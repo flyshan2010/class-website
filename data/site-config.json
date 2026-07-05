@@ -1,0 +1,29 @@
+{
+  "schoolName": "臺南市崑山國小",
+  "className": "三年四班",
+  "schoolYear": "114學年度",
+  "siteTitle": "三年四班 班級網站",
+  "teacherName": "老師",
+  "motto": "快樂學習・友愛互助",
+  "nav": [
+    { "id": "home", "label": "首頁", "icon": "🏠", "href": "index.html" },
+    { "id": "contactbook", "label": "聯絡簿", "icon": "📒", "href": "contactbook.html" },
+    { "id": "announcements", "label": "公告", "icon": "📣", "href": "announcements.html" },
+    { "id": "calendar", "label": "行事曆", "icon": "📅", "href": "calendar.html" },
+    { "id": "weekly", "label": "班級週報", "icon": "📰", "href": "weekly.html" },
+    { "id": "gallery", "label": "活動相簿", "icon": "🖼️", "href": "gallery.html" },
+    { "id": "schedule", "label": "日課表", "icon": "🕐", "href": "schedule.html" },
+    { "id": "links", "label": "常用網站", "icon": "🔗", "href": "links.html" },
+    { "id": "about", "label": "關於我們", "icon": "🌈", "href": "about.html" }
+  ],
+  "moduleColors": {
+    "contactbook": "#FF9F43",
+    "announcements": "#FF6B81",
+    "calendar": "#54A0FF",
+    "weekly": "#5F27CD",
+    "gallery": "#1DD1A1",
+    "schedule": "#FECA57",
+    "links": "#48DBFB",
+    "about": "#FF9FF3"
+  }
+}
