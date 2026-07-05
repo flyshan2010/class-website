@@ -10,7 +10,8 @@
 
   const today = App.todayISO();
   const latestContact = contact.find(x => x.date <= today) || contact[0];
-  const topAnn = [...ann].sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date)).slice(0, 3);
+  const topAnn = ann.filter(a => (a.source || "班級") === "班級")
+    .sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date)).slice(0, 3);
   const in14 = new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10);
   const upcoming = cal.filter(e => (e.endDate || e.date) >= today && e.date <= in14)
                       .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
@@ -53,7 +54,7 @@
       <section class="card weekly-card" style="--accent:${c.moduleColors.weekly}">
         <h2>📰 最新週報：${App.esc(latestWeekly.week)}</h2>
         <p class="meta">${App.esc(latestWeekly.range || "")}</p>
-        <p>${App.esc(App.lines(latestWeekly.highlights)[0] || App.lines(latestWeekly.learning)[0] || "")}…</p>
+        <p>${App.esc(App.lines(latestWeekly.highlights)[0] || App.lines(latestWeekly.learning?.chinese)[0] || "")}…</p>
         <p><a href="weekly.html">閱讀完整週報 →</a></p>
       </section>` : ""}
       ${latestAlbum ? `

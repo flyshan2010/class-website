@@ -26,6 +26,9 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: node scripts/sync-notion.mjs
 
+      - name: 同步 Google 日曆
+        run: node scripts/sync-gcal.mjs
+
       - name: 同步 Drive 相簿
         env:
           DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}

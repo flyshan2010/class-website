@@ -6,10 +6,10 @@
     return;
   }
   const days = ["一", "二", "三", "四", "五"];
-  const subjectColor = subj => {
-    const map = s.subjectColors || {};
-    return map[subj] || "#fafaf5";
-  };
+  const cellInfo = cell => typeof cell === "string"
+    ? { subject: cell, teacher: "", room: "" }
+    : { subject: cell?.subject || "", teacher: cell?.teacher || "", room: cell?.room || "" };
+  const color = subj => (s.subjectColors || {})[subj] || "#fafaf5";
 
   document.getElementById("main").innerHTML = `
     <h2 class="page-title"><span class="dot"></span>🕐 日課表</h2>
@@ -20,9 +20,10 @@
           ${s.periods.map((p, r) => `
             <tr>
               <th>${App.esc(p.name)}<br /><small>${App.esc(p.time || "")}</small></th>
-              ${days.map((_, c) => {
-                const subj = (s.table[r] || [])[c] || "";
-                return `<td style="background:${subjectColor(subj)}">${App.esc(subj)}</td>`;
+              ${days.map((_, cIdx) => {
+                const { subject, teacher, room } = cellInfo((s.table[r] || [])[cIdx]);
+                const sub = [teacher, room].filter(Boolean).join("・");
+                return `<td style="background:${color(subject)}">${App.esc(subject)}${sub ? `<br /><small style="color:var(--ink-soft)">${App.esc(sub)}</small>` : ""}</td>`;
               }).join("")}
             </tr>`).join("")}
         </tbody>

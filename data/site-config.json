@@ -1,10 +1,11 @@
 {
   "schoolName": "臺南市崑山國小",
   "className": "四年四班",
-  "schoolYear": "114學年度",
+  "schoolYear": "115學年度",
   "siteTitle": "四年四班 班級網站",
   "teacherName": "老師",
   "motto": "快樂學習・友愛互助",
+  "gcalEmbedUrl": "https://calendar.google.com/calendar/embed?src=classroom107689580550779751075%40group.calendar.google.com&ctz=Asia%2FTaipei",
   "nav": [
     { "id": "home", "label": "首頁", "icon": "🏠", "href": "index.html" },
     { "id": "contactbook", "label": "聯絡簿", "icon": "📒", "href": "contactbook.html" },

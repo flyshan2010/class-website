@@ -1,32 +1,205 @@
 [
   {
+    "name": "學生成績查詢系統",
+    "url": "https://script.google.com/macros/s/AKfycbxwY60Hok2veNzHyvhiM3oQSFenhZyVLpbRgqbzkclIRDCWVof7D1T3To",
+    "category": "班級事務",
+    "icon": "💯",
+    "note": "⚠️ 網址不完整，請老師在「網址」欄貼上完整連結"
+  },
+  {
+    "name": "公共圖書館區域資源中心電影院",
+    "url": "https://ncl.app.visionmedia.com.tw/video",
+    "category": "休閒娛樂",
+    "icon": "🎬",
+    "note": ""
+  },
+  {
+    "name": "時空學園：素養解題卡片遊戲",
+    "url": "https://sites.google.com/aiv.com.tw/time-warrior-academy/",
+    "category": "休閒娛樂",
+    "icon": "⏳",
+    "note": "與因材網合作的自學網站"
+  },
+  {
+    "name": "國語日報副刊．課外小學堂",
+    "url": "https://youtube.com/channel/UCZiXdc5Rbg0XMuldF7xyyYA",
+    "category": "休閒娛樂",
+    "icon": "🗞️",
+    "note": "全文標註注音的中文報紙，含兒童、生活、故事、語文版"
+  },
+  {
+    "name": "國語日報學習頻道",
+    "url": "https://youtube.com/@learning-mdnkids",
+    "category": "休閒娛樂",
+    "icon": "📺",
+    "note": "YouTube 頻道"
+  },
+  {
+    "name": "Mamakid.AI",
+    "url": "https://mamakid.ai/web/",
+    "category": "休閒娛樂",
+    "icon": "🤖",
+    "note": "專為學生與兒童設計的 AI 對話式搜索引擎，過濾不當內容"
+  },
+  {
     "name": "PaGamO",
-    "url": "https://www.pagamo.org",
-    "category": "學習平台",
-    "icon": "🎮"
+    "url": "https://www.pagamo.org/",
+    "category": "休閒娛樂",
+    "icon": "🎮",
+    "note": "答題佔領土的遊戲學習平台"
   },
   {
-    "name": "教育部國語辭典",
-    "url": "https://dict.concised.moe.edu.tw",
-    "category": "查詢工具",
-    "icon": "📖"
+    "name": "因雄崛起",
+    "url": "https://adl.edu.tw/hero/",
+    "category": "休閒娛樂",
+    "icon": "🦸",
+    "note": "教育部因材網答題遊戲：獲得金幣、打敗魔王"
   },
   {
-    "name": "因材網",
-    "url": "https://adl.edu.tw",
-    "category": "學習平台",
-    "icon": "🧠"
+    "name": "識字金銀島",
+    "url": "https://pair-learn.nknu.edu.tw/",
+    "category": "自學平台",
+    "icon": "🏝️",
+    "note": ""
+  },
+  {
+    "name": "雄 HTML5 FUN：PARTDLE 兜一兜",
+    "url": "https://gsyan888.blogspot.com/2024/06/html5-fun-partdle.html",
+    "category": "自學平台",
+    "icon": "🧩",
+    "note": "中文語詞部件的組合遊戲"
+  },
+  {
+    "name": "114-數學小遊戲：數N題練習",
+    "url": "https://sites.google.com/csps.tyc.edu.tw/mathgame/%E6%95%B8n%E9%A1%8C%E7%B7%B4%E7%BF%92",
+    "category": "自學平台",
+    "icon": "🎲",
+    "note": "可練九九乘法、基礎心算"
+  },
+  {
+    "name": "樹林國小-民主表達（教學指引）",
+    "url": "https://sites.google.com/view/sules-democracy/%E9%A6%96%E9%A0%81",
+    "category": "自學平台",
+    "icon": "🗳️",
+    "note": "宣導"
+  },
+  {
+    "name": "教育部因材網",
+    "url": "https://adl.edu.tw/HomePage/home/",
+    "category": "自學平台",
+    "icon": "🧠",
+    "note": ""
+  },
+  {
+    "name": "學習吧",
+    "url": "https://www.learnmode.net/home/",
+    "category": "自學平台",
+    "icon": "💡",
+    "note": ""
   },
   {
     "name": "均一教育平台",
-    "url": "https://www.junyiacademy.org",
-    "category": "學習平台",
-    "icon": "📐"
+    "url": "https://www.junyiacademy.org/",
+    "category": "自學平台",
+    "icon": "📐",
+    "note": ""
+  },
+  {
+    "name": "得報 NEWSY365",
+    "url": "https://newsy365.com/",
+    "category": "閱讀平台",
+    "icon": "📰",
+    "note": "專為國中小學生設計的閱讀平台，涵蓋國際、地方、科技、商業新聞"
+  },
+  {
+    "name": "Hami書城",
+    "url": "https://www.hamibook.com.tw/Homes/book",
+    "category": "閱讀平台",
+    "icon": "🏬",
+    "note": "可用 OpenID 登入免費閱讀"
+  },
+  {
+    "name": "布可星球",
+    "url": "https://read.tn.edu.tw/",
+    "category": "閱讀平台",
+    "icon": "🪐",
+    "note": "臺南市閱讀認證平台"
+  },
+  {
+    "name": "教育雲電子書",
+    "url": "https://oidcebook.nlpi.edu.tw/",
+    "category": "閱讀平台",
+    "icon": "📘",
+    "note": ""
+  },
+  {
+    "name": "HyRead ebook 臺南市立圖書館",
+    "url": "https://tnml.ebook.hyread.com.tw/",
+    "category": "閱讀平台",
+    "icon": "📱",
+    "note": "電子書平台，支援電腦、iPhone/iPad、Android"
+  },
+  {
+    "name": "小學堂",
+    "url": "https://xiaoxue.iis.sinica.edu.tw/",
+    "category": "工具網站",
+    "icon": "🀄",
+    "note": "文字字體教學"
+  },
+  {
+    "name": "MangaChat漫畫日記",
+    "url": "https://studio.mangachat.co/",
+    "category": "工具網站",
+    "icon": "💬",
+    "note": "可以打字創造四格漫畫"
+  },
+  {
+    "name": "教育部重編國語辭典修訂本",
+    "url": "https://dict.revised.moe.edu.tw/index.jsp",
+    "category": "工具網站",
+    "icon": "📕",
+    "note": "歷史語言辭典，主要記錄語言使用歷程，適用對象為語文研究者"
+  },
+  {
+    "name": "雄-筆順練習",
+    "url": "https://gsyan888.github.io/html5_fun/html5_stroke_parts/html5_stroke_parts.html",
+    "category": "工具網站",
+    "icon": "🖌️",
+    "note": "筆順練習"
+  },
+  {
+    "name": "教育部《國語辭典簡編本》",
+    "url": "https://dict.concised.moe.edu.tw/",
+    "category": "工具網站",
+    "icon": "📖",
+    "note": "語文教學用"
+  },
+  {
+    "name": "教育部國語小字典",
+    "url": "https://dict.mini.moe.edu.tw/",
+    "category": "工具網站",
+    "icon": "🔤",
+    "note": "1-4年級用"
+  },
+  {
+    "name": "教育部成語典",
+    "url": "https://dict.idioms.moe.edu.tw/",
+    "category": "工具網站",
+    "icon": "📚",
+    "note": ""
+  },
+  {
+    "name": "國字筆順學習網",
+    "url": "https://stroke-order.learningweb.moe.edu.tw/home.do",
+    "category": "工具網站",
+    "icon": "✍️",
+    "note": ""
   },
   {
     "name": "臺南市教育局",
     "url": "https://www.tn.edu.tw",
     "category": "親師專區",
-    "icon": "🏛️"
+    "icon": "🏛️",
+    "note": ""
   }
 ]
