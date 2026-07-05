@@ -76,7 +76,7 @@ async function fillContactbook() {
     if (r.date === "2027-02-11") notes.push("第二學期開學日！請繳交寒假作業");
     if (r.date === "2027-01-20") notes.push("今天休業式，明天起寒假開始");
     if (r.date === "2027-06-30") notes.push("今天休業式，明天起暑假開始");
-    if (dow === 3 || dow === 5) notes.push("今日半天課，中午 12:00 放學");
+    if (dow === 3 || dow === 5) notes.push("今日半天課，中午 12:40 放學");
     notes.push(...(holidayReminder[r.date] || []));
     const props = { "作業": rt("國語：\n數學：\n其他：") };
     if (notes.length && !r.notes) props["提醒事項"] = rt(notes.join("\n"));
