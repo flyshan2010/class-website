@@ -137,6 +137,39 @@ main {
 .home-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; }
 @media (max-width: 800px) { .home-grid { grid-template-columns: 1fr; } }
 
+/* 首頁版面：左側直行選單＋右側內容 */
+.home-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 18px; align-items: start; margin-top: 14px; }
+.side-menu {
+  position: sticky; top: 12px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.side-menu .module-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 16px; border-bottom-width: 4px; }
+.side-menu .module-card .icon { font-size: 26px; }
+.side-menu .module-card .label { font-size: 17px; margin-top: 0; }
+@media (max-width: 860px) {
+  .home-layout { grid-template-columns: 1fr; }
+  .side-menu { position: static; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}
+
+/* 日期倒數 */
+.countdown-list { display: flex; flex-direction: column; gap: 8px; }
+.countdown-item {
+  display: flex; align-items: center; gap: 10px;
+  background: #fafaf5; border-radius: 12px; padding: 8px 12px;
+}
+.countdown-item .emoji { font-size: 24px; }
+.countdown-item .cd-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.countdown-item .cd-days {
+  font-size: 15px; color: #fff; background: var(--sky);
+  border-radius: 999px; padding: 1px 12px; white-space: nowrap;
+}
+.countdown-item .cd-days.today { background: var(--orange); }
+.countdown-item .cd-days.soon { background: var(--pink); }
+
+/* 公告來源標籤 */
+.badge.src-班級 { background: var(--sky); }
+.badge.src-學校 { background: var(--purple); }
+
 /* ===== 標籤 / 徽章 ===== */
 .badge {
   display: inline-block;
@@ -284,7 +317,8 @@ main {
 }
 
 /* ===== 日課表 ===== */
-.schedule-table { width: 100%; border-collapse: separate; border-spacing: 4px; }
+.schedule-table { width: 100%; border-collapse: separate; border-spacing: 6px; table-layout: fixed; }
+.schedule-table col.col-period { width: 15%; }
 .schedule-table th, .schedule-table td {
   padding: 10px 4px;
   text-align: center;

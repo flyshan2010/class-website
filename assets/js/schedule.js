@@ -15,6 +15,7 @@
     <h2 class="page-title"><span class="dot"></span>🕐 日課表</h2>
     <div class="card" style="overflow-x:auto">
       <table class="schedule-table">
+        <colgroup><col class="col-period" />${days.map(() => "<col />").join("")}</colgroup>
         <thead><tr><th>節次</th>${days.map(d => `<th>星期${d}</th>`).join("")}</tr></thead>
         <tbody>
           ${s.periods.map((p, r) => `
