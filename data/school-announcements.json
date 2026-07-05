@@ -1,18 +1,10 @@
 [
   {
     "title": "暑期夏令營報名開始",
+    "content": "學校暑期夏令營（科學營、美術營、體育營）即日起開放報名，額滿為止。",
     "date": "2026-06-30",
     "category": "活動",
     "pinned": true,
-    "content": "學校暑期夏令營（科學營、美術營、體育營）即日起開放報名，額滿為止。",
-    "link": "https://www.example.edu.tw"
-  },
-  {
-    "title": "校園防蚊大作戰",
-    "date": "2026-06-26",
-    "category": "提醒",
-    "pinned": false,
-    "content": "夏季蚊蟲多，請同學配合清除積水容器，外掃區加強巡查。",
     "link": ""
   }
 ]

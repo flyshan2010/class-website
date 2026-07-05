@@ -1,8 +1,32 @@
 [
-  { "name": "因材網", "url": "https://adl.edu.tw", "category": "學習平台", "icon": "🧠" },
-  { "name": "均一教育平台", "url": "https://www.junyiacademy.org", "category": "學習平台", "icon": "📐" },
-  { "name": "PaGamO", "url": "https://www.pagamo.org", "category": "學習平台", "icon": "🎮" },
-  { "name": "教育部國語辭典", "url": "https://dict.concised.moe.edu.tw", "category": "查詢工具", "icon": "📖" },
-  { "name": "臺南市教育局", "url": "https://www.tn.edu.tw", "category": "親師專區", "icon": "🏛️" },
-  { "name": "學校首頁", "url": "https://www.example.edu.tw", "category": "親師專區", "icon": "🏫" }
+  {
+    "name": "PaGamO",
+    "url": "https://www.pagamo.org",
+    "category": "學習平台",
+    "icon": "🎮"
+  },
+  {
+    "name": "教育部國語辭典",
+    "url": "https://dict.concised.moe.edu.tw",
+    "category": "查詢工具",
+    "icon": "📖"
+  },
+  {
+    "name": "因材網",
+    "url": "https://adl.edu.tw",
+    "category": "學習平台",
+    "icon": "🧠"
+  },
+  {
+    "name": "均一教育平台",
+    "url": "https://www.junyiacademy.org",
+    "category": "學習平台",
+    "icon": "📐"
+  },
+  {
+    "name": "臺南市教育局",
+    "url": "https://www.tn.edu.tw",
+    "category": "親師專區",
+    "icon": "🏛️"
+  }
 ]
