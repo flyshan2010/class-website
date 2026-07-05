@@ -142,7 +142,7 @@ async function syncWeekly() {
       week: r["週次"],
       range: r["日期區間"],
       learning: {
-        chinese: r["學習重點-國語"],
+        chinese: r["學習重點-國語"] || r["學習重點"],
         math: r["學習重點-數學"],
         social: r["學習重點-社會"],
         other: r["學習重點-其他"],

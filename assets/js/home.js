@@ -29,7 +29,7 @@
     .filter(x => x.date >= today)
     .sort((a, b) => a.date.localeCompare(b.date))
     .filter((x, i, arr) => arr.findIndex(y => y.title === x.title && y.date === x.date) === i)
-    .slice(0, 5);
+    .slice(0, 1); // 一次只倒數一個，日期到了自動換下一個
 
   const dayDiff = d => Math.round((new Date(d + "T00:00:00") - new Date(today + "T00:00:00")) / 864e5);
   const cdBadge = n => n === 0 ? '<span class="cd-days today">就是今天</span>'
@@ -60,7 +60,6 @@
                 ${cdBadge(dayDiff(x.date))}
               </div>`).join("")}
           </div>
-          <p class="meta" style="margin-top:8px">想倒數的活動加進<a href="calendar.html">班級行事曆</a>就會出現在這裡</p>
         </section>` : ""}
 
         ${latestContact ? `
