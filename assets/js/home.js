@@ -120,8 +120,37 @@
             ${App.esc(e.title)} <span class="meta">${App.fmtDate(e.date)}</span></p>`).join("") : '<p class="empty-hint">目前沒有行事資料</p>'}
           <p><a href="calendar.html">完整行事曆 →</a></p>
         </section>
+
+        ${c.updateProxyUrl ? `
+        <section class="card" style="--accent:#FF9F43">
+          <h2>⚡ 老師專區</h2>
+          <button id="site-update" class="emotion-draw" style="margin-top:8px">🔄 立即更新班網</button>
+          <p class="meta" id="site-update-msg" style="margin-top:6px"></p>
+        </section>` : ""}
       </aside>
     </div>`;
+
+  // 一鍵更新班網（需口令；token 存在 Apps Script，不在前端）
+  const updBtn = document.getElementById("site-update");
+  if (updBtn) {
+    updBtn.addEventListener("click", async () => {
+      const pw = prompt("請輸入更新口令：");
+      if (!pw) return;
+      const msg = document.getElementById("site-update-msg");
+      msg.textContent = "⏳ 觸發中…";
+      updBtn.disabled = true;
+      try {
+        const sep = c.updateProxyUrl.includes("?") ? "&" : "?";
+        const res = await fetch(`${c.updateProxyUrl}${sep}pw=${encodeURIComponent(pw)}`).then(r => r.json());
+        msg.textContent = res.ok
+          ? "✅ 已觸發更新，約 2～3 分鐘後重新整理頁面即可看到新內容。"
+          : `❌ ${res.error || "更新失敗"}`;
+      } catch {
+        msg.textContent = "❌ 連線失敗，請稍後再試。";
+      }
+      updBtn.disabled = false;
+    });
+  }
 
   // 彩虹情緒卡：抽一張（資料取自 Super Jessica 學生彩虹情緒卡）
   const drawBtn = document.getElementById("emotion-draw");
