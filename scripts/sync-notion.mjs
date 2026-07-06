@@ -3,9 +3,10 @@
  * 用法：NOTION_TOKEN=secret_xxx node scripts/sync-notion.mjs
  * 圖片：Notion 的檔案連結會過期，因此同步時下載到 data/uploads/ 一併發布。
  */
-import { writeFile, readFile, mkdir } from "node:fs/promises";
+import { writeFile, readFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { webcrypto as crypto } from "node:crypto";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -27,6 +28,7 @@ const DS = {
   galleryIndex: "694e8649-0434-453f-8a55-43283a0ba102",
   schedule: "e648a412-b8ee-469d-98b8-a2ada9fd9513", // 🕐 日課表（一列＝一節課）
   settings: "166cce91-e6f1-456e-9275-097d71207b9b", // ⚙️ 網站設定與關於我們（項目/內容）
+  reports: "10dbe7ca-291b-4501-a2b4-2ac30f53a7f1", // 📊 學生學習報告（一列＝一生一次評量）
 };
 
 async function queryDataSource(dsId) {
@@ -263,6 +265,58 @@ async function syncSchedule() {
   });
 }
 
+// ── 學生學習報告（隱私：用該生查詢碼 AES-GCM 加密後才發布；前台輸入座號＋查詢碼解密）──
+const b64 = buf => Buffer.from(buf).toString("base64");
+
+async function encryptReport(plainObj, code, seat) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const baseKey = await crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(`${seat}:${code}`), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt, iterations: 150000, hash: "SHA-256" },
+    baseKey, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
+  const data = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(plainObj)));
+  return { v: 1, salt: b64(salt), iv: b64(iv), data: b64(data) };
+}
+
+async function syncReports() {
+  const PERIOD_ORDER = ["四上期中", "四上期末", "四下期中", "四下期末"];
+  const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
+  const rows = (await queryDataSource(DS.reports)).map(props)
+    .filter(r => r["發布"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
+
+  const bySeat = {};
+  for (const r of rows) {
+    const seat = Number(r["座號"]);
+    (bySeat[seat] ||= { seat, name: r["學生"], code: String(r["查詢碼"]).trim(), periods: [] })
+      .periods.push({
+        period: r["期間"],
+        radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
+        grades: { "考試成績": r["考試成績"], "作業成績": r["作業成績"], "上課參與": r["上課參與"], "生活常規": r["生活常規"] },
+        subjects: SUBJECTS.map(s => ({ name: s, state: r[`${s}狀態`], advice: r[`${s}建議`] })),
+        highlights: r["學生亮點"],
+        shortGoal: r["短期目標"],
+        longGoal: r["長期目標"],
+        parentTips: r["家長協助建議"],
+      });
+  }
+
+  const dir = path.join(DATA_DIR, "reports");
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+  for (const s of Object.values(bySeat)) {
+    s.periods.sort((a, b) => PERIOD_ORDER.indexOf(a.period) - PERIOD_ORDER.indexOf(b.period));
+    const payload = await encryptReport({ name: s.name, seat: s.seat, periods: s.periods }, s.code, s.seat);
+    await writeFile(path.join(dir, `${s.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
+  }
+  // 只公開「哪些座號有報告」，不含任何個資
+  await writeFile(path.join(dir, "index.json"),
+    JSON.stringify(Object.keys(bySeat).map(Number).sort((a, b) => a - b)) + "\n", "utf8");
+  console.log(`✅ reports/（${Object.keys(bySeat).length} 位學生，已加密）`);
+}
+
 await Promise.all([
   syncContactbook(),
   syncAnnouncements(),
@@ -271,5 +325,6 @@ await Promise.all([
   syncGalleryIndex(),
   syncSchedule(),
   syncSettings(),
+  syncReports(),
 ]);
 console.log("🎉 Notion 同步完成");
