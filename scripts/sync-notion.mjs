@@ -25,6 +25,7 @@ const DS = {
   weekly: "dcb8db22-0533-4ffc-8662-a9a9eef22eda",
   links: "3c3bf383-49b4-4492-9e65-f4d36ce62ef4",
   galleryIndex: "694e8649-0434-453f-8a55-43283a0ba102",
+  schedule: "e648a412-b8ee-469d-98b8-a2ada9fd9513", // 🕐 日課表（一列＝一節課）
 };
 
 async function queryDataSource(dsId) {
@@ -189,11 +190,62 @@ async function syncGalleryIndex() {
   await save("gallery-index.json", rows);
 }
 
+// ── 日課表（課程節次由 Notion 管理；固定時段與配色在下方常數）──
+const SCHEDULE_META = {
+  periods: [
+    { name: "晨掃", time: "07:40-08:00" },
+    { name: "早自修", time: "08:00-08:35" },
+    { name: "第一節", time: "08:40-09:20" },
+    { name: "第二節", time: "09:30-10:10" },
+    { name: "第三節", time: "10:30-11:10" },
+    { name: "第四節", time: "11:10-12:00" },
+    { name: "午休", time: "12:30-13:30" },
+    { name: "第五節", time: "13:40-14:20" },
+    { name: "第六節", time: "14:30-15:10" },
+    { name: "第七節", time: "15:20-16:00" },
+  ],
+  // 固定時段（非課程節次）；週三、週五半天，下午留空
+  fixedRows: {
+    "晨掃": ["晨掃", "晨掃", "晨掃", "晨掃", "晨掃"],
+    "早自修": ["早自修", "早自修", "朝會", "早自修", "早自修"],
+    "午休": ["午休", "午休", "", "午休", ""],
+  },
+  subjectColors: {
+    "國語": "#FFF3E0", "數學": "#E3F2FD", "自然": "#E8F5E9", "社會": "#FFF8E1",
+    "英語": "#F3E5F5", "英語(彈性)": "#F3E5F5", "體育": "#FFEBEE", "音樂": "#E0F7FA",
+    "視覺藝術": "#FCE4EC", "玩美(彈性)": "#FCE4EC", "健康": "#F1F8E9",
+    "資訊(彈性)": "#ECEFF1", "綜合": "#E8EAF6", "崑山活力Go(彈性)": "#FFEBEE", "本土語": "#FFF9C4",
+    "午休": "#F5F5F5", "晨掃": "#F5F5F5", "早自修": "#FAFAF5", "朝會": "#FAFAF5",
+  },
+  notes: "週三、週五為半天課，中午 12:40 放學\n體育課與崑山活力Go請穿運動服與運動鞋",
+};
+
+async function syncSchedule() {
+  const rows = (await queryDataSource(DS.schedule)).map(props).filter(r => r["顯示"]);
+  const dayIdx = { "一": 0, "二": 1, "三": 2, "四": 3, "五": 4 };
+  const cells = {}; // "第一節-0" → {subject, teacher, room}
+  for (const r of rows) {
+    const d = dayIdx[r["星期"]];
+    if (d === undefined || !r["節次"]) continue;
+    cells[`${r["節次"]}-${d}`] = { subject: r["科目"], teacher: r["教師"], room: r["教室"] };
+  }
+  const table = SCHEDULE_META.periods.map(p =>
+    SCHEDULE_META.fixedRows[p.name] ||
+    [0, 1, 2, 3, 4].map(d => cells[`${p.name}-${d}`] || ""));
+  await save("schedule.json", {
+    periods: SCHEDULE_META.periods,
+    table,
+    subjectColors: SCHEDULE_META.subjectColors,
+    notes: SCHEDULE_META.notes,
+  });
+}
+
 await Promise.all([
   syncContactbook(),
   syncAnnouncements(),
   syncWeekly(),
   syncLinks(),
   syncGalleryIndex(),
+  syncSchedule(),
 ]);
 console.log("🎉 Notion 同步完成");

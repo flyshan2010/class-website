@@ -38,6 +38,13 @@ const App = {
     return `${d.getMonth() + 1}/${d.getDate()}（${w}）`;
   },
 
+  // 短日期：只有月/日，不含星期
+  fmtDateShort(iso) {
+    if (!iso) return "";
+    const d = new Date(iso + (iso.length === 10 ? "T00:00:00" : ""));
+    return `${d.getMonth() + 1}/${d.getDate()}`;
+  },
+
   todayISO() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;

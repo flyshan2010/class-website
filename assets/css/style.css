@@ -137,8 +137,8 @@ main {
 .home-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; }
 @media (max-width: 800px) { .home-grid { grid-template-columns: 1fr; } }
 
-/* 首頁版面：左側直行選單＋右側內容 */
-.home-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 18px; align-items: start; margin-top: 14px; }
+/* 首頁版面：左側直行選單＋中間內容＋右側倒數/行事 */
+.home-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr) 290px; gap: 18px; align-items: start; margin-top: 14px; }
 .side-menu {
   position: sticky; top: 12px;
   display: flex; flex-direction: column; gap: 10px;
@@ -146,9 +146,19 @@ main {
 .side-menu .module-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 16px; border-bottom-width: 4px; }
 .side-menu .module-card .icon { font-size: 26px; }
 .side-menu .module-card .label { font-size: 17px; margin-top: 0; }
+.home-right { position: sticky; top: 12px; }
+.home-right .countdown-item { flex-wrap: wrap; }
+.home-right .countdown-item .cd-title { white-space: normal; }
+.home-right .card { padding: 16px 18px; }
+.home-right .card p { font-size: 16px; }
+@media (max-width: 1000px) {
+  .home-layout { grid-template-columns: 180px minmax(0, 1fr); }
+  .home-right { position: static; grid-column: 2; }
+}
 @media (max-width: 860px) {
   .home-layout { grid-template-columns: 1fr; }
   .side-menu { position: static; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .home-right { grid-column: auto; }
 }
 
 /* 日期倒數 */
@@ -271,6 +281,15 @@ main {
   border-radius: 999px;
   font-size: 16px;
   margin-bottom: 4px;
+}
+/* 週報版面：左側歷週索引＋右側內容 */
+.weekly-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 18px; align-items: start; }
+.weekly-layout .weekly-aside { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; }
+.weekly-layout .weekly-aside .weekly-index { flex-direction: column; align-items: stretch; }
+@media (max-width: 860px) {
+  .weekly-layout { grid-template-columns: 1fr; }
+  .weekly-layout .weekly-aside { position: static; max-height: none; }
+  .weekly-layout .weekly-aside .weekly-index { flex-direction: row; }
 }
 .weekly-index { display: flex; flex-wrap: wrap; gap: 8px; }
 .weekly-index a {
