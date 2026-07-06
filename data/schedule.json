@@ -1,76 +1,254 @@
 {
   "periods": [
-    { "name": "晨掃", "time": "07:40-08:00" },
-    { "name": "早自修", "time": "08:00-08:35" },
-    { "name": "第一節", "time": "08:40-09:20" },
-    { "name": "第二節", "time": "09:30-10:10" },
-    { "name": "第三節", "time": "10:30-11:10" },
-    { "name": "第四節", "time": "11:10-12:00" },
-    { "name": "午休", "time": "12:30-13:30" },
-    { "name": "第五節", "time": "13:40-14:20" },
-    { "name": "第六節", "time": "14:30-15:10" },
-    { "name": "第七節", "time": "15:20-16:00" }
+    {
+      "name": "晨掃",
+      "time": "07:40-08:00"
+    },
+    {
+      "name": "早自修",
+      "time": "08:00-08:35"
+    },
+    {
+      "name": "第一節",
+      "time": "08:40-09:20"
+    },
+    {
+      "name": "第二節",
+      "time": "09:30-10:10"
+    },
+    {
+      "name": "第三節",
+      "time": "10:30-11:10"
+    },
+    {
+      "name": "第四節",
+      "time": "11:10-12:00"
+    },
+    {
+      "name": "午休",
+      "time": "12:30-13:30"
+    },
+    {
+      "name": "第五節",
+      "time": "13:40-14:20"
+    },
+    {
+      "name": "第六節",
+      "time": "14:30-15:10"
+    },
+    {
+      "name": "第七節",
+      "time": "15:20-16:00"
+    }
   ],
   "table": [
-    ["晨掃", "晨掃", "晨掃", "晨掃", "晨掃"],
-    ["早自修", "早自修", "朝會", "早自修", "早自修"],
     [
-      { "subject": "國語", "teacher": "導師", "room": "本班教室" },
-      { "subject": "國語", "teacher": "導師", "room": "本班教室" },
-      { "subject": "國語", "teacher": "導師", "room": "本班教室" },
-      { "subject": "國語", "teacher": "導師", "room": "本班教室" },
-      { "subject": "國語", "teacher": "導師", "room": "本班教室" }
+      "晨掃",
+      "晨掃",
+      "晨掃",
+      "晨掃",
+      "晨掃"
     ],
     [
-      { "subject": "數學", "teacher": "導師", "room": "本班教室" },
-      { "subject": "數學", "teacher": "導師", "room": "本班教室" },
-      { "subject": "數學", "teacher": "導師", "room": "本班教室" },
-      { "subject": "崑山活力Go(彈性)", "teacher": "導師", "room": "操場" },
-      { "subject": "社會", "teacher": "導師", "room": "本班教室" }
+      "早自修",
+      "早自修",
+      "朝會",
+      "早自修",
+      "早自修"
     ],
     [
-      { "subject": "自然", "teacher": "科任老師", "room": "自然教室" },
-      { "subject": "視覺藝術", "teacher": "科任老師", "room": "美勞教室" },
-      { "subject": "社會", "teacher": "導師", "room": "本班教室" },
-      { "subject": "自然", "teacher": "科任老師", "room": "自然教室" },
-      { "subject": "英語(彈性)", "teacher": "科任老師", "room": "英語教室" }
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "本班教室"
+      }
     ],
     [
-      { "subject": "自然", "teacher": "科任老師", "room": "自然教室" },
-      { "subject": "視覺藝術", "teacher": "科任老師", "room": "美勞教室" },
-      { "subject": "玩美(彈性)", "teacher": "科任老師", "room": "美勞教室" },
-      { "subject": "社會", "teacher": "導師", "room": "本班教室" },
-      { "subject": "音樂", "teacher": "科任老師", "room": "音樂教室" }
+      {
+        "subject": "數學",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "數學",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "數學",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "崑山活力Go(彈性)",
+        "teacher": "導師",
+        "room": "操場"
+      },
+      {
+        "subject": "社會",
+        "teacher": "導師",
+        "room": "本班教室"
+      }
     ],
-    ["午休", "午休", "", "午休", ""],
     [
-      { "subject": "體育", "teacher": "科任老師", "room": "操場" },
-      { "subject": "英語", "teacher": "科任老師", "room": "英語教室" },
+      {
+        "subject": "自然",
+        "teacher": "科任老師",
+        "room": "自然教室"
+      },
+      {
+        "subject": "視覺藝術",
+        "teacher": "科任老師",
+        "room": "美勞教室"
+      },
+      {
+        "subject": "社會",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "自然",
+        "teacher": "科任老師",
+        "room": "自然教室"
+      },
+      {
+        "subject": "英語(彈性)",
+        "teacher": "科任老師",
+        "room": "英語教室"
+      }
+    ],
+    [
+      {
+        "subject": "自然",
+        "teacher": "科任老師",
+        "room": "自然教室"
+      },
+      {
+        "subject": "視覺藝術",
+        "teacher": "科任老師",
+        "room": "美勞教室"
+      },
+      {
+        "subject": "玩美(彈性)",
+        "teacher": "科任老師",
+        "room": "美勞教室"
+      },
+      {
+        "subject": "社會",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "音樂",
+        "teacher": "科任老師",
+        "room": "音樂教室"
+      }
+    ],
+    [
+      "午休",
+      "午休",
       "",
-      { "subject": "體育", "teacher": "科任老師", "room": "操場" },
+      "午休",
       ""
     ],
     [
-      { "subject": "綜合", "teacher": "導師", "room": "本班教室" },
-      { "subject": "健康", "teacher": "導師", "room": "本班教室" },
+      {
+        "subject": "體育",
+        "teacher": "科任老師",
+        "room": "操場"
+      },
+      {
+        "subject": "英語",
+        "teacher": "科任老師",
+        "room": "英語教室"
+      },
       "",
-      { "subject": "資訊(彈性)", "teacher": "科任老師", "room": "電腦教室" },
+      {
+        "subject": "體育",
+        "teacher": "科任老師",
+        "room": "操場"
+      },
       ""
     ],
     [
-      { "subject": "綜合", "teacher": "導師", "room": "本班教室" },
-      { "subject": "本土語", "teacher": "科任老師", "room": "本班教室" },
+      {
+        "subject": "綜合",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "健康",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
       "",
-      { "subject": "數學", "teacher": "導師", "room": "本班教室" },
+      {
+        "subject": "資訊(彈性)",
+        "teacher": "科任老師",
+        "room": "電腦教室"
+      },
+      ""
+    ],
+    [
+      {
+        "subject": "綜合",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
+      {
+        "subject": "本土語",
+        "teacher": "科任老師",
+        "room": "本班教室"
+      },
+      "",
+      {
+        "subject": "數學",
+        "teacher": "導師",
+        "room": "本班教室"
+      },
       ""
     ]
   ],
   "subjectColors": {
-    "國語": "#FFF3E0", "數學": "#E3F2FD", "自然": "#E8F5E9", "社會": "#FFF8E1",
-    "英語": "#F3E5F5", "英語(彈性)": "#F3E5F5", "體育": "#FFEBEE", "音樂": "#E0F7FA",
-    "視覺藝術": "#FCE4EC", "玩美(彈性)": "#FCE4EC", "健康": "#F1F8E9",
-    "資訊(彈性)": "#ECEFF1", "綜合": "#E8EAF6", "崑山活力Go(彈性)": "#FFEBEE", "本土語": "#FFF9C4",
-    "午休": "#F5F5F5", "晨掃": "#F5F5F5", "早自修": "#FAFAF5", "朝會": "#FAFAF5"
+    "國語": "#FFF3E0",
+    "數學": "#E3F2FD",
+    "自然": "#E8F5E9",
+    "社會": "#FFF8E1",
+    "英語": "#F3E5F5",
+    "英語(彈性)": "#F3E5F5",
+    "體育": "#FFEBEE",
+    "音樂": "#E0F7FA",
+    "視覺藝術": "#FCE4EC",
+    "玩美(彈性)": "#FCE4EC",
+    "健康": "#F1F8E9",
+    "資訊(彈性)": "#ECEFF1",
+    "綜合": "#E8EAF6",
+    "崑山活力Go(彈性)": "#FFEBEE",
+    "本土語": "#FFF9C4",
+    "午休": "#F5F5F5",
+    "晨掃": "#F5F5F5",
+    "早自修": "#FAFAF5",
+    "朝會": "#FAFAF5"
   },
   "notes": "週三、週五為半天課，中午 12:40 放學\n體育課與崑山活力Go請穿運動服與運動鞋"
 }
