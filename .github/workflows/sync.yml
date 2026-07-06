@@ -2,6 +2,8 @@ name: 同步 Notion 資料到班網
 
 on:
   workflow_dispatch:        # 老師手動按「Run workflow」立即更新
+  repository_dispatch:      # iOS 捷徑／API 一鍵觸發（event_type: sync-now）
+    types: [sync-now]
   schedule:
     # 台灣時間 07:00 / 16:00 / 20:00（UTC+8）
     - cron: "0 23 * * *"

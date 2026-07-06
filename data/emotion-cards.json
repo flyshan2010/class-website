@@ -1,0 +1,984 @@
+[
+ {
+  "zh": "這一題好難，這代表我的大腦正在升級中。",
+  "en": "This problem is hard, which means my brain is leveling up.",
+  "colors": [
+   "#f87171",
+   "#e11d48"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "考試分數只代表我目前的熟悉度，不代表我的智商，更不代表我的價值。",
+  "en": "Test scores only reflect my current familiarity, not my intelligence, and certainly not my worth.",
+  "colors": [
+   "#fb7185",
+   "#ef4444"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "感到壓力是正常的，那是身體在告訴我：這件事對我很重要。",
+  "en": "Feeling stressed is normal; it's my body telling me this matters to me.",
+  "colors": [
+   "#f87171",
+   "#f97316"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "我不必在第一次嘗試就做到完美，我只需要開始做。",
+  "en": "I don't have to be perfect on the first try; I just need to start.",
+  "colors": [
+   "#f43f5e",
+   "#db2777"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "生氣沒關係，但不要讓怒氣替我做決定。",
+  "en": "It's okay to be angry, but don't let anger make decisions for me.",
+  "colors": [
+   "#f87171",
+   "#f43f5e"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "與其說「我不會」，不如說「我還沒學會」。",
+  "en": "Instead of saying 'I can't', say 'I haven't learned it yet'.",
+  "colors": [
+   "#f97316",
+   "#ef4444"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "拖延是因為害怕做不好，告訴自己：「做爛一點也沒關係」，先開始就好。",
+  "en": "Procrastination comes from fear. Tell yourself: 'It's okay to do it poorly,' just start.",
+  "colors": [
+   "#ef4444",
+   "#ea580c"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "我的價值不取決於別人的按讚數或追蹤數。",
+  "en": "My worth is not determined by likes or followers.",
+  "colors": [
+   "#fb7185",
+   "#dc2626"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "設立界線不是自私，是為了保護我的能量。",
+  "en": "Setting boundaries is not selfish; it's to protect my energy.",
+  "colors": [
+   "#f87171",
+   "#ec4899"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "最困難的一步，通常就是第一步。",
+  "en": "The hardest step is usually the first one.",
+  "colors": [
+   "#f97316",
+   "#f43f5e"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "憤怒是一股能量，我可以選擇把它燒成灰燼，還是用來推動引擎。",
+  "en": "Anger is energy. I can choose to burn it into ash or use it to drive an engine.",
+  "colors": [
+   "#ef4444",
+   "#d97706"
+  ],
+  "group": "紅色系"
+ },
+ {
+  "zh": "犯錯不是失敗，犯錯是學習最深刻的時刻。",
+  "en": "Mistakes are not failures; they are the most profound moments of learning.",
+  "colors": [
+   "#fb923c",
+   "#f59e0b"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "如果A計畫行不通，英文字母表還有另外25個字母。",
+  "en": "If Plan A doesn't work, the alphabet has 25 more letters.",
+  "colors": [
+   "#fbbf24",
+   "#ea580c"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "別人的光芒不會讓我的光芒變暗，我們都能閃閃發光。",
+  "en": "Someone else's shine doesn't dim mine; we can all shine brightly.",
+  "colors": [
+   "#fdba74",
+   "#eab308"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "勇敢不是不害怕，而是帶著恐懼依然前進。",
+  "en": "Courage isn't the absence of fear, but moving forward despite it.",
+  "colors": [
+   "#fcd34d",
+   "#f97316"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "卡住的時候，就是該換個角度思考的時候。",
+  "en": "When you get stuck, it's time to think from a different angle.",
+  "colors": [
+   "#fb923c",
+   "#f87171"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "不懂不代表笨，代表我有好奇心。",
+  "en": "Not knowing doesn't mean I'm stupid; it means I'm curious.",
+  "colors": [
+   "#fdba74",
+   "#d97706"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "挫折是宇宙在問我：「你有多想要這個？」",
+  "en": "Setbacks are the universe asking: 'How much do you want this?'",
+  "colors": [
+   "#fbbf24",
+   "#f87171"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "不需要等到「準備好」才開始，因為永遠沒有完全準備好的那一刻。",
+  "en": "You don't have to wait until you're 'ready' to start, because that moment never comes.",
+  "colors": [
+   "#fb923c",
+   "#eab308"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "創意往往誕生於混亂之中。",
+  "en": "Creativity is often born out of chaos.",
+  "colors": [
+   "#fcd34d",
+   "#fb923c"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "請求幫忙不是軟弱的表現，而是拒絕放棄的證明。",
+  "en": "Asking for help is not a sign of weakness, but a proof of refusing to give up.",
+  "colors": [
+   "#f97316",
+   "#fb7185"
+  ],
+  "group": "橙色系"
+ },
+ {
+  "zh": "我不跟別人比，我只跟昨天的自己比。",
+  "en": "I don't compete with others; I only compete with yesterday's self.",
+  "colors": [
+   "#facc15",
+   "#f59e0b"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "相信自己，比任何參考書都還重要。",
+  "en": "Believing in yourself is more important than any reference book.",
+  "colors": [
+   "#fde047",
+   "#fb923c"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "我的努力像種子，埋在土裡雖然看不見，但它正在發芽。",
+  "en": "My effort is like a seed; invisible underground, but it is sprouting.",
+  "colors": [
+   "#facc15",
+   "#ca8a04"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "今天的一小步，是未來的一大步。別小看寫下的每一個字。",
+  "en": "A small step today is a giant leap for the future. Don't underestimate every word you write.",
+  "colors": [
+   "#fcd34d",
+   "#eab308"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "每個人都有自己的時區，我沒有落後，我走在自己的時間裡。",
+  "en": "Everyone has their own time zone. I am not behind; I am walking in my own time.",
+  "colors": [
+   "#fde047",
+   "#84cc16"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "花朵不會夢想成為蜜蜂，它只是盛開，蜜蜂自然會來。",
+  "en": "Flowers don't dream of the bee. They just bloom, and the bee comes.",
+  "colors": [
+   "#fef08a",
+   "#fbbf24"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "樂觀不是忽視問題，而是相信問題總有解決辦法。",
+  "en": "Optimism is not ignoring problems, but believing there is always a solution.",
+  "colors": [
+   "#fde047",
+   "#4ade80"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "你是你自己故事的主角，不要只當別人故事的配角。",
+  "en": "You are the protagonist of your own story, not just a supporting character in others'.",
+  "colors": [
+   "#fde68a",
+   "#eab308"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "你的存在本身就是一個奇蹟，不需要向誰證明。",
+  "en": "Your existence itself is a miracle; no need to prove it to anyone.",
+  "colors": [
+   "#facc15",
+   "#fdba74"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "快樂是一種選擇，不是一種結果。",
+  "en": "Happiness is a choice, not a result.",
+  "colors": [
+   "#fde047",
+   "#5eead4"
+  ],
+  "group": "黃色系"
+ },
+ {
+  "zh": "休息不是偷懶，是為了走更長遠的路。",
+  "en": "Resting is not laziness; it's to walk a longer path.",
+  "colors": [
+   "#4ade80",
+   "#059669"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "深呼吸。現在的困難，會變成以後的故事。",
+  "en": "Deep breath. Today's struggles will become tomorrow's stories.",
+  "colors": [
+   "#34d399",
+   "#14b8a6"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "不用強迫自己隨時都要正能量，累的時候就允許自己當一顆石頭。",
+  "en": "You don't have to be positive all the time. When tired, allow yourself to be a rock.",
+  "colors": [
+   "#86efac",
+   "#10b981"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "像大樹一樣，向下扎根（基礎），才能向上生長（成績）。",
+  "en": "Like a tree, take root downward (basics) to grow upward (results).",
+  "colors": [
+   "#a3e635",
+   "#16a34a"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "學習就像馬拉松，配速比衝刺更重要。",
+  "en": "Learning is like a marathon; pacing is more important than sprinting.",
+  "colors": [
+   "#2dd4bf",
+   "#22c55e"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "如果累了，學會休息，而不是放棄。",
+  "en": "If you get tired, learn to rest, not to quit.",
+  "colors": [
+   "#bbf7d0",
+   "#2dd4bf"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "大自然不著急，卻完成了所有事。",
+  "en": "Nature does not hurry, yet everything is accomplished.",
+  "colors": [
+   "#6ee7b7",
+   "#84cc16"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "原諒自己今天的進度不如預期，明天又是新的一天。",
+  "en": "Forgive yourself for today's progress; tomorrow is a new day.",
+  "colors": [
+   "#5eead4",
+   "#06b6d4"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "成長通常是不舒服的，因為你正在打破舊的殼。",
+  "en": "Growth is often uncomfortable because you are breaking the old shell.",
+  "colors": [
+   "#bef264",
+   "#10b981"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "在忙碌中，別忘了留一點時間給發呆。",
+  "en": "In the busyness, don't forget to leave some time for daydreaming.",
+  "colors": [
+   "#4ade80",
+   "#60a5fa"
+  ],
+  "group": "綠色系"
+ },
+ {
+  "zh": "眼淚是心靈的雨水，下過雨後，空氣會更清新。",
+  "en": "Tears are the rain of the soul. After the rain, the air becomes fresher.",
+  "colors": [
+   "#38bdf8",
+   "#2563eb"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "專注於我能控制的事（努力），放手我不能控制的事（結果）。",
+  "en": "Focus on what I can control (effort), let go of what I can't (outcome).",
+  "colors": [
+   "#60a5fa",
+   "#6366f1"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "不懂就問，這不是笨，這是對知識的負責。",
+  "en": "Asking when you don't know isn't stupid; it's taking responsibility for knowledge.",
+  "colors": [
+   "#22d3ee",
+   "#3b82f6"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "即使沒有人為我鼓掌，我也可以為自己喝采。",
+  "en": "Even if no one claps for me, I can applaud myself.",
+  "colors": [
+   "#93c5fd",
+   "#06b6d4"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "平靜是最大的力量。先處理心情，再處理事情。",
+  "en": "Calmness is the greatest power. Handle emotions first, then handle the task.",
+  "colors": [
+   "#818cf8",
+   "#2563eb"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "感到孤單時，記得你還擁有全世界最忠實的夥伴：你自己。",
+  "en": "When lonely, remember you have the most loyal partner: yourself.",
+  "colors": [
+   "#7dd3fc",
+   "#818cf8"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "不要讓糟糕的五分鐘，毀了你剩下的二十三小時五十五分。",
+  "en": "Don't let a bad 5 minutes ruin the rest of your 23 hours and 55 minutes.",
+  "colors": [
+   "#3b82f6",
+   "#8b5cf6"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "像水一樣，遇到石頭就繞過去，依然流向大海。",
+  "en": "Be like water; flow around the rocks and still reach the ocean.",
+  "colors": [
+   "#67e8f9",
+   "#0ea5e9"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "你的感受是有效的，不需要任何人來驗證。",
+  "en": "Your feelings are valid and need no validation.",
+  "colors": [
+   "#a5b4fc",
+   "#3b82f6"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "深呼吸，數到十。這不是逃避，是重啟。",
+  "en": "Deep breath, count to ten. It's not escaping; it's rebooting.",
+  "colors": [
+   "#60a5fa",
+   "#2dd4bf"
+  ],
+  "group": "藍色系"
+ },
+ {
+  "zh": "我現在學的東西，是在為未來的選擇權存摺。",
+  "en": "What I learn now is depositing into my future account of choices.",
+  "colors": [
+   "#818cf8",
+   "#9333ea"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "真正的聰明不是不犯錯，而是不犯重複的錯。",
+  "en": "True intelligence isn't never making mistakes, but not making the same mistake twice.",
+  "colors": [
+   "#c084fc",
+   "#7c3aed"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "你的價值，不需要透過討好別人來證明。",
+  "en": "Your worth does not need to be proven by pleasing others.",
+  "colors": [
+   "#a78bfa",
+   "#c026d3"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "雖然現在看不清未來，但只要持續走，路就會出現。",
+  "en": "Though the future is unclear, as long as you keep walking, the path will appear.",
+  "colors": [
+   "#a855f7",
+   "#6366f1"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "不要因為害怕失敗，就拒絕了開始的機會。",
+  "en": "Don't refuse the chance to start just because you fear failure.",
+  "colors": [
+   "#e879f9",
+   "#9333ea"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "夢想不需要很大，只要能讓你早上想起床就好。",
+  "en": "Dreams don't have to be big, just enough to get you out of bed.",
+  "colors": [
+   "#d8b4fe",
+   "#6366f1"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "你現在經歷的迷惘，是為了釐清真正重要的東西。",
+  "en": "The confusion you feel now is to clarify what truly matters.",
+  "colors": [
+   "#c4b5fd",
+   "#e879f9"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "改變想法是可以的，這代表你在成長。",
+  "en": "It's okay to change your mind; it means you are growing.",
+  "colors": [
+   "#6366f1",
+   "#c084fc"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "把「我必須」改成「我可以」，壓力就會變動力。",
+  "en": "Change 'I have to' to 'I get to', and pressure becomes power.",
+  "colors": [
+   "#c084fc",
+   "#f472b6"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "相信直覺，那是你靈魂的聲音。",
+  "en": "Trust your intuition; it's the voice of your soul.",
+  "colors": [
+   "#d946ef",
+   "#4f46e5"
+  ],
+  "group": "紫/靛色系"
+ },
+ {
+  "zh": "愛自己，就是接納那個還不完美的自己。",
+  "en": "Loving yourself means accepting the version of you that isn't perfect yet.",
+  "colors": [
+   "#f472b6",
+   "#f43f5e"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "真正的朋友會欣賞原本的我，而不是我偽裝的樣子。",
+  "en": "True friends appreciate who I am, not who I pretend to be.",
+  "colors": [
+   "#fda4af",
+   "#ec4899"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "對自己溫柔一點，你已經做得比你想像的更好了。",
+  "en": "Be gentle with yourself; you are doing better than you think.",
+  "colors": [
+   "#f9a8d4",
+   "#c084fc"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "無論今天過得如何，我都值得被好好對待。",
+  "en": "No matter how today went, I deserve to be treated well.",
+  "colors": [
+   "#f0abfc",
+   "#ec4899"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "你是獨一無二的拼圖，這個世界少了你就不完整。",
+  "en": "You are a unique puzzle piece; the world is incomplete without you.",
+  "colors": [
+   "#f87171",
+   "#facc15",
+   "#60a5fa"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "不要拿自己的幕後花絮，去跟別人的精采預告片比較。",
+  "en": "Don't compare your behind-the-scenes with someone else's highlight reel.",
+  "colors": [
+   "#f9a8d4",
+   "#fb7185"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "說「不」是完整的句子，不需要解釋。",
+  "en": "'No' is a complete sentence. No explanation needed.",
+  "colors": [
+   "#fb7185",
+   "#e879f9"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "即使受傷了，心依然能痊癒並變得更強壯。",
+  "en": "Even if broken, the heart heals and becomes stronger.",
+  "colors": [
+   "#fbcfe8",
+   "#fca5a5"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "感恩今天發生的一件小事，那是快樂的種子。",
+  "en": "Be grateful for one small thing today; it's the seed of joy.",
+  "colors": [
+   "#e879f9",
+   "#a855f7"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "你的善良，是這個世界最需要的禮物。",
+  "en": "Your kindness is the gift this world needs most.",
+  "colors": [
+   "#fda4af",
+   "#fdba74"
+  ],
+  "group": "粉紅/彩色系"
+ },
+ {
+  "zh": "所有的專家，曾經都是初學者。",
+  "en": "Every expert was once a beginner.",
+  "colors": [
+   "#2dd4bf",
+   "#06b6d4"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "勇氣不是從不恐懼，而是不被恐懼阻擋。",
+  "en": "Courage is not the absence of fear, but not being stopped by it.",
+  "colors": [
+   "#fdba74",
+   "#f87171"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你的潛力像冰山，看得見的只是水面上的一角。",
+  "en": "Your potential is like an iceberg; what's seen is only the tip.",
+  "colors": [
+   "#60a5fa",
+   "#2dd4bf"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "每天進步 1%，一年後你會變得強大 37 倍。",
+  "en": "Improve 1% every day, and in a year, you'll be 37 times stronger.",
+  "colors": [
+   "#d8b4fe",
+   "#f472b6"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "別讓失敗定義你，讓失敗教導你。",
+  "en": "Don't let failure define you; let failure teach you.",
+  "colors": [
+   "#fde047",
+   "#4ade80"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "即使爬得慢，只要不停止，依然在攻頂的路上。",
+  "en": "Even if you climb slowly, as long as you don't stop, you're on the way to the summit.",
+  "colors": [
+   "#a5b4fc",
+   "#3b82f6"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "專注於進步，而不是完美。",
+  "en": "Focus on progress, not perfection.",
+  "colors": [
+   "#86efac",
+   "#60a5fa"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你是你自己最好的老師，學會聆聽內心的聲音。",
+  "en": "You are your own best teacher; learn to listen to your inner voice.",
+  "colors": [
+   "#facc15",
+   "#f87171"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "困難的路，往往通向最美的地方。",
+  "en": "Difficult roads often lead to beautiful destinations.",
+  "colors": [
+   "#93c5fd",
+   "#d8b4fe"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你的努力不會白費，它們正在累積成未來的驚喜。",
+  "en": "Your efforts are not wasted; they are accumulating into future surprises.",
+  "colors": [
+   "#fca5a5",
+   "#f472b6"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "給自己一點耐心，蝴蝶也是從毛毛蟲變來的。",
+  "en": "Have patience; butterflies come from caterpillars.",
+  "colors": [
+   "#fdba74",
+   "#fde047"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "今天不想努力也沒關係，明天再試一次就好。",
+  "en": "It's okay not to try today; just try again tomorrow.",
+  "colors": [
+   "#5eead4",
+   "#34d399"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你的想法創造你的世界，試著想點開心的事。",
+  "en": "Your thoughts create your world; try thinking happy thoughts.",
+  "colors": [
+   "#818cf8",
+   "#22d3ee"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "不要為了融入而縮小自己。",
+  "en": "Don't shrink yourself to fit in.",
+  "colors": [
+   "#f472b6",
+   "#fb923c"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "失敗只是告訴你這種方法行不通，換一種就好。",
+  "en": "Failure just says this way doesn't work; try another.",
+  "colors": [
+   "#d8b4fe",
+   "#93c5fd"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "微笑是免費的，而且會傳染。",
+  "en": "Smiles are free and contagious.",
+  "colors": [
+   "#fde047",
+   "#bef264"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你的價值不在於成績單，而在於你的品格。",
+  "en": "Your worth is not in your report card, but in your character.",
+  "colors": [
+   "#4ade80",
+   "#14b8a6"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "不要害怕提問，那是變聰明的捷徑。",
+  "en": "Don't fear asking questions; it's the shortcut to getting smarter.",
+  "colors": [
+   "#60a5fa",
+   "#6366f1"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "挑戰是成長的邀請函。",
+  "en": "Challenges are invitations to grow.",
+  "colors": [
+   "#fb7185",
+   "#ef4444"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你的光芒足夠照亮黑暗。",
+  "en": "Your light is enough to illuminate the darkness.",
+  "colors": [
+   "#fcd34d",
+   "#f97316"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "不要讓任何人告訴你「你做不到」。",
+  "en": "Don't let anyone tell you 'You can't do it'.",
+  "colors": [
+   "#67e8f9",
+   "#60a5fa"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "每天給自己一個擁抱。",
+  "en": "Give yourself a hug every day.",
+  "colors": [
+   "#c4b5fd",
+   "#f0abfc"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "學習是一場探險，享受過程中的風景。",
+  "en": "Learning is an adventure; enjoy the scenery along the way.",
+  "colors": [
+   "#bef264",
+   "#4ade80"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你是被愛的，即使你感覺不到。",
+  "en": "You are loved, even if you don't feel it.",
+  "colors": [
+   "#7dd3fc",
+   "#3b82f6"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "相信過程，結果會自然發生。",
+  "en": "Trust the process, and the result will happen naturally.",
+  "colors": [
+   "#c084fc",
+   "#6366f1"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你的聲音很重要，勇敢說出來。",
+  "en": "Your voice matters; speak up bravely.",
+  "colors": [
+   "#f9a8d4",
+   "#fca5a5"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "每一次嘗試都是一次勝利。",
+  "en": "Every attempt is a victory.",
+  "colors": [
+   "#fb923c",
+   "#facc15"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你是獨特的，這就是你的超能力。",
+  "en": "You are unique, and that is your superpower.",
+  "colors": [
+   "#5eead4",
+   "#86efac"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "這世界因為有你而更美好。",
+  "en": "The world is better because you are in it.",
+  "colors": [
+   "#3b82f6",
+   "#a855f7",
+   "#ec4899"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "堅持下去，你比想像中更堅強。",
+  "en": "Keep going; you are stronger than you think.",
+  "colors": [
+   "#facc15",
+   "#f97316",
+   "#ef4444"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "今天的小進步，是明天大成功的基石。",
+  "en": "Today's small progress is the cornerstone of tomorrow's success.",
+  "colors": [
+   "#4ade80",
+   "#14b8a6",
+   "#3b82f6"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "不要放棄你的夢想，即使它看起來很遙遠。",
+  "en": "Don't give up on your dream, even if it seems far away.",
+  "colors": [
+   "#818cf8",
+   "#a855f7",
+   "#f43f5e"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你是無限可能的。",
+  "en": "You are infinite possibilities.",
+  "colors": [
+   "#fb7185",
+   "#ec4899",
+   "#d946ef"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "平靜的大海造就不出熟練的水手，感謝挑戰。",
+  "en": "A smooth sea never made a skilled sailor; thank the challenges.",
+  "colors": [
+   "#38bdf8",
+   "#3b82f6",
+   "#6366f1"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "你的潛力是無限的，不要自我設限。",
+  "en": "Your potential is limitless; don't limit yourself.",
+  "colors": [
+   "#a3e635",
+   "#22c55e",
+   "#10b981"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "做你自己，因為別人都已經有人做了。",
+  "en": "Be yourself; everyone else is already taken.",
+  "colors": [
+   "#fbbf24",
+   "#f97316",
+   "#ef4444"
+  ],
+  "group": "擴充正向語句與綜合"
+ },
+ {
+  "zh": "謝謝你今天也這麼努力。",
+  "en": "Thank you for working so hard today too.",
+  "colors": [
+   "#e879f9",
+   "#a855f7",
+   "#8b5cf6"
+  ],
+  "group": "擴充正向語句與綜合"
+ }
+]
