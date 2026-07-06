@@ -7,16 +7,66 @@
   "motto": "快樂學習・友愛互助",
   "gcalEmbedUrl": "https://calendar.google.com/calendar/embed?src=classroom107689580550779751075%40group.calendar.google.com&ctz=Asia%2FTaipei",
   "nav": [
-    { "id": "home", "label": "首頁", "icon": "🏠", "href": "index.html" },
-    { "id": "contactbook", "label": "聯絡簿", "icon": "📒", "href": "contactbook.html" },
-    { "id": "announcements", "label": "公告", "icon": "📣", "href": "announcements.html" },
-    { "id": "calendar", "label": "行事曆", "icon": "📅", "href": "calendar.html" },
-    { "id": "weekly", "label": "班級週報", "icon": "📰", "href": "weekly.html" },
-    { "id": "gallery", "label": "活動相簿", "icon": "🖼️", "href": "gallery.html" },
-    { "id": "schedule", "label": "日課表", "icon": "🕐", "href": "schedule.html" },
-    { "id": "links", "label": "常用網站", "icon": "🔗", "href": "links.html" },
-    { "id": "recap", "label": "學期回顧", "icon": "🎓", "href": "recap.html" },
-    { "id": "about", "label": "關於我們", "icon": "🌈", "href": "about.html" }
+    {
+      "id": "home",
+      "label": "首頁",
+      "icon": "🏠",
+      "href": "index.html"
+    },
+    {
+      "id": "contactbook",
+      "label": "聯絡簿",
+      "icon": "📒",
+      "href": "contactbook.html"
+    },
+    {
+      "id": "announcements",
+      "label": "公告",
+      "icon": "📣",
+      "href": "announcements.html"
+    },
+    {
+      "id": "calendar",
+      "label": "行事曆",
+      "icon": "📅",
+      "href": "calendar.html"
+    },
+    {
+      "id": "weekly",
+      "label": "班級週報",
+      "icon": "📰",
+      "href": "weekly.html"
+    },
+    {
+      "id": "gallery",
+      "label": "活動相簿",
+      "icon": "🖼️",
+      "href": "gallery.html"
+    },
+    {
+      "id": "schedule",
+      "label": "日課表",
+      "icon": "🕐",
+      "href": "schedule.html"
+    },
+    {
+      "id": "links",
+      "label": "常用網站",
+      "icon": "🔗",
+      "href": "links.html"
+    },
+    {
+      "id": "recap",
+      "label": "學期回顧",
+      "icon": "🎓",
+      "href": "recap.html"
+    },
+    {
+      "id": "about",
+      "label": "關於我們",
+      "icon": "🌈",
+      "href": "about.html"
+    }
   ],
   "moduleColors": {
     "contactbook": "#FF9F43",
