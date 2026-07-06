@@ -36,24 +36,30 @@
   document.getElementById("main").innerHTML = `
     <h2 class="page-title"><span class="dot"></span>📰 班級週報</h2>
     ${data.length ? `
-    <div class="card" style="border-top-color:var(--purple)">
-      <strong>歷週索引：</strong>
-      <div class="weekly-index" style="margin-top:6px">
-        ${data.map((w, i) => `<a href="#w${i}">${App.esc(w.week)}</a>`).join("")}
+    <div class="weekly-layout">
+      <aside class="weekly-aside">
+        <div class="card" style="border-top-color:var(--purple)">
+          <strong>歷週索引：</strong>
+          <div class="weekly-index" style="margin-top:6px">
+            ${data.map((w, i) => `<a href="#w${i}">${App.esc(w.week)}</a>`).join("")}
+          </div>
+        </div>
+      </aside>
+      <div class="weekly-main">
+        ${data.map((w, i) => `
+          <section class="card weekly-card" id="w${i}">
+            <h2>${App.esc(w.week)}</h2>
+            <p class="meta">${App.esc(w.range || "")}</p>
+            ${learning(w)}
+            ${secs.map(([key, title]) => w[key] ? `
+              <div class="weekly-sec">
+                <span class="sec-title">${title}</span>
+                ${App.ul(w[key]) || `<p>${App.esc(w[key])}</p>`}
+              </div>` : "").join("")}
+            ${imgs(w)}
+          </section>`).join("")}
       </div>
-    </div>
-    ${data.map((w, i) => `
-      <section class="card weekly-card" id="w${i}">
-        <h2>${App.esc(w.week)}</h2>
-        <p class="meta">${App.esc(w.range || "")}</p>
-        ${learning(w)}
-        ${secs.map(([key, title]) => w[key] ? `
-          <div class="weekly-sec">
-            <span class="sec-title">${title}</span>
-            ${App.ul(w[key]) || `<p>${App.esc(w[key])}</p>`}
-          </div>` : "").join("")}
-        ${imgs(w)}
-      </section>`).join("")}` : '<p class="empty-hint">第一期週報即將出刊，敬請期待！</p>'}`;
+    </div>` : '<p class="empty-hint">第一期週報即將出刊，敬請期待！</p>'}`;
 
   document.getElementById("main").addEventListener("click", e => {
     if (e.target.tagName !== "IMG") return;

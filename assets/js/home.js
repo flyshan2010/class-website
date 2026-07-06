@@ -49,18 +49,13 @@
       </aside>
 
       <div class="home-main">
-        ${cdItems.length ? `
-        <section class="card" style="--accent:${c.moduleColors.calendar}">
-          <h2>⏳ 日期倒數</h2>
-          <div class="countdown-list" style="margin-top:8px">
-            ${cdItems.map(x => `
-              <div class="countdown-item">
-                <span class="emoji">${App.esc(x.emoji || "📌")}</span>
-                <span class="cd-title">${App.esc(x.title)}<small style="color:var(--ink-soft)">　${App.fmtDate(x.date)}</small></span>
-                ${cdBadge(dayDiff(x.date))}
-              </div>`).join("")}
-          </div>
-        </section>` : ""}
+        <section class="card" style="--accent:${c.moduleColors.announcements}">
+          <h2>📣 最新公告</h2>
+          ${topAnn.length ? topAnn.map(a => `
+            <p>${a.pinned ? '<span class="badge pin">置頂</span> ' : ""}<span class="badge src-${App.esc(a.source || "班級")}">${App.esc(a.source || "班級")}公告</span> <span class="badge cat-${App.esc(a.category || "其他")}">${App.esc(a.category || "公告")}</span>
+            <strong>${App.esc(a.title)}</strong> <span class="meta">${App.fmtDateShort(a.date)}</span></p>`).join("") : '<p class="empty-hint">目前沒有公告</p>'}
+          <p><a href="announcements.html">全部公告 →</a></p>
+        </section>
 
         ${latestContact ? `
         <section class="card contact-day ${latestContact.date === today ? "today" : ""}" style="--accent:${c.moduleColors.contactbook}">
@@ -74,41 +69,45 @@
           <p style="margin-top:8px"><a href="contactbook.html">看更多聯絡簿 →</a></p>
         </section>` : ""}
 
-        <div class="home-grid">
-          <section class="card" style="--accent:${c.moduleColors.announcements}">
-            <h2>📣 最新公告</h2>
-            ${topAnn.length ? topAnn.map(a => `
-              <p>${a.pinned ? '<span class="badge pin">置頂</span> ' : ""}<span class="badge src-${App.esc(a.source || "班級")}">${App.esc(a.source || "班級")}公告</span> <span class="badge cat-${App.esc(a.category || "其他")}">${App.esc(a.category || "公告")}</span>
-              <strong>${App.esc(a.title)}</strong> <span class="meta">${App.fmtDate(a.date)}</span></p>`).join("") : '<p class="empty-hint">目前沒有公告</p>'}
-            <p><a href="announcements.html">全部公告 →</a></p>
-          </section>
+        ${latestWeekly ? `
+        <section class="card weekly-card" style="--accent:${c.moduleColors.weekly}">
+          <h2>📰 最新週報：${App.esc(latestWeekly.week)}</h2>
+          <p class="meta">${App.esc(latestWeekly.range || "")}</p>
+          <p>${App.esc(App.lines(latestWeekly.highlights)[0] || App.lines(latestWeekly.learning?.chinese)[0] || "")}…</p>
+          <p><a href="weekly.html">閱讀完整週報 →</a></p>
+        </section>` : ""}
 
-          <section class="card" style="--accent:${c.moduleColors.calendar}">
-            <h2>📅 近期行事</h2>
-            ${upcoming.length ? upcoming.map(e => `
-              <p><span class="badge type-${App.esc(e.type || "其他")}">${App.esc(e.type || "行事")}</span>
-              ${App.esc(e.title)} <span class="meta">${App.fmtDate(e.date)}</span></p>`).join("") : '<p class="empty-hint">目前沒有行事資料</p>'}
-            <p><a href="calendar.html">完整行事曆 →</a></p>
-          </section>
-        </div>
-
-        <div class="home-grid">
-          ${latestWeekly ? `
-          <section class="card weekly-card" style="--accent:${c.moduleColors.weekly}">
-            <h2>📰 最新週報：${App.esc(latestWeekly.week)}</h2>
-            <p class="meta">${App.esc(latestWeekly.range || "")}</p>
-            <p>${App.esc(App.lines(latestWeekly.highlights)[0] || App.lines(latestWeekly.learning?.chinese)[0] || "")}…</p>
-            <p><a href="weekly.html">閱讀完整週報 →</a></p>
-          </section>` : ""}
-          ${latestAlbum ? `
-          <section class="card" style="--accent:${c.moduleColors.gallery}">
-            <h2>🖼️ 最新相簿</h2>
-            <a class="album-card" href="gallery.html" style="box-shadow:none">
-              ${latestAlbum.cover ? `<img class="cover" src="${App.esc(latestAlbum.cover)}" alt="${App.esc(latestAlbum.title)}" loading="lazy" />` : ""}
-              <div class="info"><strong>${App.esc(latestAlbum.title)}</strong><div class="meta">${App.fmtDate(latestAlbum.date)}</div></div>
-            </a>
-          </section>` : ""}
-        </div>
+        ${latestAlbum ? `
+        <section class="card" style="--accent:${c.moduleColors.gallery}">
+          <h2>🖼️ 最新相簿</h2>
+          <a class="album-card" href="gallery.html" style="box-shadow:none">
+            ${latestAlbum.cover ? `<img class="cover" src="${App.esc(latestAlbum.cover)}" alt="${App.esc(latestAlbum.title)}" loading="lazy" />` : ""}
+            <div class="info"><strong>${App.esc(latestAlbum.title)}</strong><div class="meta">${App.fmtDate(latestAlbum.date)}</div></div>
+          </a>
+        </section>` : ""}
       </div>
+
+      <aside class="home-right" aria-label="日期倒數與近期行事">
+        ${cdItems.length ? `
+        <section class="card" style="--accent:${c.moduleColors.calendar}">
+          <h2>⏳ 日期倒數</h2>
+          <div class="countdown-list" style="margin-top:8px">
+            ${cdItems.map(x => `
+              <div class="countdown-item">
+                <span class="emoji">${App.esc(x.emoji || "📌")}</span>
+                <span class="cd-title">${App.esc(x.title)}<small style="color:var(--ink-soft)">　${App.fmtDate(x.date)}</small></span>
+                ${cdBadge(dayDiff(x.date))}
+              </div>`).join("")}
+          </div>
+        </section>` : ""}
+
+        <section class="card" style="--accent:${c.moduleColors.calendar}">
+          <h2>📅 近期行事</h2>
+          ${upcoming.length ? upcoming.map(e => `
+            <p><span class="badge type-${App.esc(e.type || "其他")}">${App.esc(e.type || "行事")}</span>
+            ${App.esc(e.title)} <span class="meta">${App.fmtDate(e.date)}</span></p>`).join("") : '<p class="empty-hint">目前沒有行事資料</p>'}
+          <p><a href="calendar.html">完整行事曆 →</a></p>
+        </section>
+      </aside>
     </div>`;
 })();
