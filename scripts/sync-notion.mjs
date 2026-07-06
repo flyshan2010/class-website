@@ -281,17 +281,33 @@ async function encryptReport(plainObj, code, seat) {
   return { v: 1, salt: b64(salt), iv: b64(iv), data: b64(data) };
 }
 
+// 頭貼不落地成公開檔案，改抓成 base64 放進加密內容裡
+async function avatarDataURL(files) {
+  const f = (files || [])[0];
+  if (!f?.url) return "";
+  try {
+    const res = await fetch(f.url);
+    if (!res.ok) return "";
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length > 400 * 1024) { console.warn("⚠️ 頭貼超過 400KB，略過（請用小圖）"); return ""; }
+    const ext = (f.url.split("?")[0].match(/\.(jpe?g|png|gif|webp)$/i) || [, "jpeg"])[1].toLowerCase().replace("jpg", "jpeg");
+    return `data:image/${ext};base64,${buf.toString("base64")}`;
+  } catch { return ""; }
+}
+
 async function syncReports() {
-  const PERIOD_ORDER = ["四上期中", "四上期末", "四下期中", "四下期末"];
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
   const rows = (await queryDataSource(DS.reports)).map(props)
-    .filter(r => r["發布"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
+    .filter(r => r["發布"] && r["座號"] !== "" && String(r["查詢碼"]).trim())
+    .sort((a, b) => a._created.localeCompare(b._created)); // 週次依建立時間排序
 
   const bySeat = {};
   for (const r of rows) {
     const seat = Number(r["座號"]);
-    (bySeat[seat] ||= { seat, name: r["學生"], code: String(r["查詢碼"]).trim(), periods: [] })
-      .periods.push({
+    const s = (bySeat[seat] ||= { seat, name: r["學生"], code: String(r["查詢碼"]).trim(), avatar: "", periods: [] });
+    const av = await avatarDataURL(r["頭貼"]);
+    if (av) s.avatar = av; // 用最新一列有頭貼者
+    s.periods.push({
         period: r["期間"],
         radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
         grades: { "考試成績": r["考試成績"], "作業成績": r["作業成績"], "上課參與": r["上課參與"], "生活常規": r["生活常規"] },
@@ -307,8 +323,7 @@ async function syncReports() {
   await rm(dir, { recursive: true, force: true });
   await mkdir(dir, { recursive: true });
   for (const s of Object.values(bySeat)) {
-    s.periods.sort((a, b) => PERIOD_ORDER.indexOf(a.period) - PERIOD_ORDER.indexOf(b.period));
-    const payload = await encryptReport({ name: s.name, seat: s.seat, periods: s.periods }, s.code, s.seat);
+    const payload = await encryptReport({ name: s.name, seat: s.seat, avatar: s.avatar, periods: s.periods }, s.code, s.seat);
     await writeFile(path.join(dir, `${s.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
   // 只公開「哪些座號有報告」，不含任何個資
