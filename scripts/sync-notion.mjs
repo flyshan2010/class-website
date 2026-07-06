@@ -83,7 +83,8 @@ async function saveImages(files, pageId) {
     const extMatch = (f.name || "").match(/\.(jpe?g|png|gif|webp|heic)$/i) ||
                      f.url.split("?")[0].match(/\.(jpe?g|png|gif|webp|heic)$/i);
     const ext = extMatch ? extMatch[1].toLowerCase().replace("jpeg", "jpg") : "jpg";
-    const filename = `${pageId.replace(/-/g, "").slice(0, 12)}-${i++}.${ext}`;
+    // 取 ID 後 12 碼：同工作區頁面 ID 前段幾乎相同，取前段會讓不同頁面的圖互相覆蓋
+    const filename = `${pageId.replace(/-/g, "").slice(-12)}-${i++}.${ext}`;
     try {
       const res = await fetch(f.url);
       if (!res.ok) { console.warn(`⚠️ 圖片下載失敗（${res.status}）：${f.name}`); continue; }
@@ -204,6 +205,7 @@ async function syncSettings() {
   const map = {
     "校名": "schoolName", "班級": "className", "學年度": "schoolYear",
     "網站標題": "siteTitle", "導師稱呼": "teacherName", "班級口號": "motto",
+    "一鍵更新網址": "updateProxyUrl",
   };
   for (const [k, field] of Object.entries(map)) if (kv[k]) cfg[field] = kv[k];
   await save("site-config.json", cfg);
