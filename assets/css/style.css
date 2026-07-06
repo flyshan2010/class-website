@@ -176,6 +176,38 @@ main {
 .countdown-item .cd-days.today { background: var(--orange); }
 .countdown-item .cd-days.soon { background: var(--pink); }
 
+/* 彩虹情緒卡 */
+.emotion-card {
+  margin-top: 10px;
+  min-height: 150px;
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex; flex-direction: column; justify-content: center;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(135deg, #a5b4fc, #6ee7b7);
+  box-shadow: inset 0 0 30px rgba(255,255,255,.18), 0 4px 10px rgba(0,0,0,.08);
+}
+.emotion-card.drawn { animation: emo-flip .5s ease; }
+@keyframes emo-flip {
+  0% { transform: rotateY(90deg) scale(.9); opacity: 0; }
+  100% { transform: rotateY(0) scale(1); opacity: 1; }
+}
+.emotion-card .emo-zh { font-size: 17px; font-weight: bold; line-height: 1.7; text-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.emotion-card .emo-en { font-size: 13px; font-style: italic; opacity: .92; margin-top: 8px; border-top: 1px solid rgba(255,255,255,.4); padding-top: 8px; }
+.emotion-card .emo-no { font-size: 11px; opacity: .7; margin-top: 6px; text-align: right; }
+.emo-hint { text-align: center; font-size: 13.5px; color: var(--ink-soft); margin-top: 10px; }
+.emotion-draw {
+  display: block; width: 100%; margin-top: 8px;
+  font: inherit; font-size: 17px; font-weight: bold; color: #fff;
+  border: none; border-radius: 999px; padding: 10px 0; cursor: pointer;
+  background: linear-gradient(90deg, var(--sky), var(--purple));
+  box-shadow: var(--shadow);
+  transition: transform .15s, box-shadow .15s;
+}
+.emotion-draw:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.emotion-draw:active { transform: scale(.97); }
+
 /* 公告來源標籤 */
 .badge.src-班級 { background: var(--sky); }
 .badge.src-學校 { background: var(--purple); }
@@ -350,6 +382,36 @@ main {
 @media (max-width: 640px) {
   .schedule-table th, .schedule-table td { padding: 8px 2px; font-size: 13.5px; }
 }
+
+/* ===== 學期回顧 ===== */
+.recap-hero { text-align: center; }
+.recap-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin-top: 14px; }
+.recap-stat {
+  min-width: 110px;
+  background: #fafaf5;
+  border-radius: 16px;
+  padding: 14px 10px 10px;
+}
+.recap-stat .emoji { font-size: 30px; }
+.recap-stat .num { font-size: 34px; font-weight: bold; color: var(--sky); line-height: 1.2; }
+.recap-stat .label { font-size: 15px; color: var(--ink-soft); }
+.recap-highlights { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.recap-chip {
+  background: #f3effc;
+  color: var(--purple);
+  border-radius: 999px;
+  padding: 3px 14px;
+  font-size: 15px;
+}
+.recap-timeline { margin-top: 6px; }
+.recap-week { border-left: 4px solid var(--line); padding: 4px 0 10px 16px; position: relative; }
+.recap-week::before {
+  content: ""; position: absolute; left: -9px; top: 12px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--sky); border: 3px solid #fff; box-shadow: 0 0 0 2px var(--line);
+}
+.recap-week-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.recap-photos { margin-top: 8px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 
 /* ===== 常用網站 ===== */
 .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }

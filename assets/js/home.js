@@ -1,12 +1,13 @@
 (async () => {
   const c = await App.init("home");
-  const [contact, ann, cal, weekly, gallery, countdown] = await Promise.all([
+  const [contact, ann, cal, weekly, gallery, countdown, emotionCards] = await Promise.all([
     App.fetchJSON("data/contactbook.json").catch(() => []),
     App.fetchJSON("data/announcements.json").catch(() => []),
     App.fetchJSON("data/calendar.json").catch(() => []),
     App.fetchJSON("data/weekly.json").catch(() => []),
     App.fetchJSON("data/gallery.json").catch(() => []),
     App.fetchJSON("data/countdown.json").catch(() => []),
+    App.fetchJSON("data/emotion-cards.json").catch(() => []),
   ]);
 
   const today = App.todayISO();
@@ -101,6 +102,17 @@
           </div>
         </section>` : ""}
 
+        ${emotionCards.length ? `
+        <section class="card emotion-widget" style="--accent:${c.moduleColors.about}">
+          <h2>🌈 彩虹情緒卡</h2>
+          <div id="emotion-card" class="emotion-card">
+            <p class="emo-zh">你的情緒，<br />是認識自己的導航系統。</p>
+            <p class="emo-en">Your emotions are the navigation system to knowing yourself.</p>
+          </div>
+          <p class="emo-hint">✨ 深呼吸，用<strong>左手</strong>抽一張 ✨</p>
+          <button id="emotion-draw" class="emotion-draw">🎲 抽取今日能量</button>
+        </section>` : ""}
+
         <section class="card" style="--accent:${c.moduleColors.calendar}">
           <h2>📅 近期行事</h2>
           ${upcoming.length ? upcoming.map(e => `
@@ -110,4 +122,26 @@
         </section>
       </aside>
     </div>`;
+
+  // 彩虹情緒卡：抽一張（資料取自 Super Jessica 學生彩虹情緒卡）
+  const drawBtn = document.getElementById("emotion-draw");
+  if (drawBtn) {
+    const cardEl = document.getElementById("emotion-card");
+    let last = -1;
+    drawBtn.addEventListener("click", () => {
+      let i;
+      do { i = Math.floor(Math.random() * emotionCards.length); } while (i === last && emotionCards.length > 1);
+      last = i;
+      const card = emotionCards[i];
+      cardEl.classList.remove("drawn");
+      void cardEl.offsetWidth; // 重新觸發動畫
+      cardEl.classList.add("drawn");
+      cardEl.style.background = `linear-gradient(135deg, ${card.colors.join(", ")})`;
+      cardEl.innerHTML = `
+        <p class="emo-zh">${App.esc(card.zh)}</p>
+        <p class="emo-en">${App.esc(card.en)}</p>
+        <p class="emo-no">No.${i + 1} / ${emotionCards.length}</p>`;
+      drawBtn.textContent = "🎲 再抽一張";
+    });
+  }
 })();

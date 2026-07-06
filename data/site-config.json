@@ -15,6 +15,7 @@
     { "id": "gallery", "label": "活動相簿", "icon": "🖼️", "href": "gallery.html" },
     { "id": "schedule", "label": "日課表", "icon": "🕐", "href": "schedule.html" },
     { "id": "links", "label": "常用網站", "icon": "🔗", "href": "links.html" },
+    { "id": "recap", "label": "學期回顧", "icon": "🎓", "href": "recap.html" },
     { "id": "about", "label": "關於我們", "icon": "🌈", "href": "about.html" }
   ],
   "moduleColors": {
@@ -25,6 +26,7 @@
     "gallery": "#1DD1A1",
     "schedule": "#FECA57",
     "links": "#48DBFB",
+    "recap": "#FF9F43",
     "about": "#FF9FF3"
   }
 }

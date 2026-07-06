@@ -3,7 +3,7 @@
  * 用法：NOTION_TOKEN=secret_xxx node scripts/sync-notion.mjs
  * 圖片：Notion 的檔案連結會過期，因此同步時下載到 data/uploads/ 一併發布。
  */
-import { writeFile, mkdir } from "node:fs/promises";
+import { writeFile, readFile, mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -26,6 +26,7 @@ const DS = {
   links: "3c3bf383-49b4-4492-9e65-f4d36ce62ef4",
   galleryIndex: "694e8649-0434-453f-8a55-43283a0ba102",
   schedule: "e648a412-b8ee-469d-98b8-a2ada9fd9513", // 🕐 日課表（一列＝一節課）
+  settings: "166cce91-e6f1-456e-9275-097d71207b9b", // ⚙️ 網站設定與關於我們（項目/內容）
 };
 
 async function queryDataSource(dsId) {
@@ -190,6 +191,28 @@ async function syncGalleryIndex() {
   await save("gallery-index.json", rows);
 }
 
+// ── 網站設定與關於我們（項目→內容 對照表；nav 與模組色維持在 repo）──
+async function syncSettings() {
+  const kv = {};
+  for (const r of (await queryDataSource(DS.settings)).map(props)) {
+    if (r["項目"] && String(r["內容"]).trim()) kv[r["項目"]] = String(r["內容"]).trim();
+  }
+  // site-config.json：只覆蓋文字欄位，nav/moduleColors/gcalEmbedUrl 由 repo 管
+  const cfg = JSON.parse(await readFile(path.join(DATA_DIR, "site-config.json"), "utf8"));
+  const map = {
+    "校名": "schoolName", "班級": "className", "學年度": "schoolYear",
+    "網站標題": "siteTitle", "導師稱呼": "teacherName", "班級口號": "motto",
+  };
+  for (const [k, field] of Object.entries(map)) if (kv[k]) cfg[field] = kv[k];
+  await save("site-config.json", cfg);
+  // about.json
+  const about = JSON.parse(await readFile(path.join(DATA_DIR, "about.json"), "utf8"));
+  if (kv["班級介紹"]) about.intro = kv["班級介紹"];
+  if (kv["老師的話"]) about.teacherWords = kv["老師的話"];
+  if (kv["班級公約"]) about.rules = kv["班級公約"];
+  await save("about.json", about);
+}
+
 // ── 日課表（課程節次由 Notion 管理；固定時段與配色在下方常數）──
 const SCHEDULE_META = {
   periods: [
@@ -247,5 +270,6 @@ await Promise.all([
   syncLinks(),
   syncGalleryIndex(),
   syncSchedule(),
+  syncSettings(),
 ]);
 console.log("🎉 Notion 同步完成");
