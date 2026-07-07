@@ -544,3 +544,56 @@ main {
 }
 
 .empty-hint { color: var(--ink-soft); text-align: center; padding: 30px 0; }
+
+/* ===== 小小銀行 ===== */
+.bank-section-title { font-size: 21px; margin: 26px 0 4px; }
+.bank-cat-label { font-weight: bold; color: var(--ink-soft); margin: 12px 0 8px; }
+.store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.store-card {
+  background: var(--card); border: 3px dashed #f6d8a8; border-radius: 18px;
+  padding: 14px 10px; text-align: center; box-shadow: var(--shadow);
+}
+.store-card.soldout { opacity: .55; filter: grayscale(.6); }
+.store-icon { font-size: 38px; line-height: 1.2; }
+.store-name { font-weight: bold; font-size: 16px; margin-top: 4px; }
+.store-price { color: #c97b12; font-weight: bold; margin-top: 2px; }
+.store-stock { font-size: 13px; color: var(--ink-soft); }
+.store-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+.bank-tip { margin-top: 18px; text-align: center; font-size: 15.5px; background: #fff8e8; }
+
+/* 存摺 */
+.passbook {
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+  border: 3px solid #f6d8a8; outline: 3px solid #cde3f6; outline-offset: -8px;
+  padding: 18px 20px;
+}
+.passbook-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.passbook-owner { font-size: 18px; font-weight: bold; }
+.passbook-balance {
+  margin-left: auto; text-align: right; background: #fff8e8;
+  border-radius: 16px; padding: 8px 18px;
+}
+.passbook-balance span { font-size: 13.5px; color: var(--ink-soft); display: block; }
+.passbook-balance strong { font-size: 26px; color: #c97b12; }
+.passbook-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.passbook-table th {
+  text-align: left; padding: 6px 8px; color: var(--ink-soft);
+  border-bottom: 2px solid var(--line); font-size: 14px;
+}
+.passbook-table td { padding: 7px 8px; border-bottom: 1px dashed var(--line); }
+.passbook-table .tx-date { white-space: nowrap; color: var(--ink-soft); }
+.tx-type {
+  display: inline-block; white-space: nowrap; font-size: 13.5px; font-weight: bold;
+  background: color-mix(in srgb, var(--tc, #8395A7) 16%, #fff);
+  color: color-mix(in srgb, var(--tc, #8395A7) 78%, #000);
+  border-radius: 999px; padding: 1px 10px;
+}
+.passbook-table .tx-amount { text-align: right; font-weight: bold; white-space: nowrap; }
+.passbook-table .tx-amount.plus { color: #10AC84; }
+.passbook-table .tx-amount.minus { color: #ee5253; }
+.passbook-table .tx-after { text-align: right; color: var(--ink-soft); white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .passbook-table .tx-after { display: none; }
+  .passbook-table th:last-child { display: none; }
+}

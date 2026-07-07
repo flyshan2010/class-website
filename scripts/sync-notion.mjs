@@ -29,6 +29,9 @@ const DS = {
   schedule: "e648a412-b8ee-469d-98b8-a2ada9fd9513", // 🕐 日課表（一列＝一節課）
   settings: "166cce91-e6f1-456e-9275-097d71207b9b", // ⚙️ 網站設定與關於我們（項目/內容）
   reports: "10dbe7ca-291b-4501-a2b4-2ac30f53a7f1", // 📊 學生學習報告（一列＝一生一次評量）
+  roster: "ad232b7a-c7f8-4a68-b224-5b2d5b16599a", // 👥 學生名冊
+  bank: "1868a25d-f4e8-4952-9181-75bc2e349aa9", // 🏦 班級銀行帳本（一列＝一筆交易）
+  store: "9e421ad0-0312-423d-b870-867b019b23d8", // 🏪 班級商店
 };
 
 async function queryDataSource(dsId) {
@@ -64,6 +67,7 @@ function val(prop) {
     case "url": return prop.url ?? "";
     case "number": return prop.number ?? "";
     case "files": return prop.files.map(f => ({ name: f.name, url: f.file?.url || f.external?.url || "" }));
+    case "relation": return prop.relation.map(r => r.id);
     default: return "";
   }
 }
@@ -334,6 +338,67 @@ async function syncReports() {
   console.log(`✅ reports/（${Object.keys(bySeat).length} 位學生，已加密）`);
 }
 
+// ── 班級商店（公開櫥窗，無個資）──
+async function syncStore() {
+  const rows = (await queryDataSource(DS.store)).map(props)
+    .filter(r => r["上架"] && r["品項"])
+    .map(r => ({
+      name: r["品項"],
+      category: r["分類"] || "小物",
+      price: Number(r["價格"]) || 0,
+      stock: Number(r["庫存"]) || 0,
+      icon: r["圖示"] || "🎁",
+      note: r["說明"],
+    }))
+    .sort((a, b) => a.category.localeCompare(b.category, "zh-Hant") || a.price - b.price);
+  await save("store.json", rows);
+}
+
+// ── 班級銀行（隱私：同學習報告，用座號＋查詢碼派生金鑰 AES-GCM 加密）──
+async function syncBank() {
+  const roster = (await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
+  const txRows = (await queryDataSource(DS.bank)).map(props)
+    .filter(r => r["學生"]?.length && r["金額"] !== "")
+    .sort((a, b) => String(a["日期"]?.start || "").localeCompare(String(b["日期"]?.start || "")) ||
+                    a._created.localeCompare(b._created));
+
+  const byPageId = Object.fromEntries(roster.map(r => [r._id, r]));
+  const accounts = {}; // seat → {name, seat, code, balance, tx[]}
+  for (const t of txRows) {
+    const stu = byPageId[t["學生"][0]];
+    if (!stu) continue;
+    const seat = Number(stu["座號"]);
+    const acc = (accounts[seat] ||= {
+      seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(), balance: 0, tx: [],
+    });
+    const amount = Math.round(Number(t["金額"]) || 0);
+    acc.balance += amount;
+    acc.tx.push({
+      date: t["日期"]?.start || "",
+      week: t["週次"],
+      type: t["類型"] || "調整",
+      reason: t["事由"],
+      amount,
+      after: acc.balance,
+    });
+  }
+
+  const dir = path.join(DATA_DIR, "bank");
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+  for (const acc of Object.values(accounts)) {
+    acc.tx.reverse(); // 存摺新→舊
+    const payload = await encryptReport(
+      { name: acc.name, seat: acc.seat, balance: acc.balance, tx: acc.tx }, acc.code, acc.seat);
+    await writeFile(path.join(dir, `${acc.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
+  }
+  // 只公開「哪些座號有帳戶」，不含任何個資
+  await writeFile(path.join(dir, "index.json"),
+    JSON.stringify(Object.keys(accounts).map(Number).sort((a, b) => a - b)) + "\n", "utf8");
+  console.log(`✅ bank/（${Object.keys(accounts).length} 位學生，已加密）`);
+}
+
 await Promise.all([
   syncContactbook(),
   syncAnnouncements(),
@@ -343,5 +408,7 @@ await Promise.all([
   syncSchedule(),
   syncSettings(),
   syncReports(),
+  syncStore(),
+  syncBank(),
 ]);
 console.log("🎉 Notion 同步完成");

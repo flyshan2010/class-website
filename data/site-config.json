@@ -56,6 +56,12 @@
       "href": "report.html"
     },
     {
+      "id": "bank",
+      "label": "小小銀行",
+      "icon": "🏦",
+      "href": "bank.html"
+    },
+    {
       "id": "links",
       "label": "常用網站",
       "icon": "🔗",
@@ -82,6 +88,7 @@
     "gallery": "#1DD1A1",
     "schedule": "#FECA57",
     "report": "#10AC84",
+    "bank": "#F0932B",
     "links": "#48DBFB",
     "recap": "#FF9F43",
     "about": "#FF9FF3"
