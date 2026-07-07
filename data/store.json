@@ -1,0 +1,66 @@
+[
+  {
+    "name": "可愛貼紙",
+    "category": "小物",
+    "price": 20,
+    "stock": 28,
+    "icon": "✨",
+    "note": "多款可愛貼紙隨機"
+  },
+  {
+    "name": "造型橡皮擦",
+    "category": "小物",
+    "price": 30,
+    "stock": 19,
+    "icon": "🧸",
+    "note": "動物造型橡皮擦"
+  },
+  {
+    "name": "香香鉛筆",
+    "category": "小物",
+    "price": 35,
+    "stock": 20,
+    "icon": "✏️",
+    "note": "水果香味鉛筆"
+  },
+  {
+    "name": "午餐優先打菜",
+    "category": "特權",
+    "price": 40,
+    "stock": 99,
+    "icon": "🍱",
+    "note": "當天午餐第一個打菜"
+  },
+  {
+    "name": "自由閱讀券",
+    "category": "特權",
+    "price": 60,
+    "stock": 99,
+    "icon": "📚",
+    "note": "自習課自由選書閱讀一節"
+  },
+  {
+    "name": "自由選位一天",
+    "category": "特權",
+    "price": 80,
+    "stock": 99,
+    "icon": "🪑",
+    "note": "當天可以選喜歡的座位"
+  },
+  {
+    "name": "當一日小老師",
+    "category": "特權",
+    "price": 100,
+    "stock": 99,
+    "icon": "🧑‍🏫",
+    "note": "協助老師帶一節課的活動"
+  },
+  {
+    "name": "免一次抄寫作業",
+    "category": "特權",
+    "price": 150,
+    "stock": 10,
+    "icon": "🎫",
+    "note": "抄寫類作業免寫一次（限抄寫類）"
+  }
+]
