@@ -198,10 +198,18 @@ async function syncGalleryIndex() {
   await save("gallery-index.json", rows);
 }
 
+// 去識別化姓名（公開頁用）：「王小明」→「王○明」
+function maskName(full) {
+  const name = String(full || "").replace(/^\s*\d+\s*/, "").trim();
+  if (name.length <= 1) return name || "○○○";
+  return name[0] + "○".repeat(Math.max(1, name.length - 2)) + (name.length > 2 ? name[name.length - 1] : "");
+}
+
 // ── 網站設定與關於我們（項目→內容 對照表；nav 與模組色維持在 repo）──
 async function syncSettings() {
+  const settingRows = (await queryDataSource(DS.settings)).map(props);
   const kv = {};
-  for (const r of (await queryDataSource(DS.settings)).map(props)) {
+  for (const r of settingRows) {
     if (r["項目"] && String(r["內容"]).trim()) kv[r["項目"]] = String(r["內容"]).trim();
   }
   // site-config.json：只覆蓋文字欄位，nav/moduleColors/gcalEmbedUrl 由 repo 管
@@ -218,6 +226,19 @@ async function syncSettings() {
   if (kv["班級介紹"]) about.intro = kv["班級介紹"];
   if (kv["老師的話"]) about.teacherWords = kv["老師的話"];
   if (kv["班級公約"]) about.rules = kv["班級公約"];
+  // 班級公約圖片（「班級公約」那一列的圖片欄，可多張）
+  const rulesRow = settingRows.find(r => r["項目"] === "班級公約");
+  about.rulesImages = rulesRow ? await saveImages(rulesRow["圖片"], rulesRow._id) : [];
+  // 班級幹部（名冊在學且有職務者；姓名去識別化後才公開，並帶出週薪連動獎懲制度）
+  about.cadres = (await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && String(r["職務"]).trim())
+    .sort((a, b) => (a["座號"] || 0) - (b["座號"] || 0))
+    .map(r => ({
+      role: String(r["職務"]).trim(),
+      name: maskName(r["姓名"]),
+      desc: r["職務說明"],
+      salary: r["週薪"] || 0,
+    }));
   await save("about.json", about);
 }
 
