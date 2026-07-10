@@ -597,3 +597,16 @@ main {
   .passbook-table .tx-after { display: none; }
   .passbook-table th:last-child { display: none; }
 }
+
+/* ===== 關於我們：公約圖片＋班級幹部 ===== */
+.about-rule-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; }
+.about-rule-photos img { width: 100%; border-radius: 14px; border: 3px solid #f6d8a8; display: block; }
+.cadre-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 10px; }
+.cadre-card {
+  background: #fff8f0; border: 3px dashed #f6c7cf; border-radius: 18px;
+  padding: 12px 10px; text-align: center;
+}
+.cadre-role { font-weight: bold; font-size: 16px; }
+.cadre-name { font-size: 15px; margin-top: 2px; }
+.cadre-desc { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+.cadre-salary { font-size: 13px; color: #c97b12; font-weight: bold; margin-top: 4px; }
