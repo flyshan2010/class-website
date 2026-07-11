@@ -324,21 +324,30 @@ async function avatarDataURL(files) {
 
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
+  // 姓名/查詢碼/頭貼一律以名冊為準（單一來源）；報告列只需 座號＋內容欄
+  const roster = (await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
+  const rosterBySeat = Object.fromEntries(roster.map(r => [Number(r["座號"]), r]));
   const rows = (await queryDataSource(DS.reports)).map(props)
-    .filter(r => r["發布"] && r["座號"] !== "" && String(r["查詢碼"]).trim())
+    .filter(r => r["發布"] && r["座號"] !== "")
     .sort((a, b) => a._created.localeCompare(b._created)); // 週次依建立時間排序
 
   const bySeat = {};
+  let skipped = 0;
   for (const r of rows) {
     const seat = Number(r["座號"]);
-    const s = (bySeat[seat] ||= { seat, name: r["學生"], code: String(r["查詢碼"]).trim(), avatar: "", periods: [] });
-    const av = await avatarDataURL(r["頭貼"]);
-    if (av) s.avatar = av; // 用最新一列有頭貼者
+    const stu = rosterBySeat[seat];
+    if (!stu) { skipped++; continue; } // 名冊查無（非在學或缺查詢碼）
+    const s = bySeat[seat] ||= {
+      seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(),
+      avatar: await avatarDataURL(stu["頭貼"]), periods: [],
+    };
     s.periods.push({
         period: r["期間"],
         radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
         grades: { "考試成績": r["考試成績"], "作業成績": r["作業成績"], "上課參與": r["上課參與"], "生活常規": r["生活常規"] },
         subjects: SUBJECTS.map(s => ({ name: s, state: r[`${s}狀態`], advice: r[`${s}建議`] })),
+        examSummary: r["考試成績摘要"],
         highlights: r["學生亮點"],
         shortGoal: r["短期目標"],
         longGoal: r["長期目標"],
@@ -356,6 +365,7 @@ async function syncReports() {
   // 只公開「哪些座號有報告」，不含任何個資
   await writeFile(path.join(dir, "index.json"),
     JSON.stringify(Object.keys(bySeat).map(Number).sort((a, b) => a - b)) + "\n", "utf8");
+  if (skipped) console.warn(`⚠️ reports：${skipped} 列因名冊查無對應座號（非在學/缺查詢碼）被略過`);
   console.log(`✅ reports/（${Object.keys(bySeat).length} 位學生，已加密）`);
 }
 
@@ -386,9 +396,10 @@ async function syncBank() {
 
   const byPageId = Object.fromEntries(roster.map(r => [r._id, r]));
   const accounts = {}; // seat → {name, seat, code, balance, tx[]}
+  let bankSkipped = 0;
   for (const t of txRows) {
     const stu = byPageId[t["學生"][0]];
-    if (!stu) continue;
+    if (!stu) { bankSkipped++; continue; }
     const seat = Number(stu["座號"]);
     const acc = (accounts[seat] ||= {
       seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(), balance: 0, tx: [],
@@ -417,6 +428,7 @@ async function syncBank() {
   // 只公開「哪些座號有帳戶」，不含任何個資
   await writeFile(path.join(dir, "index.json"),
     JSON.stringify(Object.keys(accounts).map(Number).sort((a, b) => a - b)) + "\n", "utf8");
+  if (bankSkipped) console.warn(`⚠️ bank：${bankSkipped} 筆帳列的學生非在學名冊（模擬學生或漏 relation），已略過`);
   console.log(`✅ bank/（${Object.keys(accounts).length} 位學生，已加密）`);
 }
 

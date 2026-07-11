@@ -143,6 +143,12 @@
             </div>`).join("")}
         </div>
 
+        ${p.examSummary ? `
+        <div class="report-box" style="--bc:#EE5253; margin-top:12px">
+          <span class="report-badge" style="--bc:#EE5253">📝 定期評量成績與全班級距</span>
+          <p style="white-space:pre-line">${App.esc(p.examSummary)}</p>
+        </div>` : ""}
+
         <div class="report-bottom">
           ${App.lines(p.highlights).length ? `
           <div class="report-box" style="--bc:#FECA57">
