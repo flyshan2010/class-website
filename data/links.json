@@ -1,5 +1,12 @@
 [
   {
+    "name": "班級管理工作台（CLASSROOM HUB）",
+    "url": "https://crimson-wind-7a22.changsheng0612.workers.dev/",
+    "category": "班級事務",
+    "icon": "🧑‍🏫",
+    "note": "課堂即時工具：黑板、加分、分組、考試計時；老師用 Google 登入，學生掃 QR 進入不需帳號（不建真實姓名名單，正式紀錄仍以班經紀錄庫為準）"
+  },
+  {
     "name": "公共圖書館區域資源中心電影院",
     "url": "https://ncl.app.visionmedia.com.tw/video",
     "category": "休閒娛樂",
