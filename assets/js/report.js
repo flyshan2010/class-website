@@ -83,6 +83,67 @@
   const SUBJ_EMOJI = { "國語": "📖", "數學": "🔢", "社會": "🌏", "人際互動": "🙌", "生活技能": "🎒" };
   const SUBJ_COLORS = { "國語": "#FF6B81", "數學": "#54A0FF", "社會": "#FECA57", "人際互動": "#FF9F43", "生活技能": "#1DD1A1" };
 
+  // 期考成績級距圖表：解析考週「考試成績摘要」純文字 → 各科橫條
+  //（我的分數＋全班級距分布三區＋百分等級星標）；解析失敗則退回純文字，向後相容。
+  const examChart = raw => {
+    if (!raw) return "";
+    const text = String(raw).replace(/<br\s*\/?>/gi, "\n"); // 相容 <br> 與換行兩種分隔
+    const subjRe = /(國語|數學|社會)\s*(\d+)\s*（\s*班平均\s*([\d.]+)\s*）/g;
+    const subjects = [];
+    let m;
+    while ((m = subjRe.exec(text))) subjects.push({ name: m[1], score: +m[2], avg: +m[3] });
+    if (!subjects.length) return `<p style="white-space:pre-line">${App.esc(text)}</p>`;
+    const bands = {}; // 科目 → [{label, n}]（高分→低分排序）
+    for (const line of App.lines(text)) {
+      const bm = line.match(/^(國語|數學|社會)級距[：:]\s*(.+)$/);
+      if (bm) bands[bm[1]] = bm[2].split(/[｜|]/).map(seg => {
+        const g = seg.match(/(.+?)[：:]\s*(\d+)\s*人/);
+        return g ? { label: g[1].trim(), n: +g[2] } : null;
+      }).filter(Boolean);
+    }
+    const avgM = text.match(/三科平均\s*([\d.]+)[^0-9]*全班第\s*(\d+)\s*名/);
+    // 百分等級：由分數落點的級距估算（同級距取中位），無級距資料則不標星
+    const bandIdx = sc => sc >= 90 ? 0 : sc >= 80 ? 1 : sc >= 70 ? 2 : sc >= 60 ? 3 : 4;
+    const prOf = (name, score) => {
+      const bs = bands[name];
+      if (!bs || !bs.length) return null;
+      const total = bs.reduce((s, b) => s + b.n, 0) || 1;
+      const mi = Math.min(bandIdx(score), bs.length - 1);
+      const below = bs.slice(mi + 1).reduce((s, b) => s + b.n, 0);
+      const same = bs[mi]?.n || 0;
+      return Math.max(1, Math.min(99, Math.round((below + same / 2) / total * 100)));
+    };
+    const prColor = pr => pr == null ? "#54A0FF" : pr >= 75 ? "#1DD1A1" : pr >= 25 ? "#FF9F43" : "#FF6B81";
+    return `
+      <div class="exam-chart">
+        <div class="exam-legend">
+          <span class="exl"><i class="ez ez2"></i>高於平均 (75-100%)</span>
+          <span class="exl"><i class="ez ez1"></i>接近平均 (25-75%)</span>
+          <span class="exl"><i class="ez ez0"></i>低於平均 (0-25%)</span>
+        </div>
+        <div class="exam-grid">
+          <div class="exam-hrow exam-head">
+            <span>科目</span><span>我的分數</span><span>全班級距分布（百分等級）</span><span>百分等級</span>
+          </div>
+          ${subjects.map(s => {
+            const pr = prOf(s.name, s.score), col = prColor(pr);
+            return `
+            <div class="exam-hrow">
+              <span class="ex-subj">${SUBJ_EMOJI[s.name] || "📘"} ${App.esc(s.name)}</span>
+              <span class="ex-score" style="color:${col}">${s.score}</span>
+              <div class="ex-bar">
+                <span class="ez ez0"></span><span class="ez ez1"></span><span class="ez ez2"></span>
+                ${pr == null ? "" : `<span class="ex-star" style="left:${pr}%" title="班平均 ${s.avg}">★</span>`}
+              </div>
+              <span class="ex-pr" style="color:${col}">${pr == null ? "—" : pr + "%"}</span>
+            </div>`;
+          }).join("")}
+        </div>
+        ${avgM ? `<p class="exam-avg">三科平均 <b>${App.esc(avgM[1])}</b>　｜　全班第 <b>${App.esc(avgM[2])}</b> 名</p>` : ""}
+        <p class="exam-note">※ 百分等級＝孩子成績在全班的相對位置（越高代表越前面），依各分數級距估算；★為孩子的落點。</p>
+      </div>`;
+  };
+
   function showReport(report, periodIdx = report.periods.length - 1, anon = false) {
     document.body.classList.add("report-open");
     const p = report.periods[periodIdx];
@@ -118,6 +179,8 @@
             <p><strong>姓名：</strong>${App.esc(displayName)}</p>
             <p><strong>座號：</strong>${seatText}</p>
             <p class="meta">${App.esc(p.period)}</p>
+            ${(c.showReportBalance !== false && report.balance != null && !anon)
+              ? `<p class="report-balance">🏦 班級存款 <strong>${report.balance}</strong> 崑山幣</p>` : ""}
           </div>
           <div class="report-overview-card">
             <span class="report-badge" style="--bc:#54A0FF">整體學習狀況概覽</span>
@@ -135,18 +198,27 @@
 
         <span class="report-badge" style="--bc:#FF9F43">各科詳細狀況與建議</span>
         <div class="report-subjects">
-          ${p.subjects.filter(s => s.state || s.advice).map(s => `
+          ${(() => {
+            const shown = p.subjects.filter(s => s.state || s.advice);
+            // 無空白保底：整週各科皆無內容時，仍給中性一句，避免出現空白區塊
+            if (!shown.length) return `
+            <div class="report-subject" style="--sc:#54A0FF; grid-column:1 / -1">
+              <div class="head">📘 本週各科</div>
+              <p>本週無特別記錄，各科學習狀況穩定，請孩子維持目前的學習節奏。</p>
+            </div>`;
+            return shown.map(s => `
             <div class="report-subject" style="--sc:${SUBJ_COLORS[s.name] || "#54A0FF"}">
               <div class="head">${SUBJ_EMOJI[s.name] || "📘"} ${App.esc(s.name)}</div>
               ${s.state ? `<p><strong>狀態：</strong>${App.esc(s.state)}</p>` : ""}
               ${s.advice ? `<p><strong>建議：</strong>${App.esc(s.advice)}</p>` : ""}
-            </div>`).join("")}
+            </div>`).join("");
+          })()}
         </div>
 
         ${p.examSummary ? `
         <div class="report-box" style="--bc:#EE5253; margin-top:12px">
-          <span class="report-badge" style="--bc:#EE5253">📝 定期評量成績與全班級距</span>
-          <p style="white-space:pre-line">${App.esc(p.examSummary)}</p>
+          <span class="report-badge" style="--bc:#EE5253">📊 定期評量成績與全班級距</span>
+          ${examChart(p.examSummary)}
         </div>` : ""}
 
         <div class="report-bottom">

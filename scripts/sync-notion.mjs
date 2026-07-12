@@ -220,6 +220,8 @@ async function syncSettings() {
     "一鍵更新網址": "updateProxyUrl",
   };
   for (const [k, field] of Object.entries(map)) if (kv[k]) cfg[field] = kv[k];
+  // 報告顯示存款開關：預設顯示；「⚙️ 網站設定」新增「報告顯示存款」列填「否/不顯示/隱藏/關」才隱藏
+  cfg.showReportBalance = !kv["報告顯示存款"] || !/否|不顯示|不顯|隱藏|關/.test(kv["報告顯示存款"]);
   await save("site-config.json", cfg);
   // about.json
   const about = JSON.parse(await readFile(path.join(DATA_DIR, "about.json"), "utf8"));
@@ -322,8 +324,26 @@ async function avatarDataURL(files) {
   } catch { return ""; }
 }
 
+// 各座號目前班級存款餘額（帳本金額加總；供學習報告顯示，隨報告一起加密）
+async function bankBalanceBySeat() {
+  const roster = (await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && r["座號"] !== "");
+  const byPageId = Object.fromEntries(roster.map(r => [r._id, r]));
+  const txRows = (await queryDataSource(DS.bank)).map(props)
+    .filter(r => r["學生"]?.length && r["金額"] !== "");
+  const bal = {};
+  for (const t of txRows) {
+    const stu = byPageId[t["學生"][0]];
+    if (!stu) continue;
+    const seat = Number(stu["座號"]);
+    bal[seat] = (bal[seat] || 0) + Math.round(Number(t["金額"]) || 0);
+  }
+  return bal;
+}
+
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
+  const balances = await bankBalanceBySeat();
   // 姓名/查詢碼/頭貼一律以名冊為準（單一來源）；報告列只需 座號＋內容欄
   const roster = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
@@ -359,7 +379,8 @@ async function syncReports() {
   await rm(dir, { recursive: true, force: true });
   await mkdir(dir, { recursive: true });
   for (const s of Object.values(bySeat)) {
-    const payload = await encryptReport({ name: s.name, seat: s.seat, avatar: s.avatar, periods: s.periods }, s.code, s.seat);
+    const payload = await encryptReport(
+      { name: s.name, seat: s.seat, avatar: s.avatar, balance: balances[s.seat] ?? null, periods: s.periods }, s.code, s.seat);
     await writeFile(path.join(dir, `${s.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
   // 只公開「哪些座號有報告」，不含任何個資

@@ -496,29 +496,33 @@ main {
   .report-subjects { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 }
 
-/* 列印：一張 A4 直式 */
+/* 列印：一張 A4 橫式（landscape，寬版方便家長閱讀與歸檔） */
 @media print {
-  @page { size: A4 portrait; margin: 10mm; }
+  @page { size: A4 landscape; margin: 8mm; }
   body { background: #fff; font-size: 12px; }
   .site-header, .site-nav, .site-footer, .no-print { display: none !important; }
   main { max-width: none; padding: 0; }
-  .report-sheet { box-shadow: none; border-radius: 8px; padding: 12px 14px; }
-  .report-title { font-size: 20px; margin-bottom: 8px; }
+  .report-sheet { box-shadow: none; border-radius: 8px; padding: 10px 16px; }
+  .report-title { font-size: 21px; margin-bottom: 6px; }
   .report-badge { font-size: 12.5px; padding: 1px 12px; margin-bottom: 4px; }
-  .report-top { grid-template-columns: 150px 1fr; gap: 10px; margin-bottom: 8px; }
-  .report-id-card { padding: 10px; font-size: 12.5px; }
-  .report-id-card .avatar, .report-id-card .avatar-img { width: 64px; height: 64px; font-size: 34px; }
-  .report-radar { width: 200px; }
+  .report-top { grid-template-columns: 180px 1fr; gap: 14px; margin-bottom: 8px; }
+  .report-id-card { padding: 10px; font-size: 13px; }
+  .report-id-card .avatar, .report-id-card .avatar-img { width: 60px; height: 60px; font-size: 32px; }
+  .report-radar { width: 210px; }
   .report-grades { gap: 6px; }
   .grade-chip { padding: 3px 8px; }
   .grade-chip .v { font-size: 18px; }
-  .report-subjects { grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 8px; }
-  .report-subject { font-size: 10.5px; padding: 0 8px 6px; }
+  .report-subjects { grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+  .report-subject { font-size: 11px; padding: 0 8px 6px; }
   .report-subject .head { margin: 0 -8px 4px; padding: 3px 8px; }
-  .report-bottom { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .report-box { padding: 6px 10px; font-size: 11px; }
+  .report-bottom { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .report-box { padding: 6px 10px; font-size: 11.5px; }
   .recap-chip { font-size: 10.5px; padding: 1px 10px; }
-  .report-sheet, .report-top, .report-subjects, .report-bottom { break-inside: avoid; }
+  .exam-hrow { grid-template-columns: 78px 58px minmax(0,1fr) 52px; padding: 4px; }
+  .ex-score { font-size: 17px; }
+  .ex-pr { font-size: 13px; }
+  .ex-subj { font-size: 12.5px; }
+  .report-sheet, .report-top, .report-subjects, .report-bottom, .exam-chart, .report-box { break-inside: avoid; }
 }
 
 /* ===== 常用網站 ===== */
@@ -624,3 +628,55 @@ main {
 .rules-num { flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; color: #4a6b7a; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .rules-main { font-size: 1.15rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
 .rules-sub { font-size: 0.9rem; color: #5f7784; margin-top: 2px; font-weight: 600; }
+
+/* ===== 期考成績級距圖表（考週報告；依家長範本設計） ===== */
+.exam-chart { margin-top: 4px; }
+.exam-legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-end; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 8px; }
+.exam-legend .exl { display: inline-flex; align-items: center; gap: 5px; }
+.exam-legend .ez { position: static; display: inline-block; width: 16px; height: 12px; border-radius: 3px; }
+.ez0 { background: #f7cad6; }
+.ez1 { background: #fce8bd; }
+.ez2 { background: #cdeab6; }
+.exam-grid { display: grid; gap: 2px; }
+.exam-hrow { display: grid; grid-template-columns: 92px 74px minmax(0, 1fr) 64px; align-items: center; gap: 10px; padding: 7px 4px; border-bottom: 1px solid #f0ece0; }
+.exam-head { font-size: 12.5px; color: var(--ink-soft); font-weight: 700; border-bottom: 2px solid #e8e4d8; }
+.exam-head span:nth-child(2), .exam-head span:nth-child(4) { text-align: center; }
+.ex-subj { font-weight: 700; font-size: 15px; }
+.ex-score { font-size: 22px; font-weight: 900; text-align: center; }
+.ex-pr { font-size: 16px; font-weight: 800; text-align: center; }
+.ex-bar { position: relative; height: 18px; border-radius: 9px; display: flex; }
+.ex-bar .ez { height: 100%; }
+.ex-bar .ez0 { flex: 0 0 25%; border-radius: 9px 0 0 9px; }
+.ex-bar .ez1 { flex: 0 0 50%; }
+.ex-bar .ez2 { flex: 0 0 25%; border-radius: 0 9px 9px 0; }
+.ex-star { position: absolute; top: 50%; transform: translate(-50%, -50%); color: #2e6fd6; font-size: 20px; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,.25); pointer-events: none; }
+.exam-avg { text-align: center; margin-top: 10px; font-size: 15px; }
+.exam-avg b { color: #EE5253; font-size: 17px; }
+.exam-note { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+@media (max-width: 560px) {
+  .exam-hrow { grid-template-columns: 64px 52px minmax(0, 1fr) 48px; gap: 6px; }
+  .ex-subj { font-size: 13px; }
+  .ex-score { font-size: 18px; }
+}
+
+/* 報告：班級存款一列（受「⚙️ 網站設定＞報告顯示存款」開關控制） */
+.report-balance { color: #c97b12; font-weight: 700; margin-top: 2px; }
+
+/* ===== 班級幹部・六大分組（海報式色塊，呼應班級公約色盤） ===== */
+.cadre-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 12px; }
+.cadre-group { border-radius: 16px; overflow: hidden; border: 2px solid; }
+.cadre-group-head { padding: 8px 14px; font-weight: 900; font-size: 1.05rem; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+.cadre-group-count { margin-left: auto; font-size: 0.78rem; font-weight: 700; background: rgba(255,255,255,.65); border-radius: 999px; padding: 1px 10px; }
+.cadre-group-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 9px; background: #fff; }
+.cadre-role-block { border-left: 4px solid; padding: 2px 0 3px 10px; }
+.cadre-role-line { display: flex; align-items: center; gap: 8px; }
+.cadre-role-name { font-weight: 800; font-size: 15px; }
+.cadre-salary-tag { font-size: 12px; color: #c97b12; font-weight: 700; }
+.cadre-people { font-size: 14.5px; margin-top: 1px; }
+.cadre-role-block .cadre-desc { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+.cadre-g0 { border-color: #7cc0dc; } .cadre-g0 .cadre-group-head { background: #d5eef7; color: #2b6076; } .cadre-g0 .cadre-role-block { border-left-color: #7cc0dc; }
+.cadre-g1 { border-color: #9cc47a; } .cadre-g1 .cadre-group-head { background: #e2f0d3; color: #46652c; } .cadre-g1 .cadre-role-block { border-left-color: #9cc47a; }
+.cadre-g2 { border-color: #e8c95a; } .cadre-g2 .cadre-group-head { background: #fbf1cf; color: #856a1a; } .cadre-g2 .cadre-role-block { border-left-color: #e8c95a; }
+.cadre-g3 { border-color: #eba36a; } .cadre-g3 .cadre-group-head { background: #fbe1cd; color: #8a4f1e; } .cadre-g3 .cadre-role-block { border-left-color: #eba36a; }
+.cadre-g4 { border-color: #b79cd8; } .cadre-g4 .cadre-group-head { background: #ebe0f5; color: #5b3f80; } .cadre-g4 .cadre-role-block { border-left-color: #b79cd8; }
+.cadre-g5 { border-color: #f2a6b6; } .cadre-g5 .cadre-group-head { background: #fbdde4; color: #90304a; } .cadre-g5 .cadre-role-block { border-left-color: #f2a6b6; }
