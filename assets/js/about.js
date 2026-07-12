@@ -5,6 +5,59 @@
   // 幹部職級 emoji（依週薪對應制度三級：30 領導職／25 股長職／20 專員職）
   const roleEmoji = salary => salary >= 30 ? "👑" : salary >= 25 ? "⭐" : "🔧";
 
+  // 幹部六大分組（依「班級幹部分組表」；同組職務依此順序；未列入的職務歸「其他幹部」組）
+  const CADRE_GROUPS = [
+    { name: "班級領導組", emoji: "🎖️", roles: ["班長", "副班長", "秩序股長"] },
+    { name: "學術與資訊組", emoji: "📚", roles: ["學藝股長", "作業小組長", "資訊小組長"] },
+    { name: "生活與衛生組", emoji: "🧹", roles: ["衛生股長", "潔牙小組長", "環保小尖兵", "午餐小組長"] },
+    { name: "體育與活動組", emoji: "⚽", roles: ["體育股長", "晨運小組長"] },
+    { name: "總務與文宣組", emoji: "🗂️", roles: ["總務股長", "文宣小組"] },
+    { name: "服務與支援組", emoji: "💗", roles: ["服務股長", "晨讀小組長", "愛心小天使", "集點小幫手"] },
+  ];
+
+  // 依組別＋職務彙整幹部（同職務多人合併列名）
+  const cadreGroups = cadres => {
+    const used = new Set();
+    const blocks = CADRE_GROUPS.map(g => {
+      const roles = g.roles.map(rn => {
+        const members = cadres.filter(x => String(x.role).trim() === rn);
+        members.forEach(m => used.add(m));
+        if (!members.length) return null;
+        return { role: rn, names: members.map(m => m.name), desc: members[0].desc, salary: members[0].salary };
+      }).filter(Boolean);
+      return { ...g, roles, count: roles.reduce((s, r) => s + r.names.length, 0) };
+    }).filter(b => b.roles.length);
+    // 未歸類職務 → 其他幹部組
+    const rest = cadres.filter(x => !used.has(x));
+    if (rest.length) {
+      const byRole = {};
+      rest.forEach(x => (byRole[String(x.role).trim()] ||= []).push(x));
+      const roles = Object.entries(byRole).map(([role, ms]) =>
+        ({ role, names: ms.map(m => m.name), desc: ms[0].desc, salary: ms[0].salary }));
+      blocks.push({ name: "其他幹部", emoji: "🌟", roles, count: rest.length });
+    }
+    return blocks;
+  };
+
+  const cadreSection = cadres => `
+    <div class="cadre-groups">
+      ${cadreGroups(cadres).map((b, gi) => `
+      <div class="cadre-group cadre-g${gi % 6}">
+        <div class="cadre-group-head">${b.emoji} ${App.esc(b.name)}<span class="cadre-group-count">${b.count} 人</span></div>
+        <div class="cadre-group-body">
+          ${b.roles.map(r => `
+          <div class="cadre-role-block">
+            <div class="cadre-role-line">
+              <span class="cadre-role-name">${roleEmoji(r.salary)} ${App.esc(r.role)}</span>
+              ${r.salary ? `<span class="cadre-salary-tag">🪙 ${r.salary}</span>` : ""}
+            </div>
+            <div class="cadre-people">${r.names.map(n => App.esc(n)).join("、")}</div>
+            ${r.desc ? `<div class="cadre-desc">${App.esc(r.desc)}</div>` : ""}
+          </div>`).join("")}
+        </div>
+      </div>`).join("")}
+    </div>`;
+
   // 班級公約海報式排版：行格式「N｜大字標題｜小字說明」→ 編號色條；
   // 開頭非編號行依序當作「小標語＋大標題」；整段沒有編號行時退回原本 bullet 清單。
   const rulesPoster = text => {
@@ -54,15 +107,7 @@
     ${about?.cadres?.length ? `
     <section class="card" style="border-top-color:var(--pink)">
       <h3>🧑‍💼 班級幹部</h3>
-      <p class="meta">幹部＝班級的工作職務，每週依職級領崑山幣薪水（詳見小小銀行）。</p>
-      <div class="cadre-grid">
-        ${about.cadres.map(x => `
-          <div class="cadre-card">
-            <div class="cadre-role">${roleEmoji(x.salary)} ${App.esc(x.role)}</div>
-            <div class="cadre-name">${App.esc(x.name)}</div>
-            ${x.desc ? `<div class="cadre-desc">${App.esc(x.desc)}</div>` : ""}
-            ${x.salary ? `<div class="cadre-salary">🪙 週薪 ${x.salary} 幣</div>` : ""}
-          </div>`).join("")}
-      </div>
+      <p class="meta">幹部＝班級的工作職務，分六大組協力運作，每週依職級領崑山幣薪水（詳見小小銀行）。</p>
+      ${cadreSection(about.cadres)}
     </section>` : ""}`;
 })();
