@@ -610,3 +610,17 @@ main {
 .cadre-name { font-size: 15px; margin-top: 2px; }
 .cadre-desc { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
 .cadre-salary { font-size: 13px; color: #c97b12; font-weight: bold; margin-top: 4px; }
+
+/* ── 班級公約海報式排版（讓班級更好的 5 個行動） ── */
+.rules-poster { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.rules-kicker { font-size: 0.95rem; color: #4a6b7a; font-weight: 700; letter-spacing: 1px; }
+.rules-title { font-size: 1.6rem; font-weight: 900; color: #2f5d6e; margin-bottom: 4px; letter-spacing: 2px; }
+.rules-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px; border-left: 8px solid transparent; }
+.rules-c0 { background: #fdf6dd; border-left-color: #e8c95a; }
+.rules-c1 { background: #f1e9f7; border-left-color: #b79cd8; }
+.rules-c2 { background: #e3f2f8; border-left-color: #7cc0dc; }
+.rules-c3 { background: #fdeadd; border-left-color: #eba36a; }
+.rules-c4 { background: #ecf5e4; border-left-color: #9cc47a; }
+.rules-num { flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; color: #4a6b7a; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.rules-main { font-size: 1.15rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
+.rules-sub { font-size: 0.9rem; color: #5f7784; margin-top: 2px; font-weight: 600; }
