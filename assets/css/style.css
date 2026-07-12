@@ -518,10 +518,11 @@ main {
   .report-bottom { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .report-box { padding: 6px 10px; font-size: 11.5px; }
   .recap-chip { font-size: 10.5px; padding: 1px 10px; }
-  .exam-hrow { grid-template-columns: 78px 58px minmax(0,1fr) 52px; padding: 4px; }
-  .ex-score { font-size: 17px; }
-  .ex-pr { font-size: 13px; }
+  .exam-hrow { grid-template-columns: 76px 54px minmax(0,1fr) 50px; padding: 3px; }
+  .ex-score { font-size: 16px; }
+  .ex-avg { font-size: 13px; }
   .ex-subj { font-size: 12.5px; }
+  .ex-bands { height: 24px; }
   .report-sheet, .report-top, .report-subjects, .report-bottom, .exam-chart, .report-box { break-inside: avoid; }
 }
 
@@ -629,34 +630,37 @@ main {
 .rules-main { font-size: 1.15rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
 .rules-sub { font-size: 0.9rem; color: #5f7784; margin-top: 2px; font-weight: 600; }
 
-/* ===== 期考成績級距圖表（考週報告；依家長範本設計） ===== */
+/* ===== 期考成績級距圖表 v2（分數級距分布＋班平均對照；依規定不呈現排名） ===== */
 .exam-chart { margin-top: 4px; }
-.exam-legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-end; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 8px; }
-.exam-legend .exl { display: inline-flex; align-items: center; gap: 5px; }
-.exam-legend .ez { position: static; display: inline-block; width: 16px; height: 12px; border-radius: 3px; }
-.ez0 { background: #f7cad6; }
-.ez1 { background: #fce8bd; }
-.ez2 { background: #cdeab6; }
-.exam-grid { display: grid; gap: 2px; }
-.exam-hrow { display: grid; grid-template-columns: 92px 74px minmax(0, 1fr) 64px; align-items: center; gap: 10px; padding: 7px 4px; border-bottom: 1px solid #f0ece0; }
-.exam-head { font-size: 12.5px; color: var(--ink-soft); font-weight: 700; border-bottom: 2px solid #e8e4d8; }
-.exam-head span:nth-child(2), .exam-head span:nth-child(4) { text-align: center; }
+.exam-legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-end; align-items: center; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 10px; }
+.exam-legend .exl { display: inline-flex; align-items: center; gap: 4px; }
+.ex-i-me { font-style: normal; color: #2e6fd6; font-size: 14px; }
+.ex-i-avg { font-style: normal; color: #e8703a; font-size: 13px; }
+.exl-dim { color: #9a9a8e; }
+.exam-grid { display: grid; gap: 4px; }
+.exam-hrow { display: grid; grid-template-columns: 84px 62px minmax(0, 1fr) 56px; align-items: center; gap: 10px; padding: 4px; }
+.exam-head { font-size: 12.5px; color: var(--ink-soft); font-weight: 700; border-bottom: 2px solid #e8e4d8; padding-bottom: 4px; }
+.exam-head span:nth-child(2), .exam-head span:nth-child(3), .exam-head span:nth-child(4) { text-align: center; }
 .ex-subj { font-weight: 700; font-size: 15px; }
-.ex-score { font-size: 22px; font-weight: 900; text-align: center; }
-.ex-pr { font-size: 16px; font-weight: 800; text-align: center; }
-.ex-bar { position: relative; height: 18px; border-radius: 9px; display: flex; }
-.ex-bar .ez { height: 100%; }
-.ex-bar .ez0 { flex: 0 0 25%; border-radius: 9px 0 0 9px; }
-.ex-bar .ez1 { flex: 0 0 50%; }
-.ex-bar .ez2 { flex: 0 0 25%; border-radius: 0 9px 9px 0; }
-.ex-star { position: absolute; top: 50%; transform: translate(-50%, -50%); color: #2e6fd6; font-size: 20px; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,.25); pointer-events: none; }
-.exam-avg { text-align: center; margin-top: 10px; font-size: 15px; }
-.exam-avg b { color: #EE5253; font-size: 17px; }
-.exam-note { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+.ex-score { font-size: 22px; font-weight: 900; text-align: center; color: #2e6fd6; }
+.ex-avg { font-size: 15px; font-weight: 700; text-align: center; color: #e8703a; }
+.ex-dist { position: relative; padding: 11px 0; }
+.ex-bands { display: flex; height: 30px; border-radius: 7px; overflow: hidden; border: 1px solid #e2ddce; }
+.ex-band { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; border-right: 1px solid rgba(255,255,255,.75); }
+.ex-band:last-child { border-right: none; }
+.ex-bn { font-size: 13px; font-weight: 800; color: #514f45; }
+.ex-bl { font-size: 9.5px; color: #7c7a6c; }
+.ex-b0 { background: #f7cad6; } .ex-b1 { background: #fbe0c4; } .ex-b2 { background: #fcefbd; } .ex-b3 { background: #e0efc4; } .ex-b4 { background: #c3e6bd; }
+.ex-b-me { box-shadow: inset 0 0 0 2px #2e6fd6; }
+.ex-mark { position: absolute; transform: translateX(-50%); font-size: 16px; line-height: 1; pointer-events: none; }
+.ex-mark-me { top: -1px; color: #2e6fd6; text-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.ex-mark-avg { bottom: -1px; color: #e8703a; }
+.exam-note { font-size: 12px; color: var(--ink-soft); margin-top: 8px; }
 @media (max-width: 560px) {
-  .exam-hrow { grid-template-columns: 64px 52px minmax(0, 1fr) 48px; gap: 6px; }
-  .ex-subj { font-size: 13px; }
+  .exam-hrow { grid-template-columns: 58px 46px minmax(0, 1fr) 44px; gap: 5px; }
+  .ex-subj { font-size: 12.5px; }
   .ex-score { font-size: 18px; }
+  .ex-bl { display: none; }
 }
 
 /* 報告：班級存款一列（受「⚙️ 網站設定＞報告顯示存款」開關控制） */

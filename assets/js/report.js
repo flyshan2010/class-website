@@ -83,8 +83,8 @@
   const SUBJ_EMOJI = { "國語": "📖", "數學": "🔢", "社會": "🌏", "人際互動": "🙌", "生活技能": "🎒" };
   const SUBJ_COLORS = { "國語": "#FF6B81", "數學": "#54A0FF", "社會": "#FECA57", "人際互動": "#FF9F43", "生活技能": "#1DD1A1" };
 
-  // 期考成績級距圖表：解析考週「考試成績摘要」純文字 → 各科橫條
-  //（我的分數＋全班級距分布三區＋百分等級星標）；解析失敗則退回純文字，向後相容。
+  // 期考成績級距圖表 v2：解析考週「考試成績摘要」→ 各科「分數級距分布長條＋我的落點★＋全班平均▽」。
+  // 依成績評量規定：不呈現個人三科平均與名次；解析失敗退回純文字，向後相容。
   const examChart = raw => {
     if (!raw) return "";
     const text = String(raw).replace(/<br\s*\/?>/gi, "\n"); // 相容 <br> 與換行兩種分隔
@@ -93,54 +93,70 @@
     let m;
     while ((m = subjRe.exec(text))) subjects.push({ name: m[1], score: +m[2], avg: +m[3] });
     if (!subjects.length) return `<p style="white-space:pre-line">${App.esc(text)}</p>`;
-    const bands = {}; // 科目 → [{label, n}]（高分→低分排序）
+    const bandsBy = {}; // 科目 → {級距label: 人數}
     for (const line of App.lines(text)) {
       const bm = line.match(/^(國語|數學|社會)級距[：:]\s*(.+)$/);
-      if (bm) bands[bm[1]] = bm[2].split(/[｜|]/).map(seg => {
-        const g = seg.match(/(.+?)[：:]\s*(\d+)\s*人/);
-        return g ? { label: g[1].trim(), n: +g[2] } : null;
-      }).filter(Boolean);
+      if (bm) {
+        const o = {};
+        bm[2].split(/[｜|]/).forEach(seg => {
+          const g = seg.match(/(.+?)[：:]\s*(\d+)\s*人/);
+          if (g) o[g[1].trim()] = +g[2];
+        });
+        bandsBy[bm[1]] = o;
+      }
     }
-    const avgM = text.match(/三科平均\s*([\d.]+)[^0-9]*全班第\s*(\d+)\s*名/);
-    // 百分等級：由分數落點的級距估算（同級距取中位），無級距資料則不標星
-    const bandIdx = sc => sc >= 90 ? 0 : sc >= 80 ? 1 : sc >= 70 ? 2 : sc >= 60 ? 3 : 4;
-    const prOf = (name, score) => {
-      const bs = bands[name];
-      if (!bs || !bs.length) return null;
-      const total = bs.reduce((s, b) => s + b.n, 0) || 1;
-      const mi = Math.min(bandIdx(score), bs.length - 1);
-      const below = bs.slice(mi + 1).reduce((s, b) => s + b.n, 0);
-      const same = bs[mi]?.n || 0;
-      return Math.max(1, Math.min(99, Math.round((below + same / 2) / total * 100)));
+    // 由低到高的五個分數級距（顯示用；相容來源 90-100 標籤）
+    const BANDS = [
+      { keys: ["60以下"], label: "60↓" },
+      { keys: ["60-69"], label: "60-69" },
+      { keys: ["70-79"], label: "70-79" },
+      { keys: ["80-89"], label: "80-89" },
+      { keys: ["90-100", "90以上"], label: "90↑" },
+    ];
+    // 分數 → 在五等寬級距軸上的百分位（含級距內插，方便 ★/▽ 精準定位）
+    const scorePct = sc => {
+      let seg, frac;
+      if (sc >= 90) { seg = 4; frac = Math.min(1, (sc - 90) / 10); }
+      else if (sc >= 80) { seg = 3; frac = (sc - 80) / 10; }
+      else if (sc >= 70) { seg = 2; frac = (sc - 70) / 10; }
+      else if (sc >= 60) { seg = 1; frac = (sc - 60) / 10; }
+      else { seg = 0; frac = Math.max(0, Math.min(1, sc / 60)); }
+      return Math.max(2, Math.min(98, (seg + frac) / 5 * 100));
     };
-    const prColor = pr => pr == null ? "#54A0FF" : pr >= 75 ? "#1DD1A1" : pr >= 25 ? "#FF9F43" : "#FF6B81";
+    const meSeg = sc => sc >= 90 ? 4 : sc >= 80 ? 3 : sc >= 70 ? 2 : sc >= 60 ? 1 : 0;
     return `
       <div class="exam-chart">
         <div class="exam-legend">
-          <span class="exl"><i class="ez ez2"></i>高於平均 (75-100%)</span>
-          <span class="exl"><i class="ez ez1"></i>接近平均 (25-75%)</span>
-          <span class="exl"><i class="ez ez0"></i>低於平均 (0-25%)</span>
+          <span class="exl"><i class="ex-i-me">★</i>我的分數</span>
+          <span class="exl"><i class="ex-i-avg">▽</i>全班平均</span>
+          <span class="exl exl-dim">長條數字＝該級距人數</span>
         </div>
         <div class="exam-grid">
           <div class="exam-hrow exam-head">
-            <span>科目</span><span>我的分數</span><span>全班級距分布（百分等級）</span><span>百分等級</span>
+            <span>科目</span><span>我的分數</span><span>全班分數級距分布</span><span>班平均</span>
           </div>
           ${subjects.map(s => {
-            const pr = prOf(s.name, s.score), col = prColor(pr);
+            const o = bandsBy[s.name] || {};
+            const mp = scorePct(s.score), ap = scorePct(s.avg), mb = meSeg(s.score);
             return `
             <div class="exam-hrow">
               <span class="ex-subj">${SUBJ_EMOJI[s.name] || "📘"} ${App.esc(s.name)}</span>
-              <span class="ex-score" style="color:${col}">${s.score}</span>
-              <div class="ex-bar">
-                <span class="ez ez0"></span><span class="ez ez1"></span><span class="ez ez2"></span>
-                ${pr == null ? "" : `<span class="ex-star" style="left:${pr}%" title="班平均 ${s.avg}">★</span>`}
+              <span class="ex-score">${s.score}</span>
+              <div class="ex-dist">
+                <div class="ex-bands">
+                  ${BANDS.map((b, i) => {
+                    const n = b.keys.reduce((v, k) => v + (o[k] || 0), 0);
+                    return `<div class="ex-band ex-b${i}${i === mb ? " ex-b-me" : ""}"><span class="ex-bn">${n}</span><span class="ex-bl">${b.label}</span></div>`;
+                  }).join("")}
+                </div>
+                <span class="ex-mark ex-mark-me" style="left:${mp}%">★</span>
+                <span class="ex-mark ex-mark-avg" style="left:${ap}%">▽</span>
               </div>
-              <span class="ex-pr" style="color:${col}">${pr == null ? "—" : pr + "%"}</span>
+              <span class="ex-avg">${s.avg}</span>
             </div>`;
           }).join("")}
         </div>
-        ${avgM ? `<p class="exam-avg">三科平均 <b>${App.esc(avgM[1])}</b>　｜　全班第 <b>${App.esc(avgM[2])}</b> 名</p>` : ""}
-        <p class="exam-note">※ 百分等級＝孩子成績在全班的相對位置（越高代表越前面），依各分數級距估算；★為孩子的落點。</p>
+        <p class="exam-note">※ 長條為全班各分數級距的人數分布；★是孩子的分數落點、▽是全班平均，方便對照孩子在班上的位置（依規定不呈現個人排名）。</p>
       </div>`;
   };
 
