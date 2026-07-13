@@ -345,6 +345,23 @@ async function bankFinanceBySeat() {
   return fin;
 }
 
+// 期間字串 → 週次序號（「第X週」，支援國字一~九十與阿拉伯數字，1~99）；無法解析回傳 9998。
+// 成長曲線依此排序，才不會受 Notion 列建立順序影響（第五週→第十週→第十五週→第二十週）。
+function periodWeek(period) {
+  const s = String(period || "");
+  const ar = s.match(/第\s*(\d+)\s*週/);
+  if (ar) return Number(ar[1]);
+  const m = s.match(/第\s*([零一二三四五六七八九十兩]+)\s*週/);
+  if (!m) return 9998;
+  const cn = { 零: 0, 一: 1, 二: 2, 兩: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+  const t = m[1];
+  const i = t.indexOf("十");
+  if (i === -1) return cn[t[0]] ?? 9998;
+  const tens = i === 0 ? 1 : (cn[t[0]] ?? 0);
+  const rest = t.slice(i + 1);
+  return tens * 10 + (rest ? (cn[rest[0]] ?? 0) : 0);
+}
+
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
   const finance = await bankFinanceBySeat();
@@ -352,9 +369,18 @@ async function syncReports() {
   const roster = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
   const rosterBySeat = Object.fromEntries(roster.map(r => [Number(r["座號"]), r]));
+  // 排序：期末總報告永遠在最後（概覽預設顯示最後一列＝總報告，且成長曲線只取每週列）；
+  // 每週列依「第X週」週次序號排序（避免建立順序造成成長曲線鋸齒），同週次退回建立時間。
   const rows = (await queryDataSource(DS.reports)).map(props)
     .filter(r => r["發布"] && r["座號"] !== "")
-    .sort((a, b) => a._created.localeCompare(b._created)); // 週次依建立時間排序
+    .sort((a, b) => {
+      const at = a["報告類型"] === "期末總報告" ? 1 : 0;
+      const bt = b["報告類型"] === "期末總報告" ? 1 : 0;
+      if (at !== bt) return at - bt;
+      const aw = periodWeek(a["期間"]), bw = periodWeek(b["期間"]);
+      if (aw !== bw) return aw - bw;
+      return a._created.localeCompare(b._created);
+    });
 
   const bySeat = {};
   let skipped = 0;
