@@ -170,9 +170,37 @@
       </div>`;
   };
 
+  // 期末總報告：五向度逐週成長曲線（折線圖，資料取自本學期各週報告的雷達分數）
+  const growthChart = periods => {
+    const weeks = periods.filter(x => x.reportType !== "期末總報告");
+    if (weeks.length < 2)
+      return `<p class="meta" style="padding:16px">本學期週報資料不足，無法繪製成長曲線（至少需 2 週）。</p>`;
+    const dims = ["國語", "數學", "社會", "人際互動", "生活技能"];
+    const W = 560, H = 250, padL = 26, padR = 10, padT = 12, padB = 32, n = weeks.length;
+    const x = i => padL + (W - padL - padR) * (n === 1 ? 0.5 : i / (n - 1));
+    const y = v => padT + (H - padT - padB) * (1 - (Math.max(1, Math.min(5, v)) - 1) / 4);
+    const grid = [1, 2, 3, 4, 5].map(v =>
+      `<line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W - padR}" y2="${y(v).toFixed(1)}" stroke="#eee" />` +
+      `<text x="${padL - 6}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end" font-size="10" fill="#9a9a8e">${v}</text>`).join("");
+    const xlabels = weeks.map((w, i) => {
+      const m = String(w.period).match(/第(.+?)週/);
+      return `<text x="${x(i).toFixed(1)}" y="${H - padB + 15}" text-anchor="middle" font-size="9.5" fill="#9a9a8e">${App.esc(m ? m[1] : i + 1)}</text>`;
+    }).join("");
+    const lines = dims.map(d => {
+      const col = SUBJ_COLORS[d];
+      const pts = weeks.map((w, i) => `${x(i).toFixed(1)},${y(w.radar[d] || 3).toFixed(1)}`).join(" ");
+      const dots = weeks.map((w, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(w.radar[d] || 3).toFixed(1)}" r="2.5" fill="${col}" />`).join("");
+      return `<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" />${dots}`;
+    }).join("");
+    const legend = dims.map(d =>
+      `<span class="growth-leg"><i style="background:${SUBJ_COLORS[d]}"></i>${SUBJ_EMOJI[d] || ""}${d}</span>`).join("");
+    return `<div class="growth-wrap"><svg viewBox="0 0 ${W} ${H}" class="growth-svg" role="img" aria-label="五向度逐週成長曲線">${grid}${lines}${xlabels}</svg><div class="growth-legend">${legend}</div></div>`;
+  };
+
   function showReport(report, periodIdx = report.periods.length - 1, anon = false) {
     document.body.classList.add("report-open");
     const p = report.periods[periodIdx];
+    const isTerm = p.reportType === "期末總報告";
     const displayName = anon ? maskName(report.name) : report.name;
     const seatText = anon ? "──" : App.esc(report.seat);
     const avatar = (!anon && report.avatar)
@@ -196,8 +224,8 @@
         </div>
       </div>
 
-      <div class="report-sheet">
-        <h2 class="report-title">✨ 學生學習分析報告 ✨</h2>
+      <div class="report-sheet${isTerm ? " report-term" : ""}">
+        <h2 class="report-title">${isTerm ? "🌟 學期學習總報告 🌟" : "✨ 學生學習分析報告 ✨"}</h2>
 
         <div class="report-top">
           <div class="report-id-card">
@@ -217,9 +245,9 @@
                   ? `<p class="report-balance">🏦 班級存款 <strong>${report.balance}</strong> 崑山幣</p>` : "")}
           </div>
           <div class="report-overview-card">
-            <span class="report-badge" style="--bc:#54A0FF">整體學習狀況概覽</span>
-            <div class="report-overview">
-              ${radarSVG(p.radar)}
+            <span class="report-badge" style="--bc:#54A0FF">${isTerm ? "五向度逐週成長曲線" : "整體學習狀況概覽"}</span>
+            <div class="report-overview${isTerm ? " report-overview-term" : ""}">
+              ${isTerm ? growthChart(report.periods) : radarSVG(p.radar)}
               <div class="report-grades">
                 ${Object.entries(p.grades).filter(([, v]) => v).map(([k, v]) => `
                   <div class="grade-chip" style="--gc:${GRADE_COLORS[k] || "#54A0FF"}">
@@ -230,7 +258,7 @@
           </div>
         </div>
 
-        <span class="report-badge" style="--bc:#FF9F43">各科詳細狀況與建議</span>
+        <span class="report-badge" style="--bc:#FF9F43">${isTerm ? "各科學期總評與建議" : "各科詳細狀況與建議"}</span>
         <div class="report-subjects">
           ${(() => {
             const shown = p.subjects.filter(s => s.state || s.advice);
@@ -251,11 +279,29 @@
 
         ${p.examSummary ? `
         <div class="report-box" style="--bc:#EE5253; margin-top:12px">
-          <span class="report-badge" style="--bc:#EE5253">📊 定期評量成績與全班級距</span>
+          <span class="report-badge" style="--bc:#EE5253">📊 ${isTerm ? "期末定期評量成績與全班級距" : "定期評量成績與全班級距"}</span>
           ${examChart(p.examSummary)}
         </div>` : ""}
 
+        ${(isTerm && App.lines(p.termComment).length) ? `
+        <div class="report-box" style="--bc:#5F27CD; margin-top:12px">
+          <span class="report-badge" style="--bc:#5F27CD">📝 學期總評</span>
+          ${App.lines(p.termComment).map(t => `<p>${App.esc(t)}</p>`).join("")}
+        </div>` : ""}
+
         <div class="report-bottom">
+          ${isTerm ? `
+          ${App.lines(p.growthHighlight).length ? `
+          <div class="report-box" style="--bc:#FECA57">
+            <span class="report-badge" style="--bc:#FECA57">🌱 學期成長亮點</span>
+            <div class="recap-highlights">${App.lines(p.growthHighlight).map(h => `<span class="recap-chip">${App.esc(h)}</span>`).join("")}</div>
+          </div>` : ""}
+          ${App.lines(p.nextGoal).length ? `
+          <div class="report-box" style="--bc:#54A0FF">
+            <span class="report-badge" style="--bc:#54A0FF">🚀 下學期目標</span>
+            ${App.ul(p.nextGoal)}
+          </div>` : ""}
+          ` : `
           ${App.lines(p.highlights).length ? `
           <div class="report-box" style="--bc:#FECA57">
             <span class="report-badge" style="--bc:#FECA57">💡 學生亮點</span>
@@ -267,6 +313,7 @@
             ${p.shortGoal ? `<p>📈 <strong>短期：</strong>${App.esc(p.shortGoal)}</p>` : ""}
             ${p.longGoal ? `<p>🚀 <strong>長期：</strong>${App.esc(p.longGoal)}</p>` : ""}
           </div>` : ""}
+          `}
           ${App.lines(p.parentTips).length ? `
           <div class="report-box" style="--bc:#FF9F43">
             <span class="report-badge" style="--bc:#FF9F43">🤝 家長協助建議</span>

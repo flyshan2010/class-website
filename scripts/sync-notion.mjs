@@ -368,6 +368,7 @@ async function syncReports() {
     };
     s.periods.push({
         period: r["期間"],
+        reportType: r["報告類型"] || "每週", // 每週 / 期末總報告
         radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
         grades: { "內容評量": r["內容評量"] ?? r["考試成績"], "作業成績": r["作業成績"], "上課參與": r["上課參與"], "生活常規": r["生活常規"] },
         subjects: SUBJECTS.map(s => ({ name: s, state: r[`${s}狀態`], advice: r[`${s}建議`] })),
@@ -376,6 +377,10 @@ async function syncReports() {
         shortGoal: r["短期目標"],
         longGoal: r["長期目標"],
         parentTips: r["家長協助建議"],
+        // 期末總報告專用欄位
+        termComment: r["學期總評"],
+        growthHighlight: r["學期成長亮點"],
+        nextGoal: r["下學期目標"],
       });
   }
 
