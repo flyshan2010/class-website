@@ -365,7 +365,7 @@ async function syncReports() {
     s.periods.push({
         period: r["期間"],
         radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
-        grades: { "考試成績": r["考試成績"], "作業成績": r["作業成績"], "上課參與": r["上課參與"], "生活常規": r["生活常規"] },
+        grades: { "內容評量": r["內容評量"] ?? r["考試成績"], "作業成績": r["作業成績"], "上課參與": r["上課參與"], "生活常規": r["生活常規"] },
         subjects: SUBJECTS.map(s => ({ name: s, state: r[`${s}狀態`], advice: r[`${s}建議`] })),
         examSummary: r["考試成績摘要"],
         highlights: r["學生亮點"],
