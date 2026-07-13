@@ -176,15 +176,15 @@
     if (weeks.length < 2)
       return `<p class="meta" style="padding:16px">本學期週報資料不足，無法繪製成長曲線（至少需 2 週）。</p>`;
     const dims = ["國語", "數學", "社會", "人際互動", "生活技能"];
-    const W = 560, H = 250, padL = 26, padR = 10, padT = 12, padB = 32, n = weeks.length;
+    const W = 560, H = 165, padL = 26, padR = 10, padT = 10, padB = 24, n = weeks.length;
     const x = i => padL + (W - padL - padR) * (n === 1 ? 0.5 : i / (n - 1));
     const y = v => padT + (H - padT - padB) * (1 - (Math.max(1, Math.min(5, v)) - 1) / 4);
     const grid = [1, 2, 3, 4, 5].map(v =>
       `<line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W - padR}" y2="${y(v).toFixed(1)}" stroke="#eee" />` +
-      `<text x="${padL - 6}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end" font-size="10" fill="#9a9a8e">${v}</text>`).join("");
+      `<text x="${padL - 6}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end" font-size="11" fill="#9a9a8e">${v}</text>`).join("");
     const xlabels = weeks.map((w, i) => {
       const m = String(w.period).match(/第(.+?)週/);
-      return `<text x="${x(i).toFixed(1)}" y="${H - padB + 15}" text-anchor="middle" font-size="9.5" fill="#9a9a8e">${App.esc(m ? m[1] : i + 1)}</text>`;
+      return `<text x="${x(i).toFixed(1)}" y="${H - padB + 16}" text-anchor="middle" font-size="11" fill="#9a9a8e">${App.esc(m ? m[1] : i + 1)}</text>`;
     }).join("");
     const lines = dims.map(d => {
       const col = SUBJ_COLORS[d];
