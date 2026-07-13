@@ -392,7 +392,7 @@ async function syncReports() {
       seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(),
       avatar: await avatarDataURL(stu["頭貼"]), periods: [],
     };
-    s.periods.push({
+    const period = {
         period: r["期間"],
         reportType: r["報告類型"] || "每週", // 每週 / 期末總報告
         radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
@@ -407,7 +407,13 @@ async function syncReports() {
         termComment: r["學期總評"],
         growthHighlight: r["學期成長亮點"],
         nextGoal: r["下學期目標"],
-      });
+      };
+    // 去重：同一學生、同一週次、同一報告類型只保留「最新建立」的一列
+    // （rows 已依 _created 遞增排序，故後處理者覆蓋先前者）。避免同週重複列在報告/成長曲線各畫一次。
+    const dkey = `${period.reportType}|${periodWeek(r["期間"])}`;
+    const seen = (s._seen ||= {});
+    if (seen[dkey] != null) s.periods[seen[dkey]] = period;
+    else { seen[dkey] = s.periods.length; s.periods.push(period); }
   }
 
   const dir = path.join(DATA_DIR, "reports");
