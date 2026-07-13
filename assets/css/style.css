@@ -549,7 +549,7 @@ main {
   .report-finance .fin-row { font-size: 9px; gap: 8px; }
   .report-finance .fin-note { font-size: 8.5px; }
   /* 期末總報告成長曲線：壓到單頁的關鍵，限高避免撐成第二頁（以內容版週報 ~166mm 為基準推算） */
-  .report-overview-term .growth-svg { max-height: 44mm; }
+  .report-overview-term .growth-svg { max-height: 40mm; }
   .report-term .report-top { margin-bottom: 2px; }
   .report-term .report-box { margin-top: 2px !important; }
   .growth-legend { font-size: 8.5px; gap: 1px 9px; margin-top: 0; }
