@@ -324,26 +324,30 @@ async function avatarDataURL(files) {
   } catch { return ""; }
 }
 
-// 各座號目前班級存款餘額（帳本金額加總；供學習報告顯示，隨報告一起加密）
-async function bankBalanceBySeat() {
+// 各座號的理財概況（帳本金額加總；供學習報告「理財表現」顯示，隨報告一起加密）
+// 回傳 { [座號]: { balance, income, expense } }：income＝收入(正)總和、expense＝支出(負)總和之絕對值
+async function bankFinanceBySeat() {
   const roster = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "");
   const byPageId = Object.fromEntries(roster.map(r => [r._id, r]));
   const txRows = (await queryDataSource(DS.bank)).map(props)
     .filter(r => r["學生"]?.length && r["金額"] !== "");
-  const bal = {};
+  const fin = {};
   for (const t of txRows) {
     const stu = byPageId[t["學生"][0]];
     if (!stu) continue;
     const seat = Number(stu["座號"]);
-    bal[seat] = (bal[seat] || 0) + Math.round(Number(t["金額"]) || 0);
+    const amt = Math.round(Number(t["金額"]) || 0);
+    const f = fin[seat] ||= { balance: 0, income: 0, expense: 0 };
+    f.balance += amt;
+    if (amt >= 0) f.income += amt; else f.expense += -amt;
   }
-  return bal;
+  return fin;
 }
 
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
-  const balances = await bankBalanceBySeat();
+  const finance = await bankFinanceBySeat();
   // 姓名/查詢碼/頭貼一律以名冊為準（單一來源）；報告列只需 座號＋內容欄
   const roster = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
@@ -379,8 +383,13 @@ async function syncReports() {
   await rm(dir, { recursive: true, force: true });
   await mkdir(dir, { recursive: true });
   for (const s of Object.values(bySeat)) {
+    const f = finance[s.seat];
+    const fin = f ? {
+      balance: f.balance, income: f.income, expense: f.expense,
+      savingsRate: f.income > 0 ? Math.round((f.balance / f.income) * 100) : null,
+    } : null;
     const payload = await encryptReport(
-      { name: s.name, seat: s.seat, avatar: s.avatar, balance: balances[s.seat] ?? null, periods: s.periods }, s.code, s.seat);
+      { name: s.name, seat: s.seat, avatar: s.avatar, balance: f ? f.balance : null, finance: fin, periods: s.periods }, s.code, s.seat);
     await writeFile(path.join(dir, `${s.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
   // 只公開「哪些座號有報告」，不含任何個資

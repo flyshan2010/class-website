@@ -83,6 +83,16 @@
   const SUBJ_EMOJI = { "國語": "📖", "數學": "🔢", "社會": "🌏", "人際互動": "🙌", "生活技能": "🎒" };
   const SUBJ_COLORS = { "國語": "#FF6B81", "數學": "#54A0FF", "社會": "#FECA57", "人際互動": "#FF9F43", "生活技能": "#1DD1A1" };
 
+  // 理財表現：依儲蓄率給一句正向、可行動的收支觀察（金融教育）
+  const financeNote = fin => {
+    const r = fin && fin.savingsRate;
+    if (r == null) return "開始記帳，觀察自己的收支";
+    if (r >= 60) return "量入為出，很會存錢 👍";
+    if (r >= 30) return "收支平衡，可以再多存一點";
+    if (r >= 0) return "花費偏多，記得留點錢儲蓄";
+    return "支出超過收入，先緩一緩消費";
+  };
+
   // 期考成績級距圖表 v2：解析考週「考試成績摘要」→ 各科「分數級距分布長條＋我的落點★＋全班平均▽」。
   // 依成績評量規定：不呈現個人三科平均與名次；解析失敗退回純文字，向後相容。
   const examChart = raw => {
@@ -195,8 +205,16 @@
             <p><strong>姓名：</strong>${App.esc(displayName)}</p>
             <p><strong>座號：</strong>${seatText}</p>
             <p class="meta">${App.esc(p.period)}</p>
-            ${(c.showReportBalance !== false && report.balance != null && !anon)
-              ? `<p class="report-balance">🏦 班級存款 <strong>${report.balance}</strong> 崑山幣</p>` : ""}
+            ${(c.showReportBalance !== false && !anon && report.finance)
+              ? `<div class="report-finance">
+                   <div class="fin-bal">🏦 存款 <strong>${report.finance.balance}</strong> 崑山幣</div>
+                   ${report.finance.income > 0 ? `
+                   <div class="fin-row"><span>收入 ${report.finance.income}</span><span>支出 ${report.finance.expense}</span></div>
+                   <div class="fin-rate">💰 儲蓄率 <strong>${report.finance.savingsRate != null ? report.finance.savingsRate + "%" : "—"}</strong></div>
+                   <div class="fin-note">${App.esc(financeNote(report.finance))}</div>` : ""}
+                 </div>`
+              : ((c.showReportBalance !== false && report.balance != null && !anon)
+                  ? `<p class="report-balance">🏦 班級存款 <strong>${report.balance}</strong> 崑山幣</p>` : "")}
           </div>
           <div class="report-overview-card">
             <span class="report-badge" style="--bc:#54A0FF">整體學習狀況概覽</span>

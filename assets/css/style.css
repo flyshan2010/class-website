@@ -541,6 +541,10 @@ main {
   .ex-mark { font-size: 11px; }
   .exam-note { font-size: 8.5px; margin-top: 2px; }
   .report-footnote { font-size: 9.5px; margin-top: 4px; }
+  .report-finance { margin-top: 3px; gap: 1px; }
+  .report-finance .fin-bal, .report-finance .fin-rate { font-size: 10.5px; }
+  .report-finance .fin-row { font-size: 9.5px; gap: 8px; }
+  .report-finance .fin-note { font-size: 9px; }
   /* 只保護「小單元」不被切斷；容器本身允許跨頁流動 */
   .report-subject, .grade-chip, .exam-hrow, .recap-chip { break-inside: avoid; }
 }
@@ -684,6 +688,13 @@ main {
 
 /* 報告：班級存款一列（受「⚙️ 網站設定＞報告顯示存款」開關控制） */
 .report-balance { color: #c97b12; font-weight: 700; margin-top: 2px; }
+
+/* 報告：理財表現迷你面板（放在身分卡左欄，利用雷達圖那側的空間，不增加版面高度） */
+.report-finance { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.report-finance .fin-bal { color: #c97b12; font-weight: 700; }
+.report-finance .fin-row { display: flex; gap: 12px; font-size: 13.5px; color: var(--ink-soft); }
+.report-finance .fin-rate { color: #10AC84; font-weight: 700; }
+.report-finance .fin-note { font-size: 12.5px; color: var(--ink-soft); text-align: center; }
 
 /* ===== 班級幹部・六大分組（海報式色塊，呼應班級公約色盤） ===== */
 .cadre-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 12px; }
