@@ -171,6 +171,12 @@
   };
 
   // 期末總報告：五向度逐週成長曲線（折線圖，資料取自本學期各週報告的雷達分數）
+  // 作品照片：Google Drive 分享連結轉縮圖網址（非 Drive 連結原樣使用）
+  const workImg = u => {
+    const m = String(u).match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+    return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200` : u;
+  };
+
   const growthChart = periods => {
     const weeks = periods.filter(x => x.reportType !== "期末總報告");
     if (weeks.length < 2)
@@ -287,6 +293,24 @@
         <div class="report-box" style="--bc:#5F27CD; margin-top:12px">
           <span class="report-badge" style="--bc:#5F27CD">📝 學期總評</span>
           ${App.lines(p.termComment).map(t => `<p>${App.esc(t)}</p>`).join("")}
+        </div>` : ""}
+
+        ${(p.works || []).length ? `
+        <div class="report-box" style="--bc:#10AC84; margin-top:12px">
+          <span class="report-badge" style="--bc:#10AC84">🎨 ${isTerm ? "學期作品牆" : "本週作品"}</span>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:8px">
+            ${p.works.map(w => w.photos.map(u => `
+            <figure style="margin:0">
+              <a href="${App.esc(u)}" target="_blank" rel="noopener">
+                <img src="${App.esc(workImg(u))}" alt="${App.esc(w.title)}" loading="lazy"
+                     style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:1px solid #eee" />
+              </a>
+              <figcaption class="meta" style="margin-top:4px">
+                ${w.subject ? `<span class="badge">${App.esc(w.subject)}</span> ` : ""}${App.esc(w.title)}
+                ${w.caption ? `<br />${App.esc(w.caption)}` : ""}
+              </figcaption>
+            </figure>`).join("")).join("")}
+          </div>
         </div>` : ""}
 
         <div class="report-bottom">
