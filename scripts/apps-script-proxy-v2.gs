@@ -19,7 +19,10 @@
  *    - GH_TOKEN        ：GitHub fine-grained token（class-website repo、Contents:RW）
  *    - NOTION_TOKEN    ：Notion integration token（需分享「📥 任務收件匣」給此 integration）
  *    - INBOX_DB_ID     ：851b8089cd51471c92632949bfb500db（📥 任務收件匣 DB ID）
- *    - UPLOAD_FOLDER_ID：Google Drive 上傳資料夾 ID（建一個「班網任務附件」資料夾，取網址中 folders/ 後那串）
+ *    - UPLOAD_FOLDER_ID：不用手動填——第一次上傳時腳本自動建「班網任務附件」資料夾並記下 ID
+ *
+ * 權限最小化：appsscript.json 明定 oauthScopes 只含 drive.file（僅能存取本腳本自己建立的
+ * 檔案，動不到雲端硬碟其他資料）＋ script.external_request（呼叫 GitHub/Notion API）。
  * 3. 右上「部署」→「管理部署作業」→ 編輯 → 版本選「新版本」→ 部署
  *    （沿用原部署可保留原網址；新專案則：新增部署作業 → 網頁應用程式 → 執行身分「我」、存取權「任何人」）。
  * 4. 網址（https://script.google.com/macros/s/…/exec）確認已在 Notion「⚙️ 網站設定」
@@ -99,26 +102,65 @@ function submitTask_(props, body) {
   return { ok: true, page_url: res.data.url };
 }
 
-/** base64 檔案 → Drive 資料夾（設「知道連結者可檢視」）→ 回傳連結 */
+/** base64 檔案 → Drive 資料夾（設「知道連結者可檢視」）→ 回傳連結
+ *  走 Drive REST API（drive.file 最小權限：只能存取本腳本建立的檔案；
+ *  內建 DriveApp 服務不支援小權限，故不使用）。 */
 function uploadFile_(props, body) {
-  const folderId = props.getProperty("UPLOAD_FOLDER_ID");
-  if (!folderId) return { ok: false, error: "尚未設定 UPLOAD_FOLDER_ID" };
-
   const filename = sanitizeFilename_(String(body.filename || "attachment"));
+  const base64 = String(body.base64 || "");
   let bytes;
   try {
-    bytes = Utilities.base64Decode(String(body.base64 || ""));
+    bytes = Utilities.base64Decode(base64);
   } catch (err) {
     return { ok: false, error: "檔案內容解析失敗，請重新選擇檔案" };
   }
   if (!bytes.length) return { ok: false, error: "檔案是空的" };
   if (bytes.length > MAX_UPLOAD_BYTES) return { ok: false, error: "檔案超過 10MB 上限，請壓縮或改傳較小的檔" };
 
+  const folderId = getUploadFolderId_(props);
   const contentType = String(body.content_type || "application/octet-stream");
-  const blob = Utilities.newBlob(bytes, contentType, stampName_(filename));
-  const file = DriveApp.getFolderById(folderId).createFile(blob);
-  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  return { ok: true, file_url: file.getUrl() };
+  const boundary = "classosBoundary";
+  const payload =
+    "--" + boundary + "\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n" +
+    JSON.stringify({ name: stampName_(filename), parents: [folderId] }) + "\r\n" +
+    "--" + boundary + "\r\nContent-Type: " + contentType + "\r\nContent-Transfer-Encoding: base64\r\n\r\n" +
+    base64 + "\r\n--" + boundary + "--";
+
+  const res = driveApi_("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink",
+    "post", payload, "multipart/related; boundary=" + boundary);
+  if (res.code !== 200) return { ok: false, error: "上傳失敗（Drive 回應 " + res.code + "）" };
+
+  // 知道連結者可檢視（讓 Notion 收件匣附件可開）
+  driveApi_("https://www.googleapis.com/drive/v3/files/" + res.data.id + "/permissions",
+    "post", JSON.stringify({ role: "reader", type: "anyone" }), "application/json");
+  return { ok: true, file_url: res.data.webViewLink };
+}
+
+/** 取得（必要時建立）腳本自管的「班網任務附件」資料夾 ID，記在 Script Properties */
+function getUploadFolderId_(props) {
+  const id = props.getProperty("UPLOAD_FOLDER_ID");
+  if (id) {
+    const chk = driveApi_("https://www.googleapis.com/drive/v3/files/" + id + "?fields=id,trashed", "get", null, null);
+    if (chk.code === 200 && !chk.data.trashed) return id; // 舊 ID（手動建或無權限）失效 → 往下重建
+  }
+  const res = driveApi_("https://www.googleapis.com/drive/v3/files?fields=id", "post",
+    JSON.stringify({ name: "班網任務附件", mimeType: "application/vnd.google-apps.folder" }), "application/json");
+  if (res.code !== 200) throw new Error("無法建立上傳資料夾（Drive 回應 " + res.code + "）");
+  props.setProperty("UPLOAD_FOLDER_ID", res.data.id);
+  return res.data.id;
+}
+
+function driveApi_(url, method, payload, contentType) {
+  const opts = {
+    method: method,
+    headers: { Authorization: "Bearer " + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true,
+  };
+  if (payload !== null) { opts.payload = payload; opts.contentType = contentType; }
+  const res = UrlFetchApp.fetch(url, opts);
+  let data = {};
+  try { data = JSON.parse(res.getContentText()); } catch (err) {}
+  return { code: res.getResponseCode(), data: data };
 }
 
 /** 查收件匣最近 N 筆（預設 20），依建立時間新→舊 */
@@ -196,4 +238,9 @@ function stampName_(name) {
 function out_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// 換權限後在編輯器手動執行一次，完成授權（之後不會再用到）
+function authorize() {
+  Logger.log("授權完成");
 }
