@@ -23,7 +23,8 @@ const App = {
       .join("");
 
     document.getElementById("site-footer").innerHTML =
-      `${c.schoolYear} ${c.schoolName} ${c.className} ❤ 本站由老師與 AI 共同維護`;
+      `${c.schoolYear} ${c.schoolName} ${c.className} ❤ 本站由老師與 AI 共同維護
+       <a href="teacher.html" title="教師專區" style="text-decoration:none;opacity:.45;margin-left:6px">🧑‍🏫</a>`;
 
     // 各模組代表色
     const accent = c.moduleColors[activeId];
