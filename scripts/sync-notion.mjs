@@ -32,6 +32,7 @@ const DS = {
   roster: "ad232b7a-c7f8-4a68-b224-5b2d5b16599a", // 👥 學生名冊
   bank: "1868a25d-f4e8-4952-9181-75bc2e349aa9", // 🏦 班級銀行帳本（一列＝一筆交易）
   store: "9e421ad0-0312-423d-b870-867b019b23d8", // 🏪 班級商店
+  portfolio: "8eb38e48-334b-45b1-ad0a-7d720782d15a", // 🎨 學生作品集（照片＝Drive 外部連結，只進加密報告）
 };
 
 async function queryDataSource(dsId) {
@@ -362,9 +363,37 @@ function periodWeek(period) {
   return tens * 10 + (rest ? (cn[rest[0]] ?? 0) : 0);
 }
 
+// 🎨 學生作品集：發布勾選者依座號分組（照片為 Drive 外部連結，不落地、不進公開資料夾，
+// 只隨該生報告 AES 加密發布——家長輸入座號＋查詢碼解密後才看得到）
+async function portfolioBySeat() {
+  if (!DS.portfolio) return {};
+  try {
+    const rows = (await queryDataSource(DS.portfolio)).map(props).filter(r => r["發布"]);
+    const by = {};
+    for (const r of rows) {
+      const seat = Number(r["座號"]);
+      if (!seat) continue;
+      (by[seat] ||= []).push({
+        title: r["作品"] || "作品",
+        subject: r["類型"] || "",
+        caption: r["說明"] || "",
+        date: r["日期"]?.start || "",
+        week: periodWeek(r["週次"]), // 空白/假期 → 9998，只出現在期末作品牆
+        photos: (r["照片"] || []).map(f => f.url).filter(Boolean),
+      });
+    }
+    for (const list of Object.values(by)) list.sort((a, b) => a.date.localeCompare(b.date));
+    return by;
+  } catch (e) {
+    console.warn(`⚠️ 作品集同步略過（${e.message}）`); // 防禦：作品集出錯不拖垮報告同步
+    return {};
+  }
+}
+
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
   const finance = await bankFinanceBySeat();
+  const works = await portfolioBySeat();
   // 姓名/查詢碼/頭貼一律以名冊為準（單一來源）；報告列只需 座號＋內容欄
   const roster = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
@@ -414,6 +443,15 @@ async function syncReports() {
     const seen = (s._seen ||= {});
     if (seen[dkey] != null) s.periods[seen[dkey]] = period;
     else { seen[dkey] = s.periods.length; s.periods.push(period); }
+  }
+
+  // 作品併入：每週報告帶該週作品；期末總報告帶整學期作品牆
+  for (const s of Object.values(bySeat)) {
+    const list = works[s.seat] || [];
+    if (!list.length) continue;
+    for (const p of s.periods) {
+      p.works = p.reportType === "期末總報告" ? list : list.filter(w => w.week === periodWeek(p.period));
+    }
   }
 
   const dir = path.join(DATA_DIR, "reports");
