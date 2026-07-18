@@ -500,9 +500,21 @@ main {
    關鍵三點：(1) 依實際列印寬度(≈277mm)＋長文內容壓到 ~148mm，即使開「頁首頁尾」＋預設邊界也單頁；
    (2) 大區塊不加 break-inside:avoid，讓內容自然填滿版面；
    (3) 列印時移除外框 outline（避免 1px 外框溢到次頁產生空白頁）。 */
+/* 學生作品牆（學習報告內） */
+.work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 8px; }
+.work-item { margin: 0; }
+.work-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; border: 1px solid #eee; }
+.work-item figcaption { margin-top: 4px; }
+.work-empty { margin: 4px 0 0; }
+
 @media print {
   @page { size: A4 landscape; margin: 5mm; }
   body { background: #fff; font-size: 10px; }
+  .work-box { margin-top: 3px !important; }
+  .work-grid { grid-template-columns: repeat(8, 1fr); gap: 4px; margin-top: 2px; }
+  .work-img { border-radius: 4px; }
+  .work-item figcaption { margin-top: 1px; font-size: 8px; line-height: 1.2; }
+  .work-empty { font-size: 9px; margin: 0; }
   .site-header, .site-nav, .site-footer, .no-print { display: none !important; }
   main { max-width: none; padding: 0; }
   .report-sheet { box-shadow: none; border: 1px solid #f0c8d0; outline: none; border-radius: 6px; padding: 3px 12px; }

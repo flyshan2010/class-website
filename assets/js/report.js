@@ -295,23 +295,23 @@
           ${App.lines(p.termComment).map(t => `<p>${App.esc(t)}</p>`).join("")}
         </div>` : ""}
 
-        ${(p.works || []).length ? `
-        <div class="report-box" style="--bc:#10AC84; margin-top:12px">
+        <div class="report-box work-box" style="--bc:#10AC84; margin-top:12px">
           <span class="report-badge" style="--bc:#10AC84">🎨 ${isTerm ? "學期作品牆" : "本週作品"}</span>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:8px">
+          ${(p.works || []).length ? `
+          <div class="work-grid">
             ${p.works.map(w => w.photos.map(u => `
-            <figure style="margin:0">
+            <figure class="work-item">
               <a href="${App.esc(u)}" target="_blank" rel="noopener">
-                <img src="${App.esc(workImg(u))}" alt="${App.esc(w.title)}" loading="lazy"
-                     style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:1px solid #eee" />
+                <img class="work-img" src="${App.esc(workImg(u))}" alt="${App.esc(w.title)}" loading="lazy" />
               </a>
-              <figcaption class="meta" style="margin-top:4px">
+              <figcaption class="meta">
                 ${w.subject ? `<span class="badge">${App.esc(w.subject)}</span> ` : ""}${App.esc(w.title)}
                 ${w.caption ? `<br />${App.esc(w.caption)}` : ""}
               </figcaption>
             </figure>`).join("")).join("")}
-          </div>
-        </div>` : ""}
+          </div>` : `
+          <p class="work-empty meta">${isTerm ? "本學期作品陸續收錄中。" : "本週沒有新收錄的作品；老師上傳後會自動出現在這裡。"}</p>`}
+        </div>
 
         <div class="report-bottom">
           ${isTerm ? `
