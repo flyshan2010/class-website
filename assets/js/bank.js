@@ -1,5 +1,7 @@
-/* 小小銀行：崑山幣存摺（座號＋查詢碼解密）＋公開商店櫥窗＋金融小知識輪播
-   加密機制與學習報告相同（PBKDF2＋AES-GCM，data/bank/<座號>.json） */
+/* 小小銀行：崑山幣存摺（座號＋查詢碼解密）＋商店櫥窗＋兌換申請＋金融小知識輪播
+   加密機制與學習報告相同（PBKDF2＋AES-GCM，data/bank/<座號>.json）
+   兌換：登入後商店卡片出現「🛒 我要兌換」→ 送 Apps Script 代理寫入 Notion「🛒 兌換申請」
+   （不直接扣款；老師在教師專區核可後才扣崑山幣＋扣庫存） */
 (async () => {
   const c = await App.init("bank");
   const main = document.getElementById("main");
@@ -39,9 +41,23 @@
     "調整": { icon: "🔧", color: "#8395A7" },
   };
 
-  // 公開區：商店櫥窗＋小知識（表單下方常駐）
+  // 登入狀態（成功解密存摺後才有；兌換申請需要 座號＋查詢碼＋餘額）
+  let session = null; // { seat, code, balance }
+
+  // 這台裝置本節課已申請過的品項（防連按重複申請；代理端另有 3 筆待處理上限）
+  const requestedKey = item => `bankRedeem:${session?.seat}:${item.id}`;
+  const alreadyRequested = item => !!sessionStorage.getItem(requestedKey(item));
+
+  // 公開區：商店櫥窗＋小知識（表單下方常駐）；登入後多「我要兌換」鈕
   const storeSection = () => {
     const cats = [["特權", "🎟️ 特權商品"], ["小物", "🎁 可愛小物"]];
+    const buyBtn = i => {
+      if (!session || !i.id || !c.updateProxyUrl) return "";
+      if (i.stock <= 0) return "";
+      if (alreadyRequested(i)) return `<button class="store-buy" disabled>🕐 已申請，等老師確認</button>`;
+      if (session.balance < i.price) return `<button class="store-buy" disabled title="崑山幣還不夠">🪙 還差 ${i.price - session.balance} 幣</button>`;
+      return `<button class="store-buy" data-id="${App.esc(i.id)}">🛒 我要兌換</button>`;
+    };
     const cards = cat => store.filter(i => i.category === cat).map(i => `
       <div class="store-card ${i.stock <= 0 ? "soldout" : ""}">
         <div class="store-icon">${App.esc(i.icon)}</div>
@@ -49,14 +65,45 @@
         <div class="store-price">🪙 ${i.price} 幣</div>
         <div class="store-stock">${i.stock <= 0 ? "😢 售完" : `庫存 ${i.stock}`}</div>
         ${i.note ? `<div class="store-note">${App.esc(i.note)}</div>` : ""}
+        ${buyBtn(i)}
       </div>`).join("");
     return `
       <h3 class="bank-section-title">🏪 班級商店櫥窗</h3>
+      ${session ? `<p class="meta">看到喜歡的就按「🛒 我要兌換」送出申請，老師確認後才會扣崑山幣喔！</p>` : ""}
       ${store.length ? cats.map(([cat, label]) => {
         const html = cards(cat);
         return html ? `<p class="bank-cat-label">${label}</p><div class="store-grid">${html}</div>` : "";
       }).join("") : `<p class="meta">商店籌備中，敬請期待！</p>`}
       <div class="bank-tip card" id="bank-tip">💡 ${App.esc(TIPS[0])}</div>`;
+  };
+
+  // 兌換申請：確認 → 送代理（品項與價格由代理以 Notion 商店為準重新驗證）
+  const bindBuyButtons = () => {
+    document.querySelectorAll(".store-buy[data-id]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const item = store.find(i => i.id === btn.dataset.id);
+        if (!item || !session) return;
+        if (!confirm(`要用 ${item.price} 枚崑山幣兌換「${item.name}」嗎？\n送出後等老師確認才會扣款喔！`)) return;
+        btn.disabled = true; btn.textContent = "⏳ 申請中…";
+        try {
+          const res = await fetch(c.updateProxyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "redeem_request", seat: session.seat, code: session.code, item_id: item.id }),
+          }).then(r => r.json());
+          if (res.ok) {
+            sessionStorage.setItem(requestedKey(item), "1");
+            btn.textContent = "🕐 已申請，等老師確認";
+          } else {
+            btn.disabled = false; btn.textContent = "🛒 我要兌換";
+            alert(res.error || "申請失敗，請稍後再試");
+          }
+        } catch {
+          btn.disabled = false; btn.textContent = "🛒 我要兌換";
+          alert("連線失敗，請確認網路後再試一次");
+        }
+      });
+    });
   };
 
   let tipTimer;
@@ -72,6 +119,7 @@
   };
 
   const showForm = (msg = "") => {
+    session = null;
     main.innerHTML = `
       <h2 class="page-title"><span class="dot"></span>🏦 小小銀行</h2>
       <div class="card report-gate">
@@ -95,7 +143,9 @@
       try {
         const res = await fetch(`data/bank/${seat}.json`, { cache: "no-cache" });
         if (!res.ok) throw new Error("noseat");
-        showPassbook(await decrypt(await res.json(), seat, code));
+        const acc = await decrypt(await res.json(), seat, code);
+        session = { seat: Number(seat), code, balance: acc.balance };
+        showPassbook(acc);
       } catch (err) {
         showForm(err.message === "noseat" ? "這個座號目前沒有帳戶，請確認座號或詢問老師。" : "查詢碼不正確，請再試一次或詢問老師。");
       }
@@ -138,6 +188,7 @@
       </div>
       ${storeSection()}`;
     startTips();
+    bindBuyButtons();
     document.getElementById("bank-exit").onclick = () => showForm();
   }
 

@@ -479,6 +479,7 @@ async function syncStore() {
   const rows = (await queryDataSource(DS.store)).map(props)
     .filter(r => r["上架"] && r["品項"])
     .map(r => ({
+      id: r._id, // Notion 頁 ID：小小銀行「兌換申請」與教師核可扣庫存靠它對回品項
       name: r["品項"],
       category: r["分類"] || "小物",
       price: Number(r["價格"]) || 0,

@@ -108,6 +108,17 @@
         <button id="task-refresh" class="emotion-draw" style="margin-top:8px">🔄 重新整理</button>
       </section>
 
+      <section class="card" style="--accent:#F0932B">
+        <h2>🛒 兌換申請</h2>
+        <p class="meta">學生在小小銀行送出的商店兌換申請。核可＝自動扣崑山幣＋商店庫存−1；處理完按「立即更新班網」，存摺與庫存才會更新到站上。</p>
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <button id="rd-tab-pending" class="emotion-draw" style="margin:0">🕐 待處理</button>
+          <button id="rd-tab-all" class="emotion-draw" style="margin:0;opacity:.75">📜 購買明細（最近 50 筆）</button>
+        </div>
+        <div id="redeem-list"><p class="empty-hint">載入中…</p></div>
+        <p class="meta">完整明細與搜尋請開 <a href="https://app.notion.com/p/c482ee9f57e549d09993a0c173fe9fb0" target="_blank" rel="noopener">Notion「🛒 兌換申請」</a>。</p>
+      </section>
+
       <section class="card" style="--accent:#10ac84">
         <h2>⚡ 班網維護</h2>
         <button id="site-update" class="emotion-draw">🔄 立即更新班網</button>
@@ -198,6 +209,67 @@
     };
     document.getElementById("task-refresh").addEventListener("click", loadTasks);
     loadTasks();
+
+    // 兌換申請：待處理（核可／駁回）＋購買明細兩個檢視
+    const RD_STATUS_STYLE = {
+      "待處理": "background:#fff3bf;color:#8a6d00",
+      "已完成": "background:#d3f9d8;color:#2b8a3e",
+      "已駁回": "background:#ffe3e3;color:#c92a2a",
+    };
+    let redeemView = "pending";
+    const loadRedeems = async () => {
+      const box = document.getElementById("redeem-list");
+      box.innerHTML = '<p class="empty-hint">載入中…</p>';
+      const params = redeemView === "pending" ? { status: "待處理", limit: 30 } : { status: "all", limit: 50 };
+      const res = await api("list_redeems", params).catch(() => ({ ok: false }));
+      if (!res.ok) { box.innerHTML = `<p class="empty-hint">載入失敗：${App.esc(res.error || "連線問題")}</p>`; return; }
+      if (!res.items.length) {
+        box.innerHTML = `<p class="empty-hint">${redeemView === "pending" ? "目前沒有待處理的申請 🎉" : "還沒有任何兌換紀錄"}</p>`;
+        return;
+      }
+      box.innerHTML = res.items.map(r => `
+        <p style="${r.status === "待處理" ? "border-left:4px solid #f0932b;padding-left:8px;background:#fff9f2" : ""}">
+          <span class="badge" style="${RD_STATUS_STYLE[r.status] || ""}">${App.esc(r.status || "—")}</span>
+          <strong>座號 ${r.seat}</strong>　${App.esc(r.item)}　🪙 ${r.price} 幣
+          <span class="meta">${App.fmtDateShort(String(r.created).slice(0, 10))}</span>
+          ${r.status === "待處理" ? `
+            <button class="badge rd-approve" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 核可</button>
+            <button class="badge rd-reject" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#ffe3e3;color:#c92a2a">❌ 駁回</button>` : ""}
+          ${r.note ? `<br /><span class="meta">${App.esc(r.note)}</span>` : ""}
+        </p>`).join("");
+
+      document.querySelectorAll(".rd-approve").forEach(btn => btn.addEventListener("click", async () => {
+        btn.disabled = true; btn.textContent = "⏳ 處理中…";
+        let res = await api("approve_redeem", { page_id: btn.dataset.id }).catch(() => ({ ok: false, error: "連線失敗" }));
+        if (!res.ok && res.insufficient) {
+          if (confirm(`${res.error}。\n仍要核可（允許餘額變負數）嗎？`)) {
+            res = await api("approve_redeem", { page_id: btn.dataset.id, force: true }).catch(() => ({ ok: false, error: "連線失敗" }));
+          } else { loadRedeems(); return; }
+        }
+        if (res.ok) alert(`✅ 已核可：座號 ${res.seat} 兌換「${res.item}」，扣 ${res.price} 幣，餘額 ${res.balance} 幣${res.stock_msg || ""}\n記得按「立即更新班網」讓存摺更新。`);
+        else alert(`❌ ${res.error || "核可失敗"}`);
+        loadRedeems();
+      }));
+      document.querySelectorAll(".rd-reject").forEach(btn => btn.addEventListener("click", async () => {
+        const reason = prompt("駁回原因（會顯示在明細，例：庫存不足、先完成本週任務）：", "");
+        if (reason === null) return;
+        btn.disabled = true; btn.textContent = "⏳ 處理中…";
+        const res = await api("reject_redeem", { page_id: btn.dataset.id, reason }).catch(() => ({ ok: false, error: "連線失敗" }));
+        if (!res.ok) alert(`❌ ${res.error || "駁回失敗"}`);
+        loadRedeems();
+      }));
+    };
+    const rdTabPending = document.getElementById("rd-tab-pending");
+    const rdTabAll = document.getElementById("rd-tab-all");
+    const setRedeemView = view => {
+      redeemView = view;
+      rdTabPending.style.opacity = view === "pending" ? "1" : ".75";
+      rdTabAll.style.opacity = view === "all" ? "1" : ".75";
+      loadRedeems();
+    };
+    rdTabPending.addEventListener("click", () => setRedeemView("pending"));
+    rdTabAll.addEventListener("click", () => setRedeemView("all"));
+    loadRedeems();
 
     // 一鍵更新班網（POST 版）
     document.getElementById("site-update").addEventListener("click", async () => {
