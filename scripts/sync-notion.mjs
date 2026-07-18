@@ -33,6 +33,7 @@ const DS = {
   bank: "1868a25d-f4e8-4952-9181-75bc2e349aa9", // 🏦 班級銀行帳本（一列＝一筆交易）
   store: "9e421ad0-0312-423d-b870-867b019b23d8", // 🏪 班級商店
   portfolio: "8eb38e48-334b-45b1-ad0a-7d720782d15a", // 🎨 學生作品集（照片＝Drive 外部連結，只進加密報告）
+  lessons: "d28efc6b-3f34-4a97-b72b-ddeb5ec51147", // 🚀 教學單元（教學駕駛艙；一列＝一單元，勾「顯示」上站）
 };
 
 async function queryDataSource(dsId) {
@@ -65,6 +66,7 @@ function val(prop) {
     case "date": return prop.date; // {start, end} 或 null
     case "checkbox": return prop.checkbox;
     case "select": return prop.select?.name ?? "";
+    case "multi_select": return prop.multi_select.map(o => o.name);
     case "url": return prop.url ?? "";
     case "number": return prop.number ?? "";
     case "files": return prop.files.map(f => ({ name: f.name, url: f.file?.url || f.external?.url || "" }));
@@ -491,6 +493,32 @@ async function syncStore() {
   await save("store.json", rows);
 }
 
+// ── 教學駕駛艙（🚀 教學單元；公開頁，只放連結與進度，無個資）──
+async function syncLessons() {
+  const STATUS_ORDER = { "進行中": 0, "備課中": 1, "已完成": 2 };
+  const rows = (await queryDataSource(DS.lessons)).map(props)
+    .filter(r => r["顯示"] && r["單元"])
+    .map(r => ({
+      title: r["單元"],
+      subject: r["科目"] || "其他",
+      status: r["狀態"] || "備課中",
+      stages: r["已完成階段"] || [],
+      date: r["日期"]?.start || "",
+      note: r["備註"],
+      links: {
+        material: r["教材"],
+        pretest: r["起始評估"],
+        site: r["教學網站"],
+        differentiated: r["差異化教材"],
+        exam: r["評量"],
+        review: r["複習"],
+      },
+    }))
+    .sort((a, b) => (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9) ||
+                    String(b.date).localeCompare(String(a.date)));
+  await save("lessons.json", rows);
+}
+
 // ── 班級銀行（隱私：同學習報告，用座號＋查詢碼派生金鑰 AES-GCM 加密）──
 async function syncBank() {
   const roster = (await queryDataSource(DS.roster)).map(props)
@@ -549,5 +577,6 @@ await Promise.all([
   syncReports(),
   syncStore(),
   syncBank(),
+  syncLessons(),
 ]);
 console.log("🎉 Notion 同步完成");

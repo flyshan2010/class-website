@@ -80,7 +80,9 @@
         <h2>🖥️ 教室現場</h2>
         <p class="meta">互動式工作台：黑板、加分、分組、計時（資料即時、獨立運作）；本頁則負責交辦與資訊發布。</p>
         <a class="emotion-draw" style="display:block;text-align:center;text-decoration:none"
-           href="https://crimson-wind-7a22.changsheng0612.workers.dev/" target="_blank" rel="noopener">🚀 開啟班級管理工作台</a>
+           href="https://crimson-wind-7a22.changsheng0612.workers.dev/" target="_blank" rel="noopener">🖥️ 開啟班級管理工作台</a>
+        <a class="emotion-draw" style="display:block;text-align:center;text-decoration:none;margin-top:8px"
+           href="cockpit.html">🚀 開啟教學駕駛艙（單元教學連結）</a>
       </section>
 
       <section class="card" style="--accent:#FF9F43">
