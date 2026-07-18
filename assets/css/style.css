@@ -608,6 +608,13 @@ main {
 .store-price { color: #c97b12; font-weight: bold; margin-top: 2px; }
 .store-stock { font-size: 13px; color: var(--ink-soft); }
 .store-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+.store-buy {
+  margin-top: 8px; width: 100%; border: none; border-radius: 12px; cursor: pointer;
+  padding: 7px 6px; font-size: 14px; font-weight: bold; font-family: inherit;
+  background: #ffb84d; color: #5b3a00; box-shadow: 0 2px 0 #d99a2b;
+}
+.store-buy:hover:not(:disabled) { background: #ffa722; }
+.store-buy:disabled { background: #eee; color: #999; box-shadow: none; cursor: default; }
 .bank-tip { margin-top: 18px; text-align: center; font-size: 15.5px; background: #fff8e8; }
 
 /* 存摺 */
