@@ -76,6 +76,13 @@
     try { quickKeys = (await App.fetchJSON("data/quick-keys.json")).keys || []; } catch {}
 
     main.innerHTML = `
+      <section class="card" style="--accent:#5F27CD">
+        <h2>🖥️ 教室現場</h2>
+        <p class="meta">互動式工作台：黑板、加分、分組、計時（資料即時、獨立運作）；本頁則負責交辦與資訊發布。</p>
+        <a class="emotion-draw" style="display:block;text-align:center;text-decoration:none"
+           href="https://crimson-wind-7a22.changsheng0612.workers.dev/" target="_blank" rel="noopener">🚀 開啟班級管理工作台</a>
+      </section>
+
       <section class="card" style="--accent:#FF9F43">
         <h2>💬 一句話交辦</h2>
         <p class="meta">寫一句話（例：「座號12 數學小考粗心 -1」），系統約 30 分內處理；也可先按快速鍵帶入範本。</p>
