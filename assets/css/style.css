@@ -617,6 +617,14 @@ main {
 .store-buy:disabled { background: #eee; color: #999; box-shadow: none; cursor: default; }
 .bank-tip { margin-top: 18px; text-align: center; font-size: 15.5px; background: #fff8e8; }
 
+/* ===== 教師專區（左側快速鍵＋內容，沿用首頁 side-menu 圖例） ===== */
+html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨點一併平滑 */
+.teacher-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; align-items: start; margin-top: 14px; }
+.teacher-main .card { scroll-margin-top: 12px; }
+@media (max-width: 860px) {
+  .teacher-layout { grid-template-columns: 1fr; }
+}
+
 /* ===== 教學駕駛艙 ===== */
 .cockpit-card { margin-bottom: 14px; }
 .cockpit-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

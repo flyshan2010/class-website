@@ -75,17 +75,28 @@
     let quickKeys = [];
     try { quickKeys = (await App.fetchJSON("data/quick-keys.json")).keys || []; } catch {}
 
-    main.innerHTML = `
-      <section class="card" style="--accent:#5F27CD">
-        <h2>🖥️ 教室現場</h2>
-        <p class="meta">互動式工作台：黑板、加分、分組、計時（資料即時、獨立運作）；本頁則負責交辦與資訊發布。</p>
-        <a class="emotion-draw" style="display:block;text-align:center;text-decoration:none"
-           href="https://crimson-wind-7a22.changsheng0612.workers.dev/" target="_blank" rel="noopener">🖥️ 開啟班級管理工作台</a>
-        <a class="emotion-draw" style="display:block;text-align:center;text-decoration:none;margin-top:8px"
-           href="cockpit.html">🚀 開啟教學駕駛艙（單元教學連結）</a>
-      </section>
+    // 左側快速鍵（同首頁 module-card 圖例）：前兩個開外部工具，其餘捲動到本頁區塊
+    const MENU = [
+      { icon: "🖥️", label: "班級工作台", href: "https://crimson-wind-7a22.changsheng0612.workers.dev/", color: "#5F27CD", ext: true },
+      { icon: "🚀", label: "教學駕駛艙", href: "cockpit.html", color: "#54A0FF" },
+      { icon: "💬", label: "一句話交辦", href: "#sec-task", color: "#FF9F43" },
+      { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
+      { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },
+      { icon: "⚡", label: "班網維護", href: "#sec-site", color: "#10ac84" },
+    ];
 
-      <section class="card" style="--accent:#FF9F43">
+    main.innerHTML = `
+      <div class="teacher-layout">
+      <aside class="side-menu" aria-label="教師功能選單">
+        ${MENU.map(m => `
+          <a class="module-card" href="${m.href}" style="--mc:${m.color}"${m.ext ? ' target="_blank" rel="noopener"' : ""}>
+            <span class="icon">${m.icon}</span>
+            <span class="label">${m.label}</span>
+          </a>`).join("")}
+      </aside>
+      <div class="teacher-main">
+
+      <section class="card" id="sec-task" style="--accent:#FF9F43">
         <h2>💬 一句話交辦</h2>
         <p class="meta">寫一句話（例：「座號12 數學小考粗心 -1」），系統約 30 分內處理；也可先按快速鍵帶入範本。</p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">
@@ -103,14 +114,14 @@
         <p class="meta" id="task-msg"></p>
       </section>
 
-      <section class="card" style="--accent:#54a0ff">
+      <section class="card" id="sec-status" style="--accent:#48DBFB">
         <h2>📋 任務狀態（最近 20 筆）</h2>
         <p class="meta">「待審」項目請點進 Notion 檢查後勾發布。</p>
         <div id="task-list"><p class="empty-hint">載入中…</p></div>
         <button id="task-refresh" class="emotion-draw" style="margin-top:8px">🔄 重新整理</button>
       </section>
 
-      <section class="card" style="--accent:#F0932B">
+      <section class="card" id="sec-redeem" style="--accent:#F0932B">
         <h2>🛒 兌換申請</h2>
         <p class="meta">學生在小小銀行送出的商店兌換申請。核可＝自動扣崑山幣＋商店庫存−1；處理完按「立即更新班網」，存摺與庫存才會更新到站上。</p>
         <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
@@ -121,12 +132,15 @@
         <p class="meta">完整明細與搜尋請開 <a href="https://app.notion.com/p/c482ee9f57e549d09993a0c173fe9fb0" target="_blank" rel="noopener">Notion「🛒 兌換申請」</a>。</p>
       </section>
 
-      <section class="card" style="--accent:#10ac84">
+      <section class="card" id="sec-site" style="--accent:#10ac84">
         <h2>⚡ 班網維護</h2>
         <button id="site-update" class="emotion-draw">🔄 立即更新班網</button>
         <p class="meta" id="site-update-msg"></p>
         <p class="meta" style="margin-top:6px"><a href="#" id="logout">登出教師專區</a></p>
-      </section>`;
+      </section>
+
+      </div>
+      </div>`;
 
     // 快速鍵：帶入範本，游標停在「＿」處
     const ta = document.getElementById("task-text");
