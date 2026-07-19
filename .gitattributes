@@ -1,0 +1,23 @@
+# 統一換行符為 LF，避免整檔 CRLF 翻動的假變更。
+#
+# 為什麼需要：本 repo 位於 Google Drive 同步資料夾，且可能在 Windows 端編輯。
+# 2026-07-19 曾發生 49 個檔案被整檔翻成 CRLF、diff 顯示 3000+ 行變更但內容零差異，
+# 導致 push 被擋、真實變更被雜訊淹沒。此檔讓 git 一律以 LF 入庫，一勞永逸。
+
+* text=auto eol=lf
+
+# 二進位檔不做換行符轉換
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.mp3 binary
+*.mp4 binary
+*.zip binary
