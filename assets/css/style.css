@@ -302,8 +302,93 @@ main {
   .cal-event { font-size: 10.5px; padding: 0 3px; }
 }
 
-/* ===== 週報 ===== */
+/* ===== 週報（海報式版面）===== */
 .weekly-card { border-top-color: var(--purple); }
+.weekly-card.poster { background: #FFFCF2; }
+.poster-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.poster-ribbon {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 4px 20px;
+  border-radius: 8px;
+  font-size: 21px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+.poster-range { color: var(--pink); font-size: 15px; margin-top: 4px; letter-spacing: 1px; }
+.poster-class {
+  background: #fff;
+  border: 2.5px dashed var(--pink);
+  border-radius: 12px;
+  padding: 4px 16px;
+  font-size: 17px;
+}
+.poster-class strong { color: var(--pink); }
+.poster-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.poster-col { display: grid; gap: 12px; }
+.poster-box {
+  background: #fff;
+  border: 2.5px solid var(--purple);
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 16.5px;
+}
+.poster-box .box-title {
+  display: inline-block;
+  color: #fff;
+  padding: 2px 16px;
+  border-radius: 999px;
+  font-size: 16px;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.10);
+}
+.poster-box .box-body p { margin: 0; }
+.poster-box ul { padding-left: 22px; margin: 0; }
+.box-learning { border-color: var(--pink); }
+.subject-row {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 8px 0;
+  border-bottom: 2px dashed var(--line);
+}
+.subject-row:last-child { border-bottom: none; padding-bottom: 2px; }
+.subject-name { font-size: 17.5px; font-weight: bold; white-space: nowrap; }
+.subject-icon { margin-right: 4px; }
+.subject-text { font-size: 16px; color: var(--ink); }
+.subject-text ul { padding-left: 20px; }
+.event-list { list-style: none; padding-left: 0 !important; }
+.event-list li { padding: 3px 0; border-bottom: 1px dashed var(--line); }
+.event-list li:last-child { border-bottom: none; }
+.event-date {
+  display: inline-block;
+  background: #eaf3ff;
+  color: var(--sky);
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 0 8px;
+  margin-right: 8px;
+  font-size: 15px;
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .poster-grid { grid-template-columns: 1fr; }
+}
 .weekly-sec { margin-top: 12px; }
 .weekly-sec .sec-title {
   display: inline-block;
