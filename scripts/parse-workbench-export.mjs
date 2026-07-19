@@ -53,7 +53,10 @@ async function loadState() {
 
 /**
  * 建立「工作台學生 → 座號」對應。
- * 以名冊對照表的姓名為準（權威來源）；對不到的一律標記需人工，絕不猜測。
+ *
+ * 前提（老師 2026-07-19 確認）：工作台 `student.id` 即座號，且工作台姓名與名冊一致。
+ * 但**不因此省略交叉驗證**——正因兩個訊號本該一致，它們不一致時就是真實異常的最佳警報：
+ * 名冊異動未同步、轉學生、或匯出到別班。一律標記需確認，不默默採用。
  */
 function buildSeatResolver(roster) {
   const nameToSeat = new Map();
@@ -61,14 +64,28 @@ function buildSeatResolver(roster) {
     nameToSeat.set(String(info.姓名).trim(), seat);
   }
   return (student) => {
-    const byName = nameToSeat.get(String(student.name || "").trim());
-    if (byName) return { seat: byName, 依據: "姓名" };
-    // 備援：工作台 student.id 若剛好是名冊內的座號，仍需人工確認才採用
-    const id = String(student.id || "").trim();
-    if (/^\d+$/.test(id) && roster.學生[id]) {
-      return { seat: id, 依據: "id推測", 需確認: true };
+    const id = String(student.id ?? "").trim();
+    const name = String(student.name ?? "").trim();
+    const seatByName = nameToSeat.get(name);
+
+    if (roster.學生[id]) {
+      if (String(roster.學生[id].姓名).trim() === name) {
+        return { seat: id, 依據: "座號與姓名皆相符" };
+      }
+      // 座號對得到、姓名對不上 → 名冊可能已異動，或該座號換人
+      return {
+        seat: id,
+        依據: seatByName
+          ? `座號${id}在名冊上是另一人，此人姓名對應到座號${seatByName}`
+          : `座號${id}的姓名與名冊不符，且此姓名不在名冊中`,
+        需確認: true,
+      };
     }
-    return { seat: null, 依據: "無法對應" };
+    // 座號不在名冊 → 退用姓名找；找得到也要人工確認（座號前提已被打破）
+    if (seatByName) {
+      return { seat: seatByName, 依據: `工作台座號${id}不在名冊，改以姓名對到座號${seatByName}`, 需確認: true };
+    }
+    return { seat: null, 依據: "座號與姓名皆對不到名冊" };
   };
 }
 
@@ -102,6 +119,7 @@ function extractEvents(cls, resolveSeat) {
         正負向: delta > 0 ? "讚賞" : "糾正",
         工作台幣值: delta,
         需確認: r.需確認 || false,
+        對應說明: r.需確認 ? r.依據 : null,
       });
     }
   }
@@ -122,6 +140,7 @@ function extractEvents(cls, resolveSeat) {
         正負向: "中性",
         工作台幣值: null,
         需確認: r.需確認 || false,
+        對應說明: r.需確認 ? r.依據 : null,
       });
     }
   }
@@ -142,6 +161,7 @@ function extractEvents(cls, resolveSeat) {
         正負向: "中性",
         工作台幣值: null,
         需確認: r.需確認 || false,
+        對應說明: r.需確認 ? r.依據 : null,
       });
     }
   }
@@ -218,13 +238,19 @@ async function main() {
 
   for (const ev of fresh) {
     const 註 = ev.工作台幣值 != null ? `   〔工作台代幣 ${ev.工作台幣值 > 0 ? "+" : ""}${ev.工作台幣值}〕` : "";
-    const 旗 = ev.需確認 ? " ⚠️需確認座號" : "";
-    console.log(`   ${toSentence(ev)}${註}${旗}`);
+    console.log(`   ${toSentence(ev)}${註}`);
+    if (ev.需確認) console.log(`      ⚠️ 座號待確認：${ev.對應說明}`);
+  }
+
+  const 待確認數 = fresh.filter((e) => e.需確認).length;
+  if (待確認數) {
+    console.log(`\n⚠️ 上列有 ${待確認數} 筆座號待確認——工作台座號與名冊姓名對不起來。`);
+    console.log("   常見原因：名冊異動未同步、轉學生、或匯出到別班。請先確認再入庫。");
   }
 
   if (unresolved.length) {
-    console.log(`\n⚠️ 需人工：${unresolved.length} 位工作台學生對不到名冊（工作台 id：${unresolved.map((u) => u.工作台id).join("、")}）`);
-    console.log("   請確認名冊對照表姓名是否與工作台一致，或該生是否已轉出。");
+    console.log(`\n⚠️ 需人工：${unresolved.length} 位工作台學生完全對不到名冊，其事件已排除不入清單。`);
+    for (const u of unresolved) console.log(`   工作台座號 ${u.工作台id}：${u.原因}`);
   }
 
   console.log(`\n下一步：確認上列無誤 → 交給 class-log 入庫 → 回頭跑 \`--commit\` 標記已處理。`);
