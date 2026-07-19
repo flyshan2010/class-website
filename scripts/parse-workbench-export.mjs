@@ -31,6 +31,13 @@ const STATE_DIR = path.join(ROOT, "data", "workbench");
 const STATE_PATH = path.join(STATE_DIR, "processed.json");        // 已回流的事件鍵
 const PENDING_PATH = path.join(STATE_DIR, "pending.json");        // 待審批次
 
+/**
+ * 崑山幣＝代幣 匯率（老師 2026-07-19 裁定）：1 代幣＝程度 1＝5 崑山幣。
+ * 這裡只用於待審清單的預覽顯示；實際入帳金幣仍由 class-log 依程度換算，
+ * 兩邊都改成 5 才算改匯率——本常數單獨改只會讓預覽與實際入帳不一致。
+ */
+const 崑山幣匯率 = 5;
+
 const args = process.argv.slice(2);
 const COMMIT = args.includes("--commit");
 const classFlagIdx = args.indexOf("--class");
@@ -171,14 +178,16 @@ function extractEvents(cls, resolveSeat) {
 
 /**
  * 產生給 class-log 的一句話。
- * 程度刻意不由工作台幣值換算——兩套幣制不同，硬換算會失真；
- * 一律附原始幣值供老師在待審階段裁定，未裁定則走 class-log 預設（程度 1）。
+ * 老師 2026-07-19 裁定「崑山幣＝代幣」：1 代幣＝程度 1＝5 崑山幣。
+ * 故代幣事件的程度＝工作台幣值絕對值（±n → 程度 n），由 class-log 現行公式 ×5 入帳，
+ * 金幣公式不用動。出勤／作業維持中性、不帶程度也不入金幣。
  */
 function toSentence(ev) {
   const 日期 = ev.日期 ? `${ev.日期} ` : "";
   if (ev.正負向 === "中性") return `${日期}座號${ev.座號} ${ev.事由}`;
   const 符號 = ev.正負向 === "讚賞" ? "+" : "-";
-  return `${日期}座號${ev.座號} ${ev.事由} ${符號}1`;
+  const 程度 = Math.abs(Number(ev.工作台幣值)) || 1;
+  return `${日期}座號${ev.座號} ${ev.事由} ${符號}${程度}`;
 }
 
 async function main() {
@@ -237,7 +246,10 @@ async function main() {
   console.log(`   來源分布：${Object.entries(bySource).map(([k, v]) => `${k} ${v}`).join("／") || "（無）"}\n`);
 
   for (const ev of fresh) {
-    const 註 = ev.工作台幣值 != null ? `   〔工作台代幣 ${ev.工作台幣值 > 0 ? "+" : ""}${ev.工作台幣值}〕` : "";
+    const 註 =
+      ev.工作台幣值 != null
+        ? `   〔工作台代幣 ${ev.工作台幣值 > 0 ? "+" : ""}${ev.工作台幣值} → 崑山幣 ${ev.工作台幣值 > 0 ? "+" : "-"}${Math.abs(ev.工作台幣值) * 崑山幣匯率}〕`
+        : "";
     console.log(`   ${toSentence(ev)}${註}`);
     if (ev.需確認) console.log(`      ⚠️ 座號待確認：${ev.對應說明}`);
   }
