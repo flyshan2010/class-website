@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>差異化練習｜家鄉在哪裡 · 社會四上 1-1</title>
+<style>
+:root{
+  --paper:#FFFCF5; --surface:#FFFFFF; --text:#3F352A; --muted:#857868; --line:#E7DCC8;
+  --accent:#E8A83A; --a:#B08BC7; --b:#6C9BD2; --c:#79B473;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --crayon:28px 8px 24px 8px / 8px 24px 8px 28px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--font-sans);line-height:1.6}
+.wrap{max-width:980px;margin:0 auto;padding:40px 28px 80px}
+header{text-align:center;margin-bottom:28px}
+header .eyebrow{color:var(--muted);font-size:18px;letter-spacing:.1em}
+header h1{font-size:42px;margin:8px 0}
+header p{color:var(--muted);font-size:18px}
+.tabs{display:flex;gap:14px;justify-content:center;margin:28px 0}
+.tab-btn{padding:14px 30px;border-radius:999px;border:3px solid var(--line);background:var(--surface);
+  font-size:20px;font-weight:700;cursor:pointer;color:var(--muted)}
+.tab-btn[data-group="A"].is-active{border-color:var(--a);color:var(--a);background:#F8F2FB}
+.tab-btn[data-group="B"].is-active{border-color:var(--b);color:var(--b);background:#EEF4FB}
+.tab-btn[data-group="C"].is-active{border-color:var(--c);color:var(--c);background:#EFF7EF}
+.panel{display:none}
+.panel.is-active{display:block}
+.group-head{padding:20px 26px;border-radius:var(--crayon);margin-bottom:22px;color:#fff}
+.group-head h2{margin:0 0 6px;font-size:26px}
+.group-head p{margin:0;font-size:17px;opacity:.95}
+.panel[data-group="A"] .group-head{background:var(--a)}
+.panel[data-group="B"] .group-head{background:var(--b)}
+.panel[data-group="C"] .group-head{background:var(--c)}
+.task{background:var(--surface);border:3px solid var(--line);border-radius:var(--crayon);padding:22px 26px;margin-bottom:18px}
+.task h3{margin:0 0 10px;font-size:22px}
+.panel[data-group="A"] .task h3{color:var(--a)}
+.panel[data-group="B"] .task h3{color:var(--b)}
+.panel[data-group="C"] .task h3{color:var(--c)}
+.task p,.task li{font-size:18px;margin:6px 0}
+.task ul{padding-left:1.3em}
+.wordbank{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.wordbank span{padding:5px 14px;border-radius:999px;background:#FFF6E8;border:2px dashed var(--accent);font-size:16px}
+.hint{margin-top:10px;padding:12px 18px;background:#F5F0FF;border-left:6px solid var(--a);border-radius:6px 14px 14px 6px;font-size:16px;color:#5b4a70}
+.answer-toggle{margin-top:10px}
+.answer-toggle summary{cursor:pointer;font-size:16px;color:var(--muted)}
+.answer-toggle .ans{margin-top:8px;padding:12px 18px;background:#F0F8F0;border-radius:10px;font-size:17px}
+footer{text-align:center;color:var(--muted);font-size:15px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">社會 4 上 第一單元 · 第 1 課 家鄉在哪裡 · 差異化指導</p>
+    <h1>🧭 家鄉在哪裡 · 分組練習</h1>
+    <p>依前測與課堂表現分成 A／B／C 三組，選擇適合自己的任務</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn is-active" data-group="A">A 組・精熟延伸</button>
+    <button class="tab-btn" data-group="B">B 組・基礎鞏固</button>
+    <button class="tab-btn" data-group="C">C 組・鷹架引導</button>
+  </div>
+
+  <section class="panel is-active" data-group="A">
+    <div class="group-head">
+      <h2>A 組・精熟延伸</h2>
+      <p>已掌握地圖種類與四要素，挑戰更靈活的應用</p>
+    </div>
+    <div class="task">
+      <h3>任務一：設計一張家鄉地圖</h3>
+      <p>假想你要幫外地朋友介紹家鄉，設計一張簡易地圖，需包含<b>圖名、方向標、比例尺、圖例</b>四要素，並標出 3 個你想介紹的地點。</p>
+    </div>
+    <div class="task">
+      <h3>任務二：選圖判斷挑戰</h3>
+      <p>如果你要規劃「兩天一夜的家鄉深度旅遊」，你會依序查詢哪些種類的地圖？為什麼？（至少用到 2 種地圖，並說明查詢的先後順序與理由）</p>
+    </div>
+    <div class="task">
+      <h3>任務三：比例尺換算</h3>
+      <p>一張地圖上 5 公分代表實際 1000 公尺。請問：①地圖上 1 公分代表實際多少公尺？②如果兩地實際距離是 3600 公尺，地圖上應該畫幾公分？</p>
+    </div>
+  </section>
+
+  <section class="panel" data-group="B">
+    <div class="group-head">
+      <h2>B 組・基礎鞏固</h2>
+      <p>課文內容大致理解，需要多做對照練習，讓概念更穩固</p>
+    </div>
+    <div class="task">
+      <h3>練習一：地圖種類配對</h3>
+      <p>把情境和適合的地圖連起來：</p>
+      <ul>
+        <li>「想知道搭公車怎麼去」→ <b>（　　）</b></li>
+        <li>「想知道有哪些好玩的景點」→ <b>（　　）</b></li>
+        <li>「想知道家鄉分成幾個行政區」→ <b>（　　）</b></li>
+      </ul>
+      <div class="wordbank"><span>交通路線圖</span><span>觀光導覽圖</span><span>行政區圖</span><span>地形圖</span></div>
+      <details class="answer-toggle"><summary>看答案</summary><div class="ans">交通路線圖／觀光導覽圖／行政區圖</div></details>
+    </div>
+    <div class="task">
+      <h3>練習二：比例尺換算</h3>
+      <p>地圖上 4 公分代表實際 400 公尺，請問地圖上 1 公分代表實際多少公尺？</p>
+      <div class="hint">提示：400 公尺 ÷ 4 公分＝？</div>
+      <details class="answer-toggle"><summary>看答案</summary><div class="ans">100 公尺</div></details>
+    </div>
+    <div class="task">
+      <h3>練習三：四要素連連看</h3>
+      <p>圖名／方向標／比例尺／圖例，各自的功能是什麼？請試著用自己的話說一次，再對照課本檢查。</p>
+    </div>
+  </section>
+
+  <section class="panel" data-group="C">
+    <div class="group-head">
+      <h2>C 組・鷹架引導</h2>
+      <p>提供詞庫與圖示提示，先建立基本概念再慢慢累積信心</p>
+    </div>
+    <div class="task">
+      <h3>基礎一：地圖要素配對</h3>
+      <p>表示地圖名稱的叫「＿＿」；表示方位的叫「＿＿」；表示距離縮小程度的叫「＿＿」；用符號說明景物的叫「＿＿」。</p>
+      <div class="wordbank"><span>圖名</span><span>方向標</span><span>比例尺</span><span>圖例</span></div>
+      <div class="hint">提示：可以翻開課本第 14 頁對照看看，先找出關鍵字再填空。</div>
+      <details class="answer-toggle"><summary>看答案</summary><div class="ans">圖名／方向標／比例尺／圖例</div></details>
+    </div>
+    <div class="task">
+      <h3>基礎二：方向常識</h3>
+      <p>地圖如果沒有畫方向標，上面代表（　　）方，下面代表（　　）方。</p>
+      <div class="wordbank"><span>北</span><span>南</span><span>東</span><span>西</span></div>
+      <details class="answer-toggle"><summary>看答案</summary><div class="ans">北／南</div></details>
+    </div>
+    <div class="task">
+      <h3>基礎三：電子地圖功能</h3>
+      <p>用手機找地點叫做「＿＿」；把地圖放大縮小叫做「＿＿」；換成衛星畫面叫做「＿＿」。</p>
+      <div class="wordbank"><span>搜尋</span><span>縮放</span><span>切換模式</span></div>
+      <div class="hint">提示：想想看你或家人用手機地圖時做過哪些動作。</div>
+      <details class="answer-toggle"><summary>看答案</summary><div class="ans">搜尋／縮放／切換模式</div></details>
+    </div>
+  </section>
+
+  <footer>老師小提醒：分組依前測與課堂觀察彈性調整，同一位學生可依不同課次的表現換組。</footer>
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.group;
+    document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('is-active', b === btn));
+    document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('is-active', p.dataset.group === group));
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>互動教學網站｜氣候、水資源與生活 · 社會四上 1-3</title>
+<style>
+:root{
+  --paper:#FFFCF5; --surface:#FFFFFF; --text:#3F352A; --muted:#857868; --line:#E7DCC8;
+  --accent:#6C9BD2; --l1:#E8A83A; --l2:#79B473; --l3:#6C9BD2; --l4:#B08BC7; --l5:#D18BA5;
+  --safe-x:80px; --safe-y:40px;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --crayon:255px 18px 235px 18px / 18px 235px 18px 255px;
+  --crayon-alt:18px 240px 18px 250px / 230px 18px 245px 18px;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#2B2621;color:var(--text);font-family:var(--font-sans)}
+button{font:inherit;color:inherit}
+.deck{position:relative;width:100%;height:100%;overflow:hidden}
+.stage{position:absolute;top:50%;left:50%;width:1600px;height:900px;overflow:hidden;background:var(--paper);transform-origin:center center}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:var(--safe-y) var(--safe-x) 34px;
+  background:var(--paper);
+  background-image:radial-gradient(circle at 12% 18%,#00000005 0 2px,transparent 2px),
+                   radial-gradient(circle at 68% 72%,#00000005 0 2px,transparent 2px),
+                   radial-gradient(circle at 88% 28%,#00000004 0 2px,transparent 2px);
+  background-size:140px 140px,180px 180px,220px 220px;
+  opacity:0;visibility:hidden;transition:opacity 220ms ease}
+.slide.is-active{opacity:1;visibility:visible}
+.eyebrow{margin:0 0 8px;font-size:24px;letter-spacing:.14em;color:var(--muted)}
+h1{margin:0;font-size:76px;letter-spacing:.06em;line-height:1.1}
+h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent))}
+.lead{font-size:28px;color:var(--muted);margin:14px 0 0}
+.layout-title{align-items:center;justify-content:center;text-align:center}
+.hero-badge{font-size:88px;margin-bottom:6px}
+.sec-1{--sect:var(--l3)} .sec-2{--sect:var(--l1)} .sec-3{--sect:var(--l4)} .sec-4{--sect:var(--l2)}
+
+.body-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;flex:1;min-height:0}
+.card{padding:22px 26px;border:3px solid var(--line);border-radius:var(--crayon);background:var(--surface);overflow:auto}
+.card:nth-child(even){border-radius:var(--crayon-alt)}
+.card h3{margin:0 0 10px;font-size:26px;color:var(--sect,var(--accent))}
+.card p,.card li{font-size:21px;line-height:1.45;margin:5px 0}
+.card ul,.card ol{margin:6px 0;padding-left:1.2em}
+
+.compare-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;min-height:0}
+.compare-cell{padding:16px 14px;border:3px solid var(--line);border-radius:16px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.compare-cell .emoji{font-size:44px;text-align:center}
+.compare-cell h4{margin:0;font-size:23px;text-align:center;color:var(--sect,var(--accent))}
+.compare-cell p{margin:0;font-size:17px;line-height:1.42;color:var(--text)}
+
+.callout{margin-top:14px;padding:16px 22px;border-left:8px solid var(--sect,var(--accent));background:var(--surface);border-radius:6px 18px 18px 6px;font-size:21px;line-height:1.48}
+.callout b{color:var(--sect,var(--accent))}
+
+.chart-box{padding:18px 22px;border:3px solid var(--line);border-radius:20px;background:var(--surface)}
+.bar-row{display:flex;align-items:flex-end;gap:8px;height:160px;margin-top:10px}
+.bar{flex:1;background:var(--sect,var(--accent));border-radius:6px 6px 0 0;position:relative;display:flex;align-items:flex-start;justify-content:center}
+.bar span{position:absolute;top:-24px;font-size:14px;color:var(--muted)}
+.bar-label{display:flex;gap:8px;margin-top:6px}
+.bar-label span{flex:1;text-align:center;font-size:14px;color:var(--muted)}
+
+.wrap-list{display:grid;gap:14px;margin-top:20px}
+.wrap-item{display:flex;gap:18px;align-items:flex-start;font-size:26px;line-height:1.5}
+.wrap-item .dot{flex:none;width:38px;height:38px;border-radius:50%;background:var(--sect,var(--accent));color:#fff;
+  display:grid;place-items:center;font-size:20px;font-weight:700}
+
+.hud{position:absolute;left:0;right:0;bottom:0;height:52px;display:flex;align-items:center;
+  gap:16px;padding:0 var(--safe-x);background:linear-gradient(to top,#00000010,transparent)}
+.hud .pagemeta{font-size:20px;color:var(--muted);margin:0}
+.hud .spacer{flex:1}
+.hud button{padding:5px 18px;border:2px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:20px}
+.hud button:hover{border-color:var(--accent)}
+.progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+</style>
+</head>
+<body>
+<main class="deck" aria-label="氣候水資源與生活互動教學網站">
+  <div class="stage" id="stage" tabindex="-1">
+
+    <section class="slide layout-title is-active" data-slide-id="cover">
+      <p class="hero-badge">🌦️💧</p>
+      <p class="eyebrow">社會 4 上 第一單元 · 第 3 課</p>
+      <h1>氣候、水資源與生活</h1>
+      <p class="lead">看懂氣溫圖、雨量圖，認識家鄉的氣候與水資源</p>
+    </section>
+
+    <section class="slide sec-1" data-slide-id="climate" hidden>
+      <p class="eyebrow">家鄉的氣候</p>
+      <h2>氣候：一個地區長時間的天氣平均狀況</h2>
+      <div class="body-grid">
+        <div class="card">
+          <h3>怎麼讀氣溫圖／雨量圖？</h3>
+          <ol>
+            <li>先看<b>標題</b>——是氣溫圖還是雨量圖？</li>
+            <li>橫軸代表<b>月分</b>（1～12月）</li>
+            <li>縱軸代表<b>氣溫（℃）或雨量（毫米）</b></li>
+          </ol>
+        </div>
+        <div class="chart-box">
+          <p style="margin:0;font-size:19px;color:var(--muted)">宜蘭 vs 屏東恆春 · 1月與7月氣溫（℃）</p>
+          <div class="bar-row">
+            <div class="bar" style="height:55%;--sect:var(--l3)"><span>16.6</span></div>
+            <div class="bar" style="height:98%;--sect:var(--l3)"><span>28.9</span></div>
+            <div class="bar" style="height:75%;--sect:var(--l4)"><span>21.1</span></div>
+            <div class="bar" style="height:97%;--sect:var(--l4)"><span>28.7</span></div>
+          </div>
+          <div class="bar-label"><span>宜蘭 1月</span><span>宜蘭 7月</span><span>恆春 1月</span><span>恆春 7月</span></div>
+        </div>
+      </div>
+      <div class="callout">宜蘭<b>夏熱冬冷</b>，溫差大；屏東恆春緯度較低，<b>四季氣溫都高</b>，溫差小。</div>
+    </section>
+
+    <section class="slide sec-2" data-slide-id="climatelife" hidden>
+      <p class="eyebrow">氣候與居民的生活</p>
+      <h2>居民依氣候特色，發展出不同的生活方式</h2>
+      <div class="compare-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="compare-cell"><div class="emoji">🏠</div><h4>選擇建材、蓋房子</h4><p>依氣候特色興建不同形式的建築</p></div>
+        <div class="compare-cell"><div class="emoji">🌾</div><h4>種植適合的作物</h4><p>依氣溫、雨量條件種植合適的農作物</p></div>
+        <div class="compare-cell"><div class="emoji">🏄</div><h4>多樣化休閒活動</h4><p>依氣候發展不同的休閒與觀光活動</p></div>
+      </div>
+      <div class="callout">案例：基隆<b>四季有雨</b>（受東北季風影響）；高雄<b>夏季多雨、冬季少雨</b>（受西南季風與梅雨影響），10月後進入乾季。</div>
+    </section>
+
+    <section class="slide sec-3" data-slide-id="water" hidden>
+      <p class="eyebrow">家鄉的水資源</p>
+      <h2>家鄉常見的水資源</h2>
+      <div class="compare-grid">
+        <div class="compare-cell"><div class="emoji">🏞️</div><h4>河川</h4><p>水量隨季節降雨量而不同</p></div>
+        <div class="compare-cell"><div class="emoji">🌊</div><h4>湖泊</h4><p>蓄積雨水，也可調節水量</p></div>
+        <div class="compare-cell"><div class="emoji">💧</div><h4>地下水</h4><p>雨水滲入地下形成的水資源</p></div>
+        <div class="compare-cell"><div class="emoji">🌅</div><h4>海洋</h4><p>提供漁業與休閒活動的資源</p></div>
+      </div>
+      <div class="callout">臺灣雖然年平均雨量是世界的 2.5 倍，但因地形陡峭、河川短促，雨水多直接流入大海，其實是<b>缺水地區</b>之一。</div>
+    </section>
+
+    <section class="slide sec-4" data-slide-id="waterlife" hidden>
+      <p class="eyebrow">水資源與居民的生活</p>
+      <h2>水資源的利用與保護</h2>
+      <div class="body-grid">
+        <div class="card">
+          <h3>怎麼利用水資源？</h3>
+          <ul>
+            <li>河川中、上游<b>興建水庫</b>——灌溉、水力發電</li>
+            <li>河川、湖泊、地下水——<b>民生與工業用水</b></li>
+            <li>河川、湖泊、海洋——<b>進行休閒活動</b></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>怎麼保護水資源？</h3>
+          <ul>
+            <li>檢查水管、器具，<b>減少漏水</b></li>
+            <li>善用省水器具、<b>一水多用</b></li>
+            <li>留意水質，發現汙染<b>通報環保局</b></li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout"><b>保護家鄉水資源，是我們每個人的責任。</b></div>
+    </section>
+
+    <section class="slide sec-4 layout-title" data-slide-id="wrap" hidden>
+      <p class="eyebrow">課程總結</p>
+      <h2>這一課，我們學會了</h2>
+      <div class="wrap-list" style="text-align:left;max-width:1150px">
+        <div class="wrap-item"><span class="dot">1</span><span><b>氣候</b>看氣溫圖／雨量圖，各地夏熱冬冷或四季有雨不同</span></div>
+        <div class="wrap-item"><span class="dot">2</span><span>氣候影響<b>建材、作物、休閒活動</b>的選擇</span></div>
+        <div class="wrap-item"><span class="dot">3</span><span><b>水資源</b>有河川、湖泊、地下水、海洋四種</span></div>
+        <div class="wrap-item"><span class="dot">4</span><span>保護水資源是<b>大家的責任</b></span></div>
+      </div>
+      <p class="lead" style="margin-top:26px">接下來，一起進行分組練習與小測驗，檢視大家學會了多少！</p>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span></p>
+      <span class="spacer"></span>
+      <button data-action="previous">← 上一頁</button>
+      <button data-action="next">下一頁 →</button>
+      <button data-action="fullscreen">全螢幕</button>
+    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  const render = (next, updateHash = true) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
+  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
+</body>
+</html>
