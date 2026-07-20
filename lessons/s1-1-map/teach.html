@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>互動教學網站｜家鄉在哪裡 · 社會四上 1-1</title>
+<style>
+:root{
+  --paper:#FFFCF5; --surface:#FFFFFF; --text:#3F352A; --muted:#857868; --line:#E7DCC8;
+  --accent:#E8A83A; --l1:#E8A83A; --l2:#79B473; --l3:#6C9BD2; --l4:#B08BC7;
+  --safe-x:80px; --safe-y:40px;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --crayon:255px 18px 235px 18px / 18px 235px 18px 255px;
+  --crayon-alt:18px 240px 18px 250px / 230px 18px 245px 18px;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#2B2621;color:var(--text);font-family:var(--font-sans)}
+button{font:inherit;color:inherit}
+.deck{position:relative;width:100%;height:100%;overflow:hidden}
+.stage{position:absolute;top:50%;left:50%;width:1600px;height:900px;overflow:hidden;background:var(--paper);transform-origin:center center}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:var(--safe-y) var(--safe-x) 34px;
+  background:var(--paper);
+  background-image:radial-gradient(circle at 12% 18%,#00000005 0 2px,transparent 2px),
+                   radial-gradient(circle at 68% 72%,#00000005 0 2px,transparent 2px),
+                   radial-gradient(circle at 88% 28%,#00000004 0 2px,transparent 2px);
+  background-size:140px 140px,180px 180px,220px 220px;
+  opacity:0;visibility:hidden;transition:opacity 220ms ease}
+.slide.is-active{opacity:1;visibility:visible}
+.eyebrow{margin:0 0 8px;font-size:24px;letter-spacing:.14em;color:var(--muted)}
+h1{margin:0;font-size:88px;letter-spacing:.1em;line-height:1.1}
+h2{margin:0 0 14px;font-size:52px;line-height:1.25;color:var(--sect,var(--accent))}
+.lead{font-size:28px;color:var(--muted);margin:14px 0 0}
+.layout-title{align-items:center;justify-content:center;text-align:center}
+.hero-badge{font-size:88px;margin-bottom:6px}
+.sec-1{--sect:var(--l1)} .sec-2{--sect:var(--l2)} .sec-3{--sect:var(--l3)} .sec-4{--sect:var(--l4)}
+
+.body-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;flex:1;min-height:0}
+.card{padding:22px 26px;border:3px solid var(--line);border-radius:var(--crayon);background:var(--surface);overflow:auto}
+.card:nth-child(even){border-radius:var(--crayon-alt)}
+.card h3{margin:0 0 10px;font-size:28px;color:var(--sect,var(--accent))}
+.card p,.card li{font-size:23px;line-height:1.5;margin:5px 0}
+.card ul,.card ol{margin:6px 0;padding-left:1.2em}
+
+.compare-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;min-height:0}
+.compare-cell{padding:16px 14px;border:3px solid var(--line);border-radius:16px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.compare-cell .emoji{font-size:48px;text-align:center}
+.compare-cell h4{margin:0;font-size:24px;text-align:center;color:var(--sect,var(--accent))}
+.compare-cell p{margin:0;font-size:18px;line-height:1.45;color:var(--text)}
+
+.callout{margin-top:14px;padding:16px 22px;border-left:8px solid var(--sect,var(--accent));background:var(--surface);border-radius:6px 18px 18px 6px;font-size:22px;line-height:1.5}
+.callout b{color:var(--sect,var(--accent))}
+
+.wrap-list{display:grid;gap:14px;margin-top:20px}
+.wrap-item{display:flex;gap:18px;align-items:flex-start;font-size:26px;line-height:1.5}
+.wrap-item .dot{flex:none;width:38px;height:38px;border-radius:50%;background:var(--sect,var(--accent));color:#fff;
+  display:grid;place-items:center;font-size:20px;font-weight:700}
+
+.hud{position:absolute;left:0;right:0;bottom:0;height:52px;display:flex;align-items:center;
+  gap:16px;padding:0 var(--safe-x);background:linear-gradient(to top,#00000010,transparent)}
+.hud .pagemeta{font-size:20px;color:var(--muted);margin:0}
+.hud .spacer{flex:1}
+.hud button{padding:5px 18px;border:2px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:20px}
+.hud button:hover{border-color:var(--accent)}
+.progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+</style>
+</head>
+<body>
+<main class="deck" aria-label="家鄉在哪裡互動教學網站">
+  <div class="stage" id="stage" tabindex="-1">
+
+    <section class="slide layout-title is-active" data-slide-id="cover">
+      <p class="hero-badge">🧭🗺️</p>
+      <p class="eyebrow">社會 4 上 第一單元 · 第 1 課</p>
+      <h1>家鄉在哪裡</h1>
+      <p class="lead">用地圖出發，找到家鄉的位置，認識地圖的四大要素</p>
+    </section>
+
+    <section class="slide sec-1" data-slide-id="home" hidden>
+      <p class="eyebrow">什麼是家鄉？</p>
+      <h2>出生、成長，或長期生活的地方</h2>
+      <div class="body-grid">
+        <div class="card">
+          <h3>定義</h3>
+          <p>我們<b>出生、成長，或是長期生活的地方</b>，都是我們的家鄉。</p>
+          <p>有些人不只在一個地方生活過，所以家鄉可能<b>不只一個</b>。</p>
+        </div>
+        <div class="card">
+          <h3>想一想</h3>
+          <p>「我出生在臺南市，所以我的家鄉是臺南市。」</p>
+          <p>「我在嘉義出生，但從小住在新北市，我覺得家鄉是新北市。」</p>
+          <p style="color:var(--muted)">你的家鄉在哪個縣市？說說看它的位置與特色。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide sec-1" data-slide-id="maptypes" hidden>
+      <p class="eyebrow">家鄉與地圖</p>
+      <h2>不同的地圖，顯示的資訊不一樣</h2>
+      <div class="compare-grid">
+        <div class="compare-cell"><div class="emoji">🏙️</div><h4>行政區圖</h4><p>顯示縣市、鄉鎮的行政區域範圍</p></div>
+        <div class="compare-cell"><div class="emoji">🚌</div><h4>交通路線圖</h4><p>顯示道路、公車、捷運等交通路線</p></div>
+        <div class="compare-cell"><div class="emoji">⛰️</div><h4>地形圖</h4><p>顯示地勢高低與河川分布情形</p></div>
+        <div class="compare-cell"><div class="emoji">📍</div><h4>觀光導覽圖</h4><p>顯示好吃、好玩、重要的景點</p></div>
+      </div>
+      <div class="callout">依據想要了解的<b>主題</b>，選擇適合的地圖，才能進一步認識家鄉。</div>
+    </section>
+
+    <section class="slide sec-2" data-slide-id="elements" hidden>
+      <p class="eyebrow">地圖的要素</p>
+      <h2>地圖的四大要素</h2>
+      <div class="compare-grid">
+        <div class="compare-cell"><div class="emoji">🏷️</div><h4>圖名</h4><p>地圖的名稱，依主題或區域命名</p></div>
+        <div class="compare-cell"><div class="emoji">🧭</div><h4>方向標</h4><p>表示方位；沒畫時慣例「上北下南」</p></div>
+        <div class="compare-cell"><div class="emoji">📏</div><h4>比例尺</h4><p>圖上距離與實際距離縮小的比例</p></div>
+        <div class="compare-cell"><div class="emoji">🔑</div><h4>圖例</h4><p>用符號說明地圖上的實際景物</p></div>
+      </div>
+      <div class="callout">練習：地圖上 8 公分＝實際 800 公尺，那比例尺換算後，1 公分等於實際多少公尺？（答：100 公尺）</div>
+    </section>
+
+    <section class="slide sec-3" data-slide-id="emap" hidden>
+      <p class="eyebrow">家鄉的電子地圖</p>
+      <h2>電子地圖的三大功能</h2>
+      <div class="body-grid">
+        <div class="card"><h3>🔍 搜尋</h3><p>輸入地點或地址，快速找到家鄉的位置。</p></div>
+        <div class="card"><h3>🔎 縮放</h3><p>點擊加減號或滑鼠滾輪，放大或縮小地圖範圍。</p></div>
+        <div class="card"><h3>🔄 切換模式</h3><p>地圖模式看道路名稱；衛星模式像從空中看實景，可看見房屋密集區與山地樹林。</p></div>
+      </div>
+      <div class="callout">隨著科技進步，電子地圖結合手機應用程式，讓我們的生活更加便利。</div>
+    </section>
+
+    <section class="slide sec-4 layout-title" data-slide-id="wrap" hidden>
+      <p class="eyebrow">課程總結</p>
+      <h2>這一課，我們學會了</h2>
+      <div class="wrap-list" style="text-align:left;max-width:1100px">
+        <div class="wrap-item"><span class="dot">1</span><span><b>家鄉</b>是出生、成長或長期生活的地方</span></div>
+        <div class="wrap-item"><span class="dot">2</span><span>依主題選擇合適的<b>地圖種類</b>認識家鄉</span></div>
+        <div class="wrap-item"><span class="dot">3</span><span>地圖的<b>四大要素</b>：圖名、方向標、比例尺、圖例</span></div>
+        <div class="wrap-item"><span class="dot">4</span><span><b>電子地圖</b>能搜尋、縮放、切換模式</span></div>
+      </div>
+      <p class="lead" style="margin-top:30px">接下來，一起進行分組練習與小測驗，檢視大家學會了多少！</p>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span></p>
+      <span class="spacer"></span>
+      <button data-action="previous">← 上一頁</button>
+      <button data-action="next">下一頁 →</button>
+      <button data-action="fullscreen">全螢幕</button>
+    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  const render = (next, updateHash = true) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
+  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
+</body>
+</html>

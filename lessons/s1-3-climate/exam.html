@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>單元評量｜氣候、水資源與生活 · 社會四上 1-3</title>
+<style>
+:root{
+  --paper:#FFFCF5; --surface:#FFFFFF; --text:#3F352A; --muted:#857868; --line:#E7DCC8;
+  --accent:#6C9BD2; --right:#4E9E5A; --wrong:#D2705E;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --crayon:28px 8px 24px 8px / 8px 24px 8px 28px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--font-sans);line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:40px 28px 90px}
+header{text-align:center;margin-bottom:26px}
+header .eyebrow{color:var(--muted);font-size:18px;letter-spacing:.1em}
+header h1{font-size:40px;margin:8px 0}
+header p{color:var(--muted);font-size:17px}
+.notice{max-width:640px;margin:14px auto 0;padding:12px 18px;background:#FDF5E6;border:2px dashed #E8A83A;border-radius:14px;font-size:15px;color:#7a5a20}
+.q{background:var(--surface);border:3px solid var(--line);border-radius:var(--crayon);padding:22px 26px;margin-bottom:18px}
+.q .qtag{display:inline-block;padding:4px 16px;border-radius:999px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;margin-bottom:10px}
+.q .stem{font-size:20px;font-weight:700;margin:0 0 14px}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 18px;border:2px solid var(--line);border-radius:16px;cursor:pointer;font-size:17px}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin-top:4px}
+.opt.correct{border-color:var(--right);background:#F0F8F0}
+.opt.incorrect{border-color:var(--wrong);background:#FCF1EE}
+.exp{display:none;margin-top:12px;padding:12px 18px;background:#F5F7FF;border-left:6px solid var(--accent);border-radius:6px 14px 14px 6px;font-size:16px}
+.exp.show{display:block}
+.submit-bar{position:sticky;bottom:0;background:var(--paper);padding:18px 0;text-align:center;border-top:2px solid var(--line);margin-top:10px}
+#submitBtn{padding:14px 42px;font-size:20px;font-weight:700;border:none;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer}
+#submitBtn:hover{opacity:.9}
+.result{display:none;text-align:center;margin:26px 0;padding:26px;border-radius:var(--crayon);background:var(--surface);border:3px solid var(--accent)}
+.result.show{display:block}
+.result .score{font-size:52px;font-weight:800;color:var(--accent)}
+.result p{font-size:17px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:14px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">社會 4 上 第一單元 · 第 3 課 氣候、水資源與生活 · 學習評量</p>
+    <h1>📝 氣候、水資源與生活 · 小考</h1>
+    <p>共 6 題，涵蓋氣候讀圖、氣候與生活、水資源，作答完按「送出」看結果</p>
+    <div class="notice">本頁僅在本機計算分數，不會上傳或紀錄任何個人資料，適合課堂上個人或投影討論使用。</div>
+  </header>
+
+  <form id="examForm">
+    <div class="q" data-answer="0">
+      <span class="qtag">第 1 題 · 氣候</span>
+      <p class="stem">下列哪一個描述最符合「夏熱冬冷」的氣候特色？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q1" value="0"><span>夏季均溫將近 29℃，冬季均溫降到 16～17℃，溫差大</span></li>
+        <li class="opt"><input type="radio" name="q1" value="1"><span>全年月均溫都在 21～29℃之間，溫差很小</span></li>
+        <li class="opt"><input type="radio" name="q1" value="2"><span>全年幾乎不下雨</span></li>
+        <li class="opt"><input type="radio" name="q1" value="3"><span>只有夏天有氣溫變化</span></li>
+      </ul>
+      <div class="exp">答案：①。像宜蘭這樣夏熱冬冷的地區，夏季（7月）均溫約28.9℃，冬季（1月）約16.6℃，溫差明顯較大。</div>
+    </div>
+
+    <div class="q" data-answer="1">
+      <span class="qtag">第 2 題 · 氣候讀圖</span>
+      <p class="stem">高雄的雨量圖顯示：6月均雨量512.4毫米，1月僅19.1毫米。這代表高雄的降雨型態最可能是？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q2" value="0"><span>四季有雨，雨量平均</span></li>
+        <li class="opt"><input type="radio" name="q2" value="1"><span>夏季多雨、冬季少雨</span></li>
+        <li class="opt"><input type="radio" name="q2" value="2"><span>冬季多雨、夏季少雨</span></li>
+        <li class="opt"><input type="radio" name="q2" value="3"><span>全年幾乎不下雨</span></li>
+      </ul>
+      <div class="exp">答案：②。高雄夏季（6月）雨量遠高於冬季（1月），屬於夏季多雨、冬季少雨的降雨型態。</div>
+    </div>
+
+    <div class="q" data-answer="1">
+      <span class="qtag">第 3 題 · 氣候與生活</span>
+      <p class="stem">居民會依家鄉的氣候特色，做出哪些生活上的選擇？（找出最完整的答案）</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q3" value="0"><span>只會影響穿的衣服顏色</span></li>
+        <li class="opt"><input type="radio" name="q3" value="1"><span>選擇建材蓋房子、種植適合的作物、發展不同的休閒活動</span></li>
+        <li class="opt"><input type="radio" name="q3" value="2"><span>完全不會受到氣候影響</span></li>
+        <li class="opt"><input type="radio" name="q3" value="3"><span>只會影響上學的時間</span></li>
+      </ul>
+      <div class="exp">答案：②。氣候特色會影響居民選擇建材興建房屋、種植合適的作物，以及發展不同的休閒活動。</div>
+    </div>
+
+    <div class="q" data-answer="2">
+      <span class="qtag">第 4 題 · 水資源</span>
+      <p class="stem">下列何者「不屬於」課文中提到的家鄉常見水資源？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q4" value="0"><span>河川</span></li>
+        <li class="opt"><input type="radio" name="q4" value="1"><span>地下水</span></li>
+        <li class="opt"><input type="radio" name="q4" value="2"><span>柏油馬路</span></li>
+        <li class="opt"><input type="radio" name="q4" value="3"><span>湖泊</span></li>
+      </ul>
+      <div class="exp">答案：③ 柏油馬路。家鄉常見的水資源包含河川、湖泊、地下水、海洋，柏油馬路不是水資源。</div>
+    </div>
+
+    <div class="q" data-answer="0">
+      <span class="qtag">第 5 題 · 水資源利用</span>
+      <p class="stem">在河川中、上游興建水庫，主要可以用來做什麼？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q5" value="0"><span>灌溉、水力發電</span></li>
+        <li class="opt"><input type="radio" name="q5" value="1"><span>製造空氣汙染</span></li>
+        <li class="opt"><input type="radio" name="q5" value="2"><span>減少居民休閒活動</span></li>
+        <li class="opt"><input type="radio" name="q5" value="3"><span>讓河川完全消失</span></li>
+      </ul>
+      <div class="exp">答案：①。在河川中、上游興建水庫，可用於灌溉與水力發電，是水資源利用的重要方式。</div>
+    </div>
+
+    <div class="q" data-answer="1">
+      <span class="qtag">第 6 題 · 水資源與生活</span>
+      <p class="stem">下列哪一項做法，最能保護家鄉的水資源？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q6" value="0"><span>發現水管漏水，先不理它</span></li>
+        <li class="opt"><input type="radio" name="q6" value="1"><span>檢查漏水、善用省水器具，一水多用</span></li>
+        <li class="opt"><input type="radio" name="q6" value="2"><span>把廢油直接倒進水溝</span></li>
+        <li class="opt"><input type="radio" name="q6" value="3"><span>覺得水資源用不完，不用節約</span></li>
+      </ul>
+      <div class="exp">答案：②。檢查漏水、善用省水器具、一水多用，都是保護水資源的具體做法；保護水資源是大家的責任。</div>
+    </div>
+
+    <div class="submit-bar">
+      <button type="button" id="submitBtn">送出，看結果</button>
+    </div>
+  </form>
+
+  <div class="result" id="result">
+    <p class="score" id="scoreText">0 / 6</p>
+    <p id="scoreMsg"></p>
+  </div>
+
+  <footer>老師小提醒：此頁為課堂投影／個人平板作答用，若需要逐生登記成績，請改用紙本評量卷登錄成績系統。</footer>
+</div>
+
+<script>
+document.getElementById('submitBtn').addEventListener('click', () => {
+  const questions = [...document.querySelectorAll('.q')];
+  let correct = 0;
+  let unanswered = 0;
+  questions.forEach((q) => {
+    const answer = Number(q.dataset.answer);
+    const opts = [...q.querySelectorAll('.opt')];
+    const checked = q.querySelector('input:checked');
+    const exp = q.querySelector('.exp');
+    exp.classList.add('show');
+    if (!checked) { unanswered++; return; }
+    const chosenValue = Number(checked.value);
+    opts.forEach((o, i) => {
+      if (i === answer) o.classList.add('correct');
+      else if (Number(o.querySelector('input').value) === chosenValue) o.classList.add('incorrect');
+    });
+    if (chosenValue === answer) correct++;
+  });
+  const result = document.getElementById('result');
+  const scoreText = document.getElementById('scoreText');
+  const scoreMsg = document.getElementById('scoreMsg');
+  scoreText.textContent = `${correct} / ${questions.length}`;
+  scoreMsg.textContent = unanswered > 0
+    ? `還有 ${unanswered} 題沒作答，答對率僅供參考。每題答案已在題目下方顯示解說。`
+    : (correct === questions.length ? '全對！氣候與水資源都學會了 👏' : '答案已顯示在每題下方，錯的題目可以再看一次解說。');
+  result.classList.add('show');
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+</script>
+</body>
+</html>

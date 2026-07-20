@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>單元評量｜家鄉的地形 · 社會四上 1-2</title>
+<style>
+:root{
+  --paper:#FFFCF5; --surface:#FFFFFF; --text:#3F352A; --muted:#857868; --line:#E7DCC8;
+  --accent:#79B473; --right:#4E9E5A; --wrong:#D2705E;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --crayon:28px 8px 24px 8px / 8px 24px 8px 28px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--font-sans);line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:40px 28px 90px}
+header{text-align:center;margin-bottom:26px}
+header .eyebrow{color:var(--muted);font-size:18px;letter-spacing:.1em}
+header h1{font-size:40px;margin:8px 0}
+header p{color:var(--muted);font-size:17px}
+.notice{max-width:640px;margin:14px auto 0;padding:12px 18px;background:#FDF5E6;border:2px dashed #E8A83A;border-radius:14px;font-size:15px;color:#7a5a20}
+.q{background:var(--surface);border:3px solid var(--line);border-radius:var(--crayon);padding:22px 26px;margin-bottom:18px}
+.q .qtag{display:inline-block;padding:4px 16px;border-radius:999px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;margin-bottom:10px}
+.q .stem{font-size:20px;font-weight:700;margin:0 0 14px}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 18px;border:2px solid var(--line);border-radius:16px;cursor:pointer;font-size:17px}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin-top:4px}
+.opt.correct{border-color:var(--right);background:#F0F8F0}
+.opt.incorrect{border-color:var(--wrong);background:#FCF1EE}
+.exp{display:none;margin-top:12px;padding:12px 18px;background:#F5F7FF;border-left:6px solid var(--accent);border-radius:6px 14px 14px 6px;font-size:16px}
+.exp.show{display:block}
+.submit-bar{position:sticky;bottom:0;background:var(--paper);padding:18px 0;text-align:center;border-top:2px solid var(--line);margin-top:10px}
+#submitBtn{padding:14px 42px;font-size:20px;font-weight:700;border:none;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer}
+#submitBtn:hover{opacity:.9}
+.result{display:none;text-align:center;margin:26px 0;padding:26px;border-radius:var(--crayon);background:var(--surface);border:3px solid var(--accent)}
+.result.show{display:block}
+.result .score{font-size:52px;font-weight:800;color:var(--accent)}
+.result p{font-size:17px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:14px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">社會 4 上 第一單元 · 第 2 課 家鄉的地形 · 學習評量</p>
+    <h1>📝 家鄉的地形 · 小考</h1>
+    <p>共 6 題，涵蓋五大地形與地形對生活的影響，作答完按「送出」看結果</p>
+    <div class="notice">本頁僅在本機計算分數，不會上傳或紀錄任何個人資料，適合課堂上個人或投影討論使用。</div>
+  </header>
+
+  <form id="examForm">
+    <div class="q" data-answer="1">
+      <span class="qtag">第 1 題 · 地形</span>
+      <p class="stem">「四周高、中間低平，狀似臉盆」的地形，稱為什麼？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q1" value="0"><span>平原</span></li>
+        <li class="opt"><input type="radio" name="q1" value="1"><span>盆地</span></li>
+        <li class="opt"><input type="radio" name="q1" value="2"><span>台地</span></li>
+        <li class="opt"><input type="radio" name="q1" value="3"><span>丘陵</span></li>
+      </ul>
+      <div class="exp">答案：②。例如臺北盆地、埔里盆地，都是四周高、中間低平的地形。</div>
+    </div>
+
+    <div class="q" data-answer="3">
+      <span class="qtag">第 2 題 · 地形</span>
+      <p class="stem">下列哪一項是「山地」的特徵？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q2" value="0"><span>地勢低平、平坦廣闊</span></li>
+        <li class="opt"><input type="radio" name="q2" value="1"><span>四周高、中間低平</span></li>
+        <li class="opt"><input type="radio" name="q2" value="2"><span>地勢稍高、頂部平坦</span></li>
+        <li class="opt"><input type="radio" name="q2" value="3"><span>地勢高聳，高度在1000公尺以上</span></li>
+      </ul>
+      <div class="exp">答案：④。山地地勢高聳，高度在1000公尺以上，例如中央山脈、雪山山脈。</div>
+    </div>
+
+    <div class="q" data-answer="2">
+      <span class="qtag">第 3 題 · 地形辨識</span>
+      <p class="stem">林口台地、桃園台地屬於哪一種地形？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q3" value="0"><span>平原</span></li>
+        <li class="opt"><input type="radio" name="q3" value="1"><span>丘陵</span></li>
+        <li class="opt"><input type="radio" name="q3" value="2"><span>台地</span></li>
+        <li class="opt"><input type="radio" name="q3" value="3"><span>盆地</span></li>
+      </ul>
+      <div class="exp">答案：③。台地地勢稍高、頂部平坦，邊緣以陡坡和低地相接，例如林口台地、桃園台地。</div>
+    </div>
+
+    <div class="q" data-answer="3">
+      <span class="qtag">第 4 題 · 地形與生活</span>
+      <p class="stem">在地形起伏較大的丘陵或山地，居民大多會怎麼利用坡度較平緩的地方？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q4" value="0"><span>興建高樓大廈</span></li>
+        <li class="opt"><input type="radio" name="q4" value="1"><span>開闢大型魚塭</span></li>
+        <li class="opt"><input type="radio" name="q4" value="2"><span>興建捷運系統</span></li>
+        <li class="opt"><input type="radio" name="q4" value="3"><span>開闢茶園、果園</span></li>
+      </ul>
+      <div class="exp">答案：④。丘陵、山地起伏大，居民活動受限，多在坡度平緩處種茶、種果樹，例如新北石碇、臺中和平區。</div>
+    </div>
+
+    <div class="q" data-answer="1">
+      <span class="qtag">第 5 題 · 地形與生活</span>
+      <p class="stem">地勢平坦的平原、盆地、台地，最不容易發展出下列哪一種景觀？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q5" value="0"><span>農田遍布的農村</span></li>
+        <li class="opt"><input type="radio" name="q5" value="1"><span>高山茶園</span></li>
+        <li class="opt"><input type="radio" name="q5" value="2"><span>高樓林立的都市</span></li>
+        <li class="opt"><input type="radio" name="q5" value="3"><span>一池池魚塭的漁村</span></li>
+      </ul>
+      <div class="exp">答案：②。高山茶園是丘陵、山地坡度平緩處的產業，不是地勢平坦地區常見的景觀。</div>
+    </div>
+
+    <div class="q" data-answer="0">
+      <span class="qtag">第 6 題 · 案例</span>
+      <p class="stem">臺東池上鄉屬於平原地形，最著名的農產品是什麼？</p>
+      <ul class="opts">
+        <li class="opt"><input type="radio" name="q6" value="0"><span>池上米（稻米）</span></li>
+        <li class="opt"><input type="radio" name="q6" value="1"><span>高山蔬果</span></li>
+        <li class="opt"><input type="radio" name="q6" value="2"><span>茶葉</span></li>
+        <li class="opt"><input type="radio" name="q6" value="3"><span>魚塭養殖</span></li>
+      </ul>
+      <div class="exp">答案：①。池上鄉位在花東縱谷平原，土壤肥沃、雨量充沛，以種植稻米聞名，池上米是全臺知名的優質米。</div>
+    </div>
+
+    <div class="submit-bar">
+      <button type="button" id="submitBtn">送出，看結果</button>
+    </div>
+  </form>
+
+  <div class="result" id="result">
+    <p class="score" id="scoreText">0 / 6</p>
+    <p id="scoreMsg"></p>
+  </div>
+
+  <footer>老師小提醒：此頁為課堂投影／個人平板作答用，若需要逐生登記成績，請改用紙本評量卷登錄成績系統。</footer>
+</div>
+
+<script>
+document.getElementById('submitBtn').addEventListener('click', () => {
+  const questions = [...document.querySelectorAll('.q')];
+  let correct = 0;
+  let unanswered = 0;
+  questions.forEach((q) => {
+    const answer = Number(q.dataset.answer);
+    const opts = [...q.querySelectorAll('.opt')];
+    const checked = q.querySelector('input:checked');
+    const exp = q.querySelector('.exp');
+    exp.classList.add('show');
+    if (!checked) { unanswered++; return; }
+    const chosenValue = Number(checked.value);
+    opts.forEach((o, i) => {
+      if (i === answer) o.classList.add('correct');
+      else if (Number(o.querySelector('input').value) === chosenValue) o.classList.add('incorrect');
+    });
+    if (chosenValue === answer) correct++;
+  });
+  const result = document.getElementById('result');
+  const scoreText = document.getElementById('scoreText');
+  const scoreMsg = document.getElementById('scoreMsg');
+  scoreText.textContent = `${correct} / ${questions.length}`;
+  scoreMsg.textContent = unanswered > 0
+    ? `還有 ${unanswered} 題沒作答，答對率僅供參考。每題答案已在題目下方顯示解說。`
+    : (correct === questions.length ? '全對！家鄉的地形都學會了 👏' : '答案已顯示在每題下方，錯的題目可以再看一次解說。');
+  result.classList.add('show');
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+</script>
+</body>
+</html>
