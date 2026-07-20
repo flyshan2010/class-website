@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>分組練習｜十萬以內的數 差異化 · 四上數學 1-1</title>
+<style>
+/* ─────────────────────────────────────────────
+   四上數學 1-1〈十萬以內的數〉差異化指導 · 基礎／進階／挑戰三組互動練習頁
+   風格同單元簡報與前測頁（方格紙數學風）
+   離線可用：無外部字型、無 CDN、無網路請求
+   用途：分組上課時投影該組任務；即時回饋型練習做在網頁，
+        逐題計算與書寫仍用紙本 docx（見各組最後一頁的「紙本」提示）
+   不收個人作答資料。
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#F7F9FC; --surface:#FFFFFF; --text:#22323F; --muted:#6B7C8C; --line:#D7E3EE; --grid:#E4EDF6;
+  --accent:#2F6FED; --gc:#2F6FED; --gb:#21A179; --ga:#8B5CF6;
+  --right:#1E9E5A; --wrong:#D64545;
+  --safe-x:88px; --safe-y:40px;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --font-num:"Consolas","SF Mono","Menlo","Courier New",monospace;
+  --r:20px;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#1B2733;color:var(--text);font-family:var(--font-sans)}
+button{font:inherit;color:inherit}
+.deck{position:relative;width:100%;height:100%;overflow:hidden}
+.stage{position:absolute;top:50%;left:50%;width:1600px;height:900px;overflow:hidden;background:var(--paper);transform-origin:center center}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:var(--safe-y) var(--safe-x) 34px;
+  background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:40px 40px,40px 40px;
+  opacity:0;visibility:hidden;transition:opacity 220ms ease}
+.slide.is-active{opacity:1;visibility:visible}
+
+.eyebrow{margin:0 0 8px;font-size:25px;letter-spacing:.14em;color:var(--muted)}
+h1{margin:0;font-size:88px;letter-spacing:.16em;line-height:1.1}
+h2{margin:0 0 6px;font-size:50px;line-height:1.22}
+.lead{font-size:30px;color:var(--muted);margin:14px 0 0}
+.judgement{margin-top:auto;padding-top:16px;font-size:29px;color:var(--accent);font-weight:700}
+
+/* 封面／選組 */
+.layout-title{align-items:center;justify-content:center;text-align:center}
+.hero-badge{font-size:72px;margin:0 0 4px}
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:32px;width:100%}
+.group-card{display:block;padding:26px 24px;border:3px solid var(--line);border-radius:var(--r);
+  background:var(--surface);text-align:left;cursor:pointer;
+  transition:transform 140ms ease,border-color 140ms ease}
+.group-card:hover{transform:translateY(-4px);border-color:var(--gcol)}
+.group-card .gtag{display:inline-block;padding:5px 20px;border-radius:999px;background:var(--gcol);color:#fff;font-size:24px;font-weight:700}
+.group-card h3{margin:14px 0 8px;font-size:33px;color:var(--gcol)}
+.group-card p{margin:0;font-size:24px;line-height:1.5;color:var(--muted)}
+.g-a{--gcol:var(--ga)} .g-b{--gcol:var(--gb)} .g-c{--gcol:var(--gc)}
+
+/* 一般頁首 */
+.qhead{display:flex;align-items:baseline;gap:18px;margin-bottom:4px}
+.qtag{flex:none;padding:5px 20px;border-radius:999px;background:var(--sect,var(--accent));color:#fff;font-size:24px;font-weight:700}
+.qskill{font-size:23px;color:var(--muted)}
+.qstem{font-size:38px;line-height:1.4;margin:8px 0 16px;font-weight:700}
+.intro{font-size:27px;line-height:1.5;margin:0 0 14px;color:var(--muted)}
+
+/* 位值表 */
+.pv-wrap{display:flex;justify-content:center;margin:4px 0 12px}
+.pv-table{border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}
+.pv-table th,.pv-table td{width:98px;border:3px solid var(--line);text-align:center;vertical-align:middle}
+.pv-table th{padding:7px 6px;background:var(--sect,var(--accent));color:#fff;font-size:23px;font-weight:700;border-color:var(--sect,var(--accent))}
+.pv-table td{height:80px;font-family:var(--font-num);font-size:50px;font-weight:700}
+.pv-table td.zero{color:var(--muted)}
+.pv-table td.hi{color:var(--accent);background:#DCE9FF}
+
+/* 可揭曉卡片（點一下看解說） */
+.reveal-grid{display:grid;gap:16px}
+.reveal-grid.cols-2{grid-template-columns:1fr 1fr}
+.reveal-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.rcard{padding:20px 26px;border:3px solid var(--line);border-radius:var(--r);background:var(--surface);
+  text-align:left;cursor:pointer;transition:transform 140ms ease,border-color 140ms ease}
+.rcard:hover{transform:translateY(-3px);border-color:var(--sect,var(--accent))}
+.rcard.is-open{cursor:default;border-color:var(--sect,var(--accent))}
+.rcard.is-open:hover{transform:none}
+.rcard h3{margin:0 0 8px;font-size:29px;color:var(--sect,var(--accent))}
+.rcard .quote{font-size:30px;line-height:1.5;margin:0;font-family:var(--font-num);font-weight:700}
+.rcard .quote.txt{font-family:var(--font-sans);font-size:26px;font-weight:400}
+.rcard .answer{display:none;margin-top:12px;padding-top:12px;border-top:2px dashed var(--line);font-size:25px;line-height:1.55}
+.rcard.is-open .answer{display:block}
+.rcard .tap{display:block;margin-top:10px;font-size:22px;color:var(--muted)}
+.rcard.is-open .tap{display:none}
+.rcard b{color:var(--sect,var(--accent))}
+
+/* 選擇題列 */
+.qlist{display:grid;gap:13px;margin:0;padding:0;list-style:none}
+.qrow{display:flex;align-items:center;gap:18px;padding:13px 22px;border:3px solid var(--line);
+  border-radius:var(--r);background:var(--surface)}
+.qrow .sent{flex:1;font-size:28px;line-height:1.4}
+.qrow .sent .n{font-family:var(--font-num);font-weight:700}
+.qrow .picks{flex:none;display:flex;gap:10px}
+.pick{padding:8px 22px;border:3px solid var(--line);border-radius:14px;background:var(--paper);
+  font-size:25px;cursor:pointer;transition:border-color 140ms ease,background 140ms ease}
+.pick:hover{border-color:var(--sect,var(--accent))}
+.pick.is-right{border-color:var(--right);background:#EDF8F1;color:var(--right);font-weight:700}
+.pick.is-wrong{border-color:var(--wrong);background:#FCEFEF;color:var(--wrong)}
+.qrow .hint{display:none;flex-basis:100%;margin-top:8px;font-size:23px;color:#8A6D3B;font-style:italic}
+.qrow.show-hint{flex-wrap:wrap}
+.qrow.show-hint .hint{display:block}
+
+/* 提示框 / 口訣 */
+.keybox{margin:0 0 16px;padding:16px 26px;background:#EEF4FE;border:3px dashed var(--accent);border-radius:16px;
+  font-size:28px;line-height:1.5;font-weight:700}
+.keybox .n{font-family:var(--font-num)}
+
+/* 任務說明（指向紙本） */
+.task-list{display:grid;gap:12px;margin:0 0 14px;padding:0;list-style:none}
+.task-list li{display:flex;gap:16px;align-items:flex-start;font-size:28px;line-height:1.45}
+.task-list .dot{flex:none;width:38px;height:38px;border-radius:50%;background:var(--sect,var(--accent));color:#fff;
+  display:grid;place-items:center;font-size:21px;font-weight:700}
+.paper-note{margin-top:14px;padding:14px 24px;border:3px solid var(--line);border-radius:14px;background:var(--surface);
+  font-size:25px;line-height:1.5;color:var(--muted)}
+.paper-note b{color:var(--text)}
+
+/* 節奏色 */
+.sec-a{--sect:var(--ga)} .sec-b{--sect:var(--gb)} .sec-c{--sect:var(--gc)}
+
+/* 底部控制列 */
+.hud{position:absolute;left:0;right:0;bottom:0;height:52px;display:flex;align-items:center;
+  gap:16px;padding:0 var(--safe-x);background:linear-gradient(to top,#00000010,transparent)}
+.hud .pagemeta{font-size:21px;color:var(--muted);margin:0}
+.hud .spacer{flex:1}
+.hud button{padding:5px 18px;border:2px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:21px}
+.hud button:hover{border-color:var(--accent)}
+.progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+</style>
+</head>
+<body>
+<main class="deck" aria-label="十萬以內的數差異化分組練習">
+  <div class="stage" id="stage" tabindex="-1">
+
+    <!-- ══ 1 封面／選組 ══ -->
+    <section class="slide layout-title is-active" data-slide-id="cover">
+      <p class="hero-badge">🔢</p>
+      <p class="eyebrow">第一單元 一億以內的數 · 1-1 · 分組練習</p>
+      <h1>分 組 練 習</h1>
+      <p class="lead">依前測結果，選一個適合的難度，點下去開始</p>
+      <div class="group-grid">
+        <button class="group-card g-c" data-goto="c1">
+          <span class="gtag">基礎題</span>
+          <h3>把位值表填對</h3>
+          <p>萬位在哪裡、0 怎麼佔位，附口訣與小提示</p>
+        </button>
+        <button class="group-card g-b" data-goto="b1">
+          <span class="gtag">進階題</span>
+          <h3>讀寫與化聚都要穩</h3>
+          <p>五位數的讀法、幾個萬幾個千的化聚練習</p>
+        </button>
+        <button class="group-card g-a" data-goto="a1">
+          <span class="gtag">挑戰題</span>
+          <h3>逆推與跨位進位</h3>
+          <p>從讀法推回數字、連續進位的數詞序列</p>
+        </button>
+      </div>
+      <p class="judgement">逐題計算寫在紙本學習單，網頁這裡先把觀念弄懂</p>
+    </section>
+
+    <!-- ══════════ 基礎題 ══════════ -->
+
+    <section class="slide sec-c" data-slide-id="c1" hidden>
+      <div class="qhead"><span class="qtag">基礎題 · 1</span><span class="qskill">基本概念 · 萬位在哪裡</span></div>
+      <p class="qstem">五位數的位值表，從右邊數過來就對了</p>
+      <div class="keybox">🔑 從<b>右邊</b>開始念：個、十、百、千、<b>萬</b>——五位數最左邊那一位就是<b>萬位</b>。<br>沒有的位，一定要寫 <span class="n">0</span> 佔位，不能空著。</div>
+      <div class="reveal-grid cols-2">
+        <button class="rcard">
+          <p class="quote">83245</p>
+          <span class="tap">▸ 萬位是多少？表示多少？點一下</span>
+          <span class="answer">萬位是 <b>8</b>，表示 <b>8 個一萬 ＝ 80000</b>。整個數讀作「八萬三千二百四十五」。</span>
+        </button>
+        <button class="rcard">
+          <p class="quote">70856</p>
+          <span class="tap">▸ 千位是多少？要不要寫？點一下</span>
+          <span class="answer">千位是 <b>0</b>，一定要寫上去佔位；讀的時候要讀出一個「零」——「七萬<b>零</b>八百五十六」。</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="slide sec-c" data-slide-id="c2" hidden>
+      <div class="qhead"><span class="qtag">基礎題 · 2</span><span class="qskill">辨識練習 · 這個數的萬位是多少</span></div>
+      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <ul class="qlist">
+        <li class="qrow" data-answer="1" data-hint="從右邊數：個、十、百、千、萬。最左邊那一位就是萬位。">
+          <span class="sent">1. <span class="n">52042</span> 的萬位是多少？</span>
+          <span class="picks"><button class="pick">2</button><button class="pick">5</button><button class="pick">4</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="千位在萬位的右邊一格。40306 從左到右是 4、0、3、0、6。">
+          <span class="sent">2. <span class="n">40306</span> 的千位是多少？</span>
+          <span class="picks"><button class="pick">0</button><button class="pick">4</button><button class="pick">3</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="2" data-hint="34079 的萬位是 3，表示 3 個一萬，一個一萬是 10000。">
+          <span class="sent">3. <span class="n">34079</span> 的萬位表示多少？</span>
+          <span class="picks"><button class="pick">3</button><button class="pick">3000</button><button class="pick">30000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="1" data-hint="90098 有兩個 9：一個在萬位、一個在十位，位置不同表示的量就不同。">
+          <span class="sent">4. <span class="n">90098</span> 十位的 9 表示多少？</span>
+          <span class="picks"><button class="pick">9000</button><button class="pick">90</button><button class="pick">90000</button></span>
+          <span class="hint"></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide sec-c" data-slide-id="c3" hidden>
+      <div class="qhead"><span class="qtag">基礎題 · 3</span><span class="qskill">紙本任務 · 動手填位值表</span></div>
+      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <ul class="task-list">
+        <li><span class="dot">1</span><span>把老師念的五個數字，一格一格<strong>填進位值表</strong>（沒有的位記得寫 0）。</span></li>
+        <li><span class="dot">2</span><span>在每個數的<strong>萬位</strong>下面畫一條線，並寫出它表示多少。</span></li>
+        <li><span class="dot">3</span><span>照樣寫寫看：「<span style="font-family:var(--font-num)">83245</span> 是 8 個萬、3 個千、2 個百、4 個十和 5 個一合起來的。」</span></li>
+      </ul>
+      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2a.差異化教材_基礎題需鷹架</b>。<br>學習單上每一題都附有空白位值表，直接填格子即可。</div>
+      <p class="judgement">先把「每一位在哪、表示多少」弄清楚，讀法自然就對了</p>
+    </section>
+
+    <!-- ══════════ 進階題 ══════════ -->
+
+    <section class="slide sec-b" data-slide-id="b1" hidden>
+      <div class="qhead"><span class="qtag">進階題 · 1</span><span class="qskill">數的化聚 · 拆開與合起來</span></div>
+      <p class="qstem">同一個數，可以拆成「幾個萬、幾個千、幾個百……」</p>
+      <div class="reveal-grid cols-3">
+        <button class="rcard">
+          <p class="quote">80500</p>
+          <span class="tap">▸ 拆拆看？點一下</span>
+          <span class="answer"><b>8</b> 個萬、<b>0</b> 個千、<b>5</b> 個百合起來。讀作「八萬零五百」。</span>
+        </button>
+        <button class="rcard">
+          <p class="quote">34079</p>
+          <span class="tap">▸ 拆拆看？點一下</span>
+          <span class="answer"><b>3</b> 個萬、<b>4</b> 個千、<b>7</b> 個十和 <b>9</b> 個一合起來。百位是 0，讀作「三萬四千零七十九」。</span>
+        </button>
+        <button class="rcard">
+          <p class="quote">50307</p>
+          <span class="tap">▸ 怎麼讀？點一下</span>
+          <span class="answer">讀作「五萬<b>零</b>三百<b>零</b>七」。千位的 0 和十位的 0 <b>沒有連在一起</b>，所以各讀一次「零」。</span>
+        </button>
+      </div>
+      <p class="judgement">拆得開，才寫得對；寫得對，才讀得順</p>
+    </section>
+
+    <section class="slide sec-b" data-slide-id="b2" hidden>
+      <div class="qhead"><span class="qtag">進階題 · 2</span><span class="qskill">讀法與序列 · 判斷對不對</span></div>
+      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <ul class="qlist">
+        <li class="qrow" data-answer="0" data-hint="千位和百位是連續兩個 0，連在一起只讀一個「零」。">
+          <span class="sent">1. <span class="n">30018</span> 讀作？</span>
+          <span class="picks"><button class="pick">三萬零一十八</button><button class="pick">三萬零零一十八</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="1" data-hint="30108 的千位是 0、十位也是 0，但中間隔了一個 1，兩個 0 沒有連在一起。">
+          <span class="sent">2. <span class="n">30108</span> 讀作？</span>
+          <span class="picks"><button class="pick">三萬一零八</button><button class="pick">三萬零一百零八</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="1" data-hint="每個月存 1000 元＝多 1 個千。29 個千再加 1 個千是 30 個千。">
+          <span class="sent">3. 存款 <span class="n">29650</span> 元，再存 <span class="n">1000</span> 元是？</span>
+          <span class="picks"><button class="pick">29750</button><button class="pick">30650</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="百位 9 加 1 變 10 個百，要進位給千位；千位 9 也滿了，再進位給萬位。">
+          <span class="sent">4. 存款 <span class="n">39953</span> 元，再存 <span class="n">100</span> 元是？</span>
+          <span class="picks"><button class="pick">40053</button><button class="pick">39053</button></span>
+          <span class="hint"></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide sec-b" data-slide-id="b3" hidden>
+      <div class="qhead"><span class="qtag">進階題 · 3</span><span class="qskill">紙本任務 · 讀寫與序列</span></div>
+      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <ul class="task-list">
+        <li><span class="dot">1</span><span>看數字<strong>寫出讀法</strong>（含 0 的那幾題要特別小心）。</span></li>
+        <li><span class="dot">2</span><span>看讀法<strong>寫出數字</strong>，並填進位值表檢查位數對不對。</span></li>
+        <li><span class="dot">3</span><span>完成收支簿的<strong>餘額欄</strong>：每月存 1000 元、每月存 100 元各一題。</span></li>
+      </ul>
+      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2b.差異化教材_進階題基礎穩固</b>。</div>
+      <p class="judgement">讀法寫得出來，代表位值真的懂了</p>
+    </section>
+
+    <!-- ══════════ 挑戰題 ══════════ -->
+
+    <section class="slide sec-a" data-slide-id="a1" hidden>
+      <div class="qhead"><span class="qtag">挑戰題 · 1</span><span class="qskill">逆推 · 從線索找出這個數</span></div>
+      <p class="qstem">給你線索，倒過來推回原本的數字</p>
+      <div class="reveal-grid cols-2">
+        <button class="rcard">
+          <p class="quote txt">一個五位數，萬位是 6、百位是 4，其他各位都是 0。這個數是多少？怎麼讀？</p>
+          <span class="tap">▸ 想好了再點一下</span>
+          <span class="answer">是 <b>60400</b>，讀作「六萬零四百」。千位、十位、個位都要寫 0 佔位；千位的 0 要讀出一個「零」，末尾的兩個 0 不讀。</span>
+        </button>
+        <button class="rcard">
+          <p class="quote txt">一個五位數讀作「八萬零六」，它是多少？位值表上有幾個 0？</p>
+          <span class="tap">▸ 想好了再點一下</span>
+          <span class="answer">是 <b>80006</b>，位值表上有 <b>3 個 0</b>（千、百、十位）。三個 0 連在一起，所以只讀一個「零」。</span>
+        </button>
+      </div>
+      <p class="judgement">從讀法推回數字，最容易漏掉的就是 0 的位數</p>
+    </section>
+
+    <section class="slide sec-a" data-slide-id="a2" hidden>
+      <div class="qhead"><span class="qtag">挑戰題 · 2</span><span class="qskill">連續進位 · 一直加下去</span></div>
+      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <ul class="qlist">
+        <li class="qrow" data-answer="1" data-hint="個、十、百、千位都是 9，加 1 之後一路進位，全部歸 0，萬位加 1。">
+          <span class="sent">1. <span class="n">19999</span> 再加 <span class="n">1</span> 是多少？</span>
+          <span class="picks"><button class="pick">19000</button><button class="pick">20000</button><button class="pick">110000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="加 10 就看十位：79986 的十位是 8，加 1 個十變 9 個十。">
+          <span class="sent">2. <span class="n">79986</span> → <span class="n">79996</span> → （　）</span>
+          <span class="picks"><button class="pick">80006</button><button class="pick">79906</button><button class="pick">80996</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="1" data-hint="每次少 1000＝少 1 個千。51782 的千位是 1，減 1 個千後千位變 0，要跟萬位借。">
+          <span class="sent">3. <span class="n">51782</span> → <span class="n">50782</span> → （　）</span>
+          <span class="picks"><button class="pick">50682</button><button class="pick">49782</button><button class="pick">40782</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="2" data-hint="每次少 100＝少 1 個百。34151 的百位是 1，減 1 個百後百位變 0，要跟千位借。">
+          <span class="sent">4. <span class="n">34351</span> → <span class="n">34251</span> → <span class="n">34151</span> → （　）</span>
+          <span class="picks"><button class="pick">34141</button><button class="pick">33151</button><button class="pick">34051</button></span>
+          <span class="hint"></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide sec-a" data-slide-id="a3" hidden>
+      <div class="qhead"><span class="qtag">挑戰題 · 3</span><span class="qskill">紙本任務 · 出題給同學</span></div>
+      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <ul class="task-list">
+        <li><span class="dot">1</span><span>完成三組<strong>連續進退位</strong>的數詞序列填空（含跨萬位的那幾題）。</span></li>
+        <li><span class="dot">2</span><span>逆推題：只給讀法，<strong>寫回數字</strong>並填進位值表。</span></li>
+        <li><span class="dot">3</span><span><strong>自己出一題</strong>「含兩處 0」的五位數考同學，並在背面寫下正確讀法與理由。</span></li>
+      </ul>
+      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2c.差異化教材_挑戰題精熟</b>。<br>第 3 題出好之後跟同組同學交換作答，再互相檢查。</div>
+      <p class="judgement">能出題考別人，才代表真的精熟</p>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span></p>
+      <span class="spacer"></span>
+      <button data-action="home">⌂ 回選組</button>
+      <button data-action="previous">← 上一頁</button>
+      <button data-action="next">下一頁 →</button>
+      <button data-action="fullscreen">全螢幕</button>
+    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  const render = (next, updateHash = true) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+  const indexOfId = (id) => slides.findIndex((s) => s.dataset.slideId === id);
+
+  // ── 封面選組：跳到該組第一頁 ──
+  document.querySelectorAll('[data-goto]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = indexOfId(btn.dataset.goto);
+      if (target >= 0) render(target);
+    });
+  });
+
+  // ── 可揭曉卡片：點一下打開解說（打開後不再收合，避免課堂上誤觸消失）──
+  document.querySelectorAll('.rcard').forEach((card) => {
+    card.addEventListener('click', () => card.classList.add('is-open'));
+  });
+
+  // ── 辨識練習：答對鎖定，答錯顯示小提示可再試 ──
+  document.querySelectorAll('.qrow').forEach((row) => {
+    const answer = Number(row.dataset.answer);
+    const picks = [...row.querySelectorAll('.pick')];
+    const hint = row.querySelector('.hint');
+    if (hint) hint.textContent = `💡 小提示：${row.dataset.hint}`;
+    picks.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        if (row.classList.contains('is-done')) return;
+        if (i === answer) {
+          btn.classList.add('is-right');
+          picks.forEach((b) => b.disabled = true);
+          row.classList.add('is-done');
+          row.classList.remove('show-hint');
+        } else {
+          btn.classList.add('is-wrong');
+          row.classList.add('show-hint');
+        }
+      });
+    });
+  });
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="home"]')?.addEventListener('click', () => render(0));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
+  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
+</body>
+</html>
