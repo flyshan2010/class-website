@@ -1,6 +1,6 @@
 [
   {
-    "title": "社會4上 S1-3 氣候、水資源與生活",
+    "title": "社椕4上 社1-3 氣候、水資源與生活",
     "subject": "社會",
     "status": "進行中",
     "stages": [
@@ -10,18 +10,18 @@
       "學習評量"
     ],
     "date": "",
-    "note": "康軒版四上第一單元第3課。內容聚焦氣候讀圖、氣候與生活、四種水資源與保護。⚠️ 2026-07-20 改為 Drive 連結版本，不上 GitHub Pages（GitHub 部署佇列異常卡住逾30分鐘未解）：五個檔案皆為單一自足 HTML，Drive 連結點開後選「下載」或「在瀏覽器開啟」，即為完整可互動網頁（Drive 內建預覽會停用 JS，需下載開啟才能作答互動）。第五段成果回流待實際教學與評量後登記。三課均完成回流後，單元狀態可改為已完成。",
+    "note": "康軒版四上第一單元第3課，聚焦氣候讀圖、氣候與生活、四種水資源與保護。2026-07-21 改回 GitHub Pages 直連（先前 Drive 替代方案已解除，實測 200），並套用新命名規範。差異化改稱基礎／進階／挑戰題。第五段成果回流待實際教學後登記。",
     "links": {
       "material": "https://drive.google.com/file/d/1Pb8YYmOnK02udkXYC7C6DLufeBD_DgZ2/view",
-      "pretest": "https://drive.google.com/file/d/1fnqhjS7OrDwTSlWP3bCCTxUgH3GooNQi/view",
-      "site": "https://drive.google.com/file/d/1UHMq554CWItp4484ZRCGBTLHiIixfpf3/view",
-      "differentiated": "https://drive.google.com/file/d/1s3doNzJGg1gihE8BKGH6u01fNscF_4jm/view",
-      "exam": "https://drive.google.com/file/d/1iPnJ1eguNpbQw0JJ62hsFWLvwIZTfrnk/view",
-      "review": "https://drive.google.com/file/d/1vB6grYqPsgAx02wP6lD6sogeKzVn_--g/view"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-3-氣候、水資源與生活/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-3-氣候、水資源與生活/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-3-氣候、水資源與生活/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-3-氣候、水資源與生活/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-3-氣候、水資源與生活/3.review.html"
     }
   },
   {
-    "title": "社會4上 S1-1 家鄉在哪裡",
+    "title": "社椕4上 社1-1 家鄉在哪裡",
     "subject": "社會",
     "status": "進行中",
     "stages": [
@@ -31,18 +31,18 @@
       "學習評量"
     ],
     "date": "",
-    "note": "康軒版四上第一單元第1課。單課獨立五段（2026-07-20 重做、改以小節為單位）。內容聚焦地圖種類與四要素、電子地圖。⚠️ 2026-07-20 改為 Drive 連結版本，不上 GitHub Pages（該次 GitHub 部署佇列異常卡住逾30分鐘未解）：五個檔案皆為單一自足 HTML（無外部字型/CDN），Drive 連結點開後選「下載」或「在瀏覽器開啟」，即為完整可互動網頁（Drive 內建預覽會停用 JS，需下載開啟才能作答互動）。第五段成果回流待實際教學與評量後登記。",
+    "note": "康軒版四上第一單元第1課，聚焦地圖種類與四要素、電子地圖。2026-07-21 改回 GitHub Pages 直連（先前 Drive 替代方案已解除，實測 200），並套用新命名規範。差異化改稱基礎／進階／挑戰題。第五段成果回流待實際教學後登記。",
     "links": {
       "material": "https://drive.google.com/file/d/1niYzZ846YBv_qZdlIzlaas-ZH-5b7rtF/view",
-      "pretest": "https://drive.google.com/file/d/14EGEZOJZWQ-NVM96luzA296A9GMiSxBz/view",
-      "site": "https://drive.google.com/file/d/1L6gSMgzPRhrTvE_gpbNr1DXCDui-HcZQ/view",
-      "differentiated": "https://drive.google.com/file/d/1KS66aDKK7cBeYdDR0rGZf58lsmUGn8Ky/view",
-      "exam": "https://drive.google.com/file/d/1pBMFqpXsBS0v7kYSPPGJP-MPLbKazbxz/view",
-      "review": "https://drive.google.com/file/d/1uB017j5M8COiQZEMKDrIzjPPR_7SVl7P/view"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/3.review.html"
     }
   },
   {
-    "title": "社會4上 S1-2 家鄉的地形",
+    "title": "社椕4上 社1-2 家鄉的地形",
     "subject": "社會",
     "status": "進行中",
     "stages": [
@@ -52,34 +52,35 @@
       "學習評量"
     ],
     "date": "",
-    "note": "康軒版四上第一單元第2課。內容聚焦五大地形特徵與地形與生活的關聯。⚠️ 2026-07-20 改為 Drive 連結版本，不上 GitHub Pages（GitHub 部署佇列異常卡住逾30分鐘未解）：五個檔案皆為單一自足 HTML，Drive 連結點開後選「下載」或「在瀏覽器開啟」，即為完整可互動網頁（Drive 內建預覽會停用 JS，需下載開啟才能作答互動）。第五段成果回流待實際教學與評量後登記。",
+    "note": "康軒版四上第一單元第2課，聚焦五大地形特徵與地形與生活的關聯。2026-07-21 改回 GitHub Pages 直連（先前 Drive 替代方案已解除，實測 200），並套用新命名規範。差異化改稱基礎／進階／挑戰題。第五段成果回流待實際教學後登記。",
     "links": {
       "material": "https://drive.google.com/file/d/19KWgnB7s8ElReTVwchWMF3aNAsCEsoFb/view",
-      "pretest": "https://drive.google.com/file/d/1sV-68eyYudsG4zCNmppRojz05bzBZsSL/view",
-      "site": "https://drive.google.com/file/d/10zw38qJgW3R1QtsW09k2KBRy3jOGWA5Y/view",
-      "differentiated": "https://drive.google.com/file/d/1ESXEpT0npI4m4Eq_sNhQIq_8DyWeo5SA/view",
-      "exam": "https://drive.google.com/file/d/1v8E36J18XoKproq5cZPeumZGMohZJ6OI/view",
-      "review": "https://drive.google.com/file/d/1Um7d5H9xG7cEUC8Dwn2tbF7K8On144vI/view"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
     }
   },
   {
-    "title": "國語4上 L01 美麗島",
+    "title": "國語4上 國L1 美麗島",
     "subject": "國語",
     "status": "進行中",
     "stages": [
       "起始評估",
       "課程教學",
-      "差異化指導"
+      "差異化指導",
+      "學習評量"
     ],
     "date": "",
-    "note": "楊喚〈美麗島〉詩歌。2026-07-19 開單元，第一段起始評估完成。2026-07-20 完成第二段課程教學（互動教學網站已部署上線）、第三段差異化指導（A/B/C 三組 docx 教材已上傳 Drive）。下一步：第四段學習評量（單元評量卵）。",
+    "note": "楊喚〈美麗島〉詩歌。2026-07-21 全面套用新命名規範（資料夾＝4上-國語-國L1-美麗島，檔名 0~5 序號）。差異化教材改稱基礎／進階／挑戰題，編排序為基礎→進階→挑戰。第四段學習評量：紙本六合一試卷包為正式計分用，網頁 4.exam.html 為平行題本線上模擬評量（同範圍、不同題，不洩題）。第五段成果回流待實際教學後登記。",
     "links": {
       "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/practice.html",
-      "exam": "",
-      "review": ""
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
     }
   }
 ]
