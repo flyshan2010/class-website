@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>線上模擬評量｜美麗島 · 國語四上第一課</title>
+<style>
+/* ─────────────────────────────────────────────
+   〈美麗島〉線上模擬評量（平行題本）
+   ⚠️ 重要：本頁題目與紙本定期評量【完全不同】，只涵蓋相同範圍。
+      班網為公開頁面，正式計分仍以紙本卷為準，網頁版供學生自主練習與課前暖身。
+   離線可用：無外部字型、無 CDN、無網路請求；不收個人作答資料。
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#FFFCF5; --surface:#FFFFFF; --text:#3F352A; --muted:#857868; --line:#E7DCC8;
+  --accent:#F2865E; --right:#4E9E5A; --wrong:#D2705E;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --crayon:28px 8px 24px 8px / 8px 24px 8px 28px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--font-sans);line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:40px 28px 90px}
+header{text-align:center;margin-bottom:26px}
+header .eyebrow{color:var(--muted);font-size:18px;letter-spacing:.1em}
+header h1{font-size:40px;margin:8px 0}
+header p{color:var(--muted);font-size:17px}
+.notice{max-width:700px;margin:14px auto 0;padding:12px 18px;background:#FDF5E6;border:2px dashed var(--accent);border-radius:14px;font-size:15px;color:#8a5230;text-align:left}
+h2.sect{font-size:26px;margin:38px 0 14px;padding-left:14px;border-left:8px solid var(--accent)}
+.q{background:var(--surface);border:3px solid var(--line);border-radius:var(--crayon);padding:22px 26px;margin-bottom:18px}
+.q .qtag{display:inline-block;padding:4px 16px;border-radius:999px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;margin-bottom:10px}
+.q .stem{font-size:20px;font-weight:700;margin:0 0 14px}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 18px;border:2px solid var(--line);border-radius:16px;cursor:pointer;font-size:17px}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin-top:5px}
+.fill input[type=text]{font:inherit;font-size:19px;padding:10px 16px;border:2px solid var(--line);border-radius:14px;width:230px;background:#FFFDF8}
+.fill input[type=text]:focus{outline:none;border-color:var(--accent)}
+.exp{display:none;margin-top:14px;padding:12px 16px;border-radius:14px;background:#F6F3EA;font-size:16px;color:#5c5346}
+.q.marked .exp{display:block}
+.q.ok{border-color:var(--right)}
+.q.ng{border-color:var(--wrong)}
+.verdict{font-weight:700;margin-right:8px}
+.q.ok .verdict{color:var(--right)}
+.q.ng .verdict{color:var(--wrong)}
+.selfq{background:#FFF9F0;border:3px dashed var(--accent);border-radius:var(--crayon);padding:22px 26px;margin-bottom:18px}
+.selfq h3{margin:6px 0 10px;font-size:21px}
+.selfq textarea{font:inherit;font-size:17px;width:100%;min-height:96px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;resize:vertical}
+.selfq details{margin-top:12px;font-size:16px}
+.selfq summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.selfq .rubric{margin:10px 0 0;padding-left:22px;color:#5c5346}
+.actions{text-align:center;margin:34px 0 10px}
+button.main{font:inherit;font-size:21px;font-weight:800;padding:14px 44px;border:none;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+button.main:hover{filter:brightness(1.06)}
+button.ghost{font:inherit;font-size:17px;padding:10px 26px;border:2px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);cursor:pointer;margin-left:10px}
+.result{display:none;text-align:center;margin-top:8px;padding:24px;background:var(--surface);border:3px solid var(--accent);border-radius:var(--crayon)}
+.result.show{display:block}
+.result .score{font-size:52px;font-weight:800;color:var(--accent);margin:6px 0}
+footer{margin-top:44px;text-align:center;color:var(--muted);font-size:15px;line-height:1.8}
+@media print{.actions,.notice{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">國語四上 · 第壹單元 我愛家鄉 · 國L1</p>
+    <h1>💯 美麗島 · 線上模擬評量</h1>
+    <p>選擇題 12 題＋填充題 4 題（自動批改），另有 2 題問答自評</p>
+    <p class="notice">📌 <b>這份是「模擬」評量，不是正式考卷。</b>題目和老師的紙本定期評量<b>完全不一樣</b>，
+      但考的範圍相同（部首、修辭、課文理解）。寫完按「送出」就會看到分數和解說，可以重複練習。</p>
+  </header>
+
+  <h2 class="sect">一、選擇題（每題 1 分，共 12 分）</h2>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 1 題 · 部首</span>
+    <p class="stem">「甜蜜」的「蜜」字，部首是下列何者？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q1"><span>虫部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span>宀部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span>必部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span>心部</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>「蜜」是蜜蜂做出來的東西，所以部首是<b>虫部</b>。上面的「宀」和「必」都只是聲符與外形的一部分。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 2 題 · 部首</span>
+    <p class="stem">「浪花」的「浪」字，部首是下列何者？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q2"><span>艮部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span>水部（氵）</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span>良部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span>白部</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>左邊的「氵」就是<b>水部</b>，凡是和水有關的字（海、洋、浪、汗）大多從水部。</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <span class="qtag">第 3 題 · 部首</span>
+    <p class="stem">「椰子樹」的「樹」字，部首是下列何者？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q3"><span>寸部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span>豆部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span>木部</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span>土部</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>樹是植物，部首在最左邊的<b>木部</b>。判斷部首時，先找「和字義有關」的那個部件。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 4 題 · 修辭</span>
+    <p class="stem">「月亮是一盞掛在天空的燈。」這句話使用了哪一種修辭？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q4"><span>明喻</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>隱喻</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>頂真</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>設問</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>喻詞用「<b>是</b>」，把月亮直接說成燈，屬於<b>隱喻</b>。課文裡「臺灣是甜蜜的糖的王國」也是同一種寫法。</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <span class="qtag">第 5 題 · 修辭</span>
+    <p class="stem">「風把樹葉叫醒了。」這句話使用了哪一種修辭？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q5"><span>明喻</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>隱喻</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>轉化（擬人）</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>頂真</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>風本來不會「叫」人，這裡把風當成人來寫，是<b>轉化（擬人）</b>。句子裡沒有「像」也沒有「是」，就不是譬喻。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 6 題 · 修辭</span>
+    <p class="stem">「操場上的落葉，像一群靠岸的小船。」這句話使用了哪一種修辭？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q6"><span>明喻</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>隱喻</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>設問</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>頂真</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>喻詞出現「<b>像</b>」，是<b>明喻</b>。口訣：看到「像、好像、彷彿、如同」就想到明喻。</p>
+  </div>
+
+  <div class="q" data-answer="3">
+    <span class="qtag">第 7 題 · 修辭</span>
+    <p class="stem">「我愛我的家，家裡有一盞溫暖的燈。」這句話使用了哪一種修辭？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q7"><span>明喻</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span>轉化</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span>設問</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span>頂真</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>前一句句尾的「家」，接著當下一句的句首，這種接龍寫法叫<b>頂真</b>。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 8 題 · 修辭作用</span>
+    <p class="stem">「你猜猜看，森林裡誰最會唱歌？」作者這樣寫，主要的用意是什麼？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q8"><span>作者真的不知道答案，需要讀者幫忙</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span>用問句把讀者拉進來一起想，引起好奇心</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span>要考讀者的自然科知識</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span>沒有用意，只是把句子拉長</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>這是<b>設問</b>。作者心裡有答案，故意用問句<b>製造懸念、讓讀者一起想</b>。〈美麗島〉開頭的問句也是這個作用。</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <span class="qtag">第 9 題 · 課文理解</span>
+    <p class="stem">課文寫「椰子樹伸著大手掌」，這裡的「大手掌」實際上是指椰子樹的什麼？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q9"><span>樹幹</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span>樹根</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span>張開的葉子</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span>椰子果實</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>椰子樹的<b>葉子</b>又大又張開，形狀很像張開的手掌，所以詩人把它當成人的手來寫。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 10 題 · 課文理解</span>
+    <p class="stem">詩中說臺灣是「甜蜜的糖的王國」，最主要想表達的是什麼？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q10"><span>臺灣人都很喜歡吃糖果</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span>臺灣物產豐富，是盛產甘蔗製糖的地方</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span>臺灣有一座用糖蓋成的城堡</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span>臺灣的天氣像糖一樣甜</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>詩人用「糖的王國」來稱讚臺灣<b>物產豐饒</b>；「王國」是誇張又親切的說法，不是真的有一個糖做的國家。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 11 題 · 寫作手法</span>
+    <p class="stem">詩人形容小朋友時，連用了「快樂的雲雀」「健康的牛」來比喻，主要的好處是什麼？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q11"><span>用大家熟悉的動物來比，小朋友的樣子更容易想像</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span>因為詩人最喜歡這兩種動物</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span>為了介紹臺灣有哪些動物</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span>湊足字數，讓詩看起來比較長</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>譬喻的好處就是「<b>用熟悉的東西說明另一樣東西</b>」，畫面立刻變清楚，讀起來也更有節奏。</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <span class="qtag">第 12 題 · 寫作手法</span>
+    <p class="stem">詩人把海寫成「吐著白色的唾沫」，這樣寫最大的好處是什麼？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q12"><span>提醒大家海水很髒，不可以喝</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span>說明海浪的科學原理</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span>把海當成活生生的人，畫面變得生動又有趣</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span>因為找不到別的詞可以形容浪花</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>這是<b>轉化（擬人）</b>：海本來不會「吐」東西，這樣寫讓海像個活人，浪花的畫面馬上浮現出來。</p>
+  </div>
+
+  <h2 class="sect">二、填充題（每題 1 分，共 4 分）</h2>
+
+  <div class="q fill" data-fill="轉化|擬人|轉化（擬人）|擬人法|轉化法">
+    <span class="qtag">填充 1 · 修辭名稱</span>
+    <p class="stem">把東西當成人來寫，讓它會說話、會動作，這種修辭叫做 <input type="text" placeholder="填答案"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>轉化（擬人）</b>。例如「香蕉跟鳳梨在街上跳舞」。</p>
+  </div>
+
+  <div class="q fill" data-fill="頂真|頂針">
+    <span class="qtag">填充 2 · 修辭名稱</span>
+    <p class="stem">前一句的句尾，拿來當作下一句的句首，這種接龍式的修辭叫做 <input type="text" placeholder="填答案"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>頂真</b>。課文「是童話一樣美麗的，美麗的寶島」就是這種寫法。</p>
+  </div>
+
+  <div class="q fill" data-fill="設問|設問法">
+    <span class="qtag">填充 3 · 修辭名稱</span>
+    <p class="stem">明明心裡有答案，卻故意用問句來引起讀者思考，這種修辭叫做 <input type="text" placeholder="填答案"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>設問</b>。課文開頭「你知道這裡是什麼地方嗎？」就是設問。</p>
+  </div>
+
+  <div class="q fill" data-fill="手掌|大手掌">
+    <span class="qtag">填充 4 · 課文填詞</span>
+    <p class="stem">「椰子樹伸著大 <input type="text" placeholder="填答案"> 」——請填入課文中的正確語詞。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>手掌</b>。</p>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="main" id="submitBtn">送出，看結果</button>
+    <button type="button" class="ghost" id="resetBtn">重做一次</button>
+  </div>
+
+  <div class="result" id="result">
+    <p>你的成績</p>
+    <p class="score" id="scoreText">0 / 16</p>
+    <p id="scoreMsg"></p>
+  </div>
+
+  <h2 class="sect">三、問答題（自評，不計分）</h2>
+  <p class="notice">這兩題請先自己寫在下面的框裡（或寫在紙本學習單上），寫完再打開「參考答案與評分規準」對照，
+    自己給自己打 3／2／1 分。老師的紙本評量也會考問答題，但題目不一樣喔。</p>
+
+  <div class="selfq">
+    <h3>問答 1：找出一句「譬喻」</h3>
+    <p>請從〈美麗島〉課文中找出<b>一句使用譬喻</b>的句子抄下來，並說明它是把<b>什麼</b>比喻成<b>什麼</b>。</p>
+    <textarea placeholder="例如：我找到的句子是「…………」，這句是把（　　）比喻成（　　）。"></textarea>
+    <details>
+      <summary>▸ 打開參考答案與評分規準</summary>
+      <p><b>參考答案：</b>「小朋友都像快樂的雲雀一樣的快樂」——把<b>小朋友</b>比喻成<b>雲雀</b>，喻詞是「像」，屬於明喻。<br>
+        （「臺灣是甜蜜的糖的王國」也可以，喻詞是「是」，屬於隱喻。）</p>
+      <ul class="rubric">
+        <li><b>3 分</b>：正確抄出譬喻句，並清楚說出「把 A 比喻成 B」，還能指出喻詞。</li>
+        <li><b>2 分</b>：抄對句子，也說出比喻的兩樣東西，但沒有提到喻詞或說明不完整。</li>
+        <li><b>1 分</b>：抄的句子不是譬喻（例如抄到轉化句），或只抄句子沒有說明。</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="selfq">
+    <h3>問答 2：用「是」寫一句隱喻</h3>
+    <p>仿照「臺灣是甜蜜的糖的王國」的寫法（用「<b>是</b>」當喻詞），為你的<b>學校</b>或<b>教室</b>寫一句話。</p>
+    <textarea placeholder="例如：我們的操場是一片綠色的大海。"></textarea>
+    <details>
+      <summary>▸ 打開參考答案與評分規準</summary>
+      <p><b>參考答案（示例）：</b>我們的圖書館是一座安靜的森林。／教室後面的植物角是一個小小的綠色王國。</p>
+      <ul class="rubric">
+        <li><b>3 分</b>：句子完整通順，確實用「是」當喻詞，且比喻貼切、有畫面。</li>
+        <li><b>2 分</b>：有用「是」造出比喻句，但比喻較普通或句子稍不通順。</li>
+        <li><b>1 分</b>：沒有用「是」當喻詞（寫成「像……一樣」也算沒照題目做），或不是比喻句。</li>
+      </ul>
+    </details>
+  </div>
+
+  <footer>
+    此頁為<b>線上模擬評量</b>，題目與正式紙本評量不同，僅供自主練習，不會記錄任何個人作答資料。<br>
+    正式成績以老師發下的紙本定期評量卷為準。
+  </footer>
+</div>
+
+<script>
+(() => {
+  const norm = s => (s || "").replace(/[\s　]/g, "").replace(/[（）()]/g, "");
+  const choiceQs = [...document.querySelectorAll('.q[data-answer]')];
+  const fillQs = [...document.querySelectorAll('.q[data-fill]')];
+  const total = choiceQs.length + fillQs.length;
+  const result = document.getElementById('result');
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    let correct = 0, blank = 0;
+
+    choiceQs.forEach(q => {
+      const picks = [...q.querySelectorAll('input[type=radio]')];
+      const chosen = picks.findIndex(i => i.checked);
+      const ans = Number(q.dataset.answer);
+      if (chosen < 0) blank++;
+      const ok = chosen === ans;
+      if (ok) correct++;
+      q.classList.add('marked');
+      q.classList.toggle('ok', ok);
+      q.classList.toggle('ng', !ok);
+      q.querySelector('.exp .verdict').textContent = ok ? '✅ 答對了！' : (chosen < 0 ? '⚠️ 沒作答。' : '❌ 再想想。');
+    });
+
+    fillQs.forEach(q => {
+      const input = q.querySelector('input[type=text]');
+      const accepted = q.dataset.fill.split('|').map(norm);
+      const val = norm(input.value);
+      if (!val) blank++;
+      const ok = accepted.includes(val);
+      if (ok) correct++;
+      q.classList.add('marked');
+      q.classList.toggle('ok', ok);
+      q.classList.toggle('ng', !ok);
+      q.querySelector('.exp .verdict').textContent = ok ? '✅ 答對了！' : (val ? '❌ 再想想。' : '⚠️ 沒作答。');
+    });
+
+    document.getElementById('scoreText').textContent = `${correct} / ${total}`;
+    const pct = correct / total;
+    const msg = blank > 0
+      ? `還有 ${blank} 題沒作答，分數僅供參考。每題下方都有解說，看完可以按「重做一次」再練。`
+      : pct === 1 ? '全部答對，太厲害了！可以去挑戰紙本的問答題。'
+      : pct >= 0.8 ? '很不錯！把答錯的那幾題解說看一遍，就更穩了。'
+      : pct >= 0.6 ? '基本觀念有了，建議回去複習「修辭」那幾頁再做一次。'
+      : '先別急，回到「複習素材」把明喻、隱喻、轉化、頂真、設問弄清楚，再回來挑戰。';
+    document.getElementById('scoreMsg').textContent = msg;
+    result.classList.add('show');
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('input[type=radio]').forEach(i => { i.checked = false; });
+    document.querySelectorAll('input[type=text]').forEach(i => { i.value = ''; });
+    document.querySelectorAll('.q').forEach(q => q.classList.remove('marked', 'ok', 'ng'));
+    result.classList.remove('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
