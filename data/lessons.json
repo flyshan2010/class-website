@@ -1,6 +1,6 @@
 [
   {
-    "title": "社會4上 第一單元 家鄉的自然環境",
+    "title": "社會4上 S1-3 氣候、水資源與生活",
     "subject": "社會",
     "status": "進行中",
     "stages": [
@@ -10,14 +10,56 @@
       "學習評量"
     ],
     "date": "",
-    "note": "康軒版四上第一單元，含第1課家鄉在哪裡／第2課家鄉的地形／第3課氣候水資源與生活。2026-07-20 一次實跑完成第一～四段（起始評估/課程教學/差異化指導/學習評量+複習），皆已部署上線。第五段成果回流待實際教學後依課堂與評量表現登記。",
+    "note": "康軒版四上第一單元第3課。內容聚焦氣候讀圖、氣候與生活、四種水資源與保護。⚠️ 2026-07-20 改為 Drive 連結版本，不上 GitHub Pages（GitHub 部署佇列異常卡住逾30分鐘未解）：五個檔案皆為單一自足 HTML，Drive 連結點開後選「下載」或「在瀏覽器開啟」，即為完整可互動網頁（Drive 內建預覽會停用 JS，需下載開啟才能作答互動）。第五段成果回流待實際教學與評量後登記。三課均完成回流後，單元狀態可改為已完成。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1Pb8YYmOnK02udkXYC7C6DLufeBD_DgZ2/view",
+      "pretest": "https://drive.google.com/file/d/1fnqhjS7OrDwTSlWP3bCCTxUgH3GooNQi/view",
+      "site": "https://drive.google.com/file/d/1UHMq554CWItp4484ZRCGBTLHiIixfpf3/view",
+      "differentiated": "https://drive.google.com/file/d/1s3doNzJGg1gihE8BKGH6u01fNscF_4jm/view",
+      "exam": "https://drive.google.com/file/d/1iPnJ1eguNpbQw0JJ62hsFWLvwIZTfrnk/view",
+      "review": "https://drive.google.com/file/d/1vB6grYqPsgAx02wP6lD6sogeKzVn_--g/view"
+    }
+  },
+  {
+    "title": "社會4上 S1-1 家鄉在哪裡",
+    "subject": "社會",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "date": "",
+    "note": "康軒版四上第一單元第1課。單課獨立五段（2026-07-20 重做、改以小節為單位）。內容聚焦地圖種類與四要素、電子地圖。⚠️ 2026-07-20 改為 Drive 連結版本，不上 GitHub Pages（該次 GitHub 部署佇列異常卡住逾30分鐘未解）：五個檔案皆為單一自足 HTML（無外部字型/CDN），Drive 連結點開後選「下載」或「在瀏覽器開啟」，即為完整可互動網頁（Drive 內建預覽會停用 JS，需下載開啟才能作答互動）。第五段成果回流待實際教學與評量後登記。",
     "links": {
       "material": "https://drive.google.com/file/d/1niYzZ846YBv_qZdlIzlaas-ZH-5b7rtF/view",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/review.html"
+      "pretest": "https://drive.google.com/file/d/14EGEZOJZWQ-NVM96luzA296A9GMiSxBz/view",
+      "site": "https://drive.google.com/file/d/1L6gSMgzPRhrTvE_gpbNr1DXCDui-HcZQ/view",
+      "differentiated": "https://drive.google.com/file/d/1KS66aDKK7cBeYdDR0rGZf58lsmUGn8Ky/view",
+      "exam": "https://drive.google.com/file/d/1pBMFqpXsBS0v7kYSPPGJP-MPLbKazbxz/view",
+      "review": "https://drive.google.com/file/d/1uB017j5M8COiQZEMKDrIzjPPR_7SVl7P/view"
+    }
+  },
+  {
+    "title": "社會4上 S1-2 家鄉的地形",
+    "subject": "社會",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "date": "",
+    "note": "康軒版四上第一單元第2課。內容聚焦五大地形特徵與地形與生活的關聯。⚠️ 2026-07-20 改為 Drive 連結版本，不上 GitHub Pages（GitHub 部署佇列異常卡住逾30分鐘未解）：五個檔案皆為單一自足 HTML，Drive 連結點開後選「下載」或「在瀏覽器開啟」，即為完整可互動網頁（Drive 內建預覽會停用 JS，需下載開啟才能作答互動）。第五段成果回流待實際教學與評量後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/19KWgnB7s8ElReTVwchWMF3aNAsCEsoFb/view",
+      "pretest": "https://drive.google.com/file/d/1sV-68eyYudsG4zCNmppRojz05bzBZsSL/view",
+      "site": "https://drive.google.com/file/d/10zw38qJgW3R1QtsW09k2KBRy3jOGWA5Y/view",
+      "differentiated": "https://drive.google.com/file/d/1ESXEpT0npI4m4Eq_sNhQIq_8DyWeo5SA/view",
+      "exam": "https://drive.google.com/file/d/1v8E36J18XoKproq5cZPeumZGMohZJ6OI/view",
+      "review": "https://drive.google.com/file/d/1Um7d5H9xG7cEUC8Dwn2tbF7K8On144vI/view"
     }
   },
   {
@@ -26,15 +68,16 @@
     "status": "進行中",
     "stages": [
       "起始評估",
-      "課程教學"
+      "課程教學",
+      "差異化指導"
     ],
     "date": "",
-    "note": "楊喚〈美麗島〉詩歌。2026-07-19 開單元，第一段起始評估完成。2026-07-20 完成第二段課程教學：互動教學網站（34頁四節：字詞大意/內容理解/形式深究/綜合整理）已部署上線。下一步：第三段差異化指導（依前測結果分A/B/C組）。",
+    "note": "楊喚〈美麗島〉詩歌。2026-07-19 開單元，第一段起始評估完成。2026-07-20 完成第二段課程教學（互動教學網站已部署上線）、第三段差異化指導（A/B/C 三組 docx 教材已上傳 Drive）。下一步：第四段學習評量（單元評量卵）。",
     "links": {
       "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
       "pretest": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/pretest.html",
       "site": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/teach.html",
-      "differentiated": "",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/practice.html",
       "exam": "",
       "review": ""
     }
