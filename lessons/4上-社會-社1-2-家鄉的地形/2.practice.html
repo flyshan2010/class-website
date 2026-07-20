@@ -23,22 +23,22 @@ header p{color:var(--muted);font-size:18px}
 .tabs{display:flex;gap:14px;justify-content:center;margin:28px 0}
 .tab-btn{padding:14px 30px;border-radius:999px;border:3px solid var(--line);background:var(--surface);
   font-size:20px;font-weight:700;cursor:pointer;color:var(--muted)}
-.tab-btn[data-group="A"].is-active{border-color:var(--a);color:var(--a);background:#F8F2FB}
-.tab-btn[data-group="B"].is-active{border-color:var(--b);color:var(--b);background:#EEF4FB}
-.tab-btn[data-group="C"].is-active{border-color:var(--c);color:var(--c);background:#FDF5E6}
+.tab-btn[data-group="challenge"].is-active{border-color:var(--a);color:var(--a);background:#F8F2FB}
+.tab-btn[data-group="advanced"].is-active{border-color:var(--b);color:var(--b);background:#EEF4FB}
+.tab-btn[data-group="basic"].is-active{border-color:var(--c);color:var(--c);background:#FDF5E6}
 .panel{display:none}
 .panel.is-active{display:block}
 .group-head{padding:20px 26px;border-radius:var(--crayon);margin-bottom:22px;color:#fff}
 .group-head h2{margin:0 0 6px;font-size:26px}
 .group-head p{margin:0;font-size:17px;opacity:.95}
-.panel[data-group="A"] .group-head{background:var(--a)}
-.panel[data-group="B"] .group-head{background:var(--b)}
-.panel[data-group="C"] .group-head{background:var(--c)}
+.panel[data-group="challenge"] .group-head{background:var(--a)}
+.panel[data-group="advanced"] .group-head{background:var(--b)}
+.panel[data-group="basic"] .group-head{background:var(--c)}
 .task{background:var(--surface);border:3px solid var(--line);border-radius:var(--crayon);padding:22px 26px;margin-bottom:18px}
 .task h3{margin:0 0 10px;font-size:22px}
-.panel[data-group="A"] .task h3{color:var(--a)}
-.panel[data-group="B"] .task h3{color:var(--b)}
-.panel[data-group="C"] .task h3{color:var(--c)}
+.panel[data-group="challenge"] .task h3{color:var(--a)}
+.panel[data-group="advanced"] .task h3{color:var(--b)}
+.panel[data-group="basic"] .task h3{color:var(--c)}
 .task p,.task li{font-size:18px;margin:6px 0}
 .task ul{padding-left:1.3em}
 .wordbank{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -55,37 +55,48 @@ footer{text-align:center;color:var(--muted);font-size:15px;margin-top:40px}
   <header>
     <p class="eyebrow">社會 4 上 第一單元 · 第 2 課 家鄉的地形 · 差異化指導</p>
     <h1>⛰️ 家鄉的地形 · 分組練習</h1>
-    <p>依前測與課堂表現分成 A／B／C 三組，選擇適合自己的任務</p>
+    <p>依前測與課堂表現分成基礎、進階、挑戰三種任務，選一個適合自己的開始</p>
   </header>
 
   <div class="tabs">
-    <button class="tab-btn is-active" data-group="A">A 組・精熟延伸</button>
-    <button class="tab-btn" data-group="B">B 組・基礎鞏固</button>
-    <button class="tab-btn" data-group="C">C 組・鷹架引導</button>
+    <button class="tab-btn is-active" data-group="basic">基礎題・鷹架引導</button>
+    <button class="tab-btn" data-group="advanced">進階題・基礎鞏固</button>
+    <button class="tab-btn" data-group="challenge">挑戰題・精熟延伸</button>
   </div>
 
-  <section class="panel is-active" data-group="A">
+  <section class="panel is-active" data-group="basic">
     <div class="group-head">
-      <h2>A 組・精熟延伸</h2>
-      <p>已掌握五大地形特徵，挑戰更深入的因果分析</p>
+      <h2>基礎題・鷹架引導</h2>
+      <p>提供詞庫與圖示提示，先建立基本概念再慢慢累積信心</p>
     </div>
     <div class="task">
-      <h3>任務一：因果推理挑戰</h3>
-      <p>比較臺東池上鄉（平原）與臺中和平區（山地），說明兩地的地形差異如何造成不同的產業發展（至少各舉一項產業）。</p>
+      <h3>基礎一：看描述選地形名稱</h3>
+      <p>🌾 地勢低平、平坦廣闊的地形叫做「＿＿＿＿」。</p>
+      <p>⛰️ 高度在 1000 公尺以上、地勢高聳的地形叫做「＿＿＿＿」。</p>
+      <div class="wordbank"><span>平原</span><span>盆地</span><span>台地</span><span>丘陵</span><span>山地</span></div>
+      <div class="hint">提示：可以翻開課本第 20～21 頁的照片對照看看，先找出關鍵字（例如「平坦」「高聳」）。</div>
+      <details class="answer-toggle"><summary>看答案</summary><div class="ans">平原／山地</div></details>
     </div>
     <div class="task">
-      <h3>任務二：小小規劃師</h3>
-      <p>如果要在一塊「地勢起伏大、坡度陡」的土地上，幫居民規劃一種適合的生活方式（作物或活動），你會建議什麼？為什麼不建議蓋大型工廠？</p>
+      <h3>基礎二：地形對地方</h3>
+      <p>請把地形和最適合的活動連起來：</p>
+      <ul>
+        <li>地勢平坦 —— （　興建房屋、種植作物　）</li>
+        <li>地勢起伏大 —— （　開闢茶園、果園　）</li>
+      </ul>
+      <div class="hint">提示：這兩個已經幫你配好了，先讀一遍、練習說出口，再蓋起來自己講一次看看。</div>
     </div>
     <div class="task">
-      <h3>任務三：我的家鄉地形小論述</h3>
-      <p>用 80～120 字，說明你家鄉屬於哪一種地形，這個地形如何影響居民的生活方式（至少舉 1 個具體例子）。</p>
+      <h3>基礎三：認識方式</h3>
+      <p>認識家鄉地形的三種方式是：實地＿＿、空拍＿＿、閱讀＿＿。</p>
+      <div class="wordbank"><span>觀察</span><span>照片</span><span>地圖</span></div>
+      <details class="answer-toggle"><summary>看答案</summary><div class="ans">觀察／照片／地圖</div></details>
     </div>
   </section>
 
-  <section class="panel" data-group="B">
+  <section class="panel" data-group="advanced">
     <div class="group-head">
-      <h2>B 組・基礎鞏固</h2>
+      <h2>進階題・基礎鞏固</h2>
       <p>課文內容大致理解，需要多做對照練習，讓概念更穩固</p>
     </div>
     <div class="task">
@@ -111,33 +122,22 @@ footer{text-align:center;color:var(--muted);font-size:15px;margin-top:40px}
     </div>
   </section>
 
-  <section class="panel" data-group="C">
+  <section class="panel" data-group="challenge">
     <div class="group-head">
-      <h2>C 組・鷹架引導</h2>
-      <p>提供詞庫與圖示提示，先建立基本概念再慢慢累積信心</p>
+      <h2>挑戰題・精熟延伸</h2>
+      <p>已掌握五大地形特徵，挑戰更深入的因果分析</p>
     </div>
     <div class="task">
-      <h3>基礎一：看描述選地形名稱</h3>
-      <p>🌾 地勢低平、平坦廣闊的地形叫做「＿＿＿＿」。</p>
-      <p>⛰️ 高度在 1000 公尺以上、地勢高聳的地形叫做「＿＿＿＿」。</p>
-      <div class="wordbank"><span>平原</span><span>盆地</span><span>台地</span><span>丘陵</span><span>山地</span></div>
-      <div class="hint">提示：可以翻開課本第 20～21 頁的照片對照看看，先找出關鍵字（例如「平坦」「高聳」）。</div>
-      <details class="answer-toggle"><summary>看答案</summary><div class="ans">平原／山地</div></details>
+      <h3>任務一：因果推理挑戰</h3>
+      <p>比較臺東池上鄉（平原）與臺中和平區（山地），說明兩地的地形差異如何造成不同的產業發展（至少各舉一項產業）。</p>
     </div>
     <div class="task">
-      <h3>基礎二：地形對地方</h3>
-      <p>請把地形和最適合的活動連起來：</p>
-      <ul>
-        <li>地勢平坦 —— （　興建房屋、種植作物　）</li>
-        <li>地勢起伏大 —— （　開闢茶園、果園　）</li>
-      </ul>
-      <div class="hint">提示：這兩個已經幫你配好了，先讀一遍、練習說出口，再蓋起來自己講一次看看。</div>
+      <h3>任務二：小小規劃師</h3>
+      <p>如果要在一塊「地勢起伏大、坡度陡」的土地上，幫居民規劃一種適合的生活方式（作物或活動），你會建議什麼？為什麼不建議蓋大型工廠？</p>
     </div>
     <div class="task">
-      <h3>基礎三：認識方式</h3>
-      <p>認識家鄉地形的三種方式是：實地＿＿、空拍＿＿、閱讀＿＿。</p>
-      <div class="wordbank"><span>觀察</span><span>照片</span><span>地圖</span></div>
-      <details class="answer-toggle"><summary>看答案</summary><div class="ans">觀察／照片／地圖</div></details>
+      <h3>任務三：我的家鄉地形小論述</h3>
+      <p>用 80～120 字，說明你家鄉屬於哪一種地形，這個地形如何影響居民的生活方式（至少舉 1 個具體例子）。</p>
     </div>
   </section>
 
