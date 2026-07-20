@@ -1,17 +1,39 @@
 [
   {
+    "title": "社會4上 第一單元 家鄉的自然環境",
+    "subject": "社會",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "date": "",
+    "note": "康軒版四上第一單元，含第1課家鄉在哪裡／第2課家鄉的地形／第3課氣候水資源與生活。2026-07-20 一次實跑完成第一～四段（起始評估/課程教學/差異化指導/學習評量+複習），皆已部署上線。第五段成果回流待實際教學後依課堂與評量表現登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1niYzZ846YBv_qZdlIzlaas-ZH-5b7rtF/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/s1-ziranhuanjing/review.html"
+    }
+  },
+  {
     "title": "國語4上 L01 美麗島",
     "subject": "國語",
     "status": "進行中",
     "stages": [
-      "起始評估"
+      "起始評估",
+      "課程教學"
     ],
     "date": "",
-    "note": "楊喚〈美麗島〉詩歌。2026-07-19 開單元。第一段起始評估已完成：互動前測頁已上線（導入活動、不收個人成績），另備紙本六合一卷供分組使用。下一步：第二段課程教學（互動教學網站）。",
+    "note": "楊喚〈美麗島〉詩歌。2026-07-19 開單元，第一段起始評估完成。2026-07-20 完成第二段課程教學：互動教學網站（34頁四節：字詞大意/內容理解/形式深究/綜合整理）已部署上線。下一步：第三段差異化指導（依前測結果分A/B/C組）。",
     "links": {
       "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
       "pretest": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/pretest.html",
-      "site": "",
+      "site": "https://flyshan2010.github.io/class-website/lessons/l01-meilidao/teach.html",
       "differentiated": "",
       "exam": "",
       "review": ""
