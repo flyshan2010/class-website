@@ -1,7 +1,8 @@
 /* 🚀 教學駕駛艙：教學五段流程的單元入口頁（老師課堂一鍵開）
    資料：data/lessons.json（Notion「🚀 教學單元」勾「顯示」者，無個資）
    五段：起始評估 → 課程教學 → 差異化指導 → 學習評量 → 成果回流（回流在紀錄庫，無連結）
-   排列：主分類＝科目，次排序＝課次代碼（國L1、社1-1…）；狀態改為卡片徽章＋上方篩選 */
+   排列：主分類＝科目，次排序＝課次代碼（國L1、社1-1…）；狀態改為卡片徽章＋上方篩選
+   卡片：標題列只留「課次＋課名＋狀態」，年段・版本・開始日收成一行小字，其下條列內容重點 */
 (async () => {
   await App.init("cockpit");
   const lessons = await App.fetchJSON("data/lessons.json").catch(() => []);
@@ -55,20 +56,29 @@
       : `<p class="meta">尚未有教學連結——用 /lesson-flow 產出後會自動掛上。</p>`;
   };
 
+  /* 內容重點：Notion 多行文字，一行一則；條列呈現，讓老師掃一眼就知道這課要教什麼 */
+  const pointList = pts => (pts && pts.length)
+    ? `<ul class="cockpit-points">${pts.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>`
+    : "";
+
   const card = l => {
     const st = STATUS_META[l.status] || STATUS_META["備課中"];
     const color = SUBJECT_COLOR[l.subject] || "#8395A7";
     const code = codeOf(l);
     // 標題已含課次代碼，前面的代碼徽章就不重複顯示課次以外的字
     const name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
+    // 年段・版本・開始日整併成一行小字，標題列只留課名與狀態
+    const meta = [l.grade, l.version, l.date ? `${App.fmtDateShort(l.date)} 開始` : ""]
+      .filter(Boolean).map(App.esc).join(" ・ ");
     return `
       <div class="card cockpit-card" style="--accent:${color}">
         <div class="cockpit-head">
           ${code ? `<span class="badge" style="background:${color};color:#fff">${App.esc(code)}</span>` : ""}
           <strong class="cockpit-title">${App.esc(name)}</strong>
           <span class="badge" style="${st.style}">${st.icon} ${App.esc(l.status)}</span>
-          ${l.date ? `<span class="meta">${App.esc(App.fmtDateShort(l.date))} 開始</span>` : ""}
         </div>
+        ${meta ? `<p class="meta cockpit-meta">${meta}</p>` : ""}
+        ${pointList(l.points)}
         ${stageChips(l.stages || [])}
         ${linkBtns(l)}
         ${l.note ? `<p class="meta">${App.esc(l.note)}</p>` : ""}

@@ -501,8 +501,12 @@ async function syncLessons() {
     .map(r => ({
       title: r["單元"],
       subject: r["科目"] || "其他",
+      grade: r["年段"] || "",
+      version: r["版本"] || "",
       status: r["狀態"] || "備課中",
       stages: r["已完成階段"] || [],
+      // 內容重點在 Notion 是多行文字，一行一個重點；切成陣列給駕駛艙做條列
+      points: String(r["內容重點"] || "").split("\n").map(s => s.trim()).filter(Boolean),
       date: r["日期"]?.start || "",
       note: r["備註"],
       links: {
