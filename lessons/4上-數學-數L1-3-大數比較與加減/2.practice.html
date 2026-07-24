@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>分組練習｜大數的大小比較與加減 差異化 · 四上數學 1-3</title>
+<style>
+/* ─────────────────────────────────────────────
+   四上數學 1-3〈大數的大小比較與加減〉差異化指導 · 基礎／進階／挑戰三組互動練習頁
+   風格同單元簡報與前測頁（方格紙數學風）
+   離線可用：無外部字型、無 CDN、無網路請求
+   用途：分組上課時投影該組任務；即時回饋型練習做在網頁，
+        逐題計算與書寫仍用紙本 docx（見各組最後一頁的「紙本」提示）
+   不收個人作答資料。
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#F7F9FC; --surface:#FFFFFF; --text:#22323F; --muted:#6B7C8C; --line:#D7E3EE; --grid:#E4EDF6;
+  --accent:#2F6FED; --gc:#2F6FED; --gb:#21A179; --ga:#8B5CF6;
+  --right:#1E9E5A; --wrong:#D64545;
+  --safe-x:88px; --safe-y:40px;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --font-num:"Consolas","SF Mono","Menlo","Courier New",monospace;
+  --r:20px;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#1B2733;color:var(--text);font-family:var(--font-sans)}
+button{font:inherit;color:inherit}
+.deck{position:relative;width:100%;height:100%;overflow:hidden}
+.stage{position:absolute;top:50%;left:50%;width:1600px;height:900px;overflow:hidden;background:var(--paper);transform-origin:center center}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:var(--safe-y) var(--safe-x) 34px;
+  background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:40px 40px,40px 40px;
+  opacity:0;visibility:hidden;transition:opacity 220ms ease}
+.slide.is-active{opacity:1;visibility:visible}
+
+.eyebrow{margin:0 0 8px;font-size:25px;letter-spacing:.14em;color:var(--muted)}
+h1{margin:0;font-size:80px;letter-spacing:.16em;line-height:1.1}
+h2{margin:0 0 6px;font-size:50px;line-height:1.22}
+.lead{font-size:30px;color:var(--muted);margin:14px 0 0}
+.judgement{margin-top:auto;padding-top:16px;font-size:29px;color:var(--accent);font-weight:700}
+
+.layout-title{align-items:center;justify-content:center;text-align:center}
+.hero-badge{font-size:72px;margin:0 0 4px}
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:32px;width:100%}
+.group-card{display:block;padding:26px 24px;border:3px solid var(--line);border-radius:var(--r);
+  background:var(--surface);text-align:left;cursor:pointer;
+  transition:transform 140ms ease,border-color 140ms ease}
+.group-card:hover{transform:translateY(-4px);border-color:var(--gcol)}
+.group-card .gtag{display:inline-block;padding:5px 20px;border-radius:999px;background:var(--gcol);color:#fff;font-size:24px;font-weight:700}
+.group-card h3{margin:14px 0 8px;font-size:33px;color:var(--gcol)}
+.group-card p{margin:0;font-size:24px;line-height:1.5;color:var(--muted)}
+.g-a{--gcol:var(--ga)} .g-b{--gcol:var(--gb)} .g-c{--gcol:var(--gc)}
+
+.qhead{display:flex;align-items:baseline;gap:18px;margin-bottom:4px}
+.qtag{flex:none;padding:5px 20px;border-radius:999px;background:var(--sect,var(--accent));color:#fff;font-size:24px;font-weight:700}
+.qskill{font-size:23px;color:var(--muted)}
+.qstem{font-size:36px;line-height:1.4;margin:8px 0 14px;font-weight:700}
+.intro{font-size:27px;line-height:1.5;margin:0 0 14px;color:var(--muted)}
+
+.pv-wrap{display:flex;justify-content:center;margin:4px 0 12px}
+.pv-table{border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}
+.pv-table th,.pv-table td{width:92px;border:3px solid var(--line);text-align:center;vertical-align:middle}
+.pv-table th{padding:6px 4px;background:var(--sect,var(--accent));color:#fff;font-size:21px;font-weight:700;border-color:var(--sect,var(--accent))}
+.pv-table td{height:74px;font-family:var(--font-num);font-size:44px;font-weight:700}
+.pv-table td.zero{color:var(--muted)}
+.pv-table td.hi{color:var(--accent);background:#DCE9FF}
+
+.reveal-grid{display:grid;gap:16px}
+.reveal-grid.cols-2{grid-template-columns:1fr 1fr}
+.reveal-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.rcard{padding:18px 24px;border:3px solid var(--line);border-radius:var(--r);background:var(--surface);
+  text-align:left;cursor:pointer;transition:transform 140ms ease,border-color 140ms ease}
+.rcard:hover{transform:translateY(-3px);border-color:var(--sect,var(--accent))}
+.rcard.is-open{cursor:default;border-color:var(--sect,var(--accent))}
+.rcard.is-open:hover{transform:none}
+.rcard h3{margin:0 0 8px;font-size:27px;color:var(--sect,var(--accent))}
+.rcard .quote{font-size:30px;line-height:1.45;margin:0;font-family:var(--font-num);font-weight:700}
+.rcard .quote.txt{font-family:var(--font-sans);font-size:24px;font-weight:400}
+.rcard .answer{display:none;margin-top:10px;padding-top:10px;border-top:2px dashed var(--line);font-size:23px;line-height:1.5}
+.rcard.is-open .answer{display:block}
+.rcard .tap{display:block;margin-top:8px;font-size:20px;color:var(--muted)}
+.rcard.is-open .tap{display:none}
+.rcard b{color:var(--sect,var(--accent))}
+
+.qlist{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.qrow{display:flex;align-items:center;gap:18px;padding:12px 22px;border:3px solid var(--line);
+  border-radius:var(--r);background:var(--surface)}
+.qrow .sent{flex:1;font-size:26px;line-height:1.35}
+.qrow .sent .n{font-family:var(--font-num);font-weight:700}
+.qrow .picks{flex:none;display:flex;gap:10px}
+.pick{padding:7px 20px;border:3px solid var(--line);border-radius:14px;background:var(--paper);
+  font-size:23px;cursor:pointer;transition:border-color 140ms ease,background 140ms ease;font-family:var(--font-num)}
+.pick:hover{border-color:var(--sect,var(--accent))}
+.pick.is-right{border-color:var(--right);background:#EDF8F1;color:var(--right);font-weight:700}
+.pick.is-wrong{border-color:var(--wrong);background:#FCEFEF;color:var(--wrong)}
+.qrow .hint{display:none;flex-basis:100%;margin-top:6px;font-size:21px;color:#8A6D3B;font-style:italic}
+.qrow.show-hint{flex-wrap:wrap}
+.qrow.show-hint .hint{display:block}
+
+.keybox{margin:0 0 14px;padding:14px 24px;background:#EEF4FE;border:3px dashed var(--accent);border-radius:16px;
+  font-size:25px;line-height:1.45;font-weight:700}
+.keybox .n{font-family:var(--font-num)}
+
+.task-list{display:grid;gap:11px;margin:0 0 14px;padding:0;list-style:none}
+.task-list li{display:flex;gap:16px;align-items:flex-start;font-size:26px;line-height:1.4}
+.task-list .dot{flex:none;width:36px;height:36px;border-radius:50%;background:var(--sect,var(--accent));color:#fff;
+  display:grid;place-items:center;font-size:20px;font-weight:700}
+.paper-note{margin-top:12px;padding:13px 22px;border:3px solid var(--line);border-radius:14px;background:var(--surface);
+  font-size:23px;line-height:1.45;color:var(--muted)}
+.paper-note b{color:var(--text)}
+
+.sec-a{--sect:var(--ga)} .sec-b{--sect:var(--gb)} .sec-c{--sect:var(--gc)}
+
+.hud{position:absolute;left:0;right:0;bottom:0;height:52px;display:flex;align-items:center;
+  gap:16px;padding:0 var(--safe-x);background:linear-gradient(to top,#00000010,transparent)}
+.hud .pagemeta{font-size:21px;color:var(--muted);margin:0}
+.hud .spacer{flex:1}
+.hud button{padding:5px 18px;border:2px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:21px}
+.hud button:hover{border-color:var(--accent)}
+.progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+</style>
+</head>
+<body>
+<main class="deck" aria-label="大數的大小比較與加減差異化分組練習">
+  <div class="stage" id="stage" tabindex="-1">
+
+    <!-- ══ 1 封面／選組 ══ -->
+    <section class="slide layout-title is-active" data-slide-id="cover">
+      <p class="hero-badge">🔢</p>
+      <p class="eyebrow">第一單元 一億以內的數 · 1-3 · 分組練習</p>
+      <h1>分 組 練 習</h1>
+      <p class="lead">依前測結果，選一個適合的難度，點下去開始</p>
+      <div class="group-grid">
+        <button class="group-card g-c" data-goto="c1">
+          <span class="gtag">基礎題</span>
+          <h3>位數優先比大小</h3>
+          <p>位數不同直接分勝負，位數相同逐位比</p>
+        </button>
+        <button class="group-card g-b" data-goto="b1">
+          <span class="gtag">進階題</span>
+          <h3>兩家族比較＋整萬加減</h3>
+          <p>萬的家族、一的家族分段比；整萬大數直接加減</p>
+        </button>
+        <button class="group-card g-a" data-goto="a1">
+          <span class="gtag">挑戰題</span>
+          <h3>複名數加減＋逆向應用</h3>
+          <p>一的家族進位借位、已知合計反推另一筆</p>
+        </button>
+      </div>
+      <p class="judgement">逐題計算寫在紙本學習單，網頁這裡先把觀念弄懂</p>
+    </section>
+
+    <!-- ══════════ 基礎題 ══════════ -->
+
+    <section class="slide sec-c" data-slide-id="c1" hidden>
+      <div class="qhead"><span class="qtag">基礎題 · 1</span><span class="qskill">位數優先 · 先數一數再比</span></div>
+      <p class="qstem">位數不同時，根本不用比數字，直接比位數</p>
+      <div class="keybox">🔑 位數越多，數字就越大：7 位數一定比 6 位數大，<b>不管後面的數字是多少</b>。<br>位數一樣多，才需要從最高位開始一位一位往下比。</div>
+      <p class="intro" style="text-align:center;margin-top:8px;">甲圖書館全年借閱 <span class="n" style="font-family:var(--font-num);color:var(--text);font-weight:700">6204000</span> 冊（7 位數）；乙圖書館全年借閱 <span class="n" style="font-family:var(--font-num);color:var(--text);font-weight:700">890000</span> 冊（6 位數）→ 甲的借閱冊數比較多，不用比到個位。</p>
+      <p class="pagemeta" style="position:static;margin-top:auto;"></p>
+    </section>
+
+    <section class="slide sec-c" data-slide-id="c2" hidden>
+      <div class="qhead"><span class="qtag">基礎題 · 2</span><span class="qskill">辨識練習 · 哪一個比較大</span></div>
+      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <ul class="qlist">
+        <li class="qrow" data-answer="0" data-hint="3850000 是 7 位數，620000 是 6 位數，位數多的比較大。">
+          <span class="sent">1. <span class="n">3850000</span> 和 <span class="n">620000</span>，哪個比較大？</span>
+          <span class="picks"><button class="pick">3850000</button><button class="pick">620000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="7100000 是 7 位數，890000 是 6 位數，位數多的比較大。">
+          <span class="sent">2. <span class="n">7100000</span> 和 <span class="n">890000</span>，哪個比較大？</span>
+          <span class="picks"><button class="pick">7100000</button><button class="pick">890000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="兩個都是 7 位數，百萬位都是 4，十萬位 2 比 1 大，所以 4260000 比較大。">
+          <span class="sent">3. <span class="n">4260000</span> 和 <span class="n">4190000</span>，哪個比較大？</span>
+          <span class="picks"><button class="pick">4260000</button><button class="pick">4190000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="兩個都是 7 位數，百萬位都是 5，十萬位 3 比 2 大，所以 5308000 比較大。">
+          <span class="sent">4. <span class="n">5308000</span> 和 <span class="n">5298000</span>，哪個比較大？</span>
+          <span class="picks"><button class="pick">5308000</button><button class="pick">5298000</button></span>
+          <span class="hint"></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide sec-c" data-slide-id="c3" hidden>
+      <div class="qhead"><span class="qtag">基礎題 · 3</span><span class="qskill">紙本任務 · 動手比一比</span></div>
+      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <ul class="task-list">
+        <li><span class="dot">1</span><span>完成六組<strong>位數不同</strong>的大數比大小圈選題。</span></li>
+        <li><span class="dot">2</span><span>完成四組<strong>位數相同</strong>、要從最高位逐位比較的填空題。</span></li>
+        <li><span class="dot">3</span><span>把三個大數<strong>由小到大排出順序</strong>，並寫下你先看哪一位。</span></li>
+      </ul>
+      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2a.差異化教材_基礎題需鷹架</b>。<br>學習單每一題都附有位值表，數不清位數時可以先填格子再比。</div>
+      <p class="judgement">先把「位數優先」練熟，比大小就不會再靠猜的</p>
+    </section>
+
+    <!-- ══════════ 進階題 ══════════ -->
+
+    <section class="slide sec-b" data-slide-id="b1" hidden>
+      <div class="qhead"><span class="qtag">進階題 · 1</span><span class="qskill">兩家族分段比較＋整萬加減</span></div>
+      <p class="qstem">位數相同時，先比萬的家族；整萬的大數可以直接把萬家族當一般數字加減</p>
+      <div class="reveal-grid cols-3">
+        <button class="rcard">
+          <p class="quote">5480000　vs　5210000</p>
+          <span class="tap">▸ 點一下看解法</span>
+          <span class="answer">萬的家族 <b>548</b> 比 <b>521</b> 大，5480000 比較大，不用再比一的家族。</span>
+        </button>
+        <button class="rcard">
+          <p class="quote">630 萬 ＋ 210 萬</p>
+          <span class="tap">▸ 點一下看解法</span>
+          <span class="answer">兩個都是整萬，直接加：630＋210＝<b>840</b>（萬），也就是 8400000。</span>
+        </button>
+        <button class="rcard">
+          <p class="quote">950 萬 － 320 萬</p>
+          <span class="tap">▸ 點一下看解法</span>
+          <span class="answer">兩個都是整萬，直接減：950－320＝<b>630</b>（萬），也就是 6300000。</span>
+        </button>
+      </div>
+      <p class="judgement">萬家族能分出勝負就不用比到底；整萬的數，萬家族就是唯一要算的部分</p>
+    </section>
+
+    <section class="slide sec-b" data-slide-id="b2" hidden>
+      <div class="qhead"><span class="qtag">進階題 · 2</span><span class="qskill">家族比較與整萬加減 · 判斷對不對</span></div>
+      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <ul class="qlist">
+        <li class="qrow" data-answer="1" data-hint="萬的家族 736 比 742 小，742 那組（7420000）比較大。">
+          <span class="sent">1. <span class="n">7360000</span> 和 <span class="n">7420000</span>，哪個比較大？</span>
+          <span class="picks"><button class="pick">7360000</button><button class="pick">7420000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="1" data-hint="兩個數萬的家族都是 815，一樣！接著比一的家族：0 比 3000 小，8153000 比較大。">
+          <span class="sent">2. <span class="n">8150000</span> 和 <span class="n">8153000</span>，哪個比較大？</span>
+          <span class="picks"><button class="pick">8150000</button><button class="pick">8153000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="320 萬 ＋ 450 萬 ＝ 770 萬。">
+          <span class="sent">3. 320 萬 ＋ 450 萬 ＝？</span>
+          <span class="picks"><button class="pick">770 萬</button><button class="pick">860 萬</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="900 萬 － 260 萬 ＝ 640 萬。">
+          <span class="sent">4. 900 萬 － 260 萬 ＝？</span>
+          <span class="picks"><button class="pick">640 萬</button><button class="pick">540 萬</button></span>
+          <span class="hint"></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide sec-b" data-slide-id="b3" hidden>
+      <div class="qhead"><span class="qtag">進階題 · 3</span><span class="qskill">紙本任務 · 家族比較與整萬加減</span></div>
+      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <ul class="task-list">
+        <li><span class="dot">1</span><span>完成五組「<strong>萬家族先比、一家族再比</strong>」的比大小題。</span></li>
+        <li><span class="dot">2</span><span>完成四題<strong>整萬大數</strong>的加減直式（把萬家族當一般數字算）。</span></li>
+        <li><span class="dot">3</span><span>應用題：兩座停車場今年的整修經費（整萬）相加、相減各一題。</span></li>
+      </ul>
+      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2b.差異化教材_進階題基礎穩固</b>。</div>
+      <p class="judgement">整萬加減練熟了，下一步就能挑戰「一的家族不是 0」的情況</p>
+    </section>
+
+    <!-- ══════════ 挑戰題 ══════════ -->
+
+    <section class="slide sec-a" data-slide-id="a1" hidden>
+      <div class="qhead"><span class="qtag">挑戰題 · 1</span><span class="qskill">複名數加減進位借位＋逆向應用</span></div>
+      <p class="qstem">一的家族滿一萬要多進位；已知合計和其中一筆，也能反推另一筆</p>
+      <div class="reveal-grid cols-2">
+        <button class="rcard">
+          <p class="quote txt">54300 ＋ 38900 ＝？</p>
+          <span class="tap">▸ 想好了再點一下</span>
+          <span class="answer">拆成 <b>5萬4300</b> ＋ <b>3萬8900</b>：一的家族 4300＋8900＝13200，<b>超過 10000</b> 要再進 1 萬給萬的家族；一的家族剩 3200，萬的家族 5＋3＋1＝9。答案是 <b>93200</b>。</span>
+        </button>
+        <button class="rcard">
+          <p class="quote txt">甲乙合購禮物共花費 186000 元，甲付了 97000 元，乙付了多少元？</p>
+          <span class="tap">▸ 想好了再點一下</span>
+          <span class="answer">186000－97000，拆成 <b>18萬6000</b>－<b>9萬7000</b>：一的家族 6000 不夠減 7000，向萬的家族借 1 萬變 16000－7000＝9000；萬的家族 18－1－9＝8。乙付了 <b>89000</b> 元。</span>
+        </button>
+      </div>
+      <p class="judgement">一的家族算出來超過 10000，別忘了多進 1 萬給萬的家族</p>
+    </section>
+
+    <section class="slide sec-a" data-slide-id="a2" hidden>
+      <div class="qhead"><span class="qtag">挑戰題 · 2</span><span class="qskill">複名數進退位與排序 · 判斷對不對</span></div>
+      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <ul class="qlist">
+        <li class="qrow" data-answer="0" data-hint="一的家族 6200＋7900＝14100，超過 10000 要多進 1 萬給萬的家族：4＋3＋1＝8，一的家族剩 4100。">
+          <span class="sent">1. <span class="n">46200</span> ＋ <span class="n">37900</span> ＝？</span>
+          <span class="picks"><button class="pick">84100</button><button class="pick">74100</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="一的家族 2000 不夠減 8000，向萬的家族借 1 萬變 12000－8000＝4000；萬的家族 15－1－6＝8。">
+          <span class="sent">2. <span class="n">152000</span> － <span class="n">68000</span> ＝？</span>
+          <span class="picks"><button class="pick">84000</button><button class="pick">94000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="萬的家族 750 比 705 大，7500000 比較大。">
+          <span class="sent">3. <span class="n">7500000</span> 和 <span class="n">7050000</span>，哪個比較大？</span>
+          <span class="picks"><button class="pick">7500000</button><button class="pick">7050000</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="一的家族 8500＋4700＝13200，超過 10000 要多進 1 萬：6＋5＋1＝12，一的家族剩 3200。">
+          <span class="sent">4. 園遊會上午收入 68500 元，下午收入 54700 元，共收入多少元？</span>
+          <span class="picks"><button class="pick">123200</button><button class="pick">113200</button></span>
+          <span class="hint"></span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide sec-a" data-slide-id="a3" hidden>
+      <div class="qhead"><span class="qtag">挑戰題 · 3</span><span class="qskill">紙本任務 · 進退位挑戰＋出題給同學</span></div>
+      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <ul class="task-list">
+        <li><span class="dot">1</span><span>完成四題「<strong>一的家族要進位或借位</strong>」的複名數加減直式。</span></li>
+        <li><span class="dot">2</span><span>完成一題<strong>逆向應用</strong>（已知合計和其中一筆，求另一筆）。</span></li>
+        <li><span class="dot">3</span><span><strong>自己出一題</strong>「一的家族要進位」的加法應用題考同學，並在背面寫下正確答案與理由。</span></li>
+      </ul>
+      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2c.差異化教材_挑戰題精熟</b>。<br>第 3 題出好之後跟同組同學交換作答。</div>
+      <p class="judgement">能出題考別人，才代表複名數加減真的精熟</p>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span></p>
+      <span class="spacer"></span>
+      <button data-action="home">⌂ 回選組</button>
+      <button data-action="previous">← 上一頁</button>
+      <button data-action="next">下一頁 →</button>
+      <button data-action="fullscreen">全螢幕</button>
+    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  const render = (next, updateHash = true) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+  const indexOfId = (id) => slides.findIndex((s) => s.dataset.slideId === id);
+
+  document.querySelectorAll('[data-goto]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = indexOfId(btn.dataset.goto);
+      if (target >= 0) render(target);
+    });
+  });
+
+  document.querySelectorAll('.rcard').forEach((card) => {
+    card.addEventListener('click', () => card.classList.add('is-open'));
+  });
+
+  document.querySelectorAll('.qrow').forEach((row) => {
+    const answer = Number(row.dataset.answer);
+    const picks = [...row.querySelectorAll('.pick')];
+    const hint = row.querySelector('.hint');
+    if (hint) hint.textContent = `💡 小提示：${row.dataset.hint}`;
+    picks.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        if (row.classList.contains('is-done')) return;
+        if (i === answer) {
+          btn.classList.add('is-right');
+          picks.forEach((b) => b.disabled = true);
+          row.classList.add('is-done');
+          row.classList.remove('show-hint');
+        } else {
+          btn.classList.add('is-wrong');
+          row.classList.add('show-hint');
+        }
+      });
+    });
+  });
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="home"]')?.addEventListener('click', () => render(0));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
+  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
+</body>
+</html>

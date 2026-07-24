@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
+  <title>大數的大小比較與加減｜四上數學 1-3</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="deck" aria-label="大數的大小比較與加減教學簡報">
+    <div class="stage" id="stage" tabindex="-1">
+
+      <!-- ══ 1 封面 ══ -->
+      <section class="slide layout-title is-active" data-slide-id="cover" aria-labelledby="t01">
+        <p class="eyebrow">第一單元 一億以內的數 · 1-3</p>
+        <h1 id="t01">大數比大小・大數怎麼加減</h1>
+        <p class="lead">翰林版　｜　數學四年級上學期　｜　建議 3 節</p>
+        <p class="judgement">位數不同直接看位數；位數相同就拆成萬的家族、一的家族一段一段比</p>
+        <p class="pagemeta">封面 · 1 / 16</p>
+      </section>
+
+      <!-- ══ 2 節次選單 ══ -->
+      <section class="slide" data-slide-id="menu" aria-labelledby="t02" hidden>
+        <p class="eyebrow">課程地圖</p>
+        <h2 id="t02">這一節，我們走六站</h2>
+        <div class="menu-grid slide-content" style="grid-template-columns:repeat(3, minmax(0,1fr));">
+          <a class="menu-card" href="#s1-a" style="--mc: var(--l1)">
+            <span class="mc-tag">第 1 站</span>
+            <h3>數感比大小</h3>
+            <p>位數是第一把尺，位數不同先別急著看數字</p>
+          </a>
+          <a class="menu-card" href="#s2-a" style="--mc: var(--l2)">
+            <span class="mc-tag">第 2 站</span>
+            <h3>兩家族分段比較</h3>
+            <p>萬的家族先比，同了才比一的家族</p>
+          </a>
+          <a class="menu-card" href="#s3-a" style="--mc: var(--l3)">
+            <span class="mc-tag">第 3 站</span>
+            <h3>大數排序挑戰</h3>
+            <p>不只兩個數，四個數怎麼一次排好</p>
+          </a>
+          <a class="menu-card" href="#s4-a" style="--mc: var(--l4)">
+            <span class="mc-tag">第 4 站</span>
+            <h3>五位數加減暖身</h3>
+            <p>複習舊經驗：進位與借位</p>
+          </a>
+          <a class="menu-card" href="#s5-a" style="--mc: var(--l5)">
+            <span class="mc-tag">第 5 站</span>
+            <h3>大數加減兩階段</h3>
+            <p>先算萬的家族，再兩個家族合起來對齊算</p>
+          </a>
+          <a class="menu-card" href="#s6-a" style="--mc: var(--l1)">
+            <span class="mc-tag">第 6 站</span>
+            <h3>生活應用＋地雷</h3>
+            <p>套進真實情境，順便盤點常見錯誤</p>
+          </a>
+        </div>
+        <p class="pagemeta">課程地圖 · 2 / 16</p>
+      </section>
+
+      <!-- ══ 3 站1-a 位數優先 ══ -->
+      <section class="slide sec-l1" data-slide-id="s1-a" aria-labelledby="t03" hidden>
+        <p class="eyebrow">第 1 站 · 數感比大小</p>
+        <h2 id="t03">桃園機場和高雄機場，去年出境人次哪個比較多？</h2>
+        <div class="comparison-grid slide-content">
+          <div class="panel panel-accent">
+            <h3>桃園機場</h3>
+            <p class="big">3842600</p>
+            <p class="note">數一數：<strong>7 位數</strong></p>
+          </div>
+          <div class="panel panel-accent">
+            <h3>高雄機場</h3>
+            <p class="big">612300</p>
+            <p class="note">數一數：<strong>6 位數</strong></p>
+          </div>
+        </div>
+        <p class="fragment readout" style="margin-top:6px;">7 位數一定比 6 位數大，不用逐位比，桃園機場出境人次比較多</p>
+        <p class="judgement">位數不同時，位數多的那個數就比較大</p>
+        <p class="pagemeta">第 1 站 · 3 / 16</p>
+      </section>
+
+      <!-- ══ 4 站1-b 位數相同逐位比 ══ -->
+      <section class="slide sec-l1" data-slide-id="s1-b" aria-labelledby="t04" hidden>
+        <p class="eyebrow">第 1 站 · 數感比大小</p>
+        <h2 id="t04">兩座水庫的蓄水量都是 7 位數，怎麼比？</h2>
+        <div class="slide-content">
+          <div class="comparison-grid" style="height:auto;">
+            <div class="panel">
+              <h3 style="color:var(--text);font-family:var(--font-num);">2150000</h3>
+            </div>
+            <div class="panel">
+              <h3 style="color:var(--text);font-family:var(--font-num);">2149000</h3>
+            </div>
+          </div>
+          <p class="fragment note" style="margin-top:14px;">位數一樣多，從最高位開始一位一位比：百萬位都是 2，十萬位都是 1，<strong>萬位 5 比 4 大</strong>，後面不用再比了。</p>
+          <p class="fragment readout" style="margin-top:10px;">2150000 比較大</p>
+        </div>
+        <p class="judgement">位數相同時，從最高位往低位比，找到第一個不同的位就分出勝負</p>
+        <p class="pagemeta">第 1 站 · 4 / 16</p>
+      </section>
+
+      <!-- ══ 5 站2-a 兩家族比較：不用比到底 ══ -->
+      <section class="slide sec-l2" data-slide-id="s2-a" aria-labelledby="t05" hidden>
+        <p class="eyebrow">第 2 站 · 兩家族分段比較</p>
+        <h2 id="t05">兩個募資專案，哪個達成金額比較高？</h2>
+        <div class="slide-content">
+          <div class="pv-wrap fragment">
+            <table class="pv-table">
+              <thead>
+                <tr><th colspan="3" class="fam-wan">萬的家族</th><th colspan="4" class="fam-one">一的家族</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fam-wan hi">5</td><td class="fam-wan hi">2</td><td class="fam-wan hi">3</td><td class="fam-one">6</td><td class="fam-one">0</td><td class="fam-one">0</td><td class="fam-one">0</td></tr>
+                <tr><td class="fam-wan hi">5</td><td class="fam-wan hi">1</td><td class="fam-wan hi">9</td><td class="fam-one">8</td><td class="fam-one">7</td><td class="fam-one">0</td><td class="fam-one">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="fragment readout" style="margin-top:8px;">甲專案 5236000　乙專案 5198700</p>
+          <p class="fragment note" style="margin-top:8px;">先比萬的家族：<strong>523 &gt; 519</strong>，甲已經比較大了——後面一的家族根本不用看！</p>
+        </div>
+        <p class="judgement">先比萬的家族，只要能分出大小，一的家族連看都不用看</p>
+        <p class="pagemeta">第 2 站 · 5 / 16</p>
+      </section>
+
+      <!-- ══ 6 站2-b 萬家族相同時 ══ -->
+      <section class="slide sec-l2" data-slide-id="s2-b" aria-labelledby="t06" hidden>
+        <p class="eyebrow">第 2 站 · 兩家族分段比較</p>
+        <h2 id="t06">兩家網路商店本月營業額，萬的家族一樣，怎麼辦？</h2>
+        <div class="slide-content">
+          <div class="pv-wrap">
+            <table class="pv-table">
+              <thead>
+                <tr><th colspan="3" class="fam-wan">萬的家族</th><th colspan="4" class="fam-one">一的家族</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fam-wan">6</td><td class="fam-wan">4</td><td class="fam-wan">8</td><td class="fam-one hi">3</td><td class="fam-one hi">0</td><td class="fam-one hi">0</td><td class="fam-one hi">0</td></tr>
+                <tr><td class="fam-wan">6</td><td class="fam-wan">4</td><td class="fam-wan">8</td><td class="fam-one hi">4</td><td class="fam-one hi">2</td><td class="fam-one hi">0</td><td class="fam-one hi">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="fragment readout" style="margin-top:8px;">丙店 6483000　丁店 6484200</p>
+          <div class="fragment callout small" style="margin-top:10px;">
+            萬的家族都是 <span class="mark">648</span>，一樣！接著比一的家族：<span class="mark">3000 &lt; 4200</span>，所以丁店營業額比較高。
+          </div>
+        </div>
+        <p class="judgement">萬的家族相同時，才需要接著比一的家族</p>
+        <p class="pagemeta">第 2 站 · 6 / 16</p>
+      </section>
+
+      <!-- ══ 7 站3-a 四個數排序 ══ -->
+      <section class="slide sec-l3" data-slide-id="s3-a" aria-labelledby="t07" hidden>
+        <p class="eyebrow">第 3 站 · 大數排序挑戰</p>
+        <h2 id="t07">園遊會四個社團的募款金額，由多到少怎麼排？</h2>
+        <div class="slide-content">
+          <table class="grid">
+            <thead><tr><th>社團</th><th>募款金額</th><th>拆成兩家族</th></tr></thead>
+            <tbody>
+              <tr><td>棋藝社</td><td class="fragment" style="font-family:var(--font-num);">8800009</td><td class="fragment"><span class="cue">880 萬 9</span></td></tr>
+              <tr><td>合唱團</td><td class="fragment" style="font-family:var(--font-num);">9900004</td><td class="fragment"><span class="cue">990 萬 4</span></td></tr>
+              <tr class="fragment is-focus"><td>手作社</td><td style="font-family:var(--font-num);">10050080</td><td><span class="cue">1005 萬 80</span></td></tr>
+              <tr class="fragment is-focus"><td>科學社</td><td style="font-family:var(--font-num);">10056000</td><td><span class="cue">1005 萬 6000</span></td></tr>
+            </tbody>
+          </table>
+          <p class="fragment note" style="margin-top:12px;">手作社和科學社都是 8 位數、萬的家族都是 1005——要接著比一的家族：<strong>80 &lt; 6000</strong>，科學社比較多。</p>
+          <p class="fragment readout" style="margin-top:8px;">完整排序：科學社 &gt; 手作社 &gt; 合唱團 &gt; 棋藝社</p>
+        </div>
+        <p class="judgement">位數多的先排前面；位數相同再用萬／一家族逐一比出完整順序</p>
+        <p class="pagemeta">第 3 站 · 7 / 16</p>
+      </section>
+
+      <!-- ══ 8 站3-b 排序常見錯誤 ══ -->
+      <section class="slide sec-l3" data-slide-id="s3-b" aria-labelledby="t08" hidden>
+        <p class="eyebrow">第 3 站 · 大數排序挑戰</p>
+        <h2 id="t08">排序時最容易犯的錯，是哪一種？</h2>
+        <div class="comparison-grid slide-content">
+          <div class="panel panel-wrong">
+            <h3>只兩兩比較</h3>
+            <p style="font-size:25px;line-height:1.55;">只比較棋藝社和合唱團誰大、手作社和科學社誰大，就直接寫答案——但四個數字沒有真正排在同一條線上比較，容易漏掉「手作社／科學社其實比另外兩個都大」。</p>
+          </div>
+          <div class="panel panel-right">
+            <h3>先分組再排序</h3>
+            <p style="font-size:25px;line-height:1.55;">先用位數把數字分成「7 位數組」和「8 位數組」，組內再用萬／一家族排出順序，最後把兩組接起來，才是完整排序。</p>
+          </div>
+        </div>
+        <p class="judgement">超過兩個數要排序時，先分位數群組，再組內細比，才不會漏比</p>
+        <p class="pagemeta">第 3 站 · 8 / 16</p>
+      </section>
+
+      <!-- ══ 9 站4-a 五位數加法暖身 ══ -->
+      <section class="slide sec-l4" data-slide-id="s4-a" aria-labelledby="t09" hidden>
+        <p class="eyebrow">第 4 站 · 五位數加減暖身</p>
+        <h2 id="t09">五位數加法，跟四位數的規則一樣：滿十就進位</h2>
+        <div class="slide-content">
+          <p class="callout">園遊會第一天收入 52681 元，第二天收入 29457 元，兩天一共收入多少元？</p>
+          <div class="fragment" style="margin-top:18px;display:flex;justify-content:center;">
+            <span class="vert">  52681
++ 29457
+<span class="rule"></span>  82138</span>
+          </div>
+          <p class="fragment note" style="margin-top:12px;">個位 1＋7＝8；十位 8＋5＝13，寫 3 進 1；百位 6＋4＋1＝11，寫 1 進 1；千位 2＋9＋1＝12，寫 2 進 1；萬位 5＋2＋1＝8。</p>
+        </div>
+        <p class="judgement">五位數加法：從個位算起，滿十就往左進 1，跟四位數完全同一套規則</p>
+        <p class="pagemeta">第 4 站 · 9 / 16</p>
+      </section>
+
+      <!-- ══ 10 站4-b 五位數減法暖身 ══ -->
+      <section class="slide sec-l4" data-slide-id="s4-b" aria-labelledby="t10" hidden>
+        <p class="eyebrow">第 4 站 · 五位數加減暖身</p>
+        <h2 id="t10">五位數減法，不夠減就向左邊借 1</h2>
+        <div class="slide-content">
+          <p class="callout">露營區兩梯次遊客人數，第一梯 61024 人，第二梯 38756 人，第一梯比第二梯多多少人？</p>
+          <div class="fragment" style="margin-top:18px;display:flex;justify-content:center;">
+            <span class="vert">  61024
+− 38756
+<span class="rule"></span>  22268</span>
+          </div>
+          <p class="fragment note" style="margin-top:12px;">個位 4 不夠減 6，向十位借 1 變 14－6＝8；百位借完只剩 0，要再向千位借；千位、萬位依序借下去，最後算出 22268。</p>
+        </div>
+        <p class="judgement">不夠減就向左邊借 1（＝10 個下一位），借完要記得那一位少了 1</p>
+        <p class="pagemeta">第 4 站 · 10 / 16</p>
+      </section>
+
+      <!-- ══ 11 站5-a 鷹架①萬家族單獨算 ══ -->
+      <section class="slide sec-l5" data-slide-id="s5-a" aria-labelledby="t11" hidden>
+        <p class="eyebrow">第 5 站 · 大數加減兩階段 · 鷹架①</p>
+        <h2 id="t11">兩座林場的造林面積都是整萬，直接把「萬」當單位加</h2>
+        <div class="slide-content">
+          <p class="callout">東林場今年造林 4270000 平方公尺，西林場造林 3680000 平方公尺，一共造林多少平方公尺？</p>
+          <div class="fragment" style="margin-top:18px;display:flex;justify-content:center;">
+            <span class="vert">  427
++ 368
+<span class="rule"></span>  795<span style="font-size:26px;"> （萬）</span></span>
+          </div>
+          <p class="fragment readout" style="margin-top:14px;">427 萬 ＋ 368 萬 ＝ 795 萬，也就是 7950000 平方公尺</p>
+          <p class="fragment note" style="margin-top:10px;">兩個數都剛好是整萬（一的家族全是 0），可以先只把「萬的家族」當成一般數字直接加，最後補回萬的家族的 4 個 0。</p>
+        </div>
+        <p class="judgement">整萬的大數加減，把萬的家族單獨拿出來算，跟平常直式加減一樣</p>
+        <p class="pagemeta">第 5 站 · 11 / 16</p>
+      </section>
+
+      <!-- ══ 12 站5-b 鷹架②兩家族合併對齊 ══ -->
+      <section class="slide sec-l5" data-slide-id="s5-b" aria-labelledby="t12" hidden>
+        <p class="eyebrow">第 5 站 · 大數加減兩階段 · 鷹架②</p>
+        <h2 id="t12">如果一的家族不是 0，兩個家族要「分開算、對齊寫」</h2>
+        <div class="slide-content">
+          <p class="callout">網路募款平台上，作家募得 63200 元，畫家募得 72500 元，兩人合計募得多少元？</p>
+          <div class="fragment" style="margin-top:8px;">
+            <p class="readout" style="font-size:28px;margin:0;">63200 想成 <span class="mark">6 萬 3200</span>　　72500 想成 <span class="mark">7 萬 2500</span></p>
+          </div>
+          <div class="fragment" style="margin-top:8px;display:flex;justify-content:center;gap:40px;">
+            <span class="vert" style="font-size:32px;padding:10px 22px;">萬　　一
+  6　3200
++ 7　2500
+<span class="rule"></span> 13　5700</span>
+          </div>
+          <p class="fragment readout" style="margin-top:8px;font-size:26px;">萬的家族 6＋7＝13；一的家族 3200＋2500＝5700（沒有超過 10000，不用再進位）→ 合計 135700 元</p>
+        </div>
+        <p class="judgement">萬的家族和一的家族「各自對齊、各自相加」，一的家族滿一萬才要進位給萬的家族</p>
+        <p class="pagemeta">第 5 站 · 12 / 16</p>
+      </section>
+
+      <!-- ══ 13 站5-c 減法版本 ══ -->
+      <section class="slide sec-l5" data-slide-id="s5-c" aria-labelledby="t13" hidden>
+        <p class="eyebrow">第 5 站 · 大數加減兩階段 · 減法版</p>
+        <h2 id="t13">相差多少？減法也是兩個家族分開對齊，不夠減就向萬家族借</h2>
+        <div class="slide-content">
+          <p class="callout" style="margin-bottom:6px;font-size:26px;">園遊會甲場銷售券款 615000 元，乙場銷售券款 428000 元，甲場比乙場多賣多少元？</p>
+          <div class="fragment" style="margin-top:6px;">
+            <p class="readout" style="font-size:25px;margin:0;">615000 想成 <span class="mark">61 萬 5000</span>　　428000 想成 <span class="mark">42 萬 8000</span></p>
+          </div>
+          <div class="fragment" style="margin-top:6px;display:flex;justify-content:center;">
+            <span class="vert" style="font-size:29px;padding:8px 22px;">萬　　　一
+  61　　5000
+− 42　　8000
+<span class="rule"></span> 18　　7000</span>
+          </div>
+          <p class="fragment note" style="margin-top:6px;font-size:24px;line-height:1.3;">一的家族 5000 不夠減 8000，向萬家族借 1 萬變 15000－8000＝7000；萬家族記得扣掉借走的 1：61－1－42＝18。</p>
+          <p class="fragment readout" style="margin-top:4px;font-size:25px;">甲場比乙場多賣 187000 元</p>
+        </div>
+        <p class="judgement">一的家族不夠減，就向萬的家族借 1 萬（＝10000），萬的家族別忘了扣掉借出去的 1</p>
+        <p class="pagemeta">第 5 站 · 13 / 16</p>
+      </section>
+
+      <!-- ══ 14 站6-a 生活應用 ══ -->
+      <section class="slide sec-l1" data-slide-id="s6-a" aria-labelledby="t14" hidden>
+        <p class="eyebrow">第 6 站 · 生活應用＋地雷</p>
+        <h2 id="t14">茶園春茶、冬茶的產量，套進今天學的方法算算看</h2>
+        <div class="slide-content">
+          <p class="callout">某茶園春茶產量 2860000 台斤，冬茶產量 1950000 台斤。①全年共產量多少台斤？②春茶比冬茶多產多少台斤？</p>
+          <div class="fragment" style="margin-top:14px;display:flex;justify-content:center;gap:60px;">
+            <span class="vert" style="font-size:36px;">286
++195
+<span class="rule"></span>481<span style="font-size:22px;">（萬）</span></span>
+            <span class="vert" style="font-size:36px;">286
+−195
+<span class="rule"></span> 91<span style="font-size:22px;">（萬）</span></span>
+          </div>
+          <p class="fragment readout" style="margin-top:14px;">全年共產量 4810000 台斤；春茶比冬茶多產 910000 台斤</p>
+        </div>
+        <p class="judgement">兩個數都是整萬時，把萬的家族當一般數字加減，最快</p>
+        <p class="pagemeta">第 6 站 · 14 / 16</p>
+      </section>
+
+      <!-- ══ 15 站6-b 易錯地雷總整理 ══ -->
+      <section class="slide sec-l1" data-slide-id="s6-b" aria-labelledby="t15" hidden>
+        <p class="eyebrow">第 6 站 · 生活應用＋地雷</p>
+        <h2 id="t15">這一節最容易踩的 5 個地雷</h2>
+        <div class="steps slide-content" style="justify-content:center;gap:8px;">
+          <div class="step" style="padding:8px 26px;"><span class="step-no" style="width:38px;height:38px;font-size:21px;">1</span><div class="step-body"><strong style="font-size:24px;">位數不同卻只看「感覺」</strong><p style="font-size:24px;margin:2px 0 0;">先數位數，位數多的才可能較大。</p></div></div>
+          <div class="step fragment" style="padding:8px 26px;"><span class="step-no" style="width:38px;height:38px;font-size:21px;">2</span><div class="step-body"><strong style="font-size:24px;">萬家族相同就停下來</strong><p style="font-size:24px;margin:2px 0 0;">相同要接著比一家族，不能判定相等。</p></div></div>
+          <div class="step fragment" style="padding:8px 26px;"><span class="step-no" style="width:38px;height:38px;font-size:21px;">3</span><div class="step-body"><strong style="font-size:24px;">一家族進位忘記給萬家族</strong><p style="font-size:24px;margin:2px 0 0;">滿一萬（≥10000）要多進 1 個萬。</p></div></div>
+          <div class="step fragment" style="padding:8px 26px;"><span class="step-no" style="width:38px;height:38px;font-size:21px;">4</span><div class="step-body"><strong style="font-size:24px;">直式借位漏了一位</strong><p style="font-size:24px;margin:2px 0 0;">借十位卻忘記百位也要少 1。</p></div></div>
+          <div class="step fragment" style="padding:8px 26px;"><span class="step-no" style="width:38px;height:38px;font-size:21px;">5</span><div class="step-body"><strong style="font-size:24px;">四個數排序只比一半</strong><p style="font-size:24px;margin:2px 0 0;">要兩兩比過，或先分位數群組再比。</p></div></div>
+        </div>
+        <p class="judgement">這 5 個地雷，練習題會一一遇到，遇到先回頭看這一頁</p>
+        <p class="pagemeta">第 6 站 · 15 / 16</p>
+      </section>
+
+      <!-- ══ 16 總結 ══ -->
+      <section class="slide layout-statement" data-slide-id="wrap" aria-labelledby="t16" hidden>
+        <p class="eyebrow">這一節的重點</p>
+        <h2 id="t16">大數比大小、大數加減，記住三件事</h2>
+        <div class="steps slide-content" style="justify-content:flex-start;">
+          <div class="step">
+            <span class="step-no">1</span>
+            <div class="step-body"><strong>比大小先看位數</strong><p>位數不同直接分勝負；位數相同用萬／一家族分段比，比較快。</p></div>
+          </div>
+          <div class="step">
+            <span class="step-no">2</span>
+            <div class="step-body"><strong>大數加減拆兩家族</strong><p>萬的家族、一的家族各自對齊相加減，比死記一長串數字更不容易出錯。</p></div>
+          </div>
+          <div class="step">
+            <span class="step-no">3</span>
+            <div class="step-body"><strong>進退位別偷懶</strong><p>一的家族滿萬要進位給萬的家族；不夠減就要向萬的家族借 1 萬。</p></div>
+          </div>
+        </div>
+        <p class="judgement">下一節開始練習，先從基礎題暖身，再挑戰進階與挑戰題</p>
+        <p class="pagemeta">總結 · 16 / 16</p>
+      </section>
+
+    </div>
+  </main>
+
+  <nav class="controls" aria-label="簡報控制">
+    <button type="button" data-action="previous" aria-label="上一步">←</button>
+    <p class="status" aria-live="polite"><span data-current>1</span> / <span data-total>16</span><span class="step-status" data-step></span></p>
+    <button type="button" data-action="next" aria-label="下一步">→</button>
+    <button type="button" data-action="fullscreen" aria-label="切換全螢幕">⛶</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><span data-progress></span></div>
+
+  <script src="slides.js"></script>
+</body>
+</html>
