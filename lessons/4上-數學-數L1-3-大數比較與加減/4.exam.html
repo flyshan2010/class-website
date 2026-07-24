@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>線上模擬評量｜大數的大小比較與加減 · 數學四上 1-3</title>
+<style>
+/* ─────────────────────────────────────────────
+   四上數學 1-3〈大數的大小比較與加減〉線上模擬評量（平行題本）
+   ⚠️ 重要：本頁題目與紙本定期評量【完全不同】，只涵蓋相同範圍。
+      班網為公開頁面，正式計分仍以紙本卷為準，網頁版供學生自主練習與課前暖身。
+      本頁例題也與 1.teach / 2.practice / 3.review 三頁的數字全數不重複。
+   離線可用：無外部字型、無 CDN、無網路請求；不收個人作答資料。
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#F7F9FC; --surface:#FFFFFF; --text:#22323F; --muted:#6B7C8C; --line:#D7E3EE;
+  --accent:#2F6FED; --right:#1E9E5A; --wrong:#D64545;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --font-num:"Consolas","SF Mono","Menlo","Courier New",monospace;
+  --r:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--font-sans);line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:40px 28px 90px}
+header{text-align:center;margin-bottom:26px}
+header .eyebrow{color:var(--muted);font-size:18px;letter-spacing:.1em}
+header h1{font-size:40px;margin:8px 0}
+header p{color:var(--muted);font-size:17px}
+.notice{max-width:700px;margin:14px auto 0;padding:12px 18px;background:#EEF4FE;border:2px dashed var(--accent);border-radius:14px;font-size:15px;color:#1B4B9E;text-align:left}
+h2.sect{font-size:26px;margin:38px 0 14px;padding-left:14px;border-left:8px solid var(--accent)}
+.q{background:var(--surface);border:3px solid var(--line);border-radius:var(--r);padding:22px 26px;margin-bottom:18px}
+.q .qtag{display:inline-block;padding:4px 16px;border-radius:999px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;margin-bottom:10px}
+.q .stem{font-size:20px;font-weight:700;margin:0 0 14px}
+.q .stem .n{font-family:var(--font-num);font-size:22px}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 18px;border:2px solid var(--line);border-radius:16px;cursor:pointer;font-size:17px}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin-top:5px}
+.opt .n{font-family:var(--font-num);font-size:19px;font-weight:700}
+.fill input[type=text]{font:inherit;font-size:19px;padding:10px 16px;border:2px solid var(--line);border-radius:14px;width:250px;background:#FBFDFF}
+.fill input[type=text]:focus{outline:none;border-color:var(--accent)}
+.exp{display:none;margin-top:14px;padding:12px 16px;border-radius:14px;background:#EFF3F7;font-size:16px;color:#44586B}
+.exp .n{font-family:var(--font-num);font-weight:700}
+.q.marked .exp{display:block}
+.q.ok{border-color:var(--right)}
+.q.ng{border-color:var(--wrong)}
+.verdict{font-weight:700;margin-right:8px}
+.q.ok .verdict{color:var(--right)}
+.q.ng .verdict{color:var(--wrong)}
+.selfq{background:#F4F8FF;border:3px dashed var(--accent);border-radius:var(--r);padding:22px 26px;margin-bottom:18px}
+.selfq h3{margin:6px 0 10px;font-size:21px}
+.selfq textarea{font:inherit;font-size:17px;width:100%;min-height:96px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;resize:vertical}
+.selfq details{margin-top:12px;font-size:16px}
+.selfq summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.selfq .rubric{margin:10px 0 0;padding-left:22px;color:#44586B}
+.actions{text-align:center;margin:34px 0 10px}
+button.main{font:inherit;font-size:21px;font-weight:800;padding:14px 44px;border:none;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+button.main:hover{filter:brightness(1.06)}
+button.ghost{font:inherit;font-size:17px;padding:10px 26px;border:2px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);cursor:pointer;margin-left:10px}
+.result{display:none;text-align:center;margin-top:8px;padding:24px;background:var(--surface);border:3px solid var(--accent);border-radius:var(--r)}
+.result.show{display:block}
+.result .score{font-size:52px;font-weight:800;color:var(--accent);margin:6px 0}
+footer{margin-top:44px;text-align:center;color:var(--muted);font-size:15px;line-height:1.8}
+@media print{.actions,.notice{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">數學四上 · 第一單元 一億以內的數 · 數L1-3</p>
+    <h1>💯 大數的大小比較與加減 · 線上模擬評量</h1>
+    <p>選擇題 12 題＋填充題 4 題（自動批改），另有 2 題問答自評</p>
+    <p class="notice">📌 <b>這份是「模擬」評量，不是正式考卷。</b>題目和老師的紙本定期評量<b>完全不一樣</b>，
+      但考的範圍相同（位數優先比大小、萬與一的家族分段比較、整萬與複名數大數加減、化聚應用）。寫完按「送出」就會看到分數和解說，可以重複練習。</p>
+  </header>
+
+  <h2 class="sect">一、選擇題（每題 1 分，共 12 分）</h2>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 1 題 · 位數優先</span>
+    <p class="stem"><span class="n">6850000</span> 和 <span class="n">940000</span>，哪一個比較大？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q1"><span class="n">6850000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span class="n">940000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span>一樣大</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span>無法判斷</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span><span class="n">6850000</span> 是 <b>7 位數</b>，<span class="n">940000</span> 是 <b>6 位數</b>，位數多的直接比較大，不用比到個位。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 2 題 · 位數優先</span>
+    <p class="stem"><span class="n">3260000</span> 和 <span class="n">3190000</span>，哪一個比較大？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q2"><span class="n">3260000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span class="n">3190000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span>一樣大</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span>無法判斷</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>兩個都是 7 位數，百萬位都是 3，十萬位 <b>2 比 1 大</b>，所以 <span class="n">3260000</span> 比較大。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 3 題 · 兩家族比較</span>
+    <p class="stem"><span class="n">51840000</span> 和 <span class="n">51620000</span>，哪一個比較大？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q3"><span class="n">51840000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span class="n">51620000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span>一樣大</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span>無法判斷</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>萬的家族 <span class="n">5184</span> 比 <span class="n">5162</span> 大，<span class="n">51840000</span> 比較大，一的家族不用比。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 4 題 · 兩家族比較</span>
+    <p class="stem"><span class="n">39270000</span> 和 <span class="n">39278000</span>，哪一個比較大？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q4"><span class="n">39270000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span class="n">39278000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>一樣大</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>無法判斷</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>萬的家族都是 <span class="n">3927</span>，一樣！接著比一的家族：<span class="n">0</span> 比 <span class="n">8000</span> 小，所以 <span class="n">39278000</span> 比較大。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 5 題 · 判斷策略</span>
+    <p class="stem"><span class="n">87600000</span> 和 <span class="n">65900000</span> 都是 8 位數，要判斷誰大，最快的方法是？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q5"><span>比位數</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>比萬的家族</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>比個位數字</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>無法判斷</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>兩個數<b>位數已經相同</b>，比位數沒有用；應該先比<b>萬的家族</b>（876 比 659 大），一次就能分出勝負。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 6 題 · 整萬加法</span>
+    <p class="stem">340 萬 ＋ 270 萬 ＝？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q6"><span>610 萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>620 萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>630 萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>540 萬</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>兩個都是整萬，直接把萬家族當一般數字加：340＋270＝<b>610</b>（萬）。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 7 題 · 整萬減法</span>
+    <p class="stem">800 萬 － 350 萬 ＝？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q7"><span>550 萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span>450 萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span>460 萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span>540 萬</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>800－350＝<b>450</b>（萬）。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 8 題 · 複名數加法</span>
+    <p class="stem"><span class="n">63400</span> ＋ <span class="n">48700</span> ＝？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">112100</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">102100</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">111100</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">122100</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>拆成 <span class="n">6萬3400</span> ＋ <span class="n">4萬8700</span>：一的家族 3400＋8700＝<span class="n">12100</span>，超過 10000 要多進 1 萬，一的家族剩 2100，萬的家族 6＋4＋1＝11，得 <span class="n">112100</span>。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 9 題 · 複名數減法</span>
+    <p class="stem"><span class="n">133000</span> － <span class="n">68000</span> ＝？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q9"><span class="n">65000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span class="n">75000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span class="n">55000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span class="n">85000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>拆成 <span class="n">13萬3000</span> － <span class="n">6萬8000</span>：一的家族 3000 不夠減 8000，向萬的家族借 1 萬變 13000－8000＝5000；萬的家族 13－1－6＝6，得 <span class="n">65000</span>。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 10 題 · 化聚</span>
+    <p class="stem">8 個千萬、3 個百萬和 6 個十萬合起來，是多少？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">83600000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">8360000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">836000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">80360000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>8 個千萬 ＝ 80000000，3 個百萬 ＝ 3000000，6 個十萬 ＝ 600000，合起來 <span class="n">83600000</span>。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 11 題 · 排序應用</span>
+    <p class="stem">慈善機構甲、乙、丙三筆捐款分別是 <span class="n">6200000</span> 元、<span class="n">6250000</span> 元、<span class="n">6180000</span> 元，金額最多的是哪一筆？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q11"><span>甲（6200000）</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span>乙（6250000）</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span>丙（6180000）</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span>一樣多</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>三筆萬的家族分別是 620、625、618，<b>625 最大</b>，所以乙筆金額最多。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 12 題 · 應用題</span>
+    <p class="stem">某展覽館上午入場 <span class="n">76500</span> 人，下午入場 <span class="n">58900</span> 人，共入場多少人？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">135400</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">125400</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">134400</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">145400</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>拆成 <span class="n">7萬6500</span> ＋ <span class="n">5萬8900</span>：一的家族 6500＋8900＝<span class="n">15400</span>，超過 10000 要多進 1 萬，一的家族剩 5400，萬的家族 7＋5＋1＝13，得 <span class="n">135400</span> 人。</p>
+  </div>
+
+  <h2 class="sect">二、填充題（每題 1 分，共 4 分）</h2>
+
+  <div class="q fill" data-fill="最高位|最高的一位">
+    <span class="qtag">填充 1 · 比較策略</span>
+    <p class="stem">兩個位數相同的大數要比大小，要從 <input type="text" placeholder="填答案"> 開始比。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>最高位</b>。從最高位往低位比，找到第一個不同的位就分出大小。</p>
+  </div>
+
+  <div class="q fill" data-fill="130200">
+    <span class="qtag">填充 2 · 複名數加法</span>
+    <p class="stem"><span class="n">71300</span> ＋ <span class="n">58900</span> ＝ <input type="text" placeholder="填數字"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<span class="n">130200</span>。一的家族 1300＋8900＝12100，超過 10000 進 1 萬給萬的家族：7＋5＋1＝13。</p>
+  </div>
+
+  <div class="q fill" data-fill="90600000">
+    <span class="qtag">填充 3 · 化聚</span>
+    <p class="stem">9 個千萬和 6 個十萬合起來是 <input type="text" placeholder="填數字"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<span class="n">90600000</span>。9 個千萬 ＝ 90000000，6 個十萬 ＝ 600000，合起來 90600000。</p>
+  </div>
+
+  <div class="q fill" data-fill="一的家族|一家族">
+    <span class="qtag">填充 4 · 比較規則</span>
+    <p class="stem">兩個大數的萬的家族一樣大時，要接著比 <input type="text" placeholder="填答案"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>一的家族</b>。萬的家族分不出勝負時，才需要繼續比一的家族。</p>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="main" id="submitBtn">送出，看結果</button>
+    <button type="button" class="ghost" id="resetBtn">重做一次</button>
+  </div>
+
+  <div class="result" id="result">
+    <p>你的成績</p>
+    <p class="score" id="scoreText">0 / 16</p>
+    <p id="scoreMsg"></p>
+  </div>
+
+  <h2 class="sect">三、問答題（自評，不計分）</h2>
+  <p class="notice">這兩題請先自己寫在下面的框裡（或寫在紙本學習單上），寫完再打開「參考答案與評分規準」對照，
+    自己給自己打 3／2／1 分。老師的紙本評量也會考問答題，但題目不一樣喔。</p>
+
+  <div class="selfq">
+    <h3>問答 1：完整說明怎麼比出誰大</h3>
+    <p><span style="font-family:var(--font-num);font-weight:700">29480000</span> 和 <span style="font-family:var(--font-num);font-weight:700">29510000</span>，請說明你會<b>先比什麼</b>、<b>再比什麼</b>，並寫出結論。</p>
+    <textarea placeholder="例如：兩個數都是（　　）位數，先比（　　）的家族：（　　）比（　　）（大／小），所以（　　）比較大。"></textarea>
+    <details>
+      <summary>▸ 打開參考答案與評分規準</summary>
+      <p><b>參考答案：</b>兩個數都是 8 位數，位數相同。先比萬的家族：<span style="font-family:var(--font-num)">2948</span> 比 <span style="font-family:var(--font-num)">2951</span> 小，所以 <span style="font-family:var(--font-num)">29510000</span> 比較大。</p>
+      <ul class="rubric">
+        <li><b>3 分</b>：正確指出位數相同，比較萬的家族的數字，結論正確。</li>
+        <li><b>2 分</b>：結論正確，但沒有說明「先比位數、再比萬的家族」的完整過程。</li>
+        <li><b>1 分</b>：結論錯誤，或只憑感覺判斷沒有說明方法。</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="selfq">
+    <h3>問答 2：自己出一題考同學</h3>
+    <p>請自己出一題<b>五位數加法應用題</b>，條件是：<b>一的家族相加會超過 10000，需要多進 1 萬給萬的家族</b>。寫下題目、算式，並說明為什麼需要進位。</p>
+    <textarea placeholder="例如：我出的題目是（　　），算式是（　　），因為一的家族相加是（　　），超過 10000 所以要……"></textarea>
+    <details>
+      <summary>▸ 打開參考答案與評分規準</summary>
+      <p><b>參考答案（示例）：</b>某網路商店上午訂單金額 84600 元，下午訂單金額 37900 元，共收到多少元？
+        拆成 <span style="font-family:var(--font-num)">8萬4600</span> ＋ <span style="font-family:var(--font-num)">3萬7900</span>：一的家族 4600＋7900＝<span style="font-family:var(--font-num)">12500</span>，超過 10000，
+        要多進 1 萬給萬的家族，一的家族剩 2500，萬的家族 8＋3＋1＝12，答案是 <span style="font-family:var(--font-num)">122500</span> 元。</p>
+      <ul class="rubric">
+        <li><b>3 分</b>：題目符合「一的家族需進位」的條件，算式與答案正確，理由說明清楚。</li>
+        <li><b>2 分</b>：題目與答案都對，但理由說明不完整。</li>
+        <li><b>1 分</b>：題目不符合條件（一的家族其實不用進位），或算式有錯。</li>
+      </ul>
+    </details>
+  </div>
+
+  <footer>
+    此頁為<b>線上模擬評量</b>，題目與正式紙本評量不同，僅供自主練習，不會記錄任何個人作答資料。<br>
+    正式成績以老師發下的紙本定期評量卷為準。
+  </footer>
+</div>
+
+<script>
+(() => {
+  const norm = s => (s || "").replace(/[\s　]/g, "").replace(/[（）()]/g, "");
+  const choiceQs = [...document.querySelectorAll('.q[data-answer]')];
+  const fillQs = [...document.querySelectorAll('.q[data-fill]')];
+  const total = choiceQs.length + fillQs.length;
+  const result = document.getElementById('result');
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    let correct = 0, blank = 0;
+
+    choiceQs.forEach(q => {
+      const picks = [...q.querySelectorAll('input[type=radio]')];
+      const chosen = picks.findIndex(i => i.checked);
+      const ans = Number(q.dataset.answer);
+      if (chosen < 0) blank++;
+      const ok = chosen === ans;
+      if (ok) correct++;
+      q.classList.add('marked');
+      q.classList.toggle('ok', ok);
+      q.classList.toggle('ng', !ok);
+      q.querySelector('.exp .verdict').textContent = ok ? '✅ 答對了！' : (chosen < 0 ? '⚠️ 沒作答。' : '❌ 再想想。');
+    });
+
+    fillQs.forEach(q => {
+      const input = q.querySelector('input[type=text]');
+      const accepted = q.dataset.fill.split('|').map(norm);
+      const val = norm(input.value);
+      if (!val) blank++;
+      const ok = accepted.includes(val);
+      if (ok) correct++;
+      q.classList.add('marked');
+      q.classList.toggle('ok', ok);
+      q.classList.toggle('ng', !ok);
+      q.querySelector('.exp .verdict').textContent = ok ? '✅ 答對了！' : (val ? '❌ 再想想。' : '⚠️ 沒作答。');
+    });
+
+    document.getElementById('scoreText').textContent = `${correct} / ${total}`;
+    const pct = correct / total;
+    const msg = blank > 0
+      ? `還有 ${blank} 題沒作答，分數僅供參考。每題下方都有解說，看完可以按「重做一次」再練。`
+      : pct === 1 ? '全部答對，太厲害了！可以去挑戰紙本的問答題。'
+      : pct >= 0.8 ? '很不錯！把答錯的那幾題解說看一遍，就更穩了。'
+      : pct >= 0.6 ? '基本觀念有了，建議回到「觀念複習」把大數加減那一頁再看一次。'
+      : '先別急，回到「觀念複習」把位數優先、兩家族比較、加減對齊四個重點弄清楚，再回來挑戰。';
+    document.getElementById('scoreMsg').textContent = msg;
+    result.classList.add('show');
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('input[type=radio]').forEach(i => { i.checked = false; });
+    document.querySelectorAll('input[type=text]').forEach(i => { i.value = ''; });
+    document.querySelectorAll('.q').forEach(q => q.classList.remove('marked', 'ok', 'ng'));
+    result.classList.remove('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
