@@ -399,6 +399,8 @@ async function portfolioBySeat() {
   }
 }
 
+const SEL_ABILITIES = ["自我覺察", "自我管理", "社會覺察", "人際技巧", "負責任決策"];
+
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
   const finance = await bankFinanceBySeat();
@@ -441,6 +443,11 @@ async function syncReports() {
         shortGoal: r["短期目標"],
         longGoal: r["長期目標"],
         parentTips: r["家長協助建議"],
+        // SEL 支線（Phase C）：觀察短文＋五能力分數（舊報告列無此欄 → null，前端不顯示）
+        selNote: r["SEL 觀察"] || "",
+        sel: SEL_ABILITIES.some(a => r[`${a}分數`] !== "")
+          ? Object.fromEntries(SEL_ABILITIES.map(a => [a, Number(r[`${a}分數`]) || 0]))
+          : null,
         // 期末總報告專用欄位
         termComment: r["學期總評"],
         growthHighlight: r["學期成長亮點"],
@@ -577,6 +584,66 @@ async function syncBank() {
   console.log(`✅ bank/（${Object.keys(accounts).length} 位學生，已加密）`);
 }
 
+// ── 學期回顧聚合（Phase C3）：班級經濟大事記＋全班 SEL 平均 ──
+// 隱私鐵則：本檔案為公開 JSON，只出「全班統計值」，不含任何姓名／座號／個人分數。
+const SEL_MIN_N = 5; // 該週已發布報告少於 5 位不出 SEL 聚合（避免平均值可回推個人）
+
+async function syncRecapExtras() {
+  try {
+    // 全班 SEL 平均（每週；只取已發布的「每週」報告且該列有 SEL 分數）
+    const selByWeek = {};
+    const reportRows = (await queryDataSource(DS.reports)).map(props)
+      .filter(r => r["發布"] && (r["報告類型"] || "每週") === "每週");
+    for (const r of reportRows) {
+      if (!SEL_ABILITIES.some(a => r[`${a}分數`] !== "")) continue;
+      const w = periodWeek(r["期間"]);
+      if (w >= 9998) continue;
+      const g = selByWeek[w] ||= { week: w, period: r["期間"], n: 0,
+        sum: Object.fromEntries(SEL_ABILITIES.map(a => [a, 0])) };
+      g.n++;
+      for (const a of SEL_ABILITIES) g.sum[a] += Number(r[`${a}分數`]) || 0;
+    }
+    const selWeeks = Object.values(selByWeek)
+      .filter(g => g.n >= SEL_MIN_N)
+      .sort((a, b) => a.week - b.week)
+      .map(g => ({ week: g.week, period: g.period, n: g.n,
+        avg: Object.fromEntries(SEL_ABILITIES.map(a => [a, Math.round((g.sum[a] / g.n) * 10) / 10])) }));
+
+    // 班級經濟大事記（帳本週次聚合；只有全班總額與筆數）
+    const roster = (await queryDataSource(DS.roster)).map(props)
+      .filter(r => r["在學"] && r["座號"] !== "");
+    const ids = new Set(roster.map(r => r._id));
+    const txRows = (await queryDataSource(DS.bank)).map(props)
+      .filter(t => t["學生"]?.length && ids.has(t["學生"][0]) && t["金額"] !== "");
+    const ecoByWeek = {};
+    const totals = { supply: 0, txCount: 0, spend: 0 };
+    for (const t of txRows) {
+      const amt = Math.round(Number(t["金額"]) || 0);
+      totals.supply += amt; totals.txCount++;
+      if (amt < 0) totals.spend += -amt;
+      const w = periodWeek(t["週次"]);
+      if (w >= 9998) continue;
+      const g = ecoByWeek[w] ||= { week: w, label: t["週次"],
+        salary: 0, reward: 0, penalty: 0, interest: 0, spend: 0, spendCount: 0, adjust: 0 };
+      const type = t["類型"] || "調整";
+      if (type === "薪水") g.salary += amt;
+      else if (type === "獎勵金") g.reward += amt;
+      else if (type === "懲罰金") g.penalty += -amt;
+      else if (type === "利息") g.interest += amt;
+      else if (type === "消費") { g.spend += -amt; g.spendCount++; }
+      else g.adjust += amt;
+    }
+    const ecoWeeks = Object.values(ecoByWeek).sort((a, b) => a.week - b.week);
+    await save("recap-extra.json", {
+      sel: { abilities: SEL_ABILITIES, minN: SEL_MIN_N, weeks: selWeeks },
+      economy: { totals, weeks: ecoWeeks },
+    });
+  } catch (e) {
+    console.warn(`⚠️ recap-extra 同步略過（${e.message}）`); // 防禦：聚合出錯不拖垮其他同步
+    await save("recap-extra.json", { sel: { abilities: SEL_ABILITIES, minN: SEL_MIN_N, weeks: [] }, economy: { totals: { supply: 0, txCount: 0, spend: 0 }, weeks: [] } });
+  }
+}
+
 await Promise.all([
   syncContactbook(),
   syncAnnouncements(),
@@ -589,6 +656,7 @@ await Promise.all([
   syncStore(),
   syncBank(),
   syncLessons(),
+  syncRecapExtras(),
 ]);
 // 同步時間戳（頁尾顯示「最後同步」，同步斷了看得見）——無個資
 await writeFile(path.join(DATA_DIR, "synced-at.json"),

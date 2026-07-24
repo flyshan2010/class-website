@@ -338,6 +338,15 @@
             ${p.longGoal ? `<p>🚀 <strong>長期：</strong>${App.esc(p.longGoal)}</p>` : ""}
           </div>` : ""}
           `}
+          ${(p.selNote || p.sel) ? `
+          <div class="report-box" style="--bc:#5F27CD">
+            <span class="report-badge" style="--bc:#5F27CD">🧠 SEL 觀察</span>
+            ${p.sel ? `<div class="recap-highlights" style="margin-bottom:6px">${Object.entries(p.sel).map(([k, v]) => {
+              const n = Math.max(1, Math.min(5, Math.round(v)));
+              return `<span class="recap-chip">${App.esc(k)} ${"★".repeat(n)}${"☆".repeat(5 - n)}</span>`;
+            }).join("")}</div>` : ""}
+            ${p.selNote ? `<p style="white-space:pre-line">${App.esc(p.selNote)}</p>` : ""}
+          </div>` : ""}
           ${App.lines(p.parentTips).length ? `
           <div class="report-box" style="--bc:#FF9F43">
             <span class="report-badge" style="--bc:#FF9F43">🤝 家長協助建議</span>
