@@ -104,8 +104,15 @@ async function saveImages(files, pageId) {
   return saved;
 }
 
+// Phase B（ClassCare）個資鐵則：名冊這些欄位永不落地到公開站台的 data/*.json，
+// 任何未來改動若把名冊列整包 dump 進輸出，這裡直接讓同步失敗而非默默外洩。
+const PII_KEYS = ["支持需求與策略", "健康行政備註", "轉入交接摘要", "家長聯絡備註"];
+
 async function save(name, data) {
-  await writeFile(path.join(DATA_DIR, name), JSON.stringify(data, null, 2) + "\n", "utf8");
+  const json = JSON.stringify(data, null, 2);
+  const leaked = PII_KEYS.filter(k => json.includes(`"${k}"`));
+  if (leaked.length) throw new Error(`個資防漏：${name} 內含名冊敏感欄位（${leaked.join("、")}），中止同步`);
+  await writeFile(path.join(DATA_DIR, name), json + "\n", "utf8");
   console.log(`✅ ${name}（${Array.isArray(data) ? data.length : 1} 筆）`);
 }
 
