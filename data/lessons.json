@@ -1,5 +1,31 @@
 [
   {
+    "title": "數L1-2 一億以內的數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "1. 萬滿十連續進位到十萬、百萬、千萬，位值表往左擴充到八位數。2. 千萬～個位逐位報讀（位值表爬樓梯）。3. 萬的家族與一的家族兩段四位分節讀寫。4. 零的三種讀法：連續的0只讀一個「零」、分開的0各讀一次、末尾的0不讀。5. 大數化聚：幾個千萬/百萬/十萬合成與進退位。"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "https://drive.google.com/file/d/1b_BXoAVhy4PQpqGomwTiPle5jQABv0Ue/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-2-一億以內的數/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-2-一億以內的數/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-2-一億以內的數/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-2-一億以內的數/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-2-一億以內的數/3.review.html"
+    }
+  },
+  {
     "title": "數L1-1 十萬以內的數",
     "subject": "數學",
     "grade": "四上",
@@ -141,25 +167,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
-    }
-  },
-  {
-    "title": "數L1-2 一億以內的數",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "",
-    "links": {
-      "material": "https://drive.google.com/file/d/1b_BXoAVhy4PQpqGomwTiPle5jQABv0Ue/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   },
   {
