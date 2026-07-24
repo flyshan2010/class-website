@@ -24,12 +24,32 @@ const App = {
 
     document.getElementById("site-footer").innerHTML =
       `${c.schoolYear} ${c.schoolName} ${c.className} ❤ 本站由老師與 AI 共同維護
+       <span id="footer-synced" style="opacity:.5"></span>
        <a href="teacher.html" title="教師專區" style="text-decoration:none;opacity:.45;margin-left:6px">🧑‍🏫</a>`;
+    this.renderSyncedAt();
 
     // 各模組代表色
     const accent = c.moduleColors[activeId];
     if (accent) document.documentElement.style.setProperty("--accent", accent);
     return c;
+  },
+
+  // 頁尾「最後同步」：正常顯示日期時間；超過 36 小時（每日 3 次同步的容錯）顯示紅字提醒
+  async renderSyncedAt() {
+    const el = document.getElementById("footer-synced");
+    if (!el) return;
+    try {
+      const { at } = await this.fetchJSON("data/synced-at.json");
+      const d = new Date(at);
+      const hrs = (Date.now() - d.getTime()) / 3.6e6;
+      const stamp = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+      el.textContent = ` ｜ 最後同步 ${stamp}`;
+      if (hrs > 36) {
+        el.textContent = ` ｜ ⚠️ 資料已 ${Math.floor(hrs / 24)} 天未更新（最後同步 ${stamp}）`;
+        el.style.color = "#c0392b";
+        el.style.opacity = "1";
+      }
+    } catch { /* 同步時間檔缺失不影響頁尾 */ }
   },
 
   fmtDate(iso) {

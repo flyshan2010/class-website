@@ -583,4 +583,7 @@ await Promise.all([
   syncBank(),
   syncLessons(),
 ]);
+// 同步時間戳（頁尾顯示「最後同步」，同步斷了看得見）——無個資
+await writeFile(path.join(DATA_DIR, "synced-at.json"),
+  JSON.stringify({ at: new Date().toISOString() }) + "\n", "utf8");
 console.log("🎉 Notion 同步完成");
