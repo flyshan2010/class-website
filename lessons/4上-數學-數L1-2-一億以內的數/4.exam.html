@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>線上模擬評量｜一億以內的數 · 數學四上 1-2</title>
+<style>
+/* ─────────────────────────────────────────────
+   四上數學 1-2〈一億以內的數〉線上模擬評量（平行題本）
+   ⚠️ 重要：本頁題目與紙本定期評量【完全不同】，只涵蓋相同範圍。
+      班網為公開頁面，正式計分仍以紙本卷為準，網頁版供學生自主練習與課前暖身。
+      本頁例題也與 1.teach / 2.practice / 3.review 三頁的數字全數不重複。
+   離線可用：無外部字型、無 CDN、無網路請求；不收個人作答資料。
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#F7F9FC; --surface:#FFFFFF; --text:#22323F; --muted:#6B7C8C; --line:#D7E3EE;
+  --accent:#2F6FED; --right:#1E9E5A; --wrong:#D64545;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --font-num:"Consolas","SF Mono","Menlo","Courier New",monospace;
+  --r:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--font-sans);line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:40px 28px 90px}
+header{text-align:center;margin-bottom:26px}
+header .eyebrow{color:var(--muted);font-size:18px;letter-spacing:.1em}
+header h1{font-size:40px;margin:8px 0}
+header p{color:var(--muted);font-size:17px}
+.notice{max-width:700px;margin:14px auto 0;padding:12px 18px;background:#EEF4FE;border:2px dashed var(--accent);border-radius:14px;font-size:15px;color:#1B4B9E;text-align:left}
+h2.sect{font-size:26px;margin:38px 0 14px;padding-left:14px;border-left:8px solid var(--accent)}
+.q{background:var(--surface);border:3px solid var(--line);border-radius:var(--r);padding:22px 26px;margin-bottom:18px}
+.q .qtag{display:inline-block;padding:4px 16px;border-radius:999px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;margin-bottom:10px}
+.q .stem{font-size:20px;font-weight:700;margin:0 0 14px}
+.q .stem .n{font-family:var(--font-num);font-size:22px}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 18px;border:2px solid var(--line);border-radius:16px;cursor:pointer;font-size:17px}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin-top:5px}
+.opt .n{font-family:var(--font-num);font-size:19px;font-weight:700}
+.fill input[type=text]{font:inherit;font-size:19px;padding:10px 16px;border:2px solid var(--line);border-radius:14px;width:250px;background:#FBFDFF}
+.fill input[type=text]:focus{outline:none;border-color:var(--accent)}
+.pvmini{border-collapse:collapse;margin:0 0 14px;background:#fff}
+.pvmini th,.pvmini td{width:62px;border:2px solid var(--line);text-align:center}
+.pvmini th{background:var(--accent);color:#fff;font-size:14px;padding:5px 2px;border-color:var(--accent)}
+.pvmini td{height:52px;font-family:var(--font-num);font-size:26px;font-weight:700}
+.exp{display:none;margin-top:14px;padding:12px 16px;border-radius:14px;background:#EFF3F7;font-size:16px;color:#44586B}
+.exp .n{font-family:var(--font-num);font-weight:700}
+.q.marked .exp{display:block}
+.q.ok{border-color:var(--right)}
+.q.ng{border-color:var(--wrong)}
+.verdict{font-weight:700;margin-right:8px}
+.q.ok .verdict{color:var(--right)}
+.q.ng .verdict{color:var(--wrong)}
+.selfq{background:#F4F8FF;border:3px dashed var(--accent);border-radius:var(--r);padding:22px 26px;margin-bottom:18px}
+.selfq h3{margin:6px 0 10px;font-size:21px}
+.selfq textarea{font:inherit;font-size:17px;width:100%;min-height:96px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;resize:vertical}
+.selfq details{margin-top:12px;font-size:16px}
+.selfq summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.selfq .rubric{margin:10px 0 0;padding-left:22px;color:#44586B}
+.actions{text-align:center;margin:34px 0 10px}
+button.main{font:inherit;font-size:21px;font-weight:800;padding:14px 44px;border:none;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+button.main:hover{filter:brightness(1.06)}
+button.ghost{font:inherit;font-size:17px;padding:10px 26px;border:2px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);cursor:pointer;margin-left:10px}
+.result{display:none;text-align:center;margin-top:8px;padding:24px;background:var(--surface);border:3px solid var(--accent);border-radius:var(--r)}
+.result.show{display:block}
+.result .score{font-size:52px;font-weight:800;color:var(--accent);margin:6px 0}
+footer{margin-top:44px;text-align:center;color:var(--muted);font-size:15px;line-height:1.8}
+@media print{.actions,.notice{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">數學四上 · 第一單元 一億以內的數 · 數L1-2</p>
+    <h1>💯 一億以內的數 · 線上模擬評量</h1>
+    <p>選擇題 12 題＋填充題 4 題（自動批改），另有 2 題問答自評</p>
+    <p class="notice">📌 <b>這份是「模擬」評量，不是正式考卷。</b>題目和老師的紙本定期評量<b>完全不一樣</b>，
+      但考的範圍相同（位值表擴充、兩個家族報讀、0 的讀法、大數的化聚）。寫完按「送出」就會看到分數和解說，可以重複練習。</p>
+  </header>
+
+  <h2 class="sect">一、選擇題（每題 1 分，共 12 分）</h2>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 1 題 · 位值</span>
+    <p class="stem"><span class="n">63920000</span> 這個數，千萬位的數字是多少？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q1"><span class="n">6</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span class="n">3</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span class="n">9</span></label></li>
+      <li><label class="opt"><input type="radio" name="q1"><span class="n">2</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>從右邊數：個、十、百、千、萬、十萬、百萬、<b>千萬</b>。八位數<b>最左邊</b>那一位就是千萬位，是 <span class="n">6</span>。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 2 題 · 位值</span>
+    <p class="stem"><span class="n">27146000</span> 的百萬位表示多少？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q2"><span class="n">70000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span class="n">7000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span class="n">700000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q2"><span class="n">70000000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>百萬位的 7 表示 <b>7 個一百萬</b>，也就是 <span class="n">7000000</span>。</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <span class="qtag">第 3 題 · 位值</span>
+    <p class="stem"><span class="n">84300000</span> 的十萬位表示多少？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q3"><span class="n">3</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span class="n">30000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span class="n">300000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q3"><span class="n">3000000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>十萬位的 3 表示 <b>3 個十萬</b>，也就是 <span class="n">300000</span>。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 4 題 · 讀法</span>
+    <p class="stem"><span class="n">51007000</span> 的正確讀法是哪一個？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q4"><span>五千一百萬七千</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>五千一百零萬七千</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>五千一百萬零七千</span></label></li>
+      <li><label class="opt"><input type="radio" name="q4"><span>五千萬一百萬七千</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>萬的家族 <span class="n">5100</span> 末尾的 0 不用讀，一的家族 <span class="n">7000</span> 開頭是 <b>7（非 0）</b>，不用加「零」：五千一百萬七千。</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <span class="qtag">第 5 題 · 讀法</span>
+    <p class="stem"><span class="n">90080000</span> 的正確讀法是哪一個？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q5"><span>九萬零八萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>九千零零八萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>九千零八萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q5"><span>九千八萬</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>萬的家族 <span class="n">9008</span>，百位十位連續兩個 0，只讀<b>一個</b>「零」：九千零八。一的家族全是 0，不用讀：九千零八萬。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 6 題 · 讀法</span>
+    <p class="stem"><span class="n">26000700</span> 的正確讀法是哪一個？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q6"><span>二千六百萬七百</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>二千六百萬零七百</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>二千六百零萬七百</span></label></li>
+      <li><label class="opt"><input type="radio" name="q6"><span>二千零六百萬七百</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>一的家族 <span class="n">0700</span>，千位是 0 且後面有數字，要讀一個「零」：二千六百萬<b>零</b>七百。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 7 題 · 寫數</span>
+    <p class="stem">「三千零四十萬二千」寫成數字是哪一個？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q7"><span class="n">3402000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span class="n">30402000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span class="n">30420000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q7"><span class="n">304020000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>萬的家族「三千零四十」＝3040、一的家族「二千」＝2000 → <span class="n">30402000</span>。百位沒有提到要寫 0 佔位。</p>
+  </div>
+
+  <div class="q" data-answer="3">
+    <span class="qtag">第 8 題 · 化聚</span>
+    <p class="stem">6 個千萬、2 個百萬和 9 個十萬合起來，是多少？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">6290000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">62009000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">62090000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q8"><span class="n">62900000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>6 個千萬 ＝ 60000000，2 個百萬 ＝ 2000000，9 個十萬 ＝ 900000，合起來 <span class="n">62900000</span>。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 9 題 · 化聚</span>
+    <p class="stem"><span class="n">68300000</span> 是幾個千萬、幾個百萬和幾個十萬合起來的？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q9"><span>6 個千萬、8 個百萬、3 個萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span>6 個千萬、8 個百萬、3 個十萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span>68 個百萬、3 個十萬</span></label></li>
+      <li><label class="opt"><input type="radio" name="q9"><span>6 個百萬、8 個千萬、3 個十萬</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>由左而右：千萬位 6、百萬位 8、十萬位 3，所以是 <b>6 個千萬、8 個百萬、3 個十萬</b>。</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <span class="qtag">第 10 題 · 數詞序列</span>
+    <p class="stem">依照順序數下去：<span class="n">39970000</span> → <span class="n">39980000</span> → <span class="n">39990000</span> →（　　）</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">39991000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">40000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">390000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q10"><span class="n">39900000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>每次加一萬，萬位、十萬位一路滿 <span class="n">10</span> 進位，千萬位由 3 變 4 → <span class="n">40000000</span>。</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <span class="qtag">第 11 題 · 數詞序列</span>
+    <p class="stem">存款 <span class="n">45000000</span> 元，再存入 <span class="n">5000000</span> 元，變成多少元？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q11"><span class="n">50000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span class="n">45500000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span class="n">95000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q11"><span class="n">40000000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>百萬位 5 個加 5 個是 10 個百萬，進位給千萬位：4 個千萬 → 5 個千萬，得 <span class="n">50000000</span>。</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <span class="qtag">第 12 題 · 退位</span>
+    <p class="stem"><span class="n">70000000</span> 減去 <span class="n">9000000</span>，是多少？</p>
+    <ul class="opts">
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">79000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">71000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">61000000</span></label></li>
+      <li><label class="opt"><input type="radio" name="q12"><span class="n">60100000</span></label></li>
+    </ul>
+    <p class="exp"><span class="verdict"></span>百萬位是 0，減 9 個百萬不夠減，要<b>跟千萬位借 1</b> 換成 10 個百萬：千萬位 7→6、百萬位 0→9，10－9＝1，得 <span class="n">61000000</span>。</p>
+  </div>
+
+  <h2 class="sect">二、填充題（每題 1 分，共 4 分）</h2>
+
+  <div class="q fill" data-fill="千萬位|千萬">
+    <span class="qtag">填充 1 · 位名</span>
+    <p class="stem">位值表上，記錄「有幾個一千萬」的那一位，叫作 <input type="text" placeholder="填答案"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>千萬位</b>。它在百萬位的左邊，是本節位值表最大的一格（再左邊就是億位）。</p>
+  </div>
+
+  <div class="q fill" data-fill="1億|一億|100000000|1億元|一億元">
+    <span class="qtag">填充 2 · 單位換算</span>
+    <p class="stem">10 個一千萬合起來是 <input type="text" placeholder="填數字或國字"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<span class="n">100000000</span>（一億）。這是千萬位再滿 10 個之後，往左邊蓋出的新位。</p>
+  </div>
+
+  <div class="q fill" data-fill="56030000">
+    <span class="qtag">填充 3 · 聽寫數字</span>
+    <p class="stem">「五千六百零三萬」寫成數字是 <input type="text" placeholder="填數字"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<span class="n">56030000</span>。萬的家族「五千六百零三」，一的家族全是 0，沒有提到要寫 0 佔位。</p>
+  </div>
+
+  <div class="q fill" data-fill="不用讀|不讀|整個不讀|不必讀">
+    <span class="qtag">填充 4 · 0 的讀法規則</span>
+    <p class="stem">一個大數中，如果<b>一整個家族全部都是</b> 0，這個家族 <input type="text" placeholder="填答案"> 。</p>
+    <p class="exp"><span class="verdict"></span>正確答案：<b>不用讀</b>（連「零」都不用說）。例如 <span class="n">37080000</span> 的一的家族是 0000，整個省略，只讀「三千七百零八萬」。</p>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="main" id="submitBtn">送出，看結果</button>
+    <button type="button" class="ghost" id="resetBtn">重做一次</button>
+  </div>
+
+  <div class="result" id="result">
+    <p>你的成績</p>
+    <p class="score" id="scoreText">0 / 16</p>
+    <p id="scoreMsg"></p>
+  </div>
+
+  <h2 class="sect">三、問答題（自評，不計分）</h2>
+  <p class="notice">這兩題請先自己寫在下面的框裡（或寫在紙本學習單上），寫完再打開「參考答案與評分規準」對照，
+    自己給自己打 3／2／1 分。老師的紙本評量也會考問答題，但題目不一樣喔。</p>
+
+  <div class="selfq">
+    <h3>問答 1：說明 0 什麼時候要讀、什麼時候不用讀</h3>
+    <p><span style="font-family:var(--font-num);font-weight:700">92047000</span> 這個數裡，0 出現在好幾個位置。請說明<b>哪些 0 要讀出來</b>、<b>哪些不用</b>，並寫出整個數的<b>讀法</b>。</p>
+    <textarea placeholder="例如：萬的家族是（　　），十位的 0 因為（　　）所以要讀；一的家族是（　　），因為（　　）所以（　　）。92047000 讀作「　　　　」。"></textarea>
+    <details>
+      <summary>▸ 打開參考答案與評分規準</summary>
+      <p><b>參考答案：</b>萬的家族是 <b>9204</b>：十位的 0 前後都有數字（百位 2、個位 4），要讀出<b>一個「零」</b>：「九千二百零四」。
+        一的家族是 <b>7000</b>：千位是 7（非 0），後面百、十、個三個 0 全部<b>在末尾</b>，都不用讀。
+        <span style="font-family:var(--font-num)">92047000</span> 讀作「<b>九千二百零四萬七千</b>」。</p>
+      <ul class="rubric">
+        <li><b>3 分</b>：兩個家族的 0 都判斷正確（要讀／不用讀），理由清楚，讀法完全正確。</li>
+        <li><b>2 分</b>：讀法正確，但說明「要不要讀」的理由不完整。</li>
+        <li><b>1 分</b>：只處理了其中一個家族，或讀法有錯。</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="selfq">
+    <h3>問答 2：自己出一題考同學</h3>
+    <p>請自己想一個<b>八位數</b>，條件是：<b>萬的家族和一的家族「各自」都要有一個分開讀的 0</b>（也就是兩個家族各讀一次「零」）。寫下這個數、它的讀法，並說明為什麼。</p>
+    <textarea placeholder="例如：我想的數是（　　　　），讀作「　　　　」，因為……"></textarea>
+    <details>
+      <summary>▸ 打開參考答案與評分規準</summary>
+      <p><b>參考答案（示例）：</b>我想的數是 <span style="font-family:var(--font-num)">60305040</span>，讀作「六千零三十萬五千零四十」。
+        萬的家族 <span style="font-family:var(--font-num)">6030</span> 的百位是 0（前後都有數字），一的家族 <span style="font-family:var(--font-num)">5040</span> 的百位也是 0（前後都有數字），
+        所以<b>兩個家族各自都要讀一次「零」</b>，不能合併，也不能省略。</p>
+      <ul class="rubric">
+        <li><b>3 分</b>：數字符合條件（兩個家族各有一個要讀的 0）、讀法正確，理由說明清楚。</li>
+        <li><b>2 分</b>：數字與讀法都對，但理由說得不完整。</li>
+        <li><b>1 分</b>：數字不符合條件（例如某個家族的 0 其實在末尾不用讀），或讀法寫錯。</li>
+      </ul>
+    </details>
+  </div>
+
+  <footer>
+    此頁為<b>線上模擬評量</b>，題目與正式紙本評量不同，僅供自主練習，不會記錄任何個人作答資料。<br>
+    正式成績以老師發下的紙本定期評量卷為準。
+  </footer>
+</div>
+
+<script>
+(() => {
+  const norm = s => (s || "").replace(/[\s　]/g, "").replace(/[（）()]/g, "");
+  const choiceQs = [...document.querySelectorAll('.q[data-answer]')];
+  const fillQs = [...document.querySelectorAll('.q[data-fill]')];
+  const total = choiceQs.length + fillQs.length;
+  const result = document.getElementById('result');
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    let correct = 0, blank = 0;
+
+    choiceQs.forEach(q => {
+      const picks = [...q.querySelectorAll('input[type=radio]')];
+      const chosen = picks.findIndex(i => i.checked);
+      const ans = Number(q.dataset.answer);
+      if (chosen < 0) blank++;
+      const ok = chosen === ans;
+      if (ok) correct++;
+      q.classList.add('marked');
+      q.classList.toggle('ok', ok);
+      q.classList.toggle('ng', !ok);
+      q.querySelector('.exp .verdict').textContent = ok ? '✅ 答對了！' : (chosen < 0 ? '⚠️ 沒作答。' : '❌ 再想想。');
+    });
+
+    fillQs.forEach(q => {
+      const input = q.querySelector('input[type=text]');
+      const accepted = q.dataset.fill.split('|').map(norm);
+      const val = norm(input.value);
+      if (!val) blank++;
+      const ok = accepted.includes(val);
+      if (ok) correct++;
+      q.classList.add('marked');
+      q.classList.toggle('ok', ok);
+      q.classList.toggle('ng', !ok);
+      q.querySelector('.exp .verdict').textContent = ok ? '✅ 答對了！' : (val ? '❌ 再想想。' : '⚠️ 沒作答。');
+    });
+
+    document.getElementById('scoreText').textContent = `${correct} / ${total}`;
+    const pct = correct / total;
+    const msg = blank > 0
+      ? `還有 ${blank} 題沒作答，分數僅供參考。每題下方都有解說，看完可以按「重做一次」再練。`
+      : pct === 1 ? '全部答對，太厲害了！可以去挑戰紙本的問答題。'
+      : pct >= 0.8 ? '很不錯！把答錯的那幾題解說看一遍，就更穩了。'
+      : pct >= 0.6 ? '基本觀念有了，建議回到「觀念複習」把 0 的讀法那一頁再看一次。'
+      : '先別急，回到「觀念複習」把位值表、兩個家族、0 的讀法四個重點弄清楚，再回來挑戰。';
+    document.getElementById('scoreMsg').textContent = msg;
+    result.classList.add('show');
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('input[type=radio]').forEach(i => { i.checked = false; });
+    document.querySelectorAll('input[type=text]').forEach(i => { i.value = ''; });
+    document.querySelectorAll('.q').forEach(q => q.classList.remove('marked', 'ok', 'ng'));
+    result.classList.remove('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
