@@ -41,15 +41,45 @@ export function academicYearRange(year) {
   return { start: `${year + 1911}-08-01`, end: `${year + 1912}-07-31` };
 }
 
-/** §1 四個邊界日期自我驗證，供驗收與 CI 使用。回傳 true 表示公式正確。 */
+/**
+ * 學期別（老師 2026-07-25 裁示）。
+ *   上學期 ＝ 學年首年 08-01 ～ 次年 01-31
+ *   下學期 ＝ 次年 02-01 ～ 次年 07-31
+ * 注意 1 月屬「上學期」——這是最容易推錯的一格。
+ * @returns {"上"|"下"}
+ */
+export function semester(date) {
+  const d = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(d.getTime())) throw new Error(`無法解析日期：${date}`);
+  const m = Number(new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Taipei", month: "2-digit",
+  }).format(d));
+  return m >= YEAR_START_MONTH || m === 1 ? "上" : "下";
+}
+
+/** 學期名稱，如 `115上`——即成績庫「學期」欄與報告「期間」開頭的格式。 */
+export function semesterName(date) {
+  return `${academicYear(date)}${semester(date)}`;
+}
+
+/** 學期起訖日（台北時間）。 */
+export function semesterRange(year, half) {
+  return half === "上"
+    ? { start: `${year + 1911}-08-01`, end: `${year + 1912}-01-31` }
+    : { start: `${year + 1912}-02-01`, end: `${year + 1912}-07-31` };
+}
+
+/** §1 邊界日期自我驗證，供驗收與 CI 使用。回傳 true 表示公式正確。 */
 export function selfTest() {
   const cases = [
-    ["2026-08-01", 115], ["2026-12-31", 115],
-    ["2027-07-31", 115], ["2027-08-01", 116],
+    ["2026-08-01", "115上"], ["2026-12-31", "115上"],
+    ["2027-01-31", "115上"], // ← 1 月仍屬上學期，最易推錯
+    ["2027-02-01", "115下"], ["2027-07-31", "115下"],
+    ["2027-08-01", "116上"],
   ];
   let allPass = true;
   for (const [date, expect] of cases) {
-    const got = academicYear(date);
+    const got = semesterName(date);
     const pass = got === expect;
     if (!pass) allPass = false;
     console.log(`${pass ? "✅" : "❌"} ${date} → ${got}（預期 ${expect}）`);
