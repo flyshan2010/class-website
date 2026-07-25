@@ -15,6 +15,7 @@ on:
           - f02-add-year-field
           - f03-backfill-year
           - f04-unpublish-mock-reports
+          - f05-test-failloud
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
