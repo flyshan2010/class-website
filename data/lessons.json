@@ -8,7 +8,8 @@
     "stages": [
       "起始評估",
       "課程教學",
-      "差異化指導"
+      "差異化指導",
+      "學習評量"
     ],
     "points": [
       "量角器構造：中心點、內外圈刻度、0度線",
@@ -22,8 +23,8 @@
       "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-1-認識量角器/0.pretest.html",
       "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-1-認識量角器/1.teach.html",
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-1-認識量角器/2.practice.html",
-      "exam": "",
-      "review": ""
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-1-認識量角器/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-1-認識量角器/3.review.html"
     }
   },
   {
