@@ -1,5 +1,31 @@
 [
   {
+    "title": "數L3-1 認識量角器",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學"
+    ],
+    "points": [
+      "量角器構造：中心點、內外圈刻度、0度線",
+      "角的單位是「度」，記作「°」",
+      "報讀策略：找0度線後以10°累數"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "https://drive.google.com/file/d/1R9kHMYRsOBXJxVjxsMjVj-z_ZZqSJagX/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-1-認識量角器/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-1-認識量角器/1.teach.html",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
     "title": "數L1-2 一億以內的數",
     "subject": "數學",
     "grade": "四上",
@@ -256,29 +282,6 @@
       "角的合成：兩角拼合，用加法算式記錄",
       "角的分解：一角拆開，用減法算式記錄",
       "從操作轉為文字算式的評量"
-    ],
-    "date": "",
-    "note": "",
-    "links": {
-      "material": "https://drive.google.com/file/d/1R9kHMYRsOBXJxVjxsMjVj-z_ZZqSJagX/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "數L3-1 認識量角器",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "量角器構造：中心點、內外圈刻度、0度線",
-      "角的單位是「度」，記作「°」",
-      "報讀策略：找0度線後以10°累數"
     ],
     "date": "",
     "note": "",
