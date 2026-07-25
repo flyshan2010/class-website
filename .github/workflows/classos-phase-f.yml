@@ -1,0 +1,42 @@
+name: ClassOS Phase F 工具
+
+# 學年升級精靈的批次操作入口（SPEC_學年升級 §3：走 Node ＋ Notion 官方 API）。
+# 僅手動觸發，且預設 dry-run —— 要實際寫入必須明確把 mode 選成 execute。
+# NOTION_TOKEN 只存在 GitHub Secret，不外流（Token 持有原則見 SPEC §3）。
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 要執行的任務
+        required: true
+        type: choice
+        options:
+          - f01-purge-test-data
+          - f02-add-year-field
+      mode:
+        description: dry-run＝只列不改（預設）／execute＝實際寫入
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - execute
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 執行 ${{ inputs.task }}（${{ inputs.mode }}）
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          MODE: ${{ inputs.mode }}
+        run: node scripts/classos/${{ inputs.task }}.mjs
