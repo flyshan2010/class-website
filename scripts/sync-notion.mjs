@@ -36,6 +36,49 @@ const DS = {
   lessons: "d28efc6b-3f34-4a97-b72b-ddeb5ec51147", // 🚀 教學單元（教學駕駛艙；一列＝一單元，勾「顯示」上站）
 };
 
+// ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
+// 設計要點：
+//   1. 過濾集中在 queryDataSource 一處，各 sync 函式不必各自改。
+//   2. 現行學年從「⚙️ 網站設定」的『學年度』讀，**不寫死**。
+//   3. 學年為空 ＝ 寫入端漏填的 bug（2026-07-25 已回填 568 筆，空值無合法情境）
+//      → 全部同步跑完後**非零退出**，讓 Actions 標紅。此時 commit 步驟會被跳過，
+//        班網維持上一版正常內容，不會被半殘資料覆蓋。
+const YEAR_FIELD = "學年";
+// 需按學年過濾的庫
+const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio"].map(k => DS[k]));
+// 有「學年」欄但**刻意不過濾**：教材是跨學年資產，過濾掉會讓升學年後既有課程頁全部消失
+const YEAR_EXEMPT = new Set([DS.lessons]);
+const DS_NAME = Object.fromEntries(Object.entries(DS).map(([k, v]) => [v, k]));
+
+let CURRENT_YEAR = null;        // 例：'115'
+const yearMissing = [];         // { ds, id }，累積後統一報錯
+
+const yearOf = page => (page.properties?.[YEAR_FIELD]?.select?.name ?? "").trim();
+
+async function resolveCurrentYear() {
+  const rows = (await queryDataSource(DS.settings)).map(props);
+  const raw = rows.find(r => (r["項目"] ?? "").includes("學年度"))?.["內容"] ?? "";
+  const m = String(raw).match(/\d{3}/);            // 「115學年度」→ 115
+  CURRENT_YEAR = m ? m[0] : null;
+  if (!CURRENT_YEAR) {
+    // 讀不到就不過濾（寧可多顯示，也不要讓班網整站空白）
+    console.warn(`⚠️ 網站設定讀不到「學年度」（值：${raw || "空"}），本次略過學年過濾`);
+  } else {
+    console.log(`📅 現行學年＝${CURRENT_YEAR}`);
+  }
+}
+
+function applyYearPolicy(dsId, rows) {
+  const filtered = YEAR_FILTERED.has(dsId);
+  if (!filtered && !YEAR_EXEMPT.has(dsId)) return rows;
+  for (const r of rows) if (!yearOf(r)) yearMissing.push({ ds: DS_NAME[dsId] ?? dsId, id: r.id });
+  if (!filtered || !CURRENT_YEAR) return rows;
+  const kept = rows.filter(r => { const y = yearOf(r); return !y || y === CURRENT_YEAR; });
+  const dropped = rows.length - kept.length;
+  if (dropped) console.log(`  ↳ ${DS_NAME[dsId]}：略過非 ${CURRENT_YEAR} 學年 ${dropped} 筆（封存，Notion 內仍在）`);
+  return kept;
+}
+
 async function queryDataSource(dsId) {
   const results = [];
   let cursor;
@@ -54,7 +97,7 @@ async function queryDataSource(dsId) {
     results.push(...json.results);
     cursor = json.has_more ? json.next_cursor : undefined;
   } while (cursor);
-  return results;
+  return applyYearPolicy(dsId, results);
 }
 
 // 把 Notion property 轉為單純值
@@ -644,6 +687,9 @@ async function syncRecapExtras() {
   }
 }
 
+// 先決定現行學年，後續各 sync 的查詢才知道要過濾哪一年（各 sync 為平行執行）
+await resolveCurrentYear();
+
 await Promise.all([
   syncContactbook(),
   syncAnnouncements(),
@@ -658,6 +704,22 @@ await Promise.all([
   syncLessons(),
   syncRecapExtras(),
 ]);
+// ── Phase F fail-loud：學年漏填即報錯（SPEC_學年升級 §5）────────────────
+// 空學年在 2026-07-25 全庫回填後已無合法情境，出現即代表某支寫入端漏填。
+// 這裡刻意「當場報錯」而非印個告警——靜默略過會讓那筆資料從班網、週結、報告一起消失。
+if (yearMissing.length) {
+  const byDs = {};
+  for (const m of yearMissing) (byDs[m.ds] ||= []).push(m.id.replace(/-/g, "").slice(0, 8));
+  console.error(`\n❌ 偵測到 ${yearMissing.length} 筆「學年」為空（寫入端漏填）：`);
+  for (const [ds, ids] of Object.entries(byDs)) {
+    console.error(`   ${ds}：${ids.length} 筆 — ${ids.slice(0, 10).join("、")}${ids.length > 10 ? " …" : ""}`);
+  }
+  console.error(`\n處理方式：到 Notion 找出上列頁面補填「學年」，或執行`);
+  console.error(`  gh workflow run classos-phase-f.yml -f task=f03-backfill-year -f mode=dry-run`);
+  console.error(`本次同步中止，班網維持上一版內容（未提交）。規則見 ClassOS_v3.5_藍圖/RULE_學年欄位.md`);
+  process.exit(1);
+}
+
 // 同步時間戳（頁尾顯示「最後同步」，同步斷了看得見）——無個資
 await writeFile(path.join(DATA_DIR, "synced-at.json"),
   JSON.stringify({ at: new Date().toISOString() }) + "\n", "utf8");
