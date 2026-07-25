@@ -26,6 +26,36 @@
     }
   },
   {
+    "title": "數L1-3 大數比較與加減",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "1. 位數優先比大小，位數相同再逐位比",
+      "2. 萬的家族與一的家族分段比較法",
+      "3. 五位數直式加減複習：進位與借位",
+      "4. 大數加減兩階段鷹架：整萬→複名數對齊",
+      "5. 一的家族滿萬進位、不夠減向萬借位"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "https://drive.google.com/file/d/1YQLFmXYpwoYarSWX9-MTlhsswqGGm8nO/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-3-大數比較與加減/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-3-大數比較與加減/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-3-大數比較與加減/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-3-大數比較與加減/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L1-3-大數比較與加減/3.review.html"
+    }
+  },
+  {
     "title": "數L1-1 十萬以內的數",
     "subject": "數學",
     "grade": "四上",
@@ -167,25 +197,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
-    }
-  },
-  {
-    "title": "數L1-3 大數比較與加減",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "",
-    "links": {
-      "material": "https://drive.google.com/file/d/1YQLFmXYpwoYarSWX9-MTlhsswqGGm8nO/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
