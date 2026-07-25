@@ -1,0 +1,24 @@
+name: 驗證 Notion token 權限（Phase F 前置・臨時）
+
+# 僅手動觸發。用途：確認 NOTION_TOKEN 具備 Phase F 所需的讀／寫／建／刪／改 schema 能力。
+# 驗證完成後此 workflow 與對應腳本即可刪除。
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 執行權限探針
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: node scripts/verify-notion-token.mjs
