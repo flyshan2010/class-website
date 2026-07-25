@@ -13,6 +13,8 @@ on:
         options:
           - f01-purge-test-data
           - f02-add-year-field
+          - f03-backfill-year
+          - f04-unpublish-mock-reports
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
