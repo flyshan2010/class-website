@@ -55,7 +55,7 @@ export async function sandboxDataSources(pageId) {
   return out;
 }
 
-/** 沙盒的兩個庫（結構比照正式庫，只保留精靈會用到的欄位）。 */
+/** 沙盒的各個庫（結構比照正式庫，只保留精靈與模擬測試會用到的欄位）。 */
 const SCHEMAS = {
   "👥 學生名冊（沙盒）": {
     姓名: { title: {} },
@@ -91,6 +91,9 @@ const SEEDS = {
   ],
   "🧪 模擬寫入（沙盒）": [],   // 由 F12 寫入
 };
+
+/** 沙盒應有的資料庫標題清單——f10 用它做回讀驗證，避免寫死數量而漏掉新增的庫。 */
+export const SANDBOX_DB_TITLES = Object.keys(SCHEMAS);
 
 function toProps(schema, row) {
   const p = {};
