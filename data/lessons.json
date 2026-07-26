@@ -1,5 +1,33 @@
 [
   {
+    "title": "數L3-2 測量與畫角",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "用量角器實測角度並正確報讀",
+      "依步驟畫出指定度數的角",
+      "判斷銳角、直角90°、鈍角"
+    ],
+    "date": "",
+    "note": "ECC活動卡（編號18・用程式碼作畫，改編）：「畫出我的角度作品」——用量角器畫銳角/直角/鈍角各一，排成圖案並標註度數",
+    "links": {
+      "material": "https://drive.google.com/file/d/1R9kHMYRsOBXJxVjxsMjVj-z_ZZqSJagX/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-2-測量與畫角/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-2-測量與畫角/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-2-測量與畫角/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-2-測量與畫角/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-2-測量與畫角/3.review.html"
+    }
+  },
+  {
     "title": "數L3-1 認識量角器",
     "subject": "數學",
     "grade": "四上",
@@ -225,29 +253,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
-    }
-  },
-  {
-    "title": "數L3-2 測量與畫角",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "用量角器實測角度並正確報讀",
-      "依步驟畫出指定度數的角",
-      "判斷銳角、直角90°、鈍角"
-    ],
-    "date": "",
-    "note": "ECC活動卡（編號18・用程式碼作畫，改編）：「畫出我的角度作品」——用量角器畫銳角/直角/鈍角各一，排成圖案並標註度數",
-    "links": {
-      "material": "https://drive.google.com/file/d/1R9kHMYRsOBXJxVjxsMjVj-z_ZZqSJagX/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   },
   {
