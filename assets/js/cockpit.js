@@ -1,7 +1,8 @@
 /* 🚀 教學駕駛艙：教學五段流程的單元入口頁（老師課堂一鍵開）
    資料：data/lessons.json（Notion「🚀 教學單元」勾「顯示」者，無個資）
    五段：起始評估 → 課程教學 → 差異化指導 → 學習評量 → 成果回流（回流在紀錄庫，無連結）
-   排列：主分類＝科目，次排序＝課次代碼（國L1、社1-1…）；狀態改為卡片徽章＋上方篩選
+   排列：主分類＝科目，次分群＝單元（數L1、社1…，由小而大），單元內依小節排序；
+         沒有小節的課（國L1）不歸單元，直接掛科目底下；狀態改為卡片徽章＋上方篩選
    卡片：標題列只留「課次＋課名＋狀態」，年段・版本・開始日收成一行小字，其下條列內容重點 */
 (async () => {
   await App.init("cockpit");
@@ -42,6 +43,11 @@
     const c = codeOf(l) || l.title || "";
     return c.split(/(\d+)/).map(p => (/^\d+$/.test(p) ? p.padStart(6, "0") : p)).join("");
   };
+  /* 單元分群：代碼有小節（數L1-2、社1-1）才歸單元，單元代碼＝最後一段小節之前的部分；
+     沒有小節的課（國L1）自成一組、不顯示單元標題。單元序號取代碼尾端數字，用來寫「第 N 單元」。 */
+  const UNIT_RE = /^(.*\d)-\d+$/; // 數L1-2 → 數L1；社1-1 → 社1；國L1（無小節）→ 不成單元
+  const unitOf = l => (UNIT_RE.exec(codeOf(l)) || [])[1] || "";
+  const unitNo = u => (/(\d+)$/.exec(u) || [])[1] || "";
 
   const stageChips = done => `
     <div class="cockpit-stages">
@@ -93,6 +99,27 @@
     });
   };
 
+  /* 科目內再依單元分塊：rows 已依課次代碼排好，照順序切開就是「單元由小而大、單元內小節由小而大」。
+     單元代碼相同的連在一起成一塊並加單元標題；沒有小節的課各自成塊、不加標題。 */
+  const unitBlocks = (rows, color) => {
+    const blocks = [];
+    rows.forEach(l => {
+      const unit = unitOf(l);
+      const last = blocks[blocks.length - 1];
+      if (unit && last && last.unit === unit) last.rows.push(l);
+      else blocks.push({ unit, rows: [l] });
+    });
+    return blocks.map(b => {
+      const head = b.unit
+        ? `<p class="cockpit-unit" style="--accent:${color}">
+             📘 第 ${App.esc(unitNo(b.unit))} 單元
+             <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 課）</span>
+           </p>`
+        : "";
+      return head + b.rows.map(card).join("");
+    }).join("");
+  };
+
   const renderList = onlyActive => {
     const list = onlyActive ? lessons.filter(l => l.status === "進行中") : lessons;
     if (!list.length) {
@@ -107,14 +134,15 @@
       return `<h3 class="bank-section-title" style="border-left:6px solid ${color};padding-left:12px">
                 ${SUBJECT_ICON[sub] || "📦"} ${App.esc(sub)}
                 <span class="meta">（${rows.length} 課）</span>
-              </h3>${rows.map(card).join("")}`;
+              </h3>${unitBlocks(rows, color)}`;
     }).join("");
   };
 
   document.getElementById("main").innerHTML = `
     <h2 class="page-title"><span class="dot"></span>🚀 教學駕駛艙</h2>
     <p class="meta">教學五段流程（起始評估→教學→差異化→評量→回流）的單元入口：課堂要用的連結都在這裡。
-    依<b>科目</b>分區、<b>課次</b>排序。單元與連結在 Notion「🚀 教學單元」維護（勾「顯示」上站），
+    依<b>科目</b>分區、區內再依<b>單元</b>分塊（單元由小而大，單元內依小節排序）。
+    單元與連結在 Notion「🚀 教學單元」維護（勾「顯示」上站），
     或對 AI 說「/lesson-flow 開新單元」。</p>
     <div class="cockpit-filter" style="display:flex;gap:10px;margin:14px 0 6px">
       <button type="button" class="cockpit-link" data-filter="all" aria-pressed="true">全部單元</button>

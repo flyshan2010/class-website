@@ -711,6 +711,13 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 }
 
 /* ===== 教學駕駛艙 ===== */
+/* 單元標題：科目分區底下的第二層，帶科目色小圓角底，和課卡明顯分層 */
+.cockpit-unit {
+  margin: 16px 0 8px; padding: 6px 12px; border-radius: 10px;
+  font-weight: bold; font-size: 16px; color: var(--ink-soft);
+  background: #f1f3f5; border-left: 4px solid var(--accent, #adb5bd);
+}
+.cockpit-unit .meta { font-weight: normal; }
 .cockpit-card { margin-bottom: 14px; }
 .cockpit-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .cockpit-title { font-size: 18px; }
