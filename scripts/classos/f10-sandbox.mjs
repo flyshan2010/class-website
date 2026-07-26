@@ -6,7 +6,7 @@
  */
 
 import { isExecute } from "./lib/notion.mjs";
-import { SANDBOX_TITLE, findSandboxPage, sandboxDataSources, buildSandbox, teardownSandbox } from "./lib/sandbox.mjs";
+import { SANDBOX_TITLE, SANDBOX_DB_TITLES, findSandboxPage, sandboxDataSources, buildSandbox, teardownSandbox } from "./lib/sandbox.mjs";
 
 const EXECUTE = isExecute();
 const existing = await findSandboxPage();
@@ -29,9 +29,10 @@ if (existing) {
   console.log(`\n回讀驗證：沙盒${after ? "❌ 仍存在" : "✅ 已不存在"}`);
   process.exit(after ? 1 : 0);
 } else {
-  console.log("本次動作：**建立沙盒**（1 頁＋2 個庫＋種子資料）");
+  console.log(`本次動作：**建立沙盒**（1 頁＋${SANDBOX_DB_TITLES.length} 個庫＋種子資料）`);
   console.log("  · 👥 學生名冊（沙盒）：3 列（2 在學＋1 已非在學，用來驗證精靈只動在學列）");
   console.log("  · ⚙️ 網站設定（沙盒）：學年度=115學年度、班級=四年四班");
+  console.log("  · 🧪 模擬寫入（沙盒）：空表，供 F12 寫 9 支 skill 的學年測試列");
   if (!EXECUTE) { console.log("\n🔍 DRY-RUN 結束。以 MODE=execute 重跑即建立。"); process.exit(0); }
 
   console.log("");
@@ -39,8 +40,11 @@ if (existing) {
   console.log(`\n回讀驗證…`);
   const found = await findSandboxPage();
   const re = found ? await sandboxDataSources(found) : {};
-  const ok = found === pageId && Object.keys(re).length === 2 && Object.values(re).every(v => v.dataSourceId);
+  // 用「應有的庫清單」比對，而非寫死數量——新增沙盒庫時不會忘記改這裡
+  const missing = SANDBOX_DB_TITLES.filter(t => !re[t]?.dataSourceId);
+  const ok = found === pageId && missing.length === 0;
   for (const [t, v] of Object.entries(re)) console.log(`  ✅ ${t}｜${v.dataSourceId}`);
+  for (const t of missing) console.log(`  ❌ ${t}｜缺少或取不到 data source`);
   console.log(`\n${ok ? "✅ 沙盒就緒，可執行 f11-upgrade-wizard（target=sandbox）" : "❌ 沙盒建置不完整"}`);
   process.exit(ok ? 0 : 1);
 }
