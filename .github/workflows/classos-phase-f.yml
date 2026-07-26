@@ -16,6 +16,8 @@ on:
           - f03-backfill-year
           - f04-unpublish-mock-reports
           - f05-test-failloud
+          - f10-sandbox
+          - f11-upgrade-wizard
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
@@ -24,6 +26,36 @@ on:
         options:
           - dry-run
           - execute
+      target:
+        description: 「僅 f11」寫哪一邊。sandbox＝拋棄式沙盒（預設）／production＝正式庫
+        required: false
+        default: sandbox
+        type: choice
+        options:
+          - sandbox
+          - production
+      path_mode:
+        description: 「僅 f11」升級路徑。auto＝由年級自動判定（預設）
+        required: false
+        default: auto
+        type: choice
+        options:
+          - auto
+          - A
+          - B
+      new_class:
+        description: 「僅 f11」新班級名稱（路徑 B 必填，如「五年四班」）
+        required: false
+        default: ""
+        type: string
+      backup_done:
+        description: 「僅 f11 + production + execute」Notion 全庫匯出備份是否已完成
+        required: false
+        default: "no"
+        type: choice
+        options:
+          - "no"
+          - "yes"
 
 permissions:
   contents: read
@@ -42,4 +74,8 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           MODE: ${{ inputs.mode }}
+          TARGET: ${{ inputs.target }}
+          PATH_MODE: ${{ inputs.path_mode }}
+          NEW_CLASS: ${{ inputs.new_class }}
+          BACKUP_DONE: ${{ inputs.backup_done }}
         run: node scripts/classos/${{ inputs.task }}.mjs
