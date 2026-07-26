@@ -711,13 +711,24 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 }
 
 /* ===== 教學駕駛艙 ===== */
-/* 單元標題：科目分區底下的第二層，帶科目色小圓角底，和課卡明顯分層 */
+/* 單元摺疊列表：科目分區底下的第二層，點標題收合／展開（預設展開有進行中課程的單元） */
+.cockpit-unit-box { margin: 16px 0 8px; }
 .cockpit-unit {
-  margin: 16px 0 8px; padding: 6px 12px; border-radius: 10px;
+  display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none;
+  padding: 8px 12px; border-radius: 10px;
   font-weight: bold; font-size: 16px; color: var(--ink-soft);
   background: #f1f3f5; border-left: 4px solid var(--accent, #adb5bd);
 }
+.cockpit-unit::-webkit-details-marker { display: none; } /* 用自訂箭頭取代瀏覽器三角形 */
+.cockpit-unit::after {
+  content: "▾"; margin-left: auto; font-size: 14px; color: var(--accent, #868e96);
+  transition: transform .15s ease;
+}
+.cockpit-unit-box:not([open]) > .cockpit-unit::after { transform: rotate(-90deg); }
+.cockpit-unit:hover { background: #e9ecef; }
 .cockpit-unit .meta { font-weight: normal; }
+/* 收合狀態下相鄰單元不要黏在一起 */
+.cockpit-unit-box:not([open]) + .cockpit-unit-box { margin-top: 8px; }
 .cockpit-card { margin-bottom: 14px; }
 .cockpit-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .cockpit-title { font-size: 18px; }
