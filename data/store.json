@@ -1,50 +1,5 @@
 [
   {
-    "id": "39bb1f9d-7e45-819d-9930-fee9c5f085fd",
-    "name": "可愛貼紙",
-    "category": "小物",
-    "price": 20,
-    "stock": 20,
-    "icon": "⭐",
-    "note": "各式可愛貼紙一張"
-  },
-  {
-    "id": "39bb1f9d-7e45-8179-bf6c-d05027bb19b0",
-    "name": "造型橡皮擦",
-    "category": "小物",
-    "price": 30,
-    "stock": 10,
-    "icon": "🪧",
-    "note": "造型橡皮擦一個"
-  },
-  {
-    "id": "39bb1f9d-7e45-81d3-a931-de91a4166697",
-    "name": "造型鉛筆",
-    "category": "小物",
-    "price": 35,
-    "stock": 10,
-    "icon": "✏️",
-    "note": "造型鉛筆一枝"
-  },
-  {
-    "id": "396b1f9d-7e45-8157-a0b0-c0fd25c898b1",
-    "name": "香香鉛筆",
-    "category": "小物",
-    "price": 35,
-    "stock": 20,
-    "icon": "✏️",
-    "note": "水果香味鉛筆"
-  },
-  {
-    "id": "39bb1f9d-7e45-8143-9047-da41a4ca1a3b",
-    "name": "小文具福袋",
-    "category": "小物",
-    "price": 50,
-    "stock": 8,
-    "icon": "🎁",
-    "note": "隨機小文具一份"
-  },
-  {
     "id": "3a7b1f9d-7e45-8178-bbd8-e4e14c983a24",
     "name": "班級小主人券",
     "category": "特權",
