@@ -100,9 +100,22 @@
   };
 
   /* 科目內再依單元分塊：rows 已依課次代碼排好，照順序切開就是「單元由小而大、單元內小節由小而大」。
-     單元代碼相同的連在一起成一塊；每塊做成 <details> 摺疊列表（點單元標題收合／展開），
-     預設只展開「有進行中課程」的單元，其餘收起來，長清單一眼看得完。
-     沒有小節的課（國L1）各自成塊、不加單元標題也不摺疊。 */
+     每塊都做成 <details> 摺疊列表（點標題收合／展開），**預設全部收合**——一進來只看到
+     單元清單，要用哪課再點開。有小節的（數L1-1…）合成「第 N 單元」；沒有小節的（國L1）
+     一課自成一列，標題直接顯示課次與課名。 */
+  const blockHead = b => {
+    if (b.unit) {
+      return `📘 第 ${App.esc(unitNo(b.unit))} 單元
+              <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 課）</span>`;
+    }
+    // 單課列：標題列就把課次與課名寫清楚，收合狀態下也認得出是哪一課
+    const l = b.rows[0], code = codeOf(l);
+    const name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
+    return code
+      ? `📄 第 ${App.esc(unitNo(code))} 課 <span class="meta">（${App.esc(code)}・${App.esc(name)}）</span>`
+      : `📄 ${App.esc(l.title || "")}`;
+  };
+
   const unitBlocks = (rows, color) => {
     const blocks = [];
     rows.forEach(l => {
@@ -111,20 +124,13 @@
       if (unit && last && last.unit === unit) last.rows.push(l);
       else blocks.push({ unit, rows: [l] });
     });
-    return blocks.map(b => {
-      const cards = b.rows.map(card).join("");
-      if (!b.unit) return cards;
-      const open = b.rows.some(l => l.status === "進行中") ? " open" : "";
-      return `
-        <details class="cockpit-unit-box"${open}>
+    return blocks.map(b => `
+        <details class="cockpit-unit-box">
           <summary class="cockpit-unit" style="--accent:${color}">
-            <span>📘 第 ${App.esc(unitNo(b.unit))} 單元
-              <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 課）</span>
-            </span>
+            <span>${blockHead(b)}</span>
           </summary>
-          ${cards}
-        </details>`;
-    }).join("");
+          ${b.rows.map(card).join("")}
+        </details>`).join("");
   };
 
   const renderList = onlyActive => {
@@ -149,7 +155,7 @@
     <h2 class="page-title"><span class="dot"></span>🚀 教學駕駛艙</h2>
     <p class="meta">教學五段流程（起始評估→教學→差異化→評量→回流）的單元入口：課堂要用的連結都在這裡。
     依<b>科目</b>分區、區內再依<b>單元</b>做成摺疊列表（單元由小而大，單元內依小節排序）——
-    點單元標題可收合／展開，預設展開有「🔥 進行中」課程的單元。
+    <b>預設全部收合</b>，點單元標題展開該單元的課卡與連結。
     單元與連結在 Notion「🚀 教學單元」維護（勾「顯示」上站），
     或對 AI 說「/lesson-flow 開新單元」。</p>
     <div class="cockpit-filter" style="display:flex;gap:10px;margin:14px 0 6px">
