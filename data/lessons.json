@@ -28,6 +28,34 @@
     }
   },
   {
+    "title": "數L3-3 旋轉角",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "順時針、逆時針旋轉方向的意義",
+      "旋轉角操作：固定端點旋轉一邊",
+      "平角180°、周角360°的認識"
+    ],
+    "date": "",
+    "note": "ECC活動卡兩張都用：①（編號21・讓人像畫動起來）「角度旋轉動畫」逐格動畫呈現0°→180°→360°；②（編號4・用連拍捕捉精彩一刻）「時鐘指針角度偵探」連拍鐘面指針測旋轉角",
+    "links": {
+      "material": "https://drive.google.com/file/d/1R9kHMYRsOBXJxVjxsMjVj-z_ZZqSJagX/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-3-旋轉角/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-3-旋轉角/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-3-旋轉角/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-3-旋轉角/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-3-旋轉角/3.review.html"
+    }
+  },
+  {
     "title": "數L3-1 認識量角器",
     "subject": "數學",
     "grade": "四上",
@@ -253,29 +281,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
-    }
-  },
-  {
-    "title": "數L3-3 旋轉角",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "順時針、逆時針旋轉方向的意義",
-      "旋轉角操作：固定端點旋轉一邊",
-      "平角180°、周角360°的認識"
-    ],
-    "date": "",
-    "note": "ECC活動卡兩張都用：①（編號21・讓人像畫動起來）「角度旋轉動畫」逐格動畫呈現0°→180°→360°；②（編號4・用連拍捕捉精彩一刻）「時鐘指針角度偵探」連拍鐘面指針測旋轉角",
-    "links": {
-      "material": "https://drive.google.com/file/d/1R9kHMYRsOBXJxVjxsMjVj-z_ZZqSJagX/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   },
   {
