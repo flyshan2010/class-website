@@ -15,19 +15,24 @@ import { api, apiOrThrow } from "./notion.mjs";
 export const SANDBOX_TITLE = "🧪 Phase F 沙盒";
 const PARENT_PAGE = "394b1f9d-7e45-81dc-b65e-c41e587d55ba"; // 🏫 班級經營中心
 
-/** 依標題找沙盒頁。回傳 page id 或 null。 */
+/**
+ * 依標題找沙盒頁。回傳 page id 或 null。
+ *
+ * ⚠️ 刻意**不用** `/v1/search`——Notion 的搜尋索引是最終一致的，剛建立的頁面查不到，
+ *    建立後立刻回讀會誤判成失敗（2026-07-26 實際踩過）。
+ *    改列父頁的子區塊，這條路即時一致。
+ */
 export async function findSandboxPage() {
-  const r = await apiOrThrow("POST", "/search", {
-    query: SANDBOX_TITLE,
-    filter: { value: "page", property: "object" },
-    page_size: 20,
-  });
-  const hit = (r.results ?? []).find(p => {
-    if (p.archived || p.in_trash) return false;
-    const t = p.properties?.title?.title ?? p.properties?.Name?.title ?? [];
-    return t.map(x => x.plain_text).join("") === SANDBOX_TITLE;
-  });
-  return hit?.id ?? null;
+  let cursor;
+  do {
+    const q = cursor ? `?start_cursor=${cursor}&page_size=100` : "?page_size=100";
+    const r = await apiOrThrow("GET", `/blocks/${PARENT_PAGE}/children${q}`);
+    for (const b of r.results ?? []) {
+      if (b.type === "child_page" && b.child_page?.title === SANDBOX_TITLE && !b.archived) return b.id;
+    }
+    cursor = r.has_more ? r.next_cursor : undefined;
+  } while (cursor);
+  return null;
 }
 
 /** 列出沙盒頁底下的資料庫：{ 標題 → { databaseId, dataSourceId } } */
