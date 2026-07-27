@@ -1,5 +1,92 @@
 [
   {
+    "title": "數L2-2 乘以三位數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "一位數×整百：個位十位省略0，從百位記起",
+      "二位數×整百：規律相同，答案看成幾個百",
+      "乘數是三位數：分三層併式，逐層對齊合併",
+      "乘數十位為0：這層仍要算，只記一個0"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "https://drive.google.com/file/d/1SegfxvbHMWHs3gig76GZkCSg1mqbCAg4/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/3.review.html"
+    }
+  },
+  {
+    "title": "數L2-1 乘以一、二位數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "四位數×一位數：分位相乘、進位與中間0的處理",
+      "一位數×二位數：整十倍規律，個位0可省略",
+      "二位數×二位數：分層併式（先乘個位、再乘十位）",
+      "三位數×二位數：直式計算＋先估算再檢查合理性"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "https://drive.google.com/file/d/1SegfxvbHMWHs3gig76GZkCSg1mqbCAg4/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-1-乘以一二位數/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-1-乘以一二位數/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-1-乘以一二位數/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-1-乘以一二位數/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-1-乘以一二位數/3.review.html"
+    }
+  },
+  {
+    "title": "數L3-4 角度的計算",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "角的合成：拼角相加、旋轉角同向累加",
+      "角的分解：總角減分角、平角180°分解",
+      "旋轉角二次操作：同向相加、反向相減",
+      "基準複習：平角180°、周角360°"
+    ],
+    "date": "",
+    "note": "第三單元「角度」最後一節，銜接3-1~3-3；本節後接下一單元(ML04)",
+    "links": {
+      "material": "https://drive.google.com/file/d/1R9kHMYRsOBXJxVjxsMjVj-z_ZZqSJagX/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-4-角度的計算/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-4-角度的計算/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-4-角度的計算/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-4-角度的計算/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L3-4-角度的計算/3.review.html"
+    }
+  },
+  {
     "title": "數L3-2 測量與畫角",
     "subject": "數學",
     "grade": "四上",
@@ -281,6 +368,25 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
+    }
+  },
+  {
+    "title": "數L2-3 乘法算式的規律",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "含練習園地(二)併入本節複習/評量段",
+    "links": {
+      "material": "https://drive.google.com/file/d/1SegfxvbHMWHs3gig76GZkCSg1mqbCAg4/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
     }
   },
   {
