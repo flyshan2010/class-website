@@ -21,12 +21,37 @@ const cfg = JSON.parse(await readFile(path.join(DATA, "school-news-config.json")
 const SITE = cfg["來源網址"];
 
 // ── 抓首頁 ──
-const res = await fetch(SITE, { headers: { "User-Agent": "class-website-bot/1.0" } });
-if (!res.ok) {
-  console.error(`❌ 校網回應 ${res.status}，本次不更新學校公告`);
-  process.exit(1);
+// 崑山校網（TANet）對雲端機房 IP 不一定通，且偶爾很慢：逐一嘗試候選網址、
+// 每次 25 秒逾時、失敗重試 3 輪。全部失敗＝保留班網現有學校公告後退出。
+const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
+  "(KHTML, like Gecko) Chrome/126.0 Safari/537.36";
+const CANDIDATES = [SITE, SITE.replace("https://", "http://")];
+
+async function fetchHome() {
+  const errs = [];
+  for (let round = 1; round <= 3; round++) {
+    for (const url of CANDIDATES) {
+      try {
+        const res = await fetch(url, {
+          headers: { "User-Agent": UA, "Accept-Language": "zh-TW,zh;q=0.9" },
+          redirect: "follow",
+          signal: AbortSignal.timeout(25_000),
+        });
+        if (!res.ok) { errs.push(`${url} → HTTP ${res.status}`); continue; }
+        console.log(`🌐 取得校網首頁：${url}（第 ${round} 輪）`);
+        return res.text();
+      } catch (e) {
+        errs.push(`${url} → ${e.cause?.code ?? e.name ?? e.message}`);
+      }
+    }
+    if (round < 3) await new Promise((r) => setTimeout(r, 3000 * round));
+  }
+  console.error("❌ 連不上崑山校網，本次不更新學校公告（班網現有內容保留）：");
+  for (const e of [...new Set(errs)]) console.error(`   · ${e}`);
+  process.exit(2); // 2＝網路問題，與 1（版型解析失敗）區分
 }
-const html = await res.text();
+
+const html = await fetchHome();
 
 // ── 取出「最新發布」那張表 ──
 const table = html.match(/<table[^>]*id="news_tableall"[\s\S]*?<\/table>/i)?.[0];
