@@ -69,11 +69,14 @@ const App = {
     return items[n % items.length];
   },
 
-  // 黑板風「當天聯絡簿」：四格（本日功課／提醒事項／攜帶物品／每日小叮嚀），
-  // 版面比照教室黑板，方便學生照抄、家長一眼看完。首頁與聯絡簿頁共用。
-  // day＝contactbook.json 的一列（可為 undefined＝沒資料，仍會畫出空黑板，版面不塌）。
+  // 「當天聯絡簿」四格卡（本日功課／提醒事項／攜帶物品／每日小叮嚀），
+  // 沿用教室黑板的分區，方便學生照抄、家長一眼看完。首頁與聯絡簿頁共用。
+  // day＝contactbook.json 的一列；opts.date 可單獨指定要標示的日期——
+  // 首頁固定標「今天」，就算今天沒有資料也照樣畫四格（顯示「今日沒有功課喔」），
+  // 免得家長／學生把下一個上課日的功課誤看成今天要交的。
   chalkBoard(day, spar, opts = {}) {
-    const { title = "當天聯絡簿", footer = "" } = opts;
+    const { title = "當天聯絡簿", footer = "", date = day?.date,
+            hwEmpty = "今日沒有功課喔 🎉" } = opts;
     const panel = (cls, icon, name, text, empty, tick = true) => {
       const items = this.lines(text);
       return `
@@ -84,18 +87,18 @@ const App = {
             : `<p class="cb-empty">${empty}</p>`}
         </section>`;
     };
-    const tip = this.dailyTip(spar, day?.date);
+    const tip = this.dailyTip(spar, date);
     return `
       <div class="chalkboard">
         <div class="cb-head">
           <h2 class="cb-title">📒 ${this.esc(title)}</h2>
-          <span class="cb-date">${day ? this.fmtDate(day.date) : "尚未開始"}</span>
+          <span class="cb-date">${date ? this.fmtDate(date) : "尚未開始"}</span>
         </div>
-        ${day ? `
+        ${date ? `
         <div class="cb-grid">
-          ${panel("hw", "✏️", "本日功課", day.homework, "今天沒有功課，好好休息！")}
-          ${panel("note", "📌", "提醒事項", day.notes, "今天沒有特別的提醒")}
-          ${panel("bring", "🎒", "攜帶物品", day.bring, "不用帶特別的東西")}
+          ${panel("hw", "✏️", "本日功課", day?.homework, hwEmpty)}
+          ${panel("note", "📌", "提醒事項", day?.notes, "今天沒有特別的提醒")}
+          ${panel("bring", "🎒", "攜帶物品", day?.bring, "不用帶特別的東西")}
           <section class="cb-panel tip">
             <h3>🌟 每日小叮嚀</h3>
             ${tip
