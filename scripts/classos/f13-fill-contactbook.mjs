@@ -25,13 +25,18 @@ const SRC = path.join(HERE, "data", "115-1-contactbook.json");
 
 const EXECUTE = isExecute();
 const SUBJECTS = ["國語", "數學", "社會"];
-const SEP = "　"; // 全形空格：科目與內容之間
 
-/** 一行一科；當天沒作業的科目不出現。整天都沒有 → 空字串（前台會顯示「今天沒有作業」）。 */
+/**
+ * 一項功課一行，且**不寫科目名稱**（老師 2026-07-31 指示）：
+ * 作業本身已含「國習／數習／社作」等簿本名稱，前面再加「國語　」會讓學生把科目誤看成一項功課。
+ * 同一科用頓號分隔的多項（例：「國習 L1 P.4-5、甲本 L1 P.3-12」）也拆成各自一行。
+ * 整天都沒有 → 空字串（前台會顯示「今天沒有功課」）。
+ */
 const homeworkText = (day) =>
   SUBJECTS
-    .filter((s) => (day[s] ?? "").trim())
-    .map((s) => `${s}${SEP}${day[s].trim()}`)
+    .flatMap((s) => String(day[s] ?? "").split("、"))
+    .map((t) => t.trim())
+    .filter(Boolean)
     .join("\n");
 
 const rt = (s) => ({ rich_text: s ? [{ text: { content: s } }] : [] });

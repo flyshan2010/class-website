@@ -1024,3 +1024,100 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   .spar-items { grid-template-columns: 1fr; }
   .spar-title { font-size: 1.4rem; }
 }
+
+/* ── 黑板風「當天聯絡簿」（首頁＋聯絡簿頁共用；App.chalkBoard） ────────────── */
+/* 設計目的：像教室黑板一樣一眼看完、方便學生照抄，家長也好讀。 */
+.chalkboard {
+  --chalk: #f6f8f2;
+  position: relative;
+  margin: 0 0 18px;
+  padding: 16px 18px 18px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  color: var(--chalk);
+  border: 10px solid #c28a4c;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, .06), transparent 55%),
+    radial-gradient(circle at 82% 85%, rgba(255, 255, 255, .05), transparent 50%),
+    linear-gradient(160deg, #35594c 0%, #2c4a40 55%, #26433a 100%);
+  box-shadow: inset 0 0 0 3px #a5703a, inset 0 0 40px rgba(0, 0, 0, .35), var(--shadow);
+}
+.cb-head {
+  display: flex; align-items: baseline; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+  padding-bottom: 10px; margin-bottom: 12px;
+  border-bottom: 2px dashed rgba(246, 248, 242, .3);
+}
+.cb-title { font-size: 24px; letter-spacing: 2px; color: var(--chalk); margin: 0; }
+.cb-date { font-size: 17px; color: #ffe680; letter-spacing: 1px; }
+.cb-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); }
+.cb-panel {
+  --pc: #ffe680;
+  padding: 10px 13px 12px;
+  border: 2px dashed rgba(246, 248, 242, .28);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .05);
+}
+.cb-panel.hw { --pc: #ffe680; }
+.cb-panel.note { --pc: #ffb0b8; }
+.cb-panel.bring { --pc: #a9e7cf; }
+.cb-panel.tip { --pc: #bcd7ff; }
+.cb-panel h3 {
+  margin: 0 0 8px; padding-bottom: 6px;
+  font-size: 17px; letter-spacing: 1px; color: var(--pc);
+  border-bottom: 1px solid rgba(246, 248, 242, .18);
+}
+.cb-list { list-style: none; margin: 0; padding: 0; }
+.cb-list li { position: relative; margin: 6px 0; padding-left: 22px; font-size: 16.5px; line-height: 1.8; }
+.cb-list.tick li::before { content: "□"; position: absolute; left: 0; opacity: .8; }
+.cb-empty { margin: 4px 0; font-size: 15.5px; opacity: .72; }
+.cb-none { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; opacity: .8; }
+.cb-tip-zh { margin: 4px 0 2px; font-size: 17px; font-weight: 700; }
+.cb-tip-letter {
+  display: inline-block; min-width: 1.5em; margin-right: 6px;
+  font-size: 22px; color: var(--pc); text-shadow: 0 0 8px rgba(188, 215, 255, .5);
+}
+.cb-tip-desc { margin: 0; font-size: 15px; line-height: 1.7; opacity: .85; }
+.cb-more { margin: 12px 0 0; text-align: right; }
+.cb-more a { color: #ffe680; }
+
+/* ── 聯絡簿頁月曆 ─────────────────────────────────────────────── */
+.cb-cal { border-top-color: var(--orange); }
+.cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 10px 0 12px; font-size: 18px; }
+.cal-nav {
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--line);
+  background: #fff; color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer;
+}
+.cal-nav:hover:not(:disabled) { border-color: var(--orange); color: var(--orange); }
+.cal-nav:disabled { opacity: .3; cursor: default; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-w { text-align: center; font-size: 13px; color: var(--ink-soft); padding: 2px 0 4px; }
+.cal-cell {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  min-height: 46px; padding: 4px 0; font-size: 15px; font-family: inherit;
+  border: 2px solid transparent; border-radius: 10px;
+  background: #f2f4f6; color: var(--ink-soft);
+}
+.cal-cell.blank { background: none; }
+.cal-cell.has { background: #fff2df; color: var(--ink); font-weight: 700; cursor: pointer; }
+.cal-cell.has:hover { border-color: var(--orange); }
+.cal-cell .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
+.cal-cell.past { opacity: .35; }            /* 已過的日期變暗，但仍可點開查找 */
+.cal-cell.today { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255, 159, 67, .22); }
+.cal-cell.sel { background: var(--orange); color: #fff; opacity: 1; }
+.cal-cell.sel .dot { background: #fff; }
+.cal-legend { margin: 12px 0 0; font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cal-legend .lg { display: inline-block; width: 14px; height: 14px; border-radius: 4px; }
+.cal-legend .lg.has { background: #fff2df; border: 1px solid var(--line); }
+.cal-legend .lg.past { background: #f2f4f6; opacity: .35; }
+.cal-legend .lg.today { background: #fff; border: 2px solid var(--orange); }
+.cb-list-title { margin: 22px 0 10px; font-size: 19px; }
+
+@media (max-width: 520px) {
+  .chalkboard { padding: 12px 12px 14px; border-width: 7px; }
+  .cb-title { font-size: 20px; }
+  .cb-grid { grid-template-columns: 1fr; }
+  .cal-cell { min-height: 40px; font-size: 14px; }
+}
