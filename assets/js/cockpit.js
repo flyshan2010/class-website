@@ -63,6 +63,19 @@
     return names.every(n => n && n === names[0]) ? names[0] : null;
   };
 
+  /* 單元名稱（數學／社會小節適用）：標題若寫成「代碼 單元名稱｜課名」（｜前後皆可留空白），
+     取「｜」前的單元名稱，同一單元底下每列都相同才採用；沒有寫「｜」的舊資料不受影響，
+     單元標題退回原本「第N單元（代碼・N課）」的樣子。 */
+  const UNIT_NAME_RE = /^(.*?)\s*｜/;
+  const sameUnitName = rows => {
+    const names = rows.map(l => {
+      const full = (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim();
+      const m = UNIT_NAME_RE.exec(full);
+      return m && m[1] ? m[1].trim() : null;
+    });
+    return names.every(n => n && n === names[0]) ? names[0] : null;
+  };
+
   const stageChips = done => `
     <div class="cockpit-stages">
       ${STAGES.map(s => `<span class="cockpit-stage ${done.includes(s) ? "done" : ""}">${done.includes(s) ? "✓" : "○"} ${s}</span>`).join("")}
@@ -126,8 +139,12 @@
         return `📄 第 ${App.esc(unitNo(b.unit))} 課
                 <span class="meta">（${App.esc(b.unit)}${App.esc(courseName)} ${b.rows.length}節）</span>`;
       }
-      return `📘 第 ${App.esc(unitNo(b.unit))} 單元
-              <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 課）</span>`;
+      const unitName = sameUnitName(b.rows);
+      return unitName
+        ? `📘 第 ${App.esc(unitNo(b.unit))} 單元
+           <span class="meta">（${App.esc(b.unit)} ${App.esc(unitName)}・${b.rows.length} 課）</span>`
+        : `📘 第 ${App.esc(unitNo(b.unit))} 單元
+           <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 課）</span>`;
     }
     // 單課列：標題列就把課次與課名寫清楚，收合狀態下也認得出是哪一課
     const l = b.rows[0], code = codeOf(l);
@@ -146,13 +163,22 @@
       else blocks.push({ unit, rows: [l] });
     });
     return blocks.map(b => {
-      const courseName = b.unit ? sameCourseName(b.rows) : null;
+      // 卡片標題要去掉的前綴：同課節次（課名）或同單元小節（單元名稱｜），已在摺疊列標題顯示過
+      let stripPrefix = null;
+      if (b.unit) {
+        const courseName = sameCourseName(b.rows);
+        if (courseName) stripPrefix = courseName;
+        else {
+          const unitName = sameUnitName(b.rows);
+          if (unitName) stripPrefix = `${unitName}｜`;
+        }
+      }
       return `
         <details class="cockpit-unit-box">
           <summary class="cockpit-unit" style="--accent:${color}">
             <span>${blockHead(b)}</span>
           </summary>
-          ${b.rows.map(l => card(l, courseName)).join("")}
+          ${b.rows.map(l => card(l, stripPrefix)).join("")}
         </details>`;
     }).join("");
   };
