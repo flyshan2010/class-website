@@ -1,5 +1,61 @@
 [
   {
+    "title": "國L2-3 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "書信格式：稱謂、正文、祝福語、署名日期",
+      "修辭：轉化（擬人）、譬喻（明喻）",
+      "句型：「以為……沒想到……」、「不但……還……」"
+    ],
+    "date": "",
+    "note": "本節為翰林四上國語第二課「請到我的家鄉來」教學節次之第3節。與國L2-1、國L2-2、國L2-4同屬一課，依教學進度切分為4節（非小節子題），4節共用同一份原教材。課次代碼／描述文字命名規則同國L2-1備註。",
+    "links": {
+      "material": "https://drive.google.com/file/d/11mlIAkqw9RfxBrt6aA-AkXcu-f5abZEr/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-3-形式深究/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-3-形式深究/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-3-形式深究/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-3-形式深究/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-3-形式深究/3.review.html"
+    }
+  },
+  {
+    "title": "國L2-4 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "全課地圖回顧（四封信→生字→修辭→句型）",
+      "讀寫教學：讀信與回信（統整活動一，P32-33）",
+      "遷移任務：寫信給校際互訪同學"
+    ],
+    "date": "",
+    "note": "本節為翰林四上國語第二課「請到我的家鄉來」教學節次之第4節（最後一節）。與國L2-1、國L2-2、國L2-3同屬一課，四節共用同一份原教材。本節正式評量依老師裁示加入「回信寫作」實作題。課次代碼／描述文字命名規則同國L2-1備註。",
+    "links": {
+      "material": "https://drive.google.com/file/d/11mlIAkqw9RfxBrt6aA-AkXcu-f5abZEr/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-4-綜合整理/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-4-綜合整理/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-4-綜合整理/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-4-綜合整理/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L2-4-綜合整理/3.review.html"
+    }
+  },
+  {
     "title": "國L2-2 第二節 內容理解",
     "subject": "國語",
     "grade": "四上",
