@@ -49,6 +49,20 @@
   const unitOf = l => (UNIT_RE.exec(codeOf(l)) || [])[1] || "";
   const unitNo = u => (/(\d+)$/.exec(u) || [])[1] || "";
 
+  /* 節次分組判斷：國語這類「同一課依教學進度切成第N節」的分組，代碼雖有 -N 尾碼、
+     邏輯上仍是同一課，要顯示成「第 N 課（代碼 課名）」；數學／社會的小節（乘以一二位數、
+     乘以三位數…）是同一單元底下不同課，維持「第 N 單元（代碼・N 課）」。
+     判斷法：把每一列標題「第N節」之前的文字取出來比對，全部相同才視為同一課。 */
+  const NODE_NAME_RE = /^(.*?)\s*第[一二三四五六七八九十0-9]+節/;
+  const sameCourseName = rows => {
+    const names = rows.map(l => {
+      const full = (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim();
+      const m = NODE_NAME_RE.exec(full);
+      return m && m[1] ? m[1].trim() : null;
+    });
+    return names.every(n => n && n === names[0]) ? names[0] : null;
+  };
+
   const stageChips = done => `
     <div class="cockpit-stages">
       ${STAGES.map(s => `<span class="cockpit-stage ${done.includes(s) ? "done" : ""}">${done.includes(s) ? "✓" : "○"} ${s}</span>`).join("")}
@@ -67,12 +81,14 @@
     ? `<ul class="cockpit-points">${pts.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>`
     : "";
 
-  const card = l => {
+  const card = (l, stripPrefix) => {
     const st = STATUS_META[l.status] || STATUS_META["備課中"];
     const color = SUBJECT_COLOR[l.subject] || "#8395A7";
     const code = codeOf(l);
     // 標題已含課次代碼，前面的代碼徽章就不重複顯示課次以外的字
-    const name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
+    let name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
+    // 同課節次分組時，課名已顯示在上方摺疊列標題，卡片標題只留節次描述避免重複
+    if (stripPrefix && name.startsWith(stripPrefix)) name = name.slice(stripPrefix.length).trim();
     // 年段・版本・開始日整併成一行小字，標題列只留課名與狀態
     const meta = [l.grade, l.version, l.date ? `${App.fmtDateShort(l.date)} 開始` : ""]
       .filter(Boolean).map(App.esc).join(" ・ ");
@@ -105,6 +121,11 @@
      一課自成一列，標題直接顯示課次與課名。 */
   const blockHead = b => {
     if (b.unit) {
+      const courseName = sameCourseName(b.rows);
+      if (courseName) {
+        return `📄 第 ${App.esc(unitNo(b.unit))} 課
+                <span class="meta">（${App.esc(b.unit)}${App.esc(courseName)} ${b.rows.length}節）</span>`;
+      }
       return `📘 第 ${App.esc(unitNo(b.unit))} 單元
               <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 課）</span>`;
     }
@@ -124,13 +145,16 @@
       if (unit && last && last.unit === unit) last.rows.push(l);
       else blocks.push({ unit, rows: [l] });
     });
-    return blocks.map(b => `
+    return blocks.map(b => {
+      const courseName = b.unit ? sameCourseName(b.rows) : null;
+      return `
         <details class="cockpit-unit-box">
           <summary class="cockpit-unit" style="--accent:${color}">
             <span>${blockHead(b)}</span>
           </summary>
-          ${b.rows.map(card).join("")}
-        </details>`).join("");
+          ${b.rows.map(l => card(l, courseName)).join("")}
+        </details>`;
+    }).join("");
   };
 
   const renderList = onlyActive => {
