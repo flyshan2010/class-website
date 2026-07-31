@@ -1025,63 +1025,66 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   .spar-title { font-size: 1.4rem; }
 }
 
-/* ── 黑板風「當天聯絡簿」（首頁＋聯絡簿頁共用；App.chalkBoard） ────────────── */
-/* 設計目的：像教室黑板一樣一眼看完、方便學生照抄，家長也好讀。 */
+/* ── 「當天聯絡簿」四格卡（首頁＋聯絡簿頁共用；App.chalkBoard） ──────────── */
+/* 版面沿用教室黑板的四格分區（一眼看完、方便學生照抄），
+   視覺則對齊班網糖果色系：白卡片＋圓角＋橘色頂邊，不與首頁其他卡片衝突。 */
 .chalkboard {
-  --chalk: #f6f8f2;
-  position: relative;
-  margin: 0 0 18px;
-  padding: 16px 18px 18px;
+  background: var(--card);
+  border-radius: var(--radius);
+  border-top: 6px solid var(--orange);
+  box-shadow: var(--shadow);
+  padding: 22px 24px 18px;
+  margin-bottom: 18px;
   min-height: 200px;
   display: flex;
   flex-direction: column;
-  color: var(--chalk);
-  border: 10px solid #c28a4c;
-  border-radius: 16px;
-  background:
-    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, .06), transparent 55%),
-    radial-gradient(circle at 82% 85%, rgba(255, 255, 255, .05), transparent 50%),
-    linear-gradient(160deg, #35594c 0%, #2c4a40 55%, #26433a 100%);
-  box-shadow: inset 0 0 0 3px #a5703a, inset 0 0 40px rgba(0, 0, 0, .35), var(--shadow);
 }
 .cb-head {
-  display: flex; align-items: baseline; justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   gap: 12px; flex-wrap: wrap;
-  padding-bottom: 10px; margin-bottom: 12px;
-  border-bottom: 2px dashed rgba(246, 248, 242, .3);
+  padding-bottom: 12px; margin-bottom: 14px;
+  border-bottom: 2px dashed var(--line);
 }
-.cb-title { font-size: 24px; letter-spacing: 2px; color: var(--chalk); margin: 0; }
-.cb-date { font-size: 17px; color: #ffe680; letter-spacing: 1px; }
+.cb-title { font-size: 24px; letter-spacing: 1px; margin: 0; }
+.cb-date {
+  font-size: 16px; color: #fff; background: var(--orange);
+  border-radius: 999px; padding: 2px 14px; letter-spacing: 1px;
+}
 .cb-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); }
 .cb-panel {
-  --pc: #ffe680;
-  padding: 10px 13px 12px;
-  border: 2px dashed rgba(246, 248, 242, .28);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, .05);
+  --pc: #D97706; --pbg: #FFF5E6;
+  padding: 12px 15px 14px;
+  border-radius: 14px;
+  background: var(--pbg);
 }
-.cb-panel.hw { --pc: #ffe680; }
-.cb-panel.note { --pc: #ffb0b8; }
-.cb-panel.bring { --pc: #a9e7cf; }
-.cb-panel.tip { --pc: #bcd7ff; }
+.cb-panel.hw { --pc: #D97706; --pbg: #FFF5E6; }
+.cb-panel.note { --pc: #E03B54; --pbg: #FFEFF2; }
+.cb-panel.bring { --pc: #0E9F7E; --pbg: #E8FAF3; }
+.cb-panel.tip { --pc: #3B7BD8; --pbg: #EDF4FF; }
 .cb-panel h3 {
   margin: 0 0 8px; padding-bottom: 6px;
-  font-size: 17px; letter-spacing: 1px; color: var(--pc);
-  border-bottom: 1px solid rgba(246, 248, 242, .18);
+  font-size: 17px; color: var(--pc);
+  border-bottom: 1px solid rgba(45, 52, 54, .08);
 }
 .cb-list { list-style: none; margin: 0; padding: 0; }
-.cb-list li { position: relative; margin: 6px 0; padding-left: 22px; font-size: 16.5px; line-height: 1.8; }
-.cb-list.tick li::before { content: "□"; position: absolute; left: 0; opacity: .8; }
-.cb-empty { margin: 4px 0; font-size: 15.5px; opacity: .72; }
-.cb-none { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; opacity: .8; }
-.cb-tip-zh { margin: 4px 0 2px; font-size: 17px; font-weight: 700; }
-.cb-tip-letter {
-  display: inline-block; min-width: 1.5em; margin-right: 6px;
-  font-size: 22px; color: var(--pc); text-shadow: 0 0 8px rgba(188, 215, 255, .5);
+.cb-list li { position: relative; margin: 6px 0; padding-left: 26px; font-size: 16.5px; line-height: 1.8; }
+/* 空心方框＝學生抄完可以自己打勾的格子 */
+.cb-list.tick li::before {
+  content: ""; position: absolute; left: 0; top: .45em;
+  width: 16px; height: 16px; border-radius: 5px;
+  border: 2px solid var(--pc); background: #fff;
 }
-.cb-tip-desc { margin: 0; font-size: 15px; line-height: 1.7; opacity: .85; }
-.cb-more { margin: 12px 0 0; text-align: right; }
-.cb-more a { color: #ffe680; }
+.cb-empty { margin: 4px 0; font-size: 15.5px; color: var(--ink-soft); }
+.cb-none { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--ink-soft); }
+.cb-tip-zh { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-size: 17px; font-weight: 700; }
+.cb-tip-letter {
+  flex: 0 0 auto;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 17px; color: #fff; background: var(--pc);
+}
+.cb-tip-desc { margin: 0; font-size: 15px; line-height: 1.7; color: var(--ink-soft); }
+.cb-more { margin: 14px 0 0; text-align: right; }
 
 /* ── 聯絡簿頁月曆 ─────────────────────────────────────────────── */
 .cb-cal { border-top-color: var(--orange); }
@@ -1116,7 +1119,7 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .cb-list-title { margin: 22px 0 10px; font-size: 19px; }
 
 @media (max-width: 520px) {
-  .chalkboard { padding: 12px 12px 14px; border-width: 7px; }
+  .chalkboard { padding: 16px 14px 14px; }
   .cb-title { font-size: 20px; }
   .cb-grid { grid-template-columns: 1fr; }
   .cal-cell { min-height: 40px; font-size: 14px; }
