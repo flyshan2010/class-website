@@ -61,6 +61,54 @@ const App = {
       </div>`;
   },
 
+  // 每日小叮嚀：用班級口號 SPAR 四則輪播，依日期決定（同一天全班看到同一則）。
+  dailyTip(spar, iso) {
+    const items = spar?.items ?? [];
+    if (!items.length) return null;
+    const n = Number(String(iso || this.todayISO()).replace(/-/g, "")) || 0;
+    return items[n % items.length];
+  },
+
+  // 黑板風「當天聯絡簿」：四格（本日功課／提醒事項／攜帶物品／每日小叮嚀），
+  // 版面比照教室黑板，方便學生照抄、家長一眼看完。首頁與聯絡簿頁共用。
+  // day＝contactbook.json 的一列（可為 undefined＝沒資料，仍會畫出空黑板，版面不塌）。
+  chalkBoard(day, spar, opts = {}) {
+    const { title = "當天聯絡簿", footer = "" } = opts;
+    const panel = (cls, icon, name, text, empty, tick = true) => {
+      const items = this.lines(text);
+      return `
+        <section class="cb-panel ${cls}">
+          <h3>${icon} ${name}</h3>
+          ${items.length
+            ? `<ul class="cb-list ${tick ? "tick" : ""}">${items.map(t => `<li>${this.esc(t)}</li>`).join("")}</ul>`
+            : `<p class="cb-empty">${empty}</p>`}
+        </section>`;
+    };
+    const tip = this.dailyTip(spar, day?.date);
+    return `
+      <div class="chalkboard">
+        <div class="cb-head">
+          <h2 class="cb-title">📒 ${this.esc(title)}</h2>
+          <span class="cb-date">${day ? this.fmtDate(day.date) : "尚未開始"}</span>
+        </div>
+        ${day ? `
+        <div class="cb-grid">
+          ${panel("hw", "✏️", "本日功課", day.homework, "今天沒有功課，好好休息！")}
+          ${panel("note", "📌", "提醒事項", day.notes, "今天沒有特別的提醒")}
+          ${panel("bring", "🎒", "攜帶物品", day.bring, "不用帶特別的東西")}
+          <section class="cb-panel tip">
+            <h3>🌟 每日小叮嚀</h3>
+            ${tip
+              ? `<p class="cb-tip-zh"><span class="cb-tip-letter">${this.esc(tip.letter)}</span>${this.esc(tip.zh)}</p>
+                 <p class="cb-tip-desc">${this.esc(tip.desc || tip.en || "")}</p>`
+              : '<p class="cb-empty">今天也要當個閃耀的自己 ✨</p>'}
+          </section>
+        </div>`
+          : '<p class="cb-none">本學期的聯絡簿還沒開始，開學後就會出現囉！</p>'}
+        ${footer ? `<p class="cb-more">${footer}</p>` : ""}
+      </div>`;
+  },
+
   // 頁尾「最後同步」：正常顯示日期時間；超過 36 小時（每日 3 次同步的容錯）顯示紅字提醒
   async renderSyncedAt() {
     const el = document.getElementById("footer-synced");

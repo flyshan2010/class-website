@@ -11,7 +11,9 @@
   ]);
 
   const today = App.todayISO();
-  const latestContact = contact.find(x => x.date <= today) || contact[0];
+  // 「當天聯絡簿」＝最早的未過期那一天（今天有就是今天，放假／週末就自動跳到下一個上課日）。
+  // 已過的日期不再出現在首頁，避免學生抄到昨天的功課。
+  const todayContact = [...contact].sort((a, b) => a.date.localeCompare(b.date)).find(x => x.date >= today);
 
   // 最新公告：置頂＋兩週內（班級與學校都收，標籤區分）。
   // 校網公告自動匯入後量會變大，首頁最多 5 則，其餘到「公告」頁看。
@@ -61,18 +63,10 @@
           <p><a href="announcements.html">全部公告 →</a></p>
         </section>
 
-        <section class="card contact-day fixed-slot ${latestContact?.date === today ? "today" : ""}" style="--accent:${c.moduleColors.contactbook}">
-          <div class="day-head">
-            <h2>📒 ${latestContact?.date === today ? "今日" : "最新"}聯絡簿</h2>
-            ${latestContact ? `<span class="meta">${App.fmtDate(latestContact.date)}</span>` : ""}
-          </div>
-          ${latestContact ? `
-          <div class="contact-section"><span class="sec-title">✏️ 今日作業</span>${App.ul(latestContact.homework) || "<p>今天沒有作業，太棒了！</p>"}</div>
-          ${latestContact.bring ? `<div class="contact-section"><span class="sec-title">🎒 攜帶物品</span>${App.ul(latestContact.bring)}</div>` : ""}
-          ${latestContact.notes ? `<div class="contact-section"><span class="sec-title">📌 提醒事項</span>${App.ul(latestContact.notes)}</div>` : ""}`
-            : '<p class="empty-hint">今天還沒有聯絡簿內容</p>'}
-          <p style="margin-top:8px"><a href="contactbook.html">看更多聯絡簿 →</a></p>
-        </section>
+        ${App.chalkBoard(todayContact, c.spar, {
+          title: "當天聯絡簿",
+          footer: '<a href="contactbook.html">看更多聯絡簿 →</a>',
+        })}
 
         ${latestWeekly ? `
         <section class="card weekly-card" style="--accent:${c.moduleColors.weekly}">
