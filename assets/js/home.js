@@ -11,9 +11,11 @@
   ]);
 
   const today = App.todayISO();
-  // 「當天聯絡簿」＝最早的未過期那一天（今天有就是今天，放假／週末就自動跳到下一個上課日）。
-  // 已過的日期不再出現在首頁，避免學生抄到昨天的功課。
-  const todayContact = [...contact].sort((a, b) => a.date.localeCompare(b.date)).find(x => x.date >= today);
+  // 「當天聯絡簿」＝**就是今天**。日期標示固定為今天，沒有資料就顯示「今日沒有功課喔」，
+  // 不拿下一個上課日的內容頂替——否則家長／學生會把 8/31 的功課當成今天要交的。
+  const todayContact = contact.find(x => x.date === today);
+  const nextSchoolDay = [...contact].filter(x => x.date > today)
+    .sort((a, b) => a.date.localeCompare(b.date))[0];
 
   // 最新公告：置頂＋兩週內（班級與學校都收，標籤區分）。
   // 校網公告自動匯入後量會變大，首頁最多 5 則，其餘到「公告」頁看。
@@ -65,7 +67,9 @@
 
         ${App.chalkBoard(todayContact, c.spar, {
           title: "當天聯絡簿",
-          footer: '<a href="contactbook.html">看更多聯絡簿 →</a>',
+          date: today,
+          footer: `${!todayContact && nextSchoolDay
+            ? `<span class="meta" style="margin-right:12px">下一次上課：${App.fmtDate(nextSchoolDay.date)}</span>` : ""}<a href="contactbook.html">看更多聯絡簿 →</a>`,
         })}
 
         ${latestWeekly ? `
