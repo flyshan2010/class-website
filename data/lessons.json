@@ -398,5 +398,54 @@
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
     }
+  },
+  {
+    "title": "國L2-2 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [
+      "提取訊息：四封信分別誰寫給誰、住在哪裡、信中提到什麼",
+      "推論訊息：水火同源為何不熄滅、汽水冷泉為何得名",
+      "比較評估：兩姐妹介紹家鄉特色的相同與不同處",
+      "詮釋整合：從四封信信件往返找感情深厚的證據"
+    ],
+    "date": "",
+    "note": "本節為翰林四上國語第二課「請到我的家鄉來」教學節次之第2節。與國L2-1、國L2-3、國L2-4同屬一課，依教學進度切分為4節（非社會、數學式的小節子題），4節共用同一份原教材。課次代碼／描述文字命名規則同國L2-1備註。",
+    "links": {
+      "material": "https://drive.google.com/file/d/11mlIAkqw9RfxBrt6aA-AkXcu-f5abZEr/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L2-1 第一節 字詞語詞及大意",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [
+      "生字：區架泉恐速抹陀彷訝螺佛牙聚汽齒（15字）部首筆順",
+      "字詞：認識「大」四字語詞（大開眼界／大排長龍／大顯身手等）",
+      "辨字：「未／末」部件辨析（妹/味、沫/抹）",
+      "近義詞：「彷彿」「好像」換一換",
+      "四封信大意：柔柔（臺南表姐）↔安安（宜蘭表妹）書信往返脈絡"
+    ],
+    "date": "",
+    "note": "本節為翰林四上國語第二課「請到我的家鄉來」教學節次之第1節。與國L2-2、國L2-3、國L2-4同屬一課，依教學進度切分為4節（字詞語詞及大意／內容理解／形式深究／綜合整理），並非社會、數學式的小節子題（小節通常各自對應不同子主題），4節共用同一份原教材。課次代碼沿用「國L2-N」格式以利駕駛艙依既有規則自動歸組於「第2課」；代碼後的描述文字改用「第N節：⋯」，用以和小節類科目的子主題命名區分。",
+    "links": {
+      "material": "https://drive.google.com/file/d/11mlIAkqw9RfxBrt6aA-AkXcu-f5abZEr/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
   }
 ]
