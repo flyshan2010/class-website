@@ -5,7 +5,8 @@
  *   1. 依「日期」比對，覆寫每個上課日的「作業」欄（格式：一行一科）
  *   2. 依「攜帶物品」的星期規則填該欄（規則留空＝清空，目前狀態）；「提醒事項」只在
  *      定期評量／休業式那幾天填，其餘清空
- *   3. 全部「發布」取消勾選 —— 之後由 sync-notion.mjs 的「前一週自動發布」規則接手
+ *   3. **不動「發布」欄** —— 發布由 sync-notion.mjs 的「日期 ≤ 今天+7 天」規則自動放行；
+ *      老師手動勾起來的「提前公開」是老師的決定，重灌內容不該把它取消掉。
  *
  * 用法：
  *   dry-run：MODE=dry-run NOTION_TOKEN=xxx node scripts/classos/f13-fill-contactbook.mjs
@@ -91,7 +92,6 @@ for (const day of days) {
   if (propText(page, "作業") !== hw) changes.push("作業");
   if (propText(page, "攜帶物品") !== bring) changes.push(bring ? "攜帶物品" : "清攜帶物品");
   if (propText(page, "提醒事項") !== note) changes.push(note ? "提醒事項" : "清提醒事項");
-  if (propText(page, "發布") === "true") changes.push("取消發布");
   if (changes.length) plan.push({ date: day.date, id: page.id, hw, note, bring, changes });
 }
 
@@ -109,7 +109,6 @@ const { ok, fail } = await forEachThrottled(plan, (p) =>
     "作業": rt(p.hw),
     "攜帶物品": rt(p.bring),
     "提醒事項": rt(p.note),
-    "發布": { checkbox: false },
   }));
 
 console.log(`\n✅ 成功 ${ok.length} 筆／❌ 失敗 ${fail.length} 筆`);
@@ -117,4 +116,4 @@ if (fail.length) {
   for (const f of fail) console.error(`   ${f.item.date} → ${f.error ?? f.r?.json?.message ?? "未知錯誤"}`);
   process.exit(1);
 }
-console.log("聯絡簿已寫入並全部取消發布，之後由『前一週自動發布』規則接手。");
+console.log("聯絡簿內容已寫入（未更動「發布」欄），由『前一週自動發布』規則接手上站。");
