@@ -13,10 +13,12 @@
   const today = App.todayISO();
   const latestContact = contact.find(x => x.date <= today) || contact[0];
 
-  // 最新公告：置頂＋兩週內（班級與學校都收，標籤區分）
+  // 最新公告：置頂＋兩週內（班級與學校都收，標籤區分）。
+  // 校網公告自動匯入後量會變大，首頁最多 5 則，其餘到「公告」頁看。
   const twoWeeksAgo = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
   const topAnn = ann.filter(a => a.pinned || a.date >= twoWeeksAgo)
-    .sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date));
+    .sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date))
+    .slice(0, 5);
 
   // 近期行事：未來（含今天）最近 5 件，不限日期範圍
   const upcoming = cal.filter(e => (e.endDate || e.date) >= today)
@@ -40,6 +42,7 @@
   const latestAlbum = gallery[0];
 
   document.getElementById("main").innerHTML = `
+    ${App.sparPoster(c.spar, true)}
     <div class="home-layout">
       <aside class="side-menu" aria-label="功能選單">
         ${c.nav.filter(n => n.id !== "home").map(n => `
@@ -50,7 +53,7 @@
       </aside>
 
       <div class="home-main">
-        <section class="card" style="--accent:${c.moduleColors.announcements}">
+        <section class="card fixed-slot" style="--accent:${c.moduleColors.announcements}">
           <h2>📣 最新公告</h2>
           ${topAnn.length ? topAnn.map(a => `
             <p>${a.pinned ? '<span class="badge pin">置頂</span> ' : ""}<span class="badge src-${App.esc(a.source || "班級")}">${App.esc(a.source || "班級")}公告</span> <span class="badge cat-${App.esc(a.category || "其他")}">${App.esc(a.category || "公告")}</span>
@@ -58,17 +61,18 @@
           <p><a href="announcements.html">全部公告 →</a></p>
         </section>
 
-        ${latestContact ? `
-        <section class="card contact-day ${latestContact.date === today ? "today" : ""}" style="--accent:${c.moduleColors.contactbook}">
+        <section class="card contact-day fixed-slot ${latestContact?.date === today ? "today" : ""}" style="--accent:${c.moduleColors.contactbook}">
           <div class="day-head">
-            <h2>📒 ${latestContact.date === today ? "今日" : "最新"}聯絡簿</h2>
-            <span class="meta">${App.fmtDate(latestContact.date)}</span>
+            <h2>📒 ${latestContact?.date === today ? "今日" : "最新"}聯絡簿</h2>
+            ${latestContact ? `<span class="meta">${App.fmtDate(latestContact.date)}</span>` : ""}
           </div>
+          ${latestContact ? `
           <div class="contact-section"><span class="sec-title">✏️ 今日作業</span>${App.ul(latestContact.homework) || "<p>今天沒有作業，太棒了！</p>"}</div>
           ${latestContact.bring ? `<div class="contact-section"><span class="sec-title">🎒 攜帶物品</span>${App.ul(latestContact.bring)}</div>` : ""}
-          ${latestContact.notes ? `<div class="contact-section"><span class="sec-title">📌 提醒事項</span>${App.ul(latestContact.notes)}</div>` : ""}
+          ${latestContact.notes ? `<div class="contact-section"><span class="sec-title">📌 提醒事項</span>${App.ul(latestContact.notes)}</div>` : ""}`
+            : '<p class="empty-hint">今天還沒有聯絡簿內容</p>'}
           <p style="margin-top:8px"><a href="contactbook.html">看更多聯絡簿 →</a></p>
-        </section>` : ""}
+        </section>
 
         ${latestWeekly ? `
         <section class="card weekly-card" style="--accent:${c.moduleColors.weekly}">

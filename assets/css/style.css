@@ -955,3 +955,71 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   .wk-photo-grid { grid-template-rows: none; }
   .wk-slot { aspect-ratio: 4 / 3; }
 }
+
+/* ===== 首頁固定版位：最新公告／最新聯絡簿沒有資料也不塌陷 ===== */
+.card.fixed-slot { min-height: 190px; display: flex; flex-direction: column; }
+.card.fixed-slot > .empty-hint { flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
+
+/* ===== 班級口號：SPAR 閃耀亮點 ===== */
+.spar-poster {
+  position: relative;
+  background: linear-gradient(135deg, #fffdf5 0%, #fdf3ff 50%, #eef7ff 100%);
+  border: 3px solid #ffe9a8;
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+/* 角落小火花（純 CSS，不外連任何素材） */
+.spar-poster::before,
+.spar-poster::after {
+  content: "✦";
+  position: absolute;
+  color: #ffd54a;
+  opacity: .55;
+  pointer-events: none;
+}
+.spar-poster::before { top: 8px; right: 14px; font-size: 22px; }
+.spar-poster::after { bottom: 6px; left: 14px; font-size: 16px; color: #b79cd8; }
+
+.spar-head { text-align: center; margin-bottom: 14px; }
+.spar-title {
+  font-size: 1.7rem; font-weight: 900; letter-spacing: 3px; color: #2f4858;
+  background: linear-gradient(90deg, #FF6B81, #FF9F43, #1DD1A1, #54A0FF);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.spar-spark { font-size: 1.2rem; margin: 0 6px; }
+.spar-sub { font-size: .95rem; color: #5f7784; font-weight: 600; margin-top: 2px; letter-spacing: 1px; }
+
+.spar-items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.spar-item {
+  display: flex; align-items: center; gap: 12px;
+  background: #fff; border-radius: 16px; padding: 12px 14px;
+  border-bottom: 5px solid var(--sc);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+}
+.spar-letter {
+  flex: 0 0 auto;
+  font-size: 3.1rem; font-weight: 900; line-height: 1;
+  color: var(--sc);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, .06);
+}
+.spar-zh { font-size: 1.1rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
+.spar-en { font-size: .8rem; color: var(--sc); font-weight: 700; letter-spacing: .5px; }
+.spar-desc { font-size: .88rem; color: #5f7784; margin-top: 4px; line-height: 1.6; }
+
+/* 首頁橫幅版：矮一點、字母再放大一點 */
+.spar-poster.compact { padding: 14px 18px; }
+.spar-poster.compact .spar-head { margin-bottom: 10px; }
+.spar-poster.compact .spar-title { font-size: 1.35rem; }
+.spar-poster.compact .spar-item { padding: 8px 12px; }
+.spar-poster.compact .spar-letter { font-size: 2.6rem; }
+
+@media (max-width: 900px) {
+  .spar-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .spar-items { grid-template-columns: 1fr; }
+  .spar-title { font-size: 1.4rem; }
+}

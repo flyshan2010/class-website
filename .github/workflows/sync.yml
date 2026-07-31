@@ -28,6 +28,9 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: node scripts/sync-notion.mjs
 
+      - name: 同步校網公告（併入學校公告分頁；須在 sync-notion 之後）
+        run: node scripts/sync-school-news.mjs
+
       - name: 同步 Google 日曆
         run: node scripts/sync-gcal.mjs
 
