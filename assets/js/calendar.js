@@ -15,7 +15,7 @@
     ${upcoming.map(e => `
       <section class="card">
         <h3><span class="badge type-${App.esc(e.type || "其他")}">${App.esc(e.type || "行事")}</span> ${App.esc(e.title)}</h3>
-        <p class="meta">${App.fmtDate(e.date)}${e.endDate && e.endDate !== e.date ? ` ～ ${App.fmtDate(e.endDate)}` : ""}</p>
+        <p class="meta">${App.fmtEventDate(e)}</p>
         ${e.notes ? `<p>${App.esc(e.notes)}</p>` : ""}
       </section>`).join("")}` : ""}`;
 })();

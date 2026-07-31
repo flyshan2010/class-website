@@ -115,7 +115,7 @@
           <h2>📅 近期行事</h2>
           ${upcoming.length ? upcoming.map(e => `
             <p><span class="badge type-${App.esc(e.type || "其他")}">${App.esc(e.type || "行事")}</span>
-            ${App.esc(e.title)} <span class="meta">${App.fmtDate(e.date)}</span></p>`).join("") : '<p class="empty-hint">目前沒有行事資料</p>'}
+            ${App.esc(e.title)} <span class="meta">${App.fmtEventDate(e)}</span></p>`).join("") : '<p class="empty-hint">目前沒有行事資料</p>'}
           <p><a href="calendar.html">完整行事曆 →</a></p>
         </section>
 

@@ -141,6 +141,16 @@ const App = {
     return `${d.getMonth() + 1}/${d.getDate()}`;
   },
 
+  // 行事曆事件的日期字串：跨日→「8/7（五）～8/9（日）」；
+  // 單日有時間→「8/7（五） 07:40–11:10」（全天事件不加時間）。
+  // 時間來自 Google 日曆，已在 sync-gcal.mjs 換算成台北時間。
+  fmtEventDate(e) {
+    if (!e?.date) return "";
+    if (e.endDate && e.endDate !== e.date) return `${this.fmtDate(e.date)} ～ ${this.fmtDate(e.endDate)}`;
+    const t = e.startTime ? ` ${e.startTime}${e.endTime ? `–${e.endTime}` : ""}` : "";
+    return `${this.fmtDate(e.date)}${t}`;
+  },
+
   todayISO() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
