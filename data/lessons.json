@@ -1,5 +1,34 @@
 [
   {
+    "title": "數L2-3 乘法算式的規律",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "0的個數規律：整十整百整千相乘，兩數各自0的個數相加",
+      "乘法表前後項關係：多1倍加一個數，少1倍減一個數",
+      "素養情境：用整百倍關係判斷「怎麼買最划算」",
+      "含練習園地(二)：三層併式綜合應用複習"
+    ],
+    "date": "",
+    "note": "含練習園地(二)併入本節複習/評量段",
+    "links": {
+      "material": "https://drive.google.com/file/d/1SegfxvbHMWHs3gig76GZkCSg1mqbCAg4/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-3-乘法算式的規律/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-3-乘法算式的規律/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-3-乘法算式的規律/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-3-乘法算式的規律/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-3-乘法算式的規律/3.review.html"
+    }
+  },
+  {
     "title": "數L2-2 乘以三位數",
     "subject": "數學",
     "grade": "四上",
@@ -368,25 +397,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
-    }
-  },
-  {
-    "title": "數L2-3 乘法算式的規律",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "含練習園地(二)併入本節複習/評量段",
-    "links": {
-      "material": "https://drive.google.com/file/d/1SegfxvbHMWHs3gig76GZkCSg1mqbCAg4/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   },
   {
