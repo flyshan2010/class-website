@@ -3,7 +3,8 @@
  *
  * 做三件事（依 SPEC_學年升級 §3：批次寫入一律走官方 API，預設 dry-run）：
  *   1. 依「日期」比對，覆寫每個上課日的「作業」欄（格式：一行一科）
- *   2. 清掉示範資料殘留的「攜帶物品」「提醒事項」（定期評量／休業式除外，改填正式提醒）
+ *   2. 依「攜帶物品」的星期規則填該欄（規則留空＝清空，目前狀態）；「提醒事項」只在
+ *      定期評量／休業式那幾天填，其餘清空
  *   3. 全部「發布」取消勾選 —— 之後由 sync-notion.mjs 的「前一週自動發布」規則接手
  *
  * 用法：
@@ -35,7 +36,19 @@ const homeworkText = (day) =>
 
 const rt = (s) => ({ rich_text: s ? [{ text: { content: s } }] : [] });
 
-const { days } = JSON.parse(await readFile(SRC, "utf8"));
+/**
+ * 攜帶物品：依星期自動帶入（正本 JSON 的「攜帶物品」欄，一行一項）。
+ * 單日要例外時，在那一天的資料加 "攜帶物品" 字串即可覆蓋星期規則。
+ * 兩者都沒有 → 空字串（＝清掉該欄）。
+ */
+const WEEKDAY = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+const bringText = (day, byWeekday) => {
+  if (typeof day["攜帶物品"] === "string") return day["攜帶物品"].trim();
+  const wd = WEEKDAY[new Date(day.date + "T00:00:00Z").getUTCDay()];
+  return (byWeekday?.[wd] ?? []).map((s) => String(s).trim()).filter(Boolean).join("\n");
+};
+
+const { days, "攜帶物品": bringByWeekday } = JSON.parse(await readFile(SRC, "utf8"));
 console.log(`📄 進度表來源：${path.basename(SRC)}（${days.length} 個上課日）`);
 console.log(`⚙️  模式：${EXECUTE ? "execute（實際寫入）" : "dry-run（只列不改）"}\n`);
 
@@ -68,12 +81,13 @@ for (const day of days) {
   const page = byDate.get(day.date);
   const hw = homeworkText(day);
   const note = (day["提醒事項"] ?? "").trim();
+  const bring = bringText(day, bringByWeekday);
   const changes = [];
   if (propText(page, "作業") !== hw) changes.push("作業");
-  if (propText(page, "攜帶物品") !== "") changes.push("清攜帶物品");
+  if (propText(page, "攜帶物品") !== bring) changes.push(bring ? "攜帶物品" : "清攜帶物品");
   if (propText(page, "提醒事項") !== note) changes.push(note ? "提醒事項" : "清提醒事項");
   if (propText(page, "發布") === "true") changes.push("取消發布");
-  if (changes.length) plan.push({ date: day.date, id: page.id, hw, note, changes });
+  if (changes.length) plan.push({ date: day.date, id: page.id, hw, note, bring, changes });
 }
 
 console.log(`\n📝 需異動 ${plan.length} 天（共 ${days.length} 天）：`);
@@ -88,7 +102,7 @@ if (!EXECUTE) {
 const { ok, fail } = await forEachThrottled(plan, (p) =>
   updatePage(p.id, {
     "作業": rt(p.hw),
-    "攜帶物品": rt(""),
+    "攜帶物品": rt(p.bring),
     "提醒事項": rt(p.note),
     "發布": { checkbox: false },
   }));
