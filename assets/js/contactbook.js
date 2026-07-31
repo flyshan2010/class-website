@@ -10,14 +10,18 @@
 
   const byDate = new Map(data.map(d => [d.date, d]));
   const days = [...data].sort((a, b) => a.date.localeCompare(b.date)); // 由早到晚
-  const upcoming = days.filter(d => d.date >= today);
+  // 未過期的全部（給預設選日用）；下方清單只列最近 5 天——整學期公開後也不會變成長長一串，
+  // 想看更後面的日子用上方月曆點選。
+  const upcomingAll = days.filter(d => d.date >= today);
+  const UPCOMING_MAX = 5;
+  const upcoming = upcomingAll.slice(0, UPCOMING_MAX);
 
   // 可翻閱的月份範圍：有資料的第一個月～最後一個月（含今天所在月）
   const ym = iso => iso.slice(0, 7);
   const months = [...new Set([...days.map(d => ym(d.date)), ym(today)])].sort();
   const minM = months[0], maxM = months.at(-1);
 
-  let selected = upcoming[0]?.date || days.at(-1)?.date || null; // 預設看最早的未過期那天
+  let selected = upcomingAll[0]?.date || days.at(-1)?.date || null; // 預設看最早的未過期那天
   let cursor = ym(selected || today);
 
   const WEEK = ["日", "一", "二", "三", "四", "五", "六"];
@@ -73,6 +77,10 @@
       </section>`).join("")
     : '<p class="empty-hint">接下來還沒有新的聯絡簿</p>';
 
+  const moreHint = upcomingAll.length > UPCOMING_MAX
+    ? `<p class="meta" style="margin:10px 0 0">只列最近 ${UPCOMING_MAX} 天；更後面的日子請用上方月曆點選 📅</p>`
+    : "";
+
   const main = document.getElementById("main");
   main.innerHTML = `
     <h2 class="page-title"><span class="dot"></span>📒 聯絡簿</h2>
@@ -82,7 +90,8 @@
     </section>
     <div id="cb-detail">${App.chalkBoard(byDate.get(selected), c.spar, { title: "聯絡簿" })}</div>
     <h3 class="cb-list-title">🔜 接下來的聯絡簿</h3>
-    <div id="cb-list">${listHTML()}</div>`;
+    <div id="cb-list">${listHTML()}</div>
+    ${moreHint}`;
 
   const calBody = document.getElementById("cal-body");
   const detail = document.getElementById("cb-detail");
