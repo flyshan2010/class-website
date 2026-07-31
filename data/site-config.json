@@ -9,10 +9,34 @@
     "title": "SPAR 閃耀亮點",
     "subtitle": "四個字母，四個閃耀的自己",
     "items": [
-      { "letter": "S", "en": "Safety", "zh": "注意安全", "desc": "危險的事先停下來；照顧自己，也照顧別人。", "color": "#FF6B81" },
-      { "letter": "P", "en": "Proactivity", "zh": "主動積極", "desc": "看見需要就主動幫忙，不必等人開口。", "color": "#FF9F43" },
-      { "letter": "A", "en": "Accountability", "zh": "認真負責", "desc": "答應的事努力完成，對自己的選擇負責。", "color": "#1DD1A1" },
-      { "letter": "R", "en": "Respect", "zh": "尊重他人", "desc": "想法不一樣也能好好相處；先理解，再回應。", "color": "#54A0FF" }
+      {
+        "letter": "S",
+        "en": "Safety",
+        "zh": "注意安全",
+        "desc": "危險的事先停下來；照顧自己，也照顧別人。",
+        "color": "#FF6B81"
+      },
+      {
+        "letter": "P",
+        "en": "Proactivity",
+        "zh": "主動積極",
+        "desc": "看見需要就主動幫忙，不必等人開口。",
+        "color": "#FF9F43"
+      },
+      {
+        "letter": "A",
+        "en": "Accountability",
+        "zh": "認真負責",
+        "desc": "答應的事努力完成，對自己的選擇負責。",
+        "color": "#1DD1A1"
+      },
+      {
+        "letter": "R",
+        "en": "Respect",
+        "zh": "尊重他人",
+        "desc": "想法不一樣也能好好相處；先理解，再回應。",
+        "color": "#54A0FF"
+      }
     ]
   },
   "showReportBalance": true,
