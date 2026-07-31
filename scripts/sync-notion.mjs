@@ -160,9 +160,19 @@ async function save(name, data) {
 }
 
 // ── 聯絡簿 ──
+// 發布規則（2026-07-31 起）：整學期的作業進度表預先建好但「發布」全不勾，
+// 每天同步時自動放行「日期 ≤ 今天 + 7 天」的那幾天 —— 家長固定看得到未來一週。
+// 「發布」勾選保留為手動超車：想更早公開某一天就自己勾起來。
+const AUTO_PUBLISH_DAYS = 7;
+const autoPublishUntil = () => {
+  const d = new Date(Date.now() + AUTO_PUBLISH_DAYS * 864e5 + 8 * 3600e3); // 以台北時間計日
+  return d.toISOString().slice(0, 10);
+};
+
 async function syncContactbook() {
+  const until = autoPublishUntil();
   const rows = (await queryDataSource(DS.contactbook)).map(props)
-    .filter(r => r["發布"] && r["日期"]?.start)
+    .filter(r => r["日期"]?.start && (r["發布"] || r["日期"].start <= until))
     .map(r => ({
       date: r["日期"].start,
       homework: r["作業"],

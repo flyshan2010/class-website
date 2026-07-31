@@ -90,6 +90,11 @@
       <h2>${c.schoolYear} ${c.schoolName} ${c.className}</h2>
       <p>${App.esc(about?.intro || "我們是一個充滿活力的班級！")}</p>
     </section>
+    ${c.spar ? `
+    <section class="card" style="border-top-color:var(--pink)">
+      <h3>⭐ 班級口號</h3>
+      ${App.sparPoster(c.spar)}
+    </section>` : ""}
     ${about?.teacherWords ? `
     <section class="card" style="border-top-color:var(--mint)">
       <h3>💬 老師的話</h3>

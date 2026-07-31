@@ -34,6 +34,33 @@ const App = {
     return c;
   },
 
+  // 班級口號「SPAR 閃耀亮點」海報：放大字首 S-P-A-R ＋ 小星星／火花。
+  // 資料在 data/site-config.json 的 spar 欄（repo 管理，Notion 同步不會覆蓋）。
+  // compact＝首頁用的橫幅版（只有字母＋中文）；完整版用於「關於我們」。
+  sparPoster(spar, compact = false) {
+    if (!spar?.items?.length) return "";
+    return `
+      <div class="spar-poster ${compact ? "compact" : ""}">
+        <div class="spar-head">
+          <span class="spar-spark">✨</span>
+          <span class="spar-title">${this.esc(spar.title || "SPAR")}</span>
+          <span class="spar-spark">✨</span>
+          ${spar.subtitle && !compact ? `<div class="spar-sub">${this.esc(spar.subtitle)}</div>` : ""}
+        </div>
+        <div class="spar-items">
+          ${spar.items.map(it => `
+            <div class="spar-item" style="--sc:${this.esc(it.color || "#54A0FF")}">
+              <span class="spar-letter" aria-hidden="true">${this.esc(it.letter)}</span>
+              <div class="spar-text">
+                <div class="spar-zh">${this.esc(it.zh)}</div>
+                <div class="spar-en">${this.esc(it.en)}</div>
+                ${it.desc && !compact ? `<div class="spar-desc">${this.esc(it.desc)}</div>` : ""}
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  },
+
   // 頁尾「最後同步」：正常顯示日期時間；超過 36 小時（每日 3 次同步的容錯）顯示紅字提醒
   async renderSyncedAt() {
     const el = document.getElementById("footer-synced");

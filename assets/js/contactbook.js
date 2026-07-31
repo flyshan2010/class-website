@@ -10,7 +10,8 @@
       <section class="card contact-day ${d.date === today ? "today" : ""}">
         <div class="day-head">
           <h2>${App.fmtDate(d.date)}</h2>
-          ${d.date === today ? '<span class="badge" style="background:var(--orange)">今天</span>' : ""}
+          ${d.date === today ? '<span class="badge" style="background:var(--orange)">今天</span>'
+            : d.date > today ? '<span class="badge" style="background:var(--sky)">預告</span>' : ""}
         </div>
         <div class="contact-section"><span class="sec-title">✏️ 今日作業</span>${App.ul(d.homework) || "<p>今天沒有作業！</p>"}</div>
         ${d.bring ? `<div class="contact-section"><span class="sec-title">🎒 攜帶物品</span>${App.ul(d.bring)}</div>` : ""}
