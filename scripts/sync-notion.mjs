@@ -468,9 +468,16 @@ async function syncReports() {
   const rows = (await queryDataSource(DS.reports)).map(props)
     .filter(r => r["發布"] && r["座號"] !== "")
     .sort((a, b) => {
-      const at = a["報告類型"] === "期末總報告" ? 1 : 0;
-      const bt = b["報告類型"] === "期末總報告" ? 1 : 0;
+      // 類型排序：每週(0) → 作文批改(1) → 期末總報告(2)（總報告永遠最後）
+      const rank = t => (t === "期末總報告" ? 2 : t === "作文批改" ? 1 : 0);
+      const at = rank(a["報告類型"]), bt = rank(b["報告類型"]);
       if (at !== bt) return at - bt;
+      // 作文批改的期間是日期字串，直接字典序＝時間序
+      if (at === 1) {
+        const c = String(a["期間"] || "").localeCompare(String(b["期間"] || ""));
+        if (c) return c;
+        return a._created.localeCompare(b._created);
+      }
       const aw = periodWeek(a["期間"]), bw = periodWeek(b["期間"]);
       if (aw !== bw) return aw - bw;
       return a._created.localeCompare(b._created);
@@ -486,7 +493,27 @@ async function syncReports() {
       seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(),
       avatar: await avatarDataURL(stu["頭貼"]), periods: [],
     };
-    const period = {
+    // ✍️ 作文批改（SPEC_作文批改 §2.1）：與每週/期末報告結構完全不同，
+    // 只帶「作文_」欄位群，不塞五向度/SEL/成績等空殼（前端據 reportType 分流渲染）
+    const period = r["報告類型"] === "作文批改" ? {
+        period: r["期間"],                       // 批改日期 YYYY-MM-DD（禁「第N週」，見 §6.7）
+        reportType: "作文批改",
+        essay: {
+          title: r["作文_題目"] || "",
+          genre: r["作文_文體"] || "",
+          grade: r["作文_總評等第"] || "",
+          intro: r["作文_開場"] || "",
+          errorCheck: r["作文_抓漏"] || "",
+          formatCheck: r["作文_版面格式"] || "",
+          upgrade: r["作文_升級站"] || "",
+          // 「項目｜等第｜建議」固定 5 行 → 還原成表格
+          scores: String(r["作文_成績單"] || "").split("\n").map(l => l.trim()).filter(Boolean)
+            .map(l => l.split("｜").map(c => c.trim())).filter(c => c.length >= 2),
+          finalWords: r["作文_老師的話"] || "",
+          sample: r["作文_修改範文"] || "",
+          pdf: r["作文_PDF連結"] || "",
+        },
+      } : {
         period: r["期間"],
         reportType: r["報告類型"] || "每週", // 每週 / 期末總報告
         radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
@@ -509,7 +536,11 @@ async function syncReports() {
       };
     // 去重：同一學生、同一週次、同一報告類型只保留「最新建立」的一列
     // （rows 已依 _created 遞增排序，故後處理者覆蓋先前者）。避免同週重複列在報告/成長曲線各畫一次。
-    const dkey = `${period.reportType}|${periodWeek(r["期間"])}`;
+    // ⚠️ 作文批改的「期間」是日期字串，periodWeek() 一律回 9998 → 同生多篇會全部相撞，
+    //    故改用題目當 key（同生同題重批＝保留最新，符合預期）。見 SPEC_作文批改 §2.2。
+    const dkey = period.reportType === "作文批改"
+      ? `作文批改|${r["作文_題目"] || r["期間"] || ""}`
+      : `${period.reportType}|${periodWeek(r["期間"])}`;
     const seen = (s._seen ||= {});
     if (seen[dkey] != null) s.periods[seen[dkey]] = period;
     else { seen[dkey] = s.periods.length; s.periods.push(period); }
@@ -520,6 +551,9 @@ async function syncReports() {
     const list = works[s.seat] || [];
     if (!list.length) continue;
     for (const p of s.periods) {
+      // 作文批改列不帶作品：它的「期間」是日期，periodWeek() 回 9998，
+      // 會與「假期作品（週次留空→9998）」誤配對。必須先排除。
+      if (p.reportType === "作文批改") continue;
       p.works = p.reportType === "期末總報告" ? list : list.filter(w => w.week === periodWeek(p.period));
     }
   }

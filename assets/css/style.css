@@ -604,6 +604,17 @@ main {
 }
 .grade-chip .k { display: block; font-size: 13.5px; color: var(--ink-soft); }
 .grade-chip .v { font-size: 24px; font-weight: bold; color: var(--gc); }
+/* ✍️ 作文批改報告（SPEC_作文批改 §8 D5）：題目/文體/總評三張 chip 一欄排；值是文字不是分數，縮小字級 */
+.report-essay .report-grades { grid-template-columns: 1fr; gap: 8px; }
+.report-essay .grade-chip { text-align: left; }
+.report-essay .grade-chip .v { font-size: 17px; line-height: 1.4; }
+.essay-scores { width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 8px; }
+.essay-scores th, .essay-scores td {
+  border-bottom: 1px solid #eee; padding: 7px 8px; text-align: left; vertical-align: top;
+}
+.essay-scores thead th { background: #fff6ec; color: var(--ink-soft); font-size: 14px; white-space: nowrap; }
+.essay-scores td:nth-child(2) { font-weight: bold; white-space: nowrap; }
+@media (max-width: 640px) { .essay-scores { font-size: 14px; } .essay-scores th, .essay-scores td { padding: 6px 4px; } }
 .report-subjects { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 14px; }
 .report-subject {
   border: 2px solid color-mix(in srgb, var(--sc) 45%, #fff); border-radius: 14px;
@@ -692,7 +703,9 @@ main {
   .growth-legend { font-size: 8.5px; gap: 1px 9px; margin-top: 0; }
   .growth-leg i { width: 10px; }
   /* 只保護「小單元」不被切斷；容器本身允許跨頁流動 */
-  .report-subject, .grade-chip, .exam-hrow, .recap-chip { break-inside: avoid; }
+  .report-subject, .grade-chip, .exam-hrow, .recap-chip, .essay-scores tr { break-inside: avoid; }
+  /* 作文批改：修改範文較長，容器允許跨頁；成績單表頭每頁重印 */
+  .essay-scores thead { display: table-header-group; }
 }
 
 /* ===== 常用網站 ===== */
