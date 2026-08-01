@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>形式深究｜差異化指導 · 四上國語 國L1-3</title>
+<title>線上模擬評量｜綜合整理 · 四上國語 國L1-4</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -1160,13 +1160,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </style>
 
 <svg id="tds-icons" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
-    <symbol id="ico-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z"/><path d="M4 19a2 2 0 0 1 2-2h13"/></symbol>
-    <symbol id="ico-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></symbol>
-    <symbol id="ico-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.7 6.3.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.3-.9Z"/></symbol>
-    <symbol id="ico-pencil" viewBox="0 0 24 24"><path d="M4 20h4L20 8a2.8 2.8 0 0 0-4-4L4 16Z"/><path d="m14 6 4 4"/></symbol>
     <symbol id="ico-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.8 1 .8 1.6V16h5.4v-.5c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3Z"/></symbol>
-    <symbol id="ico-check" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></symbol>
-    <symbol id="ico-cross" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
 </svg>
 
 <script>
@@ -1975,277 +1969,142 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 })();
 </script>
 <style>
-#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
-.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
-.slide.is-active { opacity: 1; visibility: visible; }
-.hud {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
-  display: flex; align-items: center; gap: var(--s3);
-  padding: 0 var(--safe-x);
-  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
+html, body { overflow: auto; height: auto; background: var(--bg); }
+body { padding: 0; }
+main.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--s6) var(--s4) var(--s7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
 }
-.hud .spacer { flex: 1; }
-.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
-.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
-.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
-
-.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); flex: 1; min-height: 0; }
-.tier-card {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s2);
-  background: var(--surface); border: var(--line-bold) solid var(--line); border-radius: var(--r-lg);
-  padding: var(--s5); text-decoration: none; color: var(--ink);
-  transition: border-color 140ms ease, transform 140ms ease;
+.lede { font-size: var(--t4); color: var(--muted); }
+.q-block { display: flex; flex-direction: column; gap: var(--s3); }
+footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
+@media (max-width: 480px) {
+  main.page { padding: var(--s5) var(--s3) var(--s6); }
 }
-.tier-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-.tier-card .ico { width: 64px; height: 64px; color: var(--accent); }
-.tier-card .name { font-size: var(--t2); font-weight: var(--fw-bold); }
-.tier-card .hint { font-size: var(--t5); color: var(--muted); text-align: center; }
-
-.paper-note {
-  display: flex; align-items: flex-start; gap: var(--s3);
-  background: var(--accent-soft); border: var(--line-mid) dashed var(--accent);
-  border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
-}
-.paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
 </style>
 </head>
 <body>
-<main class="deck" aria-label="形式深究分組練習">
-  <div class="stage" id="stage" tabindex="-1">
+<main class="page" aria-label="綜合整理線上模擬評量">
 
-    <section class="slide is-active" data-slide-id="cover">
-      <div class="page-head"><span class="label">國L1-3 形式深究</span><h2 class="title">分組練習</h2></div>
-      <div class="tier-grid">
-        <a class="tier-card" href="#b1">
-          <svg class="ico"><use href="#ico-book"></use></svg>
-          <div class="name">基礎題</div><div class="hint">需要鷹架</div>
-        </a>
-        <a class="tier-card" href="#p1">
-          <svg class="ico"><use href="#ico-target"></use></svg>
-          <div class="name">進階題</div><div class="hint">基礎穩固</div>
-        </a>
-        <a class="tier-card" href="#c1">
-          <svg class="ico"><use href="#ico-star"></use></svg>
-          <div class="name">挑戰題</div><div class="hint">精熟應用</div>
-        </a>
-      </div>
-    </section>
+  <header class="page-head">
+    <span class="label">國L1-4 綜合整理</span>
+    <h1 class="title">線上模擬評量</h1>
+  </header>
+  <p class="lede">6 題，練習用、不計分，可以重做——正式評量請完成紙本評量卷。</p>
 
-    <section class="slide" data-slide-id="b1" hidden>
-      <div class="page-head"><span class="label">基礎題 · 1</span><h2 class="title">修辭判斷</h2></div>
-      <div class="paper-note">
-        <svg class="ico"><use href="#ico-bulb"></use></svg>
-        <span>小提示：把東西當人來寫是「轉化」；出現「像」「是」通常是明喻或隱喻。</span>
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 1 題　全課三段大意的最後一段主要在做什麼？</p>
+      <div class="q-options">
+        <button class="q-opt" data-correct>點出真實的身分</button>
+        <button class="q-opt">描寫氣候</button>
+        <button class="q-opt">描寫物產</button>
+        <button class="q-opt">描寫地理位置</button>
       </div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">「月亮掛在天上對我微笑」用了什麼修辭？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>轉化</button>
-          <button class="q-opt">明喻</button>
-          <button class="q-opt">隱喻</button>
-          <button class="q-opt">頂真</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
+      <div class="row">
+        <button class="ds-btn primary" data-quiz-check>對答案</button>
+        <button class="ds-btn" data-quiz-reset>重做</button>
       </div>
-    </section>
-
-    <section class="slide" data-slide-id="b2" hidden>
-      <div class="page-head"><span class="label">基礎題 · 2</span><h2 class="title">喻詞判斷</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">下列哪一句是「隱喻」？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>他是一顆閃亮的星星。</button>
-          <button class="q-opt">他像一顆閃亮的星星。</button>
-          <button class="q-opt">星星在天上閃爍。</button>
-          <button class="q-opt">星星，你好嗎？</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="b3" hidden>
-      <div class="page-head"><span class="label">基礎題 · 3</span><h2 class="title">紙本任務</h2></div>
-      <div class="task-card">
-        <svg class="ico" style="font-size:64px;color:var(--accent);"><use href="#ico-pencil"></use></svg>
-        <div class="mission">請在紙本學習單上完成：修辭判斷表＋喻詞分類＋修辭連連看</div>
-        <div class="facts">
-          <div class="fact"><span class="k">檔案</span>2a.差異化教材_基礎題需鷹架.docx</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="p1" hidden>
-      <div class="page-head"><span class="label">進階題 · 1</span><h2 class="title">修辭仿寫</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">要把「太陽很紅很熱」改寫成隱喻，哪一句最好？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>太陽是一顆燒紅的大火球。</button>
-          <button class="q-opt">太陽像一顆燒紅的大火球。</button>
-          <button class="q-opt">太陽很紅，也很熱。</button>
-          <button class="q-opt">太陽公公下班了。</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="p2" hidden>
-      <div class="page-head"><span class="label">進階題 · 2</span><h2 class="title">頂真判斷</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">哪一組句子用了「頂真」？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>快樂的接快樂的，幸福的接幸福的。</button>
-          <button class="q-opt">他很快樂，也很幸福。</button>
-          <button class="q-opt">快樂像一朵花。</button>
-          <button class="q-opt">你快樂嗎？</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="p3" hidden>
-      <div class="page-head"><span class="label">進階題 · 3</span><h2 class="title">紙本任務</h2></div>
-      <div class="task-card">
-        <svg class="ico" style="font-size:64px;color:var(--accent);"><use href="#ico-pencil"></use></svg>
-        <div class="mission">請在紙本學習單上完成：修辭仿寫＋頂真接龍＋堆疊語詞造句</div>
-        <div class="facts">
-          <div class="fact"><span class="k">檔案</span>2b.差異化教材_進階題基礎穩固.docx</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="c1" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 1</span><h2 class="title">修辭混合應用</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">「安靜的、安靜的夜晚，星星是夜空中閃爍的眼睛」，這句話用了哪兩種修辭？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>重複＋隱喻</button>
-          <button class="q-opt">頂真＋明喻</button>
-          <button class="q-opt">設問＋轉化</button>
-          <button class="q-opt">堆疊語詞＋頂真</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="c2" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 2</span><h2 class="title">哪一句用得最好？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">要描寫「操場上，風把落葉吹得到處飛」，哪一句最生動？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>風牽著落葉的手，在操場上跳起了舞。</button>
-          <button class="q-opt">操場上有風，也有落葉。</button>
-          <button class="q-opt">今天風很大。</button>
-          <button class="q-opt">落葉掉在地上。</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="c3" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 3</span><h2 class="title">紙本任務</h2></div>
-      <div class="task-card">
-        <svg class="ico" style="font-size:64px;color:var(--accent);"><use href="#ico-pencil"></use></svg>
-        <div class="mission">請在紙本學習單上完成：短文修辭標註＋任選 2 種修辭寫短文＋自我評量</div>
-        <div class="facts">
-          <div class="fact"><span class="k">檔案</span>2c.差異化教材_挑戰題精熟.docx</div>
-        </div>
-      </div>
-    </section>
-
-    <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span></p>
-      <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
-      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
+      <div class="ans-feedback"></div>
     </div>
-    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 2 題　「應用寫作三步驟」的第一步是？</p>
+      <div class="q-options">
+        <button class="q-opt" data-correct>挑東西</button>
+        <button class="q-opt">給動作</button>
+        <button class="q-opt">加形容</button>
+        <button class="q-opt">寫結尾</button>
+      </div>
+      <div class="row">
+        <button class="ds-btn primary" data-quiz-check>對答案</button>
+        <button class="ds-btn" data-quiz-reset>重做</button>
+      </div>
+      <div class="ans-feedback"></div>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 3 題　「設問」這種修辭的功用是？</p>
+      <div class="q-options">
+        <button class="q-opt" data-correct>引起讀者的好奇與注意</button>
+        <button class="q-opt">一定要有人回答</button>
+        <button class="q-opt">只能放在文章開頭</button>
+        <button class="q-opt">不能使用問號</button>
+      </div>
+      <div class="row">
+        <button class="ds-btn primary" data-quiz-check>對答案</button>
+        <button class="ds-btn" data-quiz-reset>重做</button>
+      </div>
+      <div class="ans-feedback"></div>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 4 題　「微笑的月亮像個害羞的孩子」同時用了轉化和什麼修辭？</p>
+      <div class="q-options">
+        <button class="q-opt" data-correct>明喻</button>
+        <button class="q-opt">隱喻</button>
+        <button class="q-opt">頂真</button>
+        <button class="q-opt">設問</button>
+      </div>
+      <div class="row">
+        <button class="ds-btn primary" data-quiz-check>對答案</button>
+        <button class="ds-btn" data-quiz-reset>重做</button>
+      </div>
+      <div class="ans-feedback"></div>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 5 題　課文最後說「她的名字叫做臺灣」，這種寫法的效果是？</p>
+      <div class="q-options">
+        <button class="q-opt" data-correct>點出真實身分，讓謎底揭曉</button>
+        <button class="q-opt">用了隱喻</button>
+        <button class="q-opt">用了頂真</button>
+        <button class="q-opt">用了堆疊語詞</button>
+      </div>
+      <div class="row">
+        <button class="ds-btn primary" data-quiz-check>對答案</button>
+        <button class="ds-btn" data-quiz-reset>重做</button>
+      </div>
+      <div class="ans-feedback"></div>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 6 題　這一課最主要運用了什麼樣的寫作手法介紹家鄉？</p>
+      <div class="q-options">
+        <button class="q-opt" data-correct>綜合運用多種修辭，把風景物產寫得生動</button>
+        <button class="q-opt">只用平鋪直敘的方式</button>
+        <button class="q-opt">全篇都是設問句</button>
+        <button class="q-opt">全篇都是頂真句</button>
+      </div>
+      <div class="row">
+        <button class="ds-btn primary" data-quiz-check>對答案</button>
+        <button class="ds-btn" data-quiz-reset>重做</button>
+      </div>
+      <div class="ans-feedback"></div>
+    </div>
+  </div>
+
+  <div class="takeaway-band">
+    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+    <span class="text">正式計分的評量在紙本評量卷，題目和這裡不一樣，記得認真作答！</span>
+  </div>
+
+  <footer class="page-foot">四上國語 · 國L1-4 綜合整理 · 線上模擬評量</footer>
+
 </main>
-<script>
-(() => {
-  const STAGE_W = 1600, STAGE_H = 900;
-  const stage = document.querySelector('#stage');
-  const slides = [...document.querySelectorAll('.slide')];
-  const current = document.querySelector('[data-current]');
-  const total = document.querySelector('[data-total]');
-  const progress = document.querySelector('[data-progress]');
-  let index = 0;
-  if (!stage || !slides.length) return;
-
-  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
-
-  const render = (next, updateHash = true) => {
-    index = clamp(next);
-    slides.forEach((s, i) => {
-      const active = i === index;
-      s.classList.toggle('is-active', active);
-      s.hidden = !active;
-      s.setAttribute('aria-hidden', String(!active));
-    });
-    if (current) current.textContent = String(index + 1);
-    if (total) total.textContent = String(slides.length);
-    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
-    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
-  };
-
-  const slideFromHash = () => {
-    const id = decodeURIComponent(location.hash.slice(1));
-    const found = slides.findIndex((s) => s.dataset.slideId === id);
-    return found >= 0 ? found : 0;
-  };
-
-  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
-  addEventListener('keydown', (e) => {
-    if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
-    else if (e.key === 'Home') { e.preventDefault(); render(0); }
-    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
-  });
-
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
-  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
-    } catch (err) { console.warn('無法切換全螢幕', err); }
-  });
-
-  const resize = () => {
-    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
-    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
-  };
-  addEventListener('hashchange', () => render(slideFromHash(), false));
-  addEventListener('resize', resize);
-  resize();
-  render(slideFromHash(), false);
-})();
-</script>
 </body>
 </html>
