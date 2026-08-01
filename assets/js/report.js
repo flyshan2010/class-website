@@ -178,7 +178,8 @@
   };
 
   const growthChart = periods => {
-    const weeks = periods.filter(x => x.reportType !== "期末總報告");
+    // 只取每週列：期末總報告不入曲線；作文批改列沒有五向度分數（radar 為 undefined）也必須排除
+    const weeks = periods.filter(x => x.reportType !== "期末總報告" && x.reportType !== "作文批改");
     if (weeks.length < 2)
       return `<p class="meta" style="padding:16px">本學期週報資料不足，無法繪製成長曲線（至少需 2 週）。</p>`;
     const dims = ["國語", "數學", "社會", "人際互動", "生活技能"];
@@ -203,24 +204,33 @@
     return `<div class="growth-wrap"><svg viewBox="0 0 ${W} ${H}" class="growth-svg" role="img" aria-label="五向度逐週成長曲線">${grid}${lines}${xlabels}</svg><div class="growth-legend">${legend}</div></div>`;
   };
 
-  function showReport(report, periodIdx = report.periods.length - 1, anon = false) {
+  // 預設開啟「最後一筆非作文批改」的報告（週報/期末總報告）；全部都是作文時才顯示作文。
+  const defaultIdx = periods => {
+    for (let i = periods.length - 1; i >= 0; i--) if (periods[i].reportType !== "作文批改") return i;
+    return periods.length - 1;
+  };
+
+  function showReport(report, periodIdx = defaultIdx(report.periods), anon = false) {
     document.body.classList.add("report-open");
     const p = report.periods[periodIdx];
     const isTerm = p.reportType === "期末總報告";
+    const isEssay = p.reportType === "作文批改";
     const displayName = anon ? maskName(report.name) : report.name;
     const seatText = anon ? "──" : App.esc(report.seat);
     const avatar = (!anon && report.avatar)
       ? `<img class="avatar-img" src="${report.avatar}" alt="頭貼" />`
       : `<div class="avatar">🧑‍🎓</div>`;
 
-    // 週次多時用下拉選單，少時用按鈕
+    // 週次多時用下拉選單，少時用按鈕。作文批改列以「✍️ 題目」標示，與週次區別
+    const tabLabel = x => x.reportType === "作文批改"
+      ? `✍️ ${x.essay?.title || x.period}` : x.period;
     const periodPicker = report.periods.length > 5
       ? `<select id="report-period">${report.periods.map((x, i) =>
-          `<option value="${i}" ${i === periodIdx ? "selected" : ""}>${App.esc(x.period)}</option>`).join("")}</select>`
+          `<option value="${i}" ${i === periodIdx ? "selected" : ""}>${App.esc(tabLabel(x))}</option>`).join("")}</select>`
       : `<div class="report-tabs">${report.periods.map((x, i) =>
-          `<button class="${i === periodIdx ? "active" : ""}" data-i="${i}">${App.esc(x.period)}</button>`).join("")}</div>`;
+          `<button class="${i === periodIdx ? "active" : ""}" data-i="${i}">${App.esc(tabLabel(x))}</button>`).join("")}</div>`;
 
-    main.innerHTML = `
+    const toolbar = `
       <div class="report-toolbar no-print">
         ${periodPicker}
         <div class="report-actions">
@@ -229,7 +239,65 @@
           <button id="report-exit" class="report-exit">🔒 離開</button>
         </div>
       </div>
+`;
 
+    // ✍️ 作文批改報告（SPEC_作文批改 §8 D5）：與週報/期末結構完全不同，獨立一張版面。
+    // 七個文字區塊照 essay-grading-batch PROMPT_v2.2 §4 的順序呈現；成績單由「項目｜等第｜建議」還原成表格。
+    const essaySheet = () => {
+      const e = p.essay || {};
+      const block = (color, badge, text) => App.esc(String(text || "")).trim()
+        ? `<div class="report-box" style="--bc:${color}; margin-top:12px">
+             <span class="report-badge" style="--bc:${color}">${badge}</span>
+             <p style="white-space:pre-line">${App.esc(text)}</p>
+           </div>` : "";
+      return `
+      <div class="report-sheet report-essay">
+        <h2 class="report-title">✍️ 作文批改報告 ✍️</h2>
+
+        <div class="report-top">
+          <div class="report-id-card">
+            ${avatar}
+            <p><strong>姓名：</strong>${App.esc(displayName)}</p>
+            <p><strong>座號：</strong>${seatText}</p>
+            <p class="meta">批改日期 ${App.esc(p.period)}</p>
+          </div>
+          <div class="report-overview-card">
+            <span class="report-badge" style="--bc:#5F27CD">這一篇</span>
+            <div class="report-grades" style="margin-top:8px">
+              ${e.title ? `<div class="grade-chip" style="--gc:#5F27CD"><span class="k">題目</span><span class="v">${App.esc(e.title)}</span></div>` : ""}
+              ${e.genre ? `<div class="grade-chip" style="--gc:#54A0FF"><span class="k">文體</span><span class="v">${App.esc(e.genre)}</span></div>` : ""}
+              ${e.grade ? `<div class="grade-chip" style="--gc:#FF9F43"><span class="k">總評</span><span class="v">${App.esc(e.grade)}</span></div>` : ""}
+            </div>
+          </div>
+        </div>
+
+        ${block("#FECA57", "🌟 老師的開場", e.intro)}
+        ${block("#EE5253", "🔍 一、抓漏任務", e.errorCheck)}
+        ${block("#54A0FF", "📋 二、版面、字體與格式", e.formatCheck)}
+        ${block("#10AC84", "🚀 三、寫作升級站", e.upgrade)}
+
+        ${(e.scores || []).length ? `
+        <div class="report-box" style="--bc:#FF9F43; margin-top:12px">
+          <span class="report-badge" style="--bc:#FF9F43">🏆 四、閃亮亮成績單</span>
+          <table class="essay-scores">
+            <thead><tr><th>評分項目</th><th>等第</th><th>老師的建議</th></tr></thead>
+            <tbody>${e.scores.map(c => `<tr><td>${App.esc(c[0] || "")}</td><td>${App.esc(c[1] || "")}</td><td>${App.esc(c[2] || "")}</td></tr>`).join("")}</tbody>
+          </table>
+        </div>` : ""}
+
+        ${block("#5F27CD", "💬 老師的話", e.finalWords)}
+        ${block("#10AC84", "✨ 老師的魔法潤飾（修改範文）", e.sample)}
+
+        ${e.pdf ? `
+        <p class="meta no-print" style="margin-top:12px">
+          📄 <a href="${App.esc(e.pdf)}" target="_blank" rel="noopener">下載這篇的批改報告 PDF</a>
+        </p>` : ""}
+
+        <p class="report-footnote">${anon ? "本報告已去識別化。" : `本報告僅供 ${App.esc(displayName)} 的家長參考，請勿外傳。`}　${App.esc(c.schoolYear)} ${App.esc(c.className)}</p>
+      </div>`;
+    };
+
+    main.innerHTML = toolbar + (isEssay ? essaySheet() : `
       <div class="report-sheet${isTerm ? " report-term" : ""}">
         <h2 class="report-title">${isTerm ? "🌟 學期學習總報告 🌟" : "✨ 學生學習分析報告 ✨"}</h2>
 
@@ -354,7 +422,7 @@
           </div>` : ""}
         </div>
         <p class="report-footnote">${anon ? "本報告已去識別化。" : `本報告僅供 ${App.esc(displayName)} 的家長參考，請勿外傳。`}　${App.esc(c.schoolYear)} ${App.esc(c.className)}</p>
-      </div>`;
+      </div>`);
 
     main.querySelectorAll(".report-tabs button").forEach(b =>
       b.onclick = () => showReport(report, Number(b.dataset.i), anon));

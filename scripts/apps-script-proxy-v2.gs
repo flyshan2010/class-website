@@ -111,6 +111,7 @@ function submitTask_(props, body) {
     "任務原文": { title: [{ text: { content: text } }] },
     "狀態": { select: { name: "待處理" } },
     "來源": { select: { name: "教師專區" } },
+    "學年": { select: { name: schoolYear_() } },
   };
   const urls = (body.attachment_urls || []).filter(u => /^https?:\/\//.test(String(u)));
   if (urls.length) {
@@ -365,6 +366,7 @@ function approveRedeem_(props, body) {
       "金額": { number: -price },
       "類型": { select: { name: "消費" } },
       "日期": { date: { start: today } },
+      "學年": { select: { name: schoolYear_() } }, // 學年鐵則：空值會讓班網同步標紅中止
     },
   }, NOTION_VERSION_DS);
   if (ledger.code !== 200) return { ok: false, error: "帳本扣款失敗（Notion 回應 " + ledger.code + "），申請未變動" };
