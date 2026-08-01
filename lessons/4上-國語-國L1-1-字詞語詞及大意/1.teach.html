@@ -1987,6 +1987,11 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
 .vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
 .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
+[data-slide-id="practice"] .drag-match { grid-template-columns: 1fr; align-content: center; }
+[data-slide-id="practice"] .drag-match .zones { flex-direction: row; flex-wrap: wrap; }
+[data-slide-id="practice"] .drag-match .zone { flex: 1 1 30%; min-width: 260px; min-height: 70px; padding: var(--s2); }
+[data-slide-id="practice"] .drag-match .zone > .zone-head { font-size: var(--t5); font-weight: var(--fw-bold); }
+[data-slide-id="practice"] .drag-match .zone > .drop { min-height: 36px; }
 </style>
 </head>
 <body>
@@ -2075,20 +2080,22 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
     <!-- 7 詞語填空練習 -->
     <section class="slide" data-slide-id="practice" hidden>
-      <div class="page-head"><span class="label">國L1-1 · 練習</span><h2 class="title">詞語填空 ✍️　把詞語放進句子裡</h2></div>
-      <p style="font-size:var(--t4);color:var(--muted);margin:0 0 var(--s3) 0;">可選詞語：唾沫・成群結隊・街談巷議・甜蜜</p>
-      <div class="concept-grid">
-        <div class="concept-card">
-          <div class="head">1. 海浪打上岸邊，激起白色的（　　　）。</div>
-          <div class="write-field" contenteditable="true" role="textbox" aria-multiline="true" aria-label="第一題作答區" spellcheck="false" data-placeholder="點這裡打字…"></div>
+      <div class="page-head"><span class="label">國L1-1 · 練習</span><h2 class="title">詞語填空 ✍️　拉語詞到正確位置</h2></div>
+      <div class="drag-match" data-drag-match>
+        <div class="pool">
+          <span class="chip" draggable="true" data-answer="z1">唾沫</span>
+          <span class="chip" draggable="true" data-answer="z2">成群結隊</span>
+          <span class="chip" draggable="true" data-answer="z3">甜蜜</span>
+          <span class="chip" draggable="true" data-answer="none">街談巷議</span>
         </div>
-        <div class="concept-card">
-          <div class="head">2. 放學鐘聲一響，學生們就（　　　）的衝出教室。</div>
-          <div class="write-field" contenteditable="true" role="textbox" aria-multiline="true" aria-label="第二題作答區" spellcheck="false" data-placeholder="點這裡打字…"></div>
+        <div class="zones">
+          <div class="zone" data-zone="z1"><div class="zone-head">1. 海浪打上岸邊，激起白色的（　　）。</div><div class="drop"></div></div>
+          <div class="zone" data-zone="z2"><div class="zone-head">2. 放學鐘聲一響，學生們就（　　）的衝出教室。</div><div class="drop"></div></div>
+          <div class="zone" data-zone="z3"><div class="zone-head">3. 臺灣是（　　）的糖的王國。</div><div class="drop"></div></div>
         </div>
-        <div class="concept-card">
-          <div class="head">3. 臺灣是（　　　）的糖的王國。</div>
-          <div class="write-field" contenteditable="true" role="textbox" aria-multiline="true" aria-label="第三題作答區" spellcheck="false" data-placeholder="點這裡打字…"></div>
+        <div class="row">
+          <button class="ds-btn primary" data-match-check>對答案</button>
+          <button class="ds-btn" data-match-reset>重來</button>
         </div>
       </div>
     </section>
