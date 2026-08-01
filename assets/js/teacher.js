@@ -82,6 +82,7 @@
       { icon: "💬", label: "一句話交辦", href: "#sec-task", color: "#FF9F43" },
       { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
       { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },
+      { icon: "🎟️", label: "特權執行", href: "#sec-priv", color: "#9B59B6" },
       { icon: "⚡", label: "班網維護", href: "#sec-site", color: "#10ac84" },
     ];
 
@@ -125,11 +126,25 @@
         <h2>🛒 兌換申請</h2>
         <p class="meta">學生在小小銀行送出的商店兌換申請。核可＝自動扣崑山幣＋商店庫存−1；處理完按「立即更新班網」，存摺與庫存才會更新到站上。</p>
         <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-          <button id="rd-tab-pending" class="emotion-draw" style="margin:0">🕐 待處理</button>
-          <button id="rd-tab-all" class="emotion-draw" style="margin:0;opacity:.75">📜 購買明細（最近 50 筆）</button>
+          <button id="rd-tab-pending" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px">🕐 待處理</button>
+          <button id="rd-tab-all" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px;opacity:.75">📜 購買明細（最近 50 筆）</button>
         </div>
         <div id="redeem-list"><p class="empty-hint">載入中…</p></div>
         <p class="meta">完整明細與搜尋請開 <a href="https://app.notion.com/p/c482ee9f57e549d09993a0c173fe9fb0" target="_blank" rel="noopener">Notion「🛒 兌換申請」</a>。</p>
+      </section>
+
+      <section class="card" id="sec-priv" style="--accent:#9B59B6">
+        <h2>🎟️ 特權執行</h2>
+        <p class="meta">學生兌換到的特權券都在這裡。學生要用時按「✅ 使用一次」扣掉次數；扣完自動移出清單。
+          按錯了按「↩️ 撤銷」還原。<strong>這裡即時生效</strong>，學生存摺上的特權要等按「立即更新班網」才會更新。</p>
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+          <button id="pv-tab-holding" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px">🎟️ 持有中</button>
+          <button id="pv-tab-history" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px;opacity:.75">📜 使用歷史</button>
+          <input id="pv-filter" type="number" min="1" max="99" placeholder="座號篩選"
+                 style="width:110px;padding:8px;border:1px solid #ccc;border-radius:8px" />
+          <button id="pv-refresh" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px">🔄 重新整理</button>
+        </div>
+        <div id="priv-list"><p class="empty-hint">載入中…</p></div>
       </section>
 
       <section class="card" id="sec-site" style="--accent:#10ac84">
@@ -262,9 +277,11 @@
             res = await api("approve_redeem", { page_id: btn.dataset.id, force: true }).catch(() => ({ ok: false, error: "連線失敗" }));
           } else { loadRedeems(); return; }
         }
-        if (res.ok) alert(`✅ 已核可：座號 ${res.seat} 兌換「${res.item}」，扣 ${res.price} 幣，餘額 ${res.balance} 幣${res.stock_msg || ""}\n記得按「立即更新班網」讓存摺更新。`);
+        if (res.ok) alert(`✅ 已核可：座號 ${res.seat} 兌換「${res.item}」，扣 ${res.price} 幣，餘額 ${res.balance} 幣${res.stock_msg || ""}${
+          res.uses ? `\n🎟️ 已發特權券 ${res.uses} 次，之後在「特權執行」區塊扣次數。` : ""}\n記得按「立即更新班網」讓存摺更新。`);
         else alert(`❌ ${res.error || "核可失敗"}`);
         loadRedeems();
+        if (res.ok && res.uses) loadPrivs();
       }));
       document.querySelectorAll(".rd-reject").forEach(btn => btn.addEventListener("click", async () => {
         const reason = prompt("駁回原因（會顯示在明細，例：庫存不足、先完成本週任務）：", "");
@@ -286,6 +303,112 @@
     rdTabPending.addEventListener("click", () => setRedeemView("pending"));
     rdTabAll.addEventListener("click", () => setRedeemView("all"));
     loadRedeems();
+
+    // 特權執行：持有中（使用一次／撤銷／作廢）＋使用歷史
+    let storeIcons = {};
+    try {
+      const st = await App.fetchJSON("data/store.json");
+      storeIcons = Object.fromEntries(st.map(i => [i.name, i.icon]));
+    } catch {}
+    const privIcon = name => storeIcons[name] || "🎟️";
+
+    let privView = "holding";
+    let privItems = [];
+    const privBox = () => document.getElementById("priv-list");
+
+    const renderPrivs = () => {
+      const box = privBox();
+      const seatFilter = Number(document.getElementById("pv-filter").value) || 0;
+      const items = seatFilter ? privItems.filter(p => p.seat === seatFilter) : privItems;
+      if (!items.length) {
+        box.innerHTML = `<p class="empty-hint">${seatFilter ? `座號 ${seatFilter} ` : ""}${
+          privView === "holding" ? "目前沒有持有中的特權券" : "還沒有用完或作廢的特權券"}</p>`;
+        return;
+      }
+      const bySeat = {};
+      items.forEach(p => (bySeat[p.seat] ||= []).push(p));
+      const totalTickets = items.reduce((n, p) => n + (privView === "holding" ? p.remaining : 1), 0);
+
+      box.innerHTML = `
+        <p class="meta">${privView === "holding"
+          ? `目前 ${Object.keys(bySeat).length} 位同學持有 ${items.length} 張券、共 ${totalTickets} 次可用`
+          : `共 ${items.length} 筆`}</p>
+        ${Object.keys(bySeat).map(Number).sort((a, b) => a - b).map(seat => `
+          <div style="border-left:4px solid #9B59B6;padding:6px 0 6px 10px;margin-bottom:10px">
+            <p style="margin:0 0 4px"><strong>座號 ${seat}</strong>
+              <span class="meta">${bySeat[seat].length} 張券</span></p>
+            ${bySeat[seat].map(p => `
+              <p style="margin:2px 0">
+                ${privIcon(p.item)} ${App.esc(p.item)}
+                ${privView === "holding"
+                  ? `<span class="badge" style="background:#f3e5f8;color:#6c3483">剩 ${p.remaining}/${p.total} 次</span>`
+                  : `<span class="badge" style="background:#eee;color:#666">已用完／作廢</span>`}
+                <span class="meta">取得 ${App.fmtDateShort(String(p.got).slice(0, 10))}${
+                  p.last_used ? `　最近 ${App.fmtDateShort(p.last_used)}` : ""}</span>
+                ${p.remaining > 0 ? `
+                  <button class="badge pv-use" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 使用一次</button>
+                  <button class="badge pv-void" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#f1f3f5;color:#666">🚫 作廢</button>` : ""}
+                ${p.used > 0 ? `
+                  <button class="badge pv-undo" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#fff3bf;color:#8a6d00">↩️ 撤銷</button>` : ""}
+                ${p.log ? `<br /><span class="meta">${App.esc(p.log.split("\n")[0])}</span>` : ""}
+              </p>`).join("")}
+          </div>`).join("")}`;
+
+      const act = async (btn, action, params, okMsg) => {
+        btn.disabled = true; btn.textContent = "⏳";
+        const res = await api(action, params).catch(() => ({ ok: false, error: "連線失敗" }));
+        if (res.ok) alert(okMsg(res));
+        else if (!res.duplicate) alert(`❌ ${res.error || "操作失敗"}`);
+        return res;
+      };
+      document.querySelectorAll(".pv-use").forEach(btn => btn.addEventListener("click", async () => {
+        let res = await act(btn, "use_privilege", { page_id: btn.dataset.id },
+          r => `✅ 座號 ${r.seat}「${r.item}」已扣 1 次，還剩 ${r.remaining}/${r.total} 次`);
+        if (!res.ok && res.duplicate) {
+          if (confirm(`${res.error}。\n確定要再扣一次嗎？`)) {
+            res = await api("use_privilege", { page_id: btn.dataset.id, force: true }).catch(() => ({ ok: false, error: "連線失敗" }));
+            if (res.ok) alert(`✅ 座號 ${res.seat}「${res.item}」已扣 1 次，還剩 ${res.remaining}/${res.total} 次`);
+            else alert(`❌ ${res.error || "操作失敗"}`);
+          }
+        }
+        loadPrivs();
+      }));
+      document.querySelectorAll(".pv-undo").forEach(btn => btn.addEventListener("click", async () => {
+        if (!confirm("要把這張券的次數加回去嗎？（用於按錯）")) return;
+        await act(btn, "undo_privilege", { page_id: btn.dataset.id },
+          r => `↩️ 已還原：座號 ${r.seat}「${r.item}」剩 ${r.remaining} 次`);
+        loadPrivs();
+      }));
+      document.querySelectorAll(".pv-void").forEach(btn => btn.addEventListener("click", async () => {
+        const reason = prompt("作廢原因（會記在使用紀錄，例：學期末結清、條件未達成）：", "");
+        if (reason === null) return;
+        await act(btn, "void_privilege", { page_id: btn.dataset.id, reason },
+          r => `🚫 已作廢：座號 ${r.seat}「${r.item}」${r.voided} 次（不退幣）`);
+        loadPrivs();
+      }));
+    };
+
+    const loadPrivs = async () => {
+      privBox().innerHTML = '<p class="empty-hint">載入中…</p>';
+      const res = await api("list_privileges", privView === "holding" ? { view: "holding" } : { view: "history", limit: 50 })
+        .catch(() => ({ ok: false }));
+      if (!res.ok) { privBox().innerHTML = `<p class="empty-hint">載入失敗：${App.esc(res.error || "連線問題")}</p>`; return; }
+      privItems = res.items;
+      renderPrivs();
+    };
+    const pvHolding = document.getElementById("pv-tab-holding");
+    const pvHistory = document.getElementById("pv-tab-history");
+    const setPrivView = view => {
+      privView = view;
+      pvHolding.style.opacity = view === "holding" ? "1" : ".75";
+      pvHistory.style.opacity = view === "history" ? "1" : ".75";
+      loadPrivs();
+    };
+    pvHolding.addEventListener("click", () => setPrivView("holding"));
+    pvHistory.addEventListener("click", () => setPrivView("history"));
+    document.getElementById("pv-filter").addEventListener("input", renderPrivs);
+    document.getElementById("pv-refresh").addEventListener("click", loadPrivs);
+    loadPrivs();
 
     // 一鍵更新班網（POST 版）
     document.getElementById("site-update").addEventListener("click", async () => {

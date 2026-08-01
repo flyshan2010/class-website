@@ -106,6 +106,30 @@
     });
   };
 
+  // 我的特權：只列還能用的券（已用完的不顯示）；次數以老師端紀錄為準
+  const privilegeSection = acc => {
+    const list = acc.privileges || [];
+    if (!list.length) {
+      return `
+        <h3 class="bank-section-title">🎟️ 我的特權</h3>
+        <p class="meta">你目前沒有特權券。到下面的商店櫥窗看看，存夠崑山幣就能兌換囉！</p>`;
+    }
+    const totalTimes = list.reduce((n, p) => n + p.remaining, 0);
+    return `
+      <h3 class="bank-section-title">🎟️ 我的特權</h3>
+      <p class="meta">你有 ${list.length} 張特權券、共 ${totalTimes} 次可以用。要用的時候找老師，老師會幫你扣一次。</p>
+      <div class="store-grid">
+        ${list.map(p => `
+          <div class="store-card">
+            <div class="store-icon">${App.esc(p.icon)}</div>
+            <div class="store-name">${App.esc(p.name)}</div>
+            <div class="store-price">還可以用 ${p.remaining} 次${p.total > 1 ? `／共 ${p.total} 次` : ""}</div>
+            <div class="store-stock">${p.got ? `${App.esc(App.fmtDateShort(p.got))} 兌換` : ""}</div>
+            ${p.note ? `<div class="store-note">${App.esc(p.note)}</div>` : ""}
+          </div>`).join("")}
+      </div>`;
+  };
+
   let tipTimer;
   const startTips = () => {
     clearInterval(tipTimer);
@@ -186,6 +210,7 @@
         </table>` : `<p class="meta" style="padding:12px">還沒有任何交易，開始工作賺崑山幣吧！</p>`}
         <p class="report-footnote">本存摺僅供 ${App.esc(acc.name)} 同學與家長參考，請勿外傳。　${App.esc(c.schoolYear)} ${App.esc(c.className)}</p>
       </div>
+      ${privilegeSection(acc)}
       ${storeSection()}`;
     startTips();
     bindBuyButtons();
