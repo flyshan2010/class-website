@@ -71,6 +71,21 @@ for (const b of BATCHES) {
     (b.expect === null ? "（尚未設定預期值）" : `（預期 ${b.expect}）${okCount ? " ✅" : " ❌ 不符"}`));
   if (loose) console.log(`  ⚠️ 另有 ${loose} 筆標題含「模擬」但非前綴 —— 本腳本不動，請人工判讀`);
   for (const p of hit) console.log(`    · ${shortId(p.id)}  ${b.show(p)}`);
+
+  // ── 保留清單（老師核對誤刪用）───────────────────
+  // 逐筆列出「不會被刪」的資料；超過 12 筆只印統計，避免 log 過長。
+  const keep = all.filter((p) => !isMock(p, tp));
+  console.log(`  🟢 保留 ${keep.length} 筆` + (keep.length > 12 ? "（>12 筆，只印彙總）" : ""));
+  if (keep.length && keep.length <= 12) {
+    for (const p of keep) console.log(`    ○ ${shortId(p.id)}  建立 ${p.created_time?.slice(0, 10)}  ${b.show(p)}`);
+  } else if (keep.length) {
+    const byDay = new Map();
+    for (const p of keep) {
+      const d = p.created_time?.slice(0, 10) ?? "?";
+      byDay.set(d, (byDay.get(d) ?? 0) + 1);
+    }
+    for (const [d, n] of [...byDay].sort()) console.log(`    ○ 建立 ${d}：${n} 筆`);
+  }
   console.log("");
   plan.push({ b, hit });
 }
