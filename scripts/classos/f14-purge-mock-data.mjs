@@ -49,6 +49,7 @@ const BATCHES = [
 /** 明確保留、只清點不刪的庫 —— 每次跑都印出來，證明沒被誤動。 */
 const KEEP = [
   { label: "📰 班級週報", ds: DS.weekly, expect: 42 },
+  { label: "👥 學生名冊", ds: DS.roster, expect: 27 },
 ];
 
 console.log(`模式：${EXECUTE ? "⚠️ EXECUTE（實際封存）" : "🔍 DRY-RUN（只列不刪）"}\n`);
