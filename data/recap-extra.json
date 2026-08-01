@@ -12,33 +12,10 @@
   },
   "economy": {
     "totals": {
-      "supply": 1395,
-      "txCount": 154,
-      "spend": 140
+      "supply": 0,
+      "txCount": 0,
+      "spend": 0
     },
-    "weeks": [
-      {
-        "week": 1,
-        "label": "115下第一週(2/8-2/12)",
-        "salary": 1180,
-        "reward": 250,
-        "penalty": 100,
-        "interest": 45,
-        "spend": 40,
-        "spendCount": 2,
-        "adjust": 0
-      },
-      {
-        "week": 20,
-        "label": "115下第二十週(6/21-6/25)",
-        "salary": 0,
-        "reward": 60,
-        "penalty": 0,
-        "interest": 0,
-        "spend": 0,
-        "spendCount": 0,
-        "adjust": 0
-      }
-    ]
+    "weeks": []
   }
 }
