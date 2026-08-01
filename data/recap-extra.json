@@ -12,9 +12,9 @@
   },
   "economy": {
     "totals": {
-      "supply": 0,
-      "txCount": 0,
-      "spend": 0
+      "supply": 5,
+      "txCount": 2,
+      "spend": 25
     },
     "weeks": []
   }
