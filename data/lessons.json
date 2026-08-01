@@ -7,7 +7,9 @@
     "status": "進行中",
     "stages": [
       "起始評估",
-      "課程教學"
+      "課程教學",
+      "差異化指導",
+      "學習評量"
     ],
     "points": [
       "修辭焦點：轉化（擬人）、譬喻（明喻／隱喻）、頂真、堆疊語詞",
@@ -20,8 +22,8 @@
       "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
       "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-3-形式深究/0.pretest.html",
       "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-3-形式深究/1.teach.html",
-      "differentiated": "",
-      "exam": "",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-3-形式深究/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-3-形式深究/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-3-形式深究/3.review.html"
     }
   },
@@ -33,7 +35,9 @@
     "status": "進行中",
     "stages": [
       "起始評估",
-      "課程教學"
+      "課程教學",
+      "差異化指導",
+      "學習評量"
     ],
     "points": [
       "全課地圖：三層結構、五種寫法統整",
@@ -46,8 +50,8 @@
       "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
       "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-4-綜合整理/0.pretest.html",
       "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-4-綜合整理/1.teach.html",
-      "differentiated": "",
-      "exam": "",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-4-綜合整理/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-4-綜合整理/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-4-綜合整理/3.review.html"
     }
   },
@@ -59,7 +63,9 @@
     "status": "進行中",
     "stages": [
       "起始評估",
-      "課程教學"
+      "課程教學",
+      "差異化指導",
+      "學習評量"
     ],
     "points": [
       "生字語詞：從部首猜字義（甜、唾、蕉、鳳）＋詞語填空",
@@ -72,8 +78,8 @@
       "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
       "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-1-字詞語詞及大意/0.pretest.html",
       "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-1-字詞語詞及大意/1.teach.html",
-      "differentiated": "",
-      "exam": "",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-1-字詞語詞及大意/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-1-字詞語詞及大意/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-1-字詞語詞及大意/3.review.html"
     }
   },
@@ -85,7 +91,9 @@
     "status": "進行中",
     "stages": [
       "起始評估",
-      "課程教學"
+      "課程教學",
+      "差異化指導",
+      "學習評量"
     ],
     "points": [
       "課文內容：臺灣風景特點與位置氣候、物產段落推論",
@@ -98,8 +106,8 @@
       "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
       "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-2-內容理解/0.pretest.html",
       "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-2-內容理解/1.teach.html",
-      "differentiated": "",
-      "exam": "",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-2-內容理解/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-2-內容理解/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-2-內容理解/3.review.html"
     }
   },
