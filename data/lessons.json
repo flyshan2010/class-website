@@ -596,34 +596,5 @@
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
     }
-  },
-  {
-    "title": "國L1 美麗島",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "生字語詞：從部首猜字義（甜、唾、蕉、鳳）＋詞語填空",
-      "課文結構：三段遞進——位置氣候 → 物產豐富 → 人民熱情",
-      "修辭焦點：轉化（擬人）、譬喻、頂真、設問",
-      "作者楊喚以想像的筆法寫臺灣風景，分四節上完"
-    ],
-    "date": "",
-    "note": "楊喚〈美麗島〉詩歌。2026-07-21 全面套用新命名規範（資料夾＝4上-國語-國L1-美麗島，檔名 0~5 序號）。差異化教材改稱基礎／進階／挑戰題，編排序為基礎→進階→挑戰。第四段學習評量：紙本六合一試卷包為正式計分用，網頁 4.exam.html 為平行題本線上模擬評量（同範圍、不同題，不洩題）。第五段成果回流待實際教學後登記。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1fR3JmnVW1eN2lmk2ccqF9ISNR6O-IRb8/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L1-美麗島/3.review.html"
-    }
   }
 ]
