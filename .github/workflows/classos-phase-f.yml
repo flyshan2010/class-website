@@ -20,6 +20,7 @@ on:
           - f11-upgrade-wizard
           - f12-simulate-skill-writes
           - f13-fill-contactbook
+          - f14-purge-mock-data
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
