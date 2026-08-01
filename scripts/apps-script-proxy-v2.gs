@@ -1,5 +1,5 @@
 /**
- * 班網教師專區代理 v2.1（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換
+ * 班網教師專區代理 v2.2（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋特權執行
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
  *
  * 功能（單一 Web App，doPost 依 action 分派）：
@@ -10,7 +10,12 @@
  *   - redeem_request：學生在小小銀行送出商店兌換申請（以座號＋查詢碼驗證，不需教師口令）
  *   - list_redeems  ：查兌換申請（教師專區處理與明細查詢用）
  *   - approve_redeem：核可申請 → 自動建帳本「消費」列扣幣＋商店庫存 −1 ＋申請設「已完成」
+ *                     特權類另寫「剩餘次數」＝商店「使用次數」（空白＝1），該列即成為學生的特權券
  *   - reject_redeem ：駁回申請（填原因）
+ *   - list_privileges ：查特權券（holding＝剩餘>0；history＝已用完/作廢）
+ *   - use_privilege   ：學生執行特權 → 剩餘 −1、已使用 +1、追加使用紀錄（同日重複扣需 force）
+ *   - undo_privilege  ：誤按還原（剩餘 +1、已使用 −1）
+ *   - void_privilege  ：作廢（剩餘歸 0，填原因；不退幣）
  *
  * 資安原則：
  *   - 教師動作口令一律放 POST body，禁止放 URL query（doGet 僅保留舊版相容一版後移除）。
@@ -70,6 +75,10 @@ function doPost(e) {
       case "list_redeems":   return out_(listRedeems_(props, body));
       case "approve_redeem": return out_(approveRedeem_(props, body));
       case "reject_redeem":  return out_(rejectRedeem_(props, body));
+      case "list_privileges": return out_(listPrivileges_(props, body));
+      case "use_privilege":   return out_(usePrivilege_(props, body));
+      case "undo_privilege":  return out_(undoPrivilege_(props, body));
+      case "void_privilege":  return out_(voidPrivilege_(props, body));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -259,6 +268,7 @@ function redeemRequest_(props, body) {
   const price = Math.round(Number((ip["價格"] || {}).number) || 0);
   const stock = Number((ip["庫存"] || {}).number) || 0;
   const listed = !!(ip["上架"] || {}).checkbox;
+  const category = (((ip["分類"] || {}).select) || {}).name || "小物";
   if (!itemName || !listed) return { ok: false, error: "這個商品已下架，請重新整理頁面看看還有什麼" };
   if (stock <= 0) return { ok: false, error: "「" + itemName + "」已經售完囉，下次早點來！" };
   if (price <= 0) return { ok: false, error: "商品價格設定有誤，請告訴老師" };
@@ -272,7 +282,9 @@ function redeemRequest_(props, body) {
       "品項": { rich_text: [{ text: { content: itemName } }] },
       "價格": { number: price },
       "商店頁ID": { rich_text: [{ text: { content: itemId } }] },
+      "分類": { select: { name: category } },
       "狀態": { select: { name: "待處理" } },
+      "學年": { select: { name: schoolYear_() } },
     },
   }, NOTION_VERSION_DS);
   if (res.code !== 200) return { ok: false, error: "申請送出失敗（Notion 回應 " + res.code + "），請稍後再試" };
@@ -328,6 +340,7 @@ function approveRedeem_(props, body) {
   const itemName = ((rp["品項"] || {}).rich_text || []).map(t => t.plain_text).join("");
   const price = Math.round(Number((rp["價格"] || {}).number) || 0);
   const storePageId = ((rp["商店頁ID"] || {}).rich_text || []).map(t => t.plain_text).join("").trim();
+  let category = (((rp["分類"] || {}).select) || {}).name || ""; // 空白＝舊資料，稍後以商店為準補
   if (!seat || !itemName || price <= 0) return { ok: false, error: "申請資料不完整，請直接到 Notion 檢查這筆申請" };
 
   // 2) 名冊找學生
@@ -356,30 +369,41 @@ function approveRedeem_(props, body) {
   }, NOTION_VERSION_DS);
   if (ledger.code !== 200) return { ok: false, error: "帳本扣款失敗（Notion 回應 " + ledger.code + "），申請未變動" };
 
-  // 5) 商店庫存 −1（失敗不擋流程，回報請老師手動調）
+  // 5) 商店庫存 −1（失敗不擋流程，回報請老師手動調）；順便取「使用次數」與分類
   let stockMsg = "";
+  let uses = 1; // 特權券可用次數：商店「使用次數」空白＝1
   if (storePageId) {
     const store = notionV_(token, "pages/" + storePageId, "get", null, NOTION_VERSION_DS);
     if (store.code === 200) {
-      const stock = Number(((store.data.properties || {})["庫存"] || {}).number) || 0;
+      const sp = store.data.properties || {};
+      uses = Math.max(1, Math.round(Number((sp["使用次數"] || {}).number) || 1));
+      if (!category) category = (((sp["分類"] || {}).select) || {}).name || "小物";
+      const stock = Number((sp["庫存"] || {}).number) || 0;
       const upd = notionV_(token, "pages/" + storePageId, "patch", {
         properties: { "庫存": { number: Math.max(0, stock - 1) } },
       }, NOTION_VERSION_DS);
       if (upd.code !== 200) stockMsg = "（庫存未扣成功，請手動 −1）";
     } else stockMsg = "（找不到商店品項，庫存請手動 −1）";
   } else stockMsg = "（此申請無商店頁ID，庫存請手動 −1）";
+  if (!category) category = "小物";
 
-  // 6) 申請設已完成＋處理紀錄
+  // 6) 申請設已完成＋處理紀錄；特權類同時發券（剩餘次數＝可用次數）
   const nowIso = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd'T'HH:mm:ss+08:00");
   const newBalance = balance - price;
-  notionV_(token, "pages/" + pageId, "patch", {
-    properties: {
-      "狀態": { select: { name: "已完成" } },
-      "處理時間": { date: { start: nowIso } },
-      "備註": { rich_text: [{ text: { content: "已扣 " + price + " 幣，餘額 " + newBalance + " 幣" + stockMsg } }] },
-    },
-  }, NOTION_VERSION_DS);
-  return { ok: true, seat: seat, item: itemName, price: price, balance: newBalance, stock_msg: stockMsg };
+  const isPrivilege = category === "特權";
+  const doneProps = {
+    "狀態": { select: { name: "已完成" } },
+    "分類": { select: { name: category } },
+    "處理時間": { date: { start: nowIso } },
+    "備註": { rich_text: [{ text: { content: "已扣 " + price + " 幣，餘額 " + newBalance + " 幣" + stockMsg } }] },
+  };
+  if (isPrivilege) {
+    doneProps["剩餘次數"] = { number: uses };
+    doneProps["已使用次數"] = { number: 0 };
+  }
+  notionV_(token, "pages/" + pageId, "patch", { properties: doneProps }, NOTION_VERSION_DS);
+  return { ok: true, seat: seat, item: itemName, price: price, balance: newBalance, stock_msg: stockMsg,
+    category: category, uses: isPrivilege ? uses : 0 };
 }
 
 /** 駁回申請：狀態=已駁回＋原因 */
@@ -400,6 +424,165 @@ function rejectRedeem_(props, body) {
   }, NOTION_VERSION_DS);
   if (res.code !== 200) return { ok: false, error: "駁回失敗（Notion 回應 " + res.code + "）" };
   return { ok: true };
+}
+
+// ---------- 動作：特權執行 ----------
+//
+// 資料模型：一列「已完成」且「分類＝特權」的兌換申請 ＝ 一張特權券。
+//   剩餘次數 > 0 ＝ 學生手上還能用的券；剩餘次數 = 0 ＝ 已用完或已作廢（歷史）。
+//   扣次數的正本在 Notion，教師專區按下去即時生效；學生端存摺要等下次同步班網才更新。
+
+const PRIV_PAGE_LIMIT = 300; // 持有中清單最多撈 300 張券（分頁）
+
+/** 讀一張特權券並驗基本狀態；回 { ok:false, error } 或 { ok:true, p, remaining, used, item, seat } */
+function readPrivilege_(token, pageId) {
+  const res = notionV_(token, "pages/" + pageId, "get", null, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "找不到這張特權券（Notion 回應 " + res.code + "）" };
+  const p = res.data.properties || {};
+  const status = (((p["狀態"] || {}).select) || {}).name || "";
+  const category = (((p["分類"] || {}).select) || {}).name || "";
+  if (status !== "已完成") return { ok: false, error: "這筆兌換不是已完成狀態（目前：" + (status || "空白") + "）" };
+  if (category !== "特權") return { ok: false, error: "這筆兌換不是特權類，沒有次數可以扣" };
+  return {
+    ok: true,
+    p: p,
+    seat: Math.floor(Number((p["座號"] || {}).number) || 0),
+    item: ((p["品項"] || {}).rich_text || []).map(t => t.plain_text).join(""),
+    remaining: Math.round(Number((p["剩餘次數"] || {}).number) || 0),
+    used: Math.round(Number((p["已使用次數"] || {}).number) || 0),
+    log: ((p["使用紀錄"] || {}).rich_text || []).map(t => t.plain_text).join(""),
+    lastUsed: (((p["最近使用"] || {}).date) || {}).start || "",
+  };
+}
+
+/** 使用紀錄：新的一行加在最前面，整體上限 1800 字（Notion rich_text 單段 2000 字） */
+function appendLog_(oldLog, line) {
+  const merged = line + (oldLog ? "\n" + oldLog : "");
+  return merged.length > 1800 ? merged.slice(0, 1800) : merged;
+}
+
+function today_() { return Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd"); }
+function stampMD_() { return Utilities.formatDate(new Date(), "Asia/Taipei", "MM/dd"); }
+
+/** 查特權券：view = "holding"（剩餘>0，預設）或 "history"（剩餘=0，已用完／作廢） */
+function listPrivileges_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+
+  const holding = String(body.view || "holding") !== "history";
+  const limit = holding ? PRIV_PAGE_LIMIT : Math.min(Math.max(parseInt(body.limit, 10) || 50, 1), 100);
+  const filter = { and: [
+    { property: "狀態", select: { equals: "已完成" } },
+    { property: "分類", select: { equals: "特權" } },
+    holding ? { property: "剩餘次數", number: { greater_than: 0 } }
+            : { property: "剩餘次數", number: { equals: 0 } },
+  ] };
+  const sorts = holding
+    ? [{ property: "座號", direction: "ascending" }, { timestamp: "created_time", direction: "ascending" }]
+    : [{ property: "最近使用", direction: "descending" }];
+
+  const items = [];
+  let cursor = null;
+  do {
+    const payload = { filter: filter, sorts: sorts, page_size: Math.min(100, limit - items.length) };
+    if (cursor) payload.start_cursor = cursor;
+    const res = queryDS_(token, DS_REDEEM, payload);
+    if (res.code !== 200) return { ok: false, error: "查詢特權券失敗（Notion 回應 " + res.code + "）" };
+    for (const page of res.data.results || []) {
+      const p = page.properties || {};
+      const remaining = Math.round(Number((p["剩餘次數"] || {}).number) || 0);
+      const used = Math.round(Number((p["已使用次數"] || {}).number) || 0);
+      items.push({
+        page_id: page.id,
+        seat: Math.floor(Number((p["座號"] || {}).number) || 0),
+        item: ((p["品項"] || {}).rich_text || []).map(t => t.plain_text).join(""),
+        remaining: remaining,
+        used: used,
+        total: remaining + used,
+        got: (((p["處理時間"] || {}).date) || {}).start || page.created_time,
+        last_used: (((p["最近使用"] || {}).date) || {}).start || "",
+        log: ((p["使用紀錄"] || {}).rich_text || []).map(t => t.plain_text).join(""),
+      });
+    }
+    cursor = res.data.has_more ? res.data.next_cursor : null;
+  } while (cursor && items.length < limit);
+
+  return { ok: true, items: items, today: today_() };
+}
+
+/** 使用一次：剩餘 −1、已使用 +1、追加使用紀錄；同一天已扣過需 force（防誤按重複扣） */
+function usePrivilege_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const pageId = String(body.page_id || "").trim();
+  if (!pageId) return { ok: false, error: "缺少特權券編號" };
+
+  const cur = readPrivilege_(token, pageId);
+  if (!cur.ok) return cur;
+  if (cur.remaining <= 0) return { ok: false, error: "「" + cur.item + "」已經沒有剩餘次數了" };
+  if (cur.lastUsed === today_() && !body.force) {
+    return { ok: false, duplicate: true,
+      error: "座號 " + cur.seat + " 的「" + cur.item + "」今天已經扣過一次了" };
+  }
+
+  const note = String(body.note || "").trim().slice(0, 60);
+  const res = notionV_(token, "pages/" + pageId, "patch", {
+    properties: {
+      "剩餘次數": { number: cur.remaining - 1 },
+      "已使用次數": { number: cur.used + 1 },
+      "最近使用": { date: { start: today_() } },
+      "使用紀錄": { rich_text: [{ text: { content:
+        appendLog_(cur.log, stampMD_() + " 使用" + (note ? "（" + note + "）" : "")) } }] },
+    },
+  }, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "扣次數失敗（Notion 回應 " + res.code + "）" };
+  return { ok: true, seat: cur.seat, item: cur.item, remaining: cur.remaining - 1, total: cur.remaining + cur.used };
+}
+
+/** 誤按還原：剩餘 +1、已使用 −1 */
+function undoPrivilege_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const pageId = String(body.page_id || "").trim();
+  if (!pageId) return { ok: false, error: "缺少特權券編號" };
+
+  const cur = readPrivilege_(token, pageId);
+  if (!cur.ok) return cur;
+  if (cur.used <= 0) return { ok: false, error: "「" + cur.item + "」還沒有使用紀錄，不用還原" };
+
+  const res = notionV_(token, "pages/" + pageId, "patch", {
+    properties: {
+      "剩餘次數": { number: cur.remaining + 1 },
+      "已使用次數": { number: cur.used - 1 },
+      "使用紀錄": { rich_text: [{ text: { content: appendLog_(cur.log, stampMD_() + " 撤銷一次（老師誤按）") } }] },
+    },
+  }, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "還原失敗（Notion 回應 " + res.code + "）" };
+  return { ok: true, seat: cur.seat, item: cur.item, remaining: cur.remaining + 1 };
+}
+
+/** 作廢：剩餘歸 0＋填原因（不退幣；學期末清券或條件未達成時用） */
+function voidPrivilege_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const pageId = String(body.page_id || "").trim();
+  if (!pageId) return { ok: false, error: "缺少特權券編號" };
+  const reason = String(body.reason || "").trim().slice(0, 100) || "老師作廢";
+
+  const cur = readPrivilege_(token, pageId);
+  if (!cur.ok) return cur;
+  if (cur.remaining <= 0) return { ok: false, error: "「" + cur.item + "」已經沒有剩餘次數，不需作廢" };
+
+  const res = notionV_(token, "pages/" + pageId, "patch", {
+    properties: {
+      "剩餘次數": { number: 0 },
+      "最近使用": { date: { start: today_() } },
+      "使用紀錄": { rich_text: [{ text: { content:
+        appendLog_(cur.log, stampMD_() + " 作廢 " + cur.remaining + " 次：" + reason) } }] },
+    },
+  }, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "作廢失敗（Notion 回應 " + res.code + "）" };
+  return { ok: true, seat: cur.seat, item: cur.item, voided: cur.remaining };
 }
 
 // 名冊：座號＋在學 → 學生頁（含 properties）；查無回 null
@@ -461,6 +644,14 @@ function notionV_(token, path, method, payload, version) {
   let data = {};
   try { data = JSON.parse(res.getContentText()); } catch (err) {}
   return { code: code, data: data };
+}
+
+// 學年欄位鐵則：西元年 − 1911 −（月份 < 8 ? 1 : 0）；以寫入當下的台北時間為準
+function schoolYear_() {
+  const now = new Date();
+  const y = Number(Utilities.formatDate(now, "Asia/Taipei", "yyyy"));
+  const m = Number(Utilities.formatDate(now, "Asia/Taipei", "MM"));
+  return String(y - 1911 - (m < 8 ? 1 : 0));
 }
 
 function sanitizeFilename_(name) {

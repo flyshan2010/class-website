@@ -32,6 +32,7 @@ const DS = {
   roster: "ad232b7a-c7f8-4a68-b224-5b2d5b16599a", // 👥 學生名冊
   bank: "1868a25d-f4e8-4952-9181-75bc2e349aa9", // 🏦 班級銀行帳本（一列＝一筆交易）
   store: "9e421ad0-0312-423d-b870-867b019b23d8", // 🏪 班級商店
+  redeem: "f4c697c6-7c27-4d20-b54a-febac0fc5d64", // 🛒 兌換申請（已完成的特權列＝學生手上的特權券）
   portfolio: "8eb38e48-334b-45b1-ad0a-7d720782d15a", // 🎨 學生作品集（照片＝Drive 外部連結，只進加密報告）
   lessons: "d28efc6b-3f34-4a97-b72b-ddeb5ec51147", // 🚀 教學單元（教學駕駛艙；一列＝一單元，勾「顯示」上站）
 };
@@ -45,7 +46,7 @@ const DS = {
 //        班網維持上一版正常內容，不會被半殘資料覆蓋。
 const YEAR_FIELD = "學年";
 // 需按學年過濾的庫
-const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio"].map(k => DS[k]));
+const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem"].map(k => DS[k]));
 // 有「學年」欄但**刻意不過濾**：教材是跨學年資產，過濾掉會讓升學年後既有課程頁全部消失
 const YEAR_EXEMPT = new Set([DS.lessons]);
 const DS_NAME = Object.fromEntries(Object.entries(DS).map(([k, v]) => [v, k]));
@@ -621,20 +622,51 @@ async function syncBank() {
     });
   }
 
+  // 特權券：已完成且剩餘次數 > 0 的兌換申請＝學生手上還能用的券。
+  // 走同一份加密存摺（座號↔品項對應屬個資，不另開公開檔）；已用完的不出現在學生端。
+  const storeMeta = Object.fromEntries((await queryDataSource(DS.store)).map(props)
+    .filter(r => r["品項"])
+    .map(r => [r["品項"], { icon: r["圖示"] || "🎟️", note: r["說明"] || "" }]));
+  const bySeatRoster = Object.fromEntries(roster.map(r => [Number(r["座號"]), r]));
+  let privSkipped = 0;
+  const privRows = (await queryDataSource(DS.redeem)).map(props)
+    .filter(r => r["狀態"] === "已完成" && r["分類"] === "特權" && Number(r["剩餘次數"]) > 0);
+  for (const r of privRows) {
+    const seat = Number(r["座號"]);
+    const stu = bySeatRoster[seat];
+    if (!stu) { privSkipped++; continue; }
+    const acc = (accounts[seat] ||= {
+      seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(), balance: 0, tx: [],
+    });
+    const meta = storeMeta[r["品項"]] || {};
+    (acc.privileges ||= []).push({
+      name: r["品項"],
+      icon: meta.icon || "🎟️",
+      note: meta.note || "",
+      remaining: Math.round(Number(r["剩餘次數"]) || 0),
+      total: Math.round((Number(r["剩餘次數"]) || 0) + (Number(r["已使用次數"]) || 0)),
+      got: r["處理時間"]?.start?.slice(0, 10) || "",
+    });
+  }
+
   const dir = path.join(DATA_DIR, "bank");
   await rm(dir, { recursive: true, force: true });
   await mkdir(dir, { recursive: true });
   for (const acc of Object.values(accounts)) {
     acc.tx.reverse(); // 存摺新→舊
+    (acc.privileges ||= []).sort((a, b) => String(b.got).localeCompare(String(a.got)));
     const payload = await encryptReport(
-      { name: acc.name, seat: acc.seat, balance: acc.balance, tx: acc.tx }, acc.code, acc.seat);
+      { name: acc.name, seat: acc.seat, balance: acc.balance, tx: acc.tx, privileges: acc.privileges },
+      acc.code, acc.seat);
     await writeFile(path.join(dir, `${acc.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
   // 只公開「哪些座號有帳戶」，不含任何個資
   await writeFile(path.join(dir, "index.json"),
     JSON.stringify(Object.keys(accounts).map(Number).sort((a, b) => a - b)) + "\n", "utf8");
   if (bankSkipped) console.warn(`⚠️ bank：${bankSkipped} 筆帳列的學生非在學名冊（模擬學生或漏 relation），已略過`);
-  console.log(`✅ bank/（${Object.keys(accounts).length} 位學生，已加密）`);
+  if (privSkipped) console.warn(`⚠️ bank：${privSkipped} 張特權券的座號不在在學名冊，已略過`);
+  const privCount = privRows.length - privSkipped;
+  console.log(`✅ bank/（${Object.keys(accounts).length} 位學生，含 ${privCount} 張特權券，已加密）`);
 }
 
 // ── 學期回顧聚合（Phase C3）：班級經濟大事記＋全班 SEL 平均 ──
