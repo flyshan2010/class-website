@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" data-subject="chinese">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>內容理解｜複習速記 · 四上國語 國L3-2</title>
+<style>
+/* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
+/* ============================================================
+   教學 Design System · tokens.css  v1.0
+   基準設計尺：1600 × 900（16:9 投影）
+   用法：在 <html> 或 .stage 上加 data-subject="chinese|math|
+   nature|society|health|art"，主題即整份切換。
+   鐵則：面向學生的文字一律 ≥ 24px；語意色不隨主題變。
+   ============================================================ */
+
+:root {
+  /* ---------- 版面骨架 ---------- */
+  --stage-w: 1600;
+  --stage-h: 900;
+  --safe-x: 96px;          /* 左右安全區 */
+  --safe-y: 64px;          /* 上下安全區 */
+  --header-h: 92px;        /* 頁首帶 */
+  --footer-h: 76px;        /* 頁尾判斷帶 */
+
+  /* ---------- 字級階梯（投影用，勿低於 T5） ---------- */
+  --t1: 80px;              /* 核心判斷／單一大字 72–88 */
+  --t2: 56px;              /* 頁標題 52–60 */
+  --t3: 38px;              /* 區塊標／欄標 36–40 */
+  --t4: 30px;              /* 內文／表格主文 28–32 */
+  --t5: 24px;              /* 標籤／註記（硬性下限） */
+  --t-min: 24px;           /* 驗證器據此檢查 */
+
+  --lh-tight: 1.15;
+  --lh-normal: 1.45;
+  --lh-loose: 1.7;
+
+  --fw-regular: 400;
+  --fw-bold: 700;
+
+  --font-sans: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC",
+               "Heiti TC", system-ui, sans-serif;
+  --font-hand: "Chalkduster", "Bradley Hand", var(--font-sans);
+
+  /* ---------- 間距尺（8 的倍數） ---------- */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 48px;
+  --s6: 64px;
+  --s7: 96px;
+
+  /* ---------- 線寬／圓角／陰影（各三級） ---------- */
+  --line-thin: 1px;
+  --line-mid: 2px;
+  --line-bold: 4px;
+
+  --r-sm: 6px;
+  --r-md: 14px;
+  --r-lg: 24px;
+
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, .08);
+  --shadow-2: 0 4px 14px rgba(0, 0, 0, .10);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, .14);
+
+  /* ---------- 語意色：跨主題固定，不得覆寫 ----------
+     鐵則：語意一律「顏色 + 圖示（或文字）」雙軌呈現，不得只靠顏色。
+     色覺障礙學生看不出紅綠差別；投影機色偏也會讓暖色系互相靠近。
+     正確 → ✓ / #ico-check   錯誤 → ✗ / #ico-cross   提醒 → ⚠ / #ico-warn
+     ------------------------------------------------------- */
+  --correct: #1B7A3E;
+  --correct-soft: #E6F3EA;
+  --wrong: #C0322B;
+  --wrong-soft: #FBEAE9;
+  --warn: #8A6100;
+  --warn-soft: #FBF2DC;
+  --neutral-soft: #EFEFEF;
+
+  /* ---------- 動畫：白名單三用途 ---------- */
+  --dur-fast: 200ms;
+  --dur-base: 300ms;
+  --dur-slow: 400ms;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+
+  /* ---------- 預設主題（無 data-subject 時＝通用教學） ---------- */
+  --bg: #F8F8F7;
+  --surface: #FFFFFF;
+  --ink: #1A1A1A;
+  --muted: #5C5C5C;
+  --line: #D6D4CF;
+  --accent: #B4441F;
+  --accent-soft: #FBEDE7;
+  --accent-2: #2B5680;
+  --texture: none;
+}
+
+/* ============================================================
+   六科主題（層 1：由科目決定色彩／質感）
+   每組皆已驗過：ink/bg ≥ 7:1、accent/bg ≥ 4.5:1
+   ============================================================ */
+
+/* 國語：宣紙米白 + 墨黑 + 硃紅 */
+[data-subject="chinese"] {
+  --bg: #FAF7F0;
+  --surface: #FFFDF8;
+  --ink: #1C1A17;
+  --muted: #5E574C;
+  --line: #DED5C4;
+  --accent: #B23A2E;
+  --accent-soft: #F7E9E5;
+  --accent-2: #5A6B7A;   /* 墨青：與 --warn 拉開，避免「次重點」被誤讀成「注意」 */
+  --texture: none;
+}
+
+/* 數學：淨白 + 靛藍 + 橘 */
+[data-subject="math"] {
+  --bg: #FBFCFD;
+  --surface: #FFFFFF;
+  --ink: #16202B;
+  --muted: #556575;
+  --line: #D3DDE7;
+  --accent: #1F5FA8;
+  --accent-soft: #E8F0F9;
+  --accent-2: #7A3D9A;   /* 深紫：原橙對比僅 4.03 且撞 --warn，已改 */
+  --texture: grid;
+}
+
+/* 自然：淺灰白 + 森綠 + 琥珀 */
+[data-subject="nature"] {
+  --bg: #F7F9F6;
+  --surface: #FFFFFF;
+  --ink: #16201A;
+  --muted: #506055;
+  --line: #D2DFD3;
+  --accent: #1E6B45;
+  --accent-soft: #E7F2EB;
+  --accent-2: #205C7A;   /* 深青藍：原琥珀與 --warn 撞色，已改 */
+  --texture: none;
+}
+
+/* 社會：牛皮紙 + 深褐 + 靛 */
+[data-subject="society"] {
+  --bg: #FAF6EE;
+  --surface: #FFFCF6;
+  --ink: #241E16;
+  --muted: #6A5B49;
+  --line: #DCCFB8;
+  --accent: #2B5680;
+  --accent-soft: #E7EEF5;
+  --accent-2: #6B4423;   /* 加深土褐：與 --warn 拉開 */
+  --texture: paper;
+}
+
+/* 健體：明亮白 + 深青 + 活力橙 */
+[data-subject="health"] {
+  --bg: #FBFDFD;
+  --surface: #FFFFFF;
+  --ink: #14201F;
+  --muted: #4F6362;
+  --line: #CFE0DF;
+  --accent: #0E6B6B;
+  --accent-soft: #E4F2F1;
+  --accent-2: #B0355F;   /* 桃紅：原橙對比僅 4.44 且撞 --warn，已改 */
+  --texture: none;
+}
+
+/* 藝文：低彩灰 + 炭黑 + 紫（accent 可依作品取樣覆寫） */
+[data-subject="art"] {
+  --bg: #F8F7F6;
+  --surface: #FFFFFF;
+  --ink: #1B1A19;
+  --muted: #5C5859;
+  --line: #DAD6D4;
+  --accent: #6B4E8C;
+  --accent-soft: #F0EBF5;
+  --accent-2: #45607A;   /* 炭青：與 --warn 拉開 */
+  --texture: canvas;
+}
+
+/* ============================================================
+   質感層（極輕，不干擾閱讀）
+   ============================================================ */
+[data-subject="math"] .stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(31, 95, 168, .05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(31, 95, 168, .05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+[data-subject="society"] .stage::before,
+[data-subject="art"] .stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .35;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(138, 90, 43, .05) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 60%, rgba(138, 90, 43, .04) 0 2px, transparent 3px);
+  background-size: 180px 180px;
+}
+
+/* ============================================================
+   基礎排版
+   ============================================================ */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #222;
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+
+.stage {
+  position: relative;
+  width: 1600px;
+  height: 900px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: var(--safe-y) var(--safe-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+h1, h2, h3, p, ul, ol { margin: 0; }
+
+.t1 { font-size: var(--t1); line-height: var(--lh-tight); font-weight: var(--fw-bold); }
+.t2 { font-size: var(--t2); line-height: var(--lh-tight); font-weight: var(--fw-bold); }
+.t3 { font-size: var(--t3); line-height: var(--lh-normal); font-weight: var(--fw-bold); }
+.t4 { font-size: var(--t4); line-height: var(--lh-normal); }
+.t5 { font-size: var(--t5); line-height: var(--lh-normal); color: var(--muted); }
+
+.ink { color: var(--ink); }
+.muted { color: var(--muted); }
+.em { color: var(--accent); font-weight: var(--fw-bold); }
+
+/* ============================================================
+   動畫白名單：只有這三種用途
+   1. reveal   逐步揭露
+   2. step-on  流程演示（步驟點亮）
+   3. focus    聚焦重點（其餘降透明）
+   ============================================================ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--dur-base) var(--ease),
+              transform var(--dur-base) var(--ease);
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+
+.is-dimmed {
+  opacity: .28;
+  transition: opacity var(--dur-base) var(--ease);
+}
+
+.is-active-step {
+  border-color: var(--accent) !important;
+  background: var(--accent-soft);
+  transition: background var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+  }
+  [data-reveal] { opacity: 1; transform: none; }
+}
+
+@media print {
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .is-dimmed { opacity: 1 !important; }
+  .slide { page-break-after: always; }
+}
+/* ============================================================
+   教學 Design System · components.css  v1.0
+   靜態元件 10 個 + 互動元件 5 個
+   依賴 tokens.css。所有尺寸以 1600×900 設計尺為準。
+   ============================================================ */
+
+/* ---------- 共用：頁首帶／頁尾判斷帶 ---------- */
+.page-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  min-height: var(--header-h);
+  border-bottom: var(--line-mid) solid var(--line);
+  padding-bottom: var(--s2);
+}
+.page-head .label {
+  font-size: var(--t5);
+  color: var(--accent);
+  font-weight: var(--fw-bold);
+  letter-spacing: .08em;
+}
+.page-head .title { font-size: var(--t2); font-weight: var(--fw-bold); }
+.page-meta {
+  position: absolute;
+  right: var(--safe-x);
+  bottom: var(--s3);
+  font-size: var(--t5);
+  color: var(--muted);
+}
+
+/* 直屬投影片的主要內容區塊撐滿可用高度，避免內容擠在上方、下半頁大片留白。
+   .takeaway-band 靠自身的 margin-top:auto 貼底，不受影響。 */
+.slide > .compare-pair,
+.slide > .flow-steps,
+.slide > .misconception,
+.slide > .figure-block,
+.slide > .timeline,
+.slide > .question-frame,
+.slide > .drag-match,
+.slide > .section-divider,
+.slide > .data-focus,
+.slide > .action-list,
+.slide > .slide-body { flex: 1; min-height: 0; }
+.slide > .section-divider,
+.slide > .data-focus { justify-content: center; }
+
+.slide > .question-frame { justify-content: center; }
+
+/* ---------- 1. 概念卡 concept-card ---------- */
+.concept-card {
+  background: var(--surface);
+  border: var(--line-thin) solid var(--line);
+  border-left: var(--line-bold) solid var(--accent);
+  border-radius: var(--r-md);
+  padding: var(--s4);
+  box-shadow: var(--shadow-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.concept-card > .head { font-size: var(--t3); font-weight: var(--fw-bold); }
+.concept-card > .body { font-size: var(--t4); color: var(--ink); }
+
+/* ---------- 2. 對照組 compare-pair ---------- */
+.compare-pair {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: var(--s3);
+}
+.compare-pair.stacked { grid-template-columns: 1fr; }
+.compare-pair > .side {
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.compare-pair > .side > .head {
+  font-size: var(--t3);
+  font-weight: var(--fw-bold);
+  padding-bottom: var(--s1);
+  border-bottom: var(--line-thin) solid var(--line);
+}
+.compare-pair > .side > .item { font-size: var(--t4); }
+.compare-pair > .side.is-focus { border-color: var(--accent); background: var(--accent-soft); }
+.compare-pair > .vs {
+  align-self: center;
+  font-size: var(--t3);
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+}
+
+/* ---------- 3. 流程列 flow-steps ---------- */
+.flow-steps { display: flex; align-items: stretch; gap: var(--s2); }
+.flow-steps.vertical { flex-direction: column; }
+.flow-steps > .step {
+  flex: 1;
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.flow-steps > .step > .badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: var(--t3);
+  font-weight: var(--fw-bold);
+  display: grid;
+  place-items: center;
+}
+.flow-steps > .step > .head { font-size: var(--t3); font-weight: var(--fw-bold); }
+.flow-steps > .step > .body { font-size: var(--t4); color: var(--muted); }
+.flow-steps > .arrow {
+  align-self: center;
+  color: var(--accent);
+  font-size: var(--t2);
+  line-height: 1;
+}
+
+/* ---------- 4. 時間軸 timeline ---------- */
+.timeline { position: relative; padding-left: var(--s6); }
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: 8px;
+  bottom: 8px;
+  width: var(--line-bold);
+  background: var(--line);
+  border-radius: 2px;
+}
+.timeline > .node {
+  position: relative;
+  padding: 0 0 var(--s4) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.timeline > .node::before {
+  content: "";
+  position: absolute;
+  left: -50px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: var(--line-bold) solid var(--bg);
+}
+.timeline > .node > .when { font-size: var(--t5); color: var(--accent); font-weight: var(--fw-bold); }
+.timeline > .node > .what { font-size: var(--t4); font-weight: var(--fw-bold); }
+.timeline > .node > .note { font-size: var(--t5); color: var(--muted); }
+
+/* ---------- 5. 詞彙卡 vocab-card ---------- */
+.vocab-card {
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s3) var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  min-width: 300px;
+}
+.vocab-card > .word {
+  font-size: var(--t2);
+  font-weight: var(--fw-bold);
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+}
+.vocab-card > .word > .zhuyin {
+  font-size: var(--t5);
+  color: var(--accent);
+  font-weight: var(--fw-regular);
+}
+.vocab-card > .mean { font-size: var(--t4); }
+.vocab-card > .example {
+  font-size: var(--t5);
+  color: var(--muted);
+  border-left: var(--line-mid) solid var(--line);
+  padding-left: var(--s2);
+}
+
+/* ---------- 6. 任務卡 task-card ---------- */
+.task-card {
+  background: var(--accent-soft);
+  border: var(--line-mid) solid var(--accent);
+  border-radius: var(--r-lg);
+  padding: var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.task-card > .mission { font-size: var(--t2); font-weight: var(--fw-bold); }
+.task-card > .facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s5);
+}
+.task-card > .facts > .fact {
+  font-size: var(--t4);
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+}
+.task-card > .facts > .fact > .k {
+  font-size: var(--t5);
+  color: var(--muted);
+  font-weight: var(--fw-bold);
+}
+
+/* ---------- 7. 迷思澄清框 misconception ---------- */
+.misconception { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--s3); align-items: stretch; }
+.misconception > .wrong-side,
+.misconception > .right-side {
+  border-radius: var(--r-md);
+  padding: var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.misconception > .wrong-side { background: var(--wrong-soft); border: var(--line-mid) solid var(--wrong); }
+.misconception > .right-side { background: var(--correct-soft); border: var(--line-mid) solid var(--correct); }
+.misconception .mark { font-size: var(--t3); font-weight: var(--fw-bold); }
+.misconception > .wrong-side .mark { color: var(--wrong); }
+.misconception > .right-side .mark { color: var(--correct); }
+.misconception .text { font-size: var(--t4); }
+.misconception > .becomes {
+  align-self: center;
+  font-size: var(--t2);
+  color: var(--muted);
+}
+
+/* ---------- 8. 重點判斷帶 takeaway-band ---------- */
+.takeaway-band {
+  margin-top: auto;
+  background: var(--surface);
+  border: var(--line-mid) solid var(--accent);
+  border-radius: var(--r-md);
+  padding: var(--s3) var(--s4);
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: var(--footer-h);
+}
+.takeaway-band > .icon { font-size: var(--t3); color: var(--accent); }
+.takeaway-band > .text { font-size: var(--t3); font-weight: var(--fw-bold); }
+
+/* ---------- 9. 圖文區塊 figure-block ---------- */
+.figure-block { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5); align-items: center; }
+.figure-block.figure-top { grid-template-columns: 1fr; }
+.figure-block > .figure {
+  background: var(--surface);
+  border: var(--line-thin) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s3);
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+}
+.figure-block > .figure svg,
+.figure-block > .figure img { max-width: 100%; max-height: 420px; }
+.figure-block > .caption { display: flex; flex-direction: column; gap: var(--s2); }
+.figure-block > .caption > .head { font-size: var(--t3); font-weight: var(--fw-bold); }
+.figure-block > .caption > .body { font-size: var(--t4); }
+
+/* ---------- 10. 三層提問框 question-frame ---------- */
+.question-frame { display: flex; flex-direction: column; gap: var(--s3); }
+.question-frame > .q {
+  background: var(--surface);
+  border: var(--line-thin) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s3) var(--s4);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+}
+.question-frame > .q > .tier {
+  flex: none;
+  font-size: var(--t5);
+  font-weight: var(--fw-bold);
+  color: #fff;
+  background: var(--muted);
+  border-radius: var(--r-sm);
+  padding: 4px 12px;
+}
+.question-frame > .q.tier-3 > .tier { background: var(--accent); }
+.question-frame > .q > .text { font-size: var(--t3); }
+
+/* ---------- 11. 過場分隔頁 section-divider ----------
+   段落之間的呼吸點。整頁只放一句，讓學生知道「換段了」。
+   版型輪替鐵則：full-bleed 版型只用於封面／過場／結尾，內容頁不用。 */
+.section-divider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--s3);
+  background: var(--accent-soft);
+  border-left: var(--line-bold) solid var(--accent);
+  border-radius: var(--r-lg);
+  padding: var(--s6) var(--s7);
+}
+.section-divider > .kicker {
+  font-size: var(--t3);
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+  letter-spacing: .05em;
+}
+.section-divider > .headline { font-size: var(--t1); font-weight: var(--fw-bold); line-height: var(--lh-tight); }
+.section-divider > .sub { font-size: var(--t4); color: var(--muted); }
+
+/* ---------- 12. 數據聚焦頁 data-focus ----------
+   一個大數字（或一張圖）＋一句結論。重點數據不再埋在內文裡。 */
+.data-focus { display: grid; grid-template-columns: auto 1fr; gap: var(--s5); align-items: center; }
+.data-focus.stacked { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+.data-focus > .figure-num {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s1);
+  padding: var(--s4) var(--s6);
+  background: var(--surface);
+  border: var(--line-bold) solid var(--accent);
+  border-radius: var(--r-lg);
+}
+.data-focus > .figure-num > .num {
+  font-size: var(--num-xl, 160px);   /* 刻意超過 T1：數據就是主角。RWD 會降階 */
+  line-height: 1;
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+}
+.data-focus > .figure-num > .unit { font-size: var(--t3); font-weight: var(--fw-bold); color: var(--muted); }
+.data-focus > .readout { display: flex; flex-direction: column; gap: var(--s3); }
+.data-focus > .readout > .claim { font-size: var(--t2); font-weight: var(--fw-bold); }
+.data-focus > .readout > .note { font-size: var(--t4); color: var(--muted); }
+
+/* ---------- 13. 行動／檢核頁 action-list ----------
+   明確的下一步或檢核清單。方框＝待辦、✓＋綠底＝完成，顏色＋記號雙軌。 */
+.action-list { display: flex; flex-direction: column; gap: var(--s2); }
+.action-list > .head { font-size: var(--t2); font-weight: var(--fw-bold); margin-bottom: var(--s2); }
+.action-list > .item {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  background: var(--surface);
+  border: var(--line-thin) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s3) var(--s4);
+  font-size: var(--t4);
+  min-height: 64px;
+}
+.action-list > .item::before {
+  content: "";
+  flex: none;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border: var(--line-mid) solid var(--accent);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: var(--t5); font-weight: var(--fw-bold);
+}
+.action-list > .item.is-done { color: var(--muted); }
+.action-list > .item.is-done::before {
+  content: "✓"; color: #fff; background: var(--correct); border-color: var(--correct);
+}
+
+/* 課堂書寫欄 .write-field（單一正本，簡報與教材網頁共用）
+   用 contenteditable 而非 textarea，才能有作業本底線格。
+   高度以 --field-h 固定（min == max），內容再長只在框內捲動，不撐破版面。
+   line-height 必須等於底線格距，字才會坐在線上。 */
+.write-field {
+  --field-h: 84px;
+  min-height: var(--field-h);
+  max-height: var(--field-h);
+  padding: 0 4px;
+  overflow-y: auto;
+  font-family: inherit;
+  font-size: 28px;
+  line-height: 42px;
+  color: var(--ink);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 40px,
+    var(--line) 40px 42px
+  );
+  outline: 0;
+  cursor: text;
+}
+.write-field:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  opacity: .7;
+}
+.write-field:focus {
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 var(--line-mid) var(--accent);
+}
+@media print {
+  .write-field { overflow: visible; box-shadow: none; }
+  .write-field:empty::before { content: none; }
+}
+
+/* ============================================================
+   互動元件（5 個）— 純 CSS/JS，離線可用
+   ============================================================ */
+
+/* ---------- I1. 翻牌 flip-card ---------- */
+.flip-card {
+  perspective: 1200px;
+  width: 100%;
+  min-height: 240px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+}
+/* .inner 必須 display:block —— 若是 <span> 等 inline 元素，
+   min-height／height 會完全失效，正反面會塌成小方塊、文字溢出卡片外。 */
+.flip-card > .inner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  transition: transform var(--dur-slow) var(--ease);
+  transform-style: preserve-3d;
+}
+.flip-card.is-flipped > .inner { transform: rotateY(180deg); }
+.flip-card .face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: var(--r-md);
+  border: var(--line-mid) solid var(--line);
+  background: var(--surface);
+  padding: var(--s3);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  /* 正面是「問題」，用 t3 而非 t1/t2：卡片欄寬有限，56px 會撐爆。
+     每張卡建議至少 280px 寬。 */
+  font-size: var(--t3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+.flip-card .face.back {
+  transform: rotateY(180deg);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  font-size: var(--t4);
+}
+.flip-card:focus-visible { outline: var(--line-bold) solid var(--accent); outline-offset: 4px; }
+
+/* ---------- I2. 抽題／抽人 picker ---------- */
+.picker {
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  align-items: center;
+}
+.picker > .display {
+  font-size: var(--t1);
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+  min-height: 96px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.picker > .display.is-rolling { opacity: .55; }
+.picker > .status { font-size: var(--t5); color: var(--muted); }
+
+/* ---------- I3. 拖曳配對 drag-match ---------- */
+.drag-match { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5); }
+.drag-match .pool { display: flex; flex-wrap: wrap; gap: var(--s2); align-content: flex-start; }
+.drag-match .chip {
+  font-size: var(--t4);
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s2) var(--s3);
+  cursor: grab;
+  user-select: none;
+}
+.drag-match .chip.is-dragging { opacity: .5; cursor: grabbing; }
+.drag-match .chip.is-placed { cursor: default; }
+.drag-match .zones { display: flex; flex-direction: column; gap: var(--s3); }
+.drag-match .zone {
+  border: var(--line-bold) dashed var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s3);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.drag-match .zone > .zone-head { font-size: var(--t3); font-weight: var(--fw-bold); }
+.drag-match .zone > .drop { display: flex; flex-wrap: wrap; gap: var(--s2); min-height: 48px; }
+.drag-match .zone.is-over { border-color: var(--accent); background: var(--accent-soft); }
+.drag-match .chip.is-correct { border-color: var(--correct); background: var(--correct-soft); color: var(--correct); }
+.drag-match .chip.is-wrong { border-color: var(--wrong); background: var(--wrong-soft); color: var(--wrong); }
+
+/* ---------- I4. 倒數計時 countdown ---------- */
+.countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--s2) var(--s4);
+}
+.countdown > .time {
+  font-size: var(--t1);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  min-width: 200px;
+  text-align: center;
+}
+.countdown.is-warning > .time { color: var(--warn); }
+.countdown.is-done > .time { color: var(--wrong); }
+.countdown.is-done { border-color: var(--wrong); background: var(--wrong-soft); }
+
+/* ---------- I5. 加分板 score-board ---------- */
+.score-board { display: flex; gap: var(--s3); flex-wrap: wrap; }
+.score-board > .team {
+  flex: 1;
+  min-width: 200px;
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s2);
+}
+.score-board > .team > .name { font-size: var(--t3); font-weight: var(--fw-bold); }
+.score-board > .team > .score {
+  font-size: var(--t1);
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.score-board > .team.is-lead { border-color: var(--accent); background: var(--accent-soft); }
+.score-board > .team > .ctrl { display: flex; gap: var(--s2); }
+
+/* 共用按鈕 */
+.ds-btn {
+  font-family: inherit;
+  font-size: var(--t4);
+  font-weight: var(--fw-bold);
+  color: var(--ink);
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s1) var(--s3);
+  cursor: pointer;
+  min-width: 56px;
+  min-height: 56px;
+}
+.ds-btn:hover { border-color: var(--accent); }
+.ds-btn:focus-visible { outline: var(--line-bold) solid var(--accent); outline-offset: 3px; }
+.ds-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+@media print {
+  .picker, .countdown, .score-board .ctrl, .ds-btn { display: none !important; }
+  .flip-card > .inner { transform: none !important; }
+  .flip-card .face.back { position: static; transform: none; backface-visibility: visible; }
+}
+
+/* ============================================================
+   I6–I8 作答型互動元件（2026-07-21 新增）
+   共通鐵則：正誤一律「顏色 ＋ 圖示」雙軌；可點區最小 56×56；
+   字級不低於 --t5(24px)；滑鼠／觸控／鍵盤三種操作都要能完成。
+   ============================================================ */
+
+/* ---------- 作答結果回饋（三元件共用） ---------- */
+.ans-feedback {
+  display: none;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: var(--s3);
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-md);
+  font-size: var(--t4);
+  font-weight: var(--fw-bold);
+  border: var(--line-mid) solid transparent;
+}
+.ans-feedback.is-shown { display: flex; }
+.ans-feedback .ico { width: 1.2em; height: 1.2em; flex: none; }
+.ans-feedback.is-correct { color: var(--correct); background: var(--correct-soft); border-color: var(--correct); }
+.ans-feedback.is-wrong   { color: var(--wrong);   background: var(--wrong-soft);   border-color: var(--wrong); }
+
+/* ---------- I6. 選擇題 quiz（單選／多選／是非） ---------- */
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4);
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-lg);
+}
+.quiz > .q-stem {
+  font-size: var(--t3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+}
+.quiz > .q-hint { font-size: var(--t5); color: var(--muted); }
+.quiz > .q-options {
+  display: grid;
+  gap: var(--s2);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.quiz[data-mode="tf"] > .q-options { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+.q-opt {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  text-align: left;
+  font: inherit;
+  font-size: var(--t4);
+  line-height: var(--lh-normal);
+  min-height: 56px;
+  padding: var(--s2) var(--s3);
+  background: var(--bg);
+  color: var(--ink);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.q-opt:hover { border-color: var(--accent); }
+.q-opt:focus-visible { outline: var(--line-bold) solid var(--accent); outline-offset: 3px; }
+
+/* 選項前的標記格：未選為空框，已選填入記號 —— 不只靠底色表達「已選」 */
+.q-opt::before {
+  content: "";
+  flex: none;
+  width: 32px; height: 32px;
+  border: var(--line-mid) solid var(--line);
+  background: var(--surface);
+}
+.quiz[data-mode="multi"] .q-opt::before { border-radius: var(--r-sm); }
+.quiz:not([data-mode="multi"]) .q-opt::before { border-radius: 50%; }
+.q-opt.is-picked { border-color: var(--accent); background: var(--accent-soft); }
+.q-opt.is-picked::before {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: inset 0 0 0 4px var(--surface);
+}
+
+/* 對答案後：顏色 ＋ 文字記號雙軌（::after 為圖示欄） */
+.q-opt.is-correct { border-color: var(--correct); background: var(--correct-soft); color: var(--correct); }
+.q-opt.is-wrong   { border-color: var(--wrong);   background: var(--wrong-soft);   color: var(--wrong); }
+.q-opt.is-missed  { border-color: var(--correct); border-style: dashed; color: var(--correct); }
+.q-opt.is-correct::after { content: "✓"; margin-left: auto; font-weight: var(--fw-bold); }
+.q-opt.is-wrong::after   { content: "✗"; margin-left: auto; font-weight: var(--fw-bold); }
+.q-opt.is-missed::after  { content: "（正解）"; margin-left: auto; font-size: var(--t5); }
+.quiz.is-locked .q-opt { cursor: default; }
+
+/* ---------- I7. 排列題 order ---------- */
+.order-q {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4);
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-lg);
+}
+.order-q > .q-stem { font-size: var(--t3); font-weight: var(--fw-bold); }
+.order-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  counter-reset: ord;
+}
+.order-item {
+  counter-increment: ord;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--t4);
+  line-height: var(--lh-normal);
+  min-height: 56px;
+  padding: var(--s2) var(--s3);
+  background: var(--bg);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  cursor: grab;
+}
+.order-item::before {
+  content: counter(ord);
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  font-weight: var(--fw-bold);
+  color: var(--surface);
+  background: var(--accent);
+  border-radius: 50%;
+}
+.order-item > .txt { flex: 1; min-width: 0; overflow-wrap: break-word; }
+.order-item > .move {
+  flex: none;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  font: inherit; font-size: var(--t4);
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+.order-item > .move:hover { border-color: var(--accent); }
+.order-item > .move:focus-visible { outline: var(--line-bold) solid var(--accent); outline-offset: 2px; }
+.order-item > .move[disabled] { opacity: .35; cursor: default; }
+.order-item.is-dragging { opacity: .5; cursor: grabbing; }
+.order-item.is-over { border-color: var(--accent); border-style: dashed; }
+.order-item.is-correct { border-color: var(--correct); background: var(--correct-soft); }
+.order-item.is-wrong   { border-color: var(--wrong);   background: var(--wrong-soft); }
+.order-item.is-correct > .txt::after { content: " ✓"; color: var(--correct); font-weight: var(--fw-bold); }
+.order-item.is-wrong   > .txt::after { content: " ✗"; color: var(--wrong);   font-weight: var(--fw-bold); }
+
+/* ---------- I8. 圖標答題 hotspot ---------- */
+.hotspot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4);
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-lg);
+}
+.hotspot > .q-stem { font-size: var(--t3); font-weight: var(--fw-bold); }
+.hotspot > .q-hint { font-size: var(--t5); color: var(--muted); }
+.hs-stage {
+  position: relative;
+  align-self: center;
+  max-width: 100%;
+  line-height: 0;            /* 消除 img 底部行距，讓座標與圖精準對齊 */
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: manipulation;
+}
+.hs-stage:focus-visible { outline: var(--line-bold) solid var(--accent); outline-offset: 3px; }
+.hs-stage > img,
+.hs-stage > svg { display: block; max-width: 100%; height: auto; }
+
+/* 學生放下的標記；用 --x/--y 百分比定位，縮放後仍對齊 */
+.hs-mark {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  width: 48px; height: 48px;
+  margin: -24px 0 0 -24px;
+  border-radius: 50%;
+  border: var(--line-bold) solid var(--accent);
+  background: var(--accent-soft);
+  display: grid; place-items: center;
+  font-size: 24px; line-height: 1;
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+  pointer-events: none;
+}
+.hs-mark.is-correct { border-color: var(--correct); background: var(--correct-soft); color: var(--correct); }
+.hs-mark.is-correct::after { content: "✓"; }
+.hs-mark.is-wrong { border-color: var(--wrong); background: var(--wrong-soft); color: var(--wrong); }
+.hs-mark.is-wrong::after { content: "✗"; }
+
+/* 對答案後才顯示的正解圈 */
+.hs-target {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  border-radius: 50%;
+  border: var(--line-bold) dashed var(--correct);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  display: none;
+}
+.hotspot.is-revealed .hs-target { display: block; }
+
+/* ============================================================
+   RWD：教學網頁在手機／平板／投影機都要能讀
+   斷點語意 —— 1024：平板橫；768：平板直／小筆電；480：手機
+   字級只降到 --t-min(24px) 為止，不再往下（後排學生可讀性優先）
+   ============================================================ */
+@media (max-width: 1024px) {
+  :root {
+    --t1: 60px; --t2: 46px; --t3: 34px; --t4: 28px;
+    --s7: 64px; --s6: 48px;
+    --safe-x: 48px; --safe-y: 40px;
+  }
+}
+@media (max-width: 768px) {
+  :root {
+    --t1: 46px; --t2: 36px; --t3: 30px; --t4: 26px;
+    --s7: 40px; --s6: 32px; --s5: 28px;
+    --safe-x: 24px; --safe-y: 24px;
+  }
+  /* 並排結構一律改直排，避免擠成無法閱讀的窄欄 */
+  .compare-pair,
+  .misconception,
+  .flow-steps,
+  .figure-block { grid-template-columns: 1fr !important; }
+  .quiz > .q-options { grid-template-columns: 1fr; }
+  .drag-match .zones { grid-template-columns: 1fr; }
+  .timeline { padding-left: var(--s4); }
+  /* 數據聚焦頁：窄螢幕改上下堆疊，大數字降階 */
+  .data-focus { grid-template-columns: 1fr !important; text-align: center; justify-items: center; }
+  :root { --num-xl: 110px; }
+  .section-divider { padding: var(--s5) var(--s5); }
+}
+@media (max-width: 480px) {
+  :root { --t1: 38px; --t2: 32px; --t3: 28px; --t4: 25px; --num-xl: 80px; }
+  .quiz, .order-q, .hotspot, .concept-card, .task-card { padding: var(--s3); }
+  .order-item { flex-wrap: wrap; }
+  /* 手機上工具列按鈕改為可換行，不要橫向溢出 */
+  .ds-btn { flex: 1 1 auto; }
+}
+
+/* 觸控裝置：hover 效果會「黏住」，關掉純 hover 的視覺變化 */
+@media (hover: none) {
+  .q-opt:hover, .order-item > .move:hover, .ds-btn:hover { border-color: var(--line); }
+  .q-opt.is-picked:hover { border-color: var(--accent); }
+}
+
+@media print {
+  .quiz .ds-btn, .order-q .ds-btn, .hotspot .ds-btn { display: none !important; }
+  .order-item > .move { display: none !important; }
+  .hs-stage { cursor: default; }
+  .ans-feedback { display: none !important; }
+}
+
+/* 鍵盤操作時的預覽標記（方向鍵移動、Enter 才真正放下） */
+.hs-mark.is-ghost { opacity: .55; border-style: dashed; }
+.hs-mark.is-ghost::after { content: none; }
+
+/* 按鈕列：手機上自動換行，不橫向溢出 */
+.row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+/* 單檔頁面用：非簡報頁面不需要 16:9 舞台，改為可捲動文件 */
+html, body { overflow: auto; height: auto; background: var(--bg); }
+.ico { width: 1em; height: 1em; fill: none; stroke: currentColor;
+       stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+
+<svg id="tds-icons" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="ico-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z"/><path d="M4 19a2 2 0 0 1 2-2h13"/></symbol>
+    <symbol id="ico-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="ico-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.7 6.3.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.3-.9Z"/></symbol>
+    <symbol id="ico-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.8 1 .8 1.6V16h5.4v-.5c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3Z"/></symbol>
+    <symbol id="ico-check" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></symbol>
+    <symbol id="ico-cross" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="ico-pencil" viewBox="0 0 24 24"><path d="M4 20h4L20 8a2.8 2.8 0 0 0-4-4L4 16Z"/><path d="m14 6 4 4"/></symbol>
+    <symbol id="ico-warn" viewBox="0 0 24 24"><path d="M12 4 2.5 20h19Z"/><path d="M12 10v4M12 17h.01"/></symbol>
+    <symbol id="ico-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="ico-map" viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2Z"/><path d="M9 4v14M15 6v14"/></symbol>
+    <symbol id="ico-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+    <symbol id="ico-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.8 2.8 0 0 1 5.4.9c0 1.9-2.7 2.3-2.7 4"/><path d="M12 17.5h.01"/></symbol>
+    <symbol id="ico-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></symbol>
+    <symbol id="ico-group" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17.5" cy="9.5" r="2.5"/><path d="M15.5 20a5 5 0 0 1 5.5-4.9"/></symbol>
+    <symbol id="ico-cycle" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v4h-4"/></symbol>
+    <symbol id="ico-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="ico-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/></symbol>
+    <symbol id="ico-leaf" viewBox="0 0 24 24"><path d="M20 4C9 4 4 9 4 16a4 4 0 0 0 4 4c7 0 12-5 12-16Z"/><path d="M4 20 14 10"/></symbol>
+    <symbol id="ico-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-9.5A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.5C19 15.5 12 20 12 20Z"/></symbol>
+</svg>
+
+<script>
+/* ============================================================
+   教學 Design System · interactions.js  v1.0
+   五個互動元件，宣告式初始化（用 data-* 屬性即生效）。
+   純 vanilla JS，零依賴、零外部連線，離線可用。
+   所有互動元件皆同時支援滑鼠、鍵盤與觸控（教室觸控螢幕）。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  var TDS = {};
+
+  /* ---------- 小工具 ---------- */
+  function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function on(el, ev, fn) { el.addEventListener(ev, fn); }
+
+  /* ============================================================
+     I1. 翻牌 flip-card
+     <button class="flip-card" data-flip>
+       <span class="inner">
+         <span class="face front">問題</span>
+         <span class="face back">答案</span>
+       </span>
+     </button>
+     ============================================================ */
+  function initFlipCards(root) {
+    $$("[data-flip]", root).forEach(function (card) {
+      if (card.dataset.tdsReady) return;
+      card.dataset.tdsReady = "1";
+      if (card.tagName !== "BUTTON") {
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+      }
+      card.setAttribute("aria-pressed", "false");
+      function toggle() {
+        var flipped = card.classList.toggle("is-flipped");
+        card.setAttribute("aria-pressed", flipped ? "true" : "false");
+      }
+      on(card, "click", toggle);
+      on(card, "keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+      });
+    });
+  }
+
+  /* ============================================================
+     I2. 抽題／抽人 picker
+     <div class="picker" data-picker
+          data-items="1號,2號,3號"      // 或 data-items-from="#listId"
+          data-no-repeat="true">
+       <div class="display">—</div>
+       <button class="ds-btn primary" data-picker-draw>抽</button>
+       <button class="ds-btn" data-picker-reset>重置</button>
+       <div class="status"></div>
+     </div>
+     ============================================================ */
+  function initPickers(root) {
+    $$("[data-picker]", root).forEach(function (el) {
+      if (el.dataset.tdsReady) return;
+      el.dataset.tdsReady = "1";
+
+      var items = [];
+      if (el.dataset.itemsFrom) {
+        var src = document.querySelector(el.dataset.itemsFrom);
+        if (src) items = $$("li,option,.item", src).map(function (n) { return n.textContent.trim(); });
+      }
+      if (!items.length && el.dataset.items) {
+        items = el.dataset.items.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      }
+
+      var noRepeat = el.dataset.noRepeat !== "false";
+      var pool = items.slice();
+      var display = el.querySelector(".display");
+      var status = el.querySelector(".status");
+      var drawBtn = el.querySelector("[data-picker-draw]");
+      var resetBtn = el.querySelector("[data-picker-reset]");
+      var rolling = false;
+
+      if (display) display.setAttribute("aria-live", "polite");
+
+      function updateStatus() {
+        if (status) status.textContent = "剩餘 " + pool.length + " ／ 共 " + items.length;
+      }
+
+      function draw() {
+        if (rolling) return;
+        if (!pool.length) {
+          if (display) display.textContent = "已抽完";
+          return;
+        }
+        rolling = true;
+        if (display) display.classList.add("is-rolling");
+        var ticks = 0;
+        var timer = setInterval(function () {
+          if (display) display.textContent = pool[Math.floor(Math.random() * pool.length)];
+          if (++ticks >= 8) {
+            clearInterval(timer);
+            var idx = Math.floor(Math.random() * pool.length);
+            var picked = pool[idx];
+            if (noRepeat) pool.splice(idx, 1);
+            if (display) {
+              display.textContent = picked;
+              display.classList.remove("is-rolling");
+            }
+            rolling = false;
+            updateStatus();
+          }
+        }, 60);
+      }
+
+      function reset() {
+        pool = items.slice();
+        if (display) display.textContent = "—";
+        updateStatus();
+      }
+
+      if (drawBtn) on(drawBtn, "click", draw);
+      if (resetBtn) on(resetBtn, "click", reset);
+      updateStatus();
+      el.tdsDraw = draw;
+      el.tdsReset = reset;
+    });
+  }
+
+  /* ============================================================
+     I3. 拖曳配對 drag-match
+     <div class="drag-match" data-drag-match>
+       <div class="pool">
+         <span class="chip" draggable="true" data-answer="a">詞A</span>
+       </div>
+       <div class="zones">
+         <div class="zone" data-zone="a">
+           <div class="zone-head">類別甲</div><div class="drop"></div>
+         </div>
+       </div>
+       <button class="ds-btn" data-match-check>對答案</button>
+       <button class="ds-btn" data-match-reset>重來</button>
+     </div>
+     滑鼠：拖曳。觸控／鍵盤：先點 chip 選取，再點 zone 放入。
+     ============================================================ */
+  function initDragMatch(root) {
+    $$("[data-drag-match]", root).forEach(function (el) {
+      if (el.dataset.tdsReady) return;
+      el.dataset.tdsReady = "1";
+
+      var pool = el.querySelector(".pool");
+      var selected = null;
+
+      function place(chip, zone) {
+        var drop = zone.querySelector(".drop") || zone;
+        drop.appendChild(chip);
+        chip.classList.add("is-placed");
+        chip.classList.remove("is-correct", "is-wrong");
+        clearSelection();
+      }
+
+      function clearSelection() {
+        if (selected) selected.classList.remove("is-dragging");
+        selected = null;
+        $$(".zone", el).forEach(function (z) { z.classList.remove("is-over"); });
+      }
+
+      $$(".chip", el).forEach(function (chip) {
+        chip.setAttribute("tabindex", "0");
+        on(chip, "dragstart", function (e) {
+          selected = chip;
+          chip.classList.add("is-dragging");
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+        });
+        on(chip, "dragend", clearSelection);
+        // 觸控／點選模式
+        on(chip, "click", function () {
+          if (selected === chip) { clearSelection(); return; }
+          clearSelection();
+          selected = chip;
+          chip.classList.add("is-dragging");
+        });
+        on(chip, "keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); chip.click(); }
+        });
+      });
+
+      $$(".zone", el).forEach(function (zone) {
+        zone.setAttribute("tabindex", "0");
+        on(zone, "dragover", function (e) { e.preventDefault(); zone.classList.add("is-over"); });
+        on(zone, "dragleave", function () { zone.classList.remove("is-over"); });
+        on(zone, "drop", function (e) {
+          e.preventDefault();
+          if (selected) place(selected, zone);
+        });
+        on(zone, "click", function () { if (selected) place(selected, zone); });
+        on(zone, "keydown", function (e) {
+          if ((e.key === "Enter" || e.key === " ") && selected) { e.preventDefault(); place(selected, zone); }
+        });
+      });
+
+      var checkBtn = el.querySelector("[data-match-check]");
+      if (checkBtn) on(checkBtn, "click", function () {
+        $$(".zone", el).forEach(function (zone) {
+          var key = zone.dataset.zone;
+          $$(".chip", zone).forEach(function (chip) {
+            var ok = chip.dataset.answer === key;
+            chip.classList.toggle("is-correct", ok);
+            chip.classList.toggle("is-wrong", !ok);
+          });
+        });
+      });
+
+      var resetBtn = el.querySelector("[data-match-reset]");
+      if (resetBtn) on(resetBtn, "click", function () {
+        $$(".chip", el).forEach(function (chip) {
+          chip.classList.remove("is-placed", "is-correct", "is-wrong", "is-dragging");
+          if (pool) pool.appendChild(chip);
+        });
+        clearSelection();
+      });
+    });
+  }
+
+  /* ============================================================
+     I4. 倒數計時 countdown
+     <div class="countdown" data-countdown data-seconds="180" data-warn-at="30">
+       <div class="time">03:00</div>
+       <button class="ds-btn primary" data-cd-toggle>開始</button>
+       <button class="ds-btn" data-cd-reset>重置</button>
+     </div>
+     ============================================================ */
+  function initCountdowns(root) {
+    $$("[data-countdown]", root).forEach(function (el) {
+      if (el.dataset.tdsReady) return;
+      el.dataset.tdsReady = "1";
+
+      var total = parseInt(el.dataset.seconds || "180", 10);
+      var warnAt = parseInt(el.dataset.warnAt || "30", 10);
+      var left = total;
+      var timer = null;
+      var timeEl = el.querySelector(".time");
+      var toggleBtn = el.querySelector("[data-cd-toggle]");
+      var resetBtn = el.querySelector("[data-cd-reset]");
+
+      if (timeEl) timeEl.setAttribute("aria-live", "polite");
+
+      function fmt(s) {
+        var m = Math.floor(s / 60), r = s % 60;
+        return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r;
+      }
+
+      function render() {
+        if (timeEl) timeEl.textContent = fmt(left);
+        el.classList.toggle("is-warning", left <= warnAt && left > 0);
+        el.classList.toggle("is-done", left === 0);
+      }
+
+      function tick() {
+        if (left > 0) left--;
+        render();
+        if (left === 0) {
+          stop();
+          el.dispatchEvent(new CustomEvent("tds:countdown-done", { bubbles: true }));
+        }
+      }
+
+      function start() {
+        if (timer) return;
+        timer = setInterval(tick, 1000);
+        if (toggleBtn) toggleBtn.textContent = "暫停";
+      }
+
+      function stop() {
+        clearInterval(timer);
+        timer = null;
+        if (toggleBtn) toggleBtn.textContent = left === 0 ? "開始" : "繼續";
+      }
+
+      function reset() {
+        stop();
+        left = total;
+        render();
+        if (toggleBtn) toggleBtn.textContent = "開始";
+      }
+
+      if (toggleBtn) on(toggleBtn, "click", function () { timer ? stop() : start(); });
+      if (resetBtn) on(resetBtn, "click", reset);
+      render();
+      el.tdsStart = start;
+      el.tdsStop = stop;
+      el.tdsReset = reset;
+    });
+  }
+
+  /* ============================================================
+     I5. 加分板 score-board
+     <div class="score-board" data-score-board data-step="1">
+       <div class="team" data-team="第一組">
+         <div class="name">第一組</div>
+         <div class="score">0</div>
+         <div class="ctrl">
+           <button class="ds-btn" data-score-minus>−</button>
+           <button class="ds-btn primary" data-score-plus>＋</button>
+         </div>
+       </div>
+     </div>
+     ============================================================ */
+  function initScoreBoards(root) {
+    $$("[data-score-board]", root).forEach(function (board) {
+      if (board.dataset.tdsReady) return;
+      board.dataset.tdsReady = "1";
+      var step = parseInt(board.dataset.step || "1", 10);
+
+      function markLead() {
+        var teams = $$(".team", board);
+        var max = -Infinity;
+        teams.forEach(function (t) {
+          var v = parseInt(t.querySelector(".score").textContent, 10) || 0;
+          if (v > max) max = v;
+        });
+        teams.forEach(function (t) {
+          var v = parseInt(t.querySelector(".score").textContent, 10) || 0;
+          t.classList.toggle("is-lead", max > 0 && v === max);
+        });
+      }
+
+      $$(".team", board).forEach(function (team) {
+        var scoreEl = team.querySelector(".score");
+        if (scoreEl) scoreEl.setAttribute("aria-live", "polite");
+        function bump(delta) {
+          var v = (parseInt(scoreEl.textContent, 10) || 0) + delta;
+          scoreEl.textContent = v;
+          markLead();
+        }
+        var plus = team.querySelector("[data-score-plus]");
+        var minus = team.querySelector("[data-score-minus]");
+        if (plus) on(plus, "click", function () { bump(step); });
+        if (minus) on(minus, "click", function () { bump(-step); });
+      });
+
+      var resetBtn = board.querySelector("[data-score-reset]");
+      if (resetBtn) on(resetBtn, "click", function () {
+        $$(".score", board).forEach(function (s) { s.textContent = "0"; });
+        markLead();
+      });
+    });
+  }
+
+  /* ============================================================
+     動畫白名單支援：逐步揭露 / 聚焦
+     供簡報導覽（slides.js）呼叫
+     ============================================================ */
+  TDS.revealNext = function (slide) {
+    var hidden = $$("[data-reveal]:not(.is-shown)", slide);
+    if (!hidden.length) return false;
+    hidden[0].classList.add("is-shown");
+    return true;
+  };
+
+  TDS.revealPrev = function (slide) {
+    var shown = $$("[data-reveal].is-shown", slide);
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove("is-shown");
+    return true;
+  };
+
+  TDS.revealAll = function (slide) {
+    $$("[data-reveal]", slide).forEach(function (n) { n.classList.add("is-shown"); });
+  };
+
+  TDS.revealCount = function (slide) {
+    return {
+      shown: $$("[data-reveal].is-shown", slide).length,
+      total: $$("[data-reveal]", slide).length
+    };
+  };
+
+  /* 聚焦重點：把 group 內非 target 的項目降透明 */
+  TDS.focusOn = function (group, target) {
+    $$(":scope > *", group).forEach(function (n) {
+      n.classList.toggle("is-dimmed", n !== target);
+    });
+  };
+
+  TDS.clearFocus = function (group) {
+    $$(":scope > *", group).forEach(function (n) { n.classList.remove("is-dimmed"); });
+  };
+
+  /* ---------- 作答回饋共用（I6–I8） ---------- */
+  function feedbackOf(el) {
+    return el.querySelector(".ans-feedback");
+  }
+  function showFb(fb, state, text) {
+    if (!fb) return;
+    fb.className = "ans-feedback is-shown" +
+      (state === true ? " is-correct" : state === false ? " is-wrong" : "");
+    fb.textContent = (state === true ? "✓ " : state === false ? "✗ " : "") + text;
+    fb.setAttribute("aria-live", "polite");
+  }
+  function hideFb(fb) {
+    if (!fb) return;
+    fb.className = "ans-feedback";
+    fb.textContent = "";
+  }
+  function answered(el, kind, ok) {
+    el.dispatchEvent(new CustomEvent("tds:answered", {
+      bubbles: true, detail: { type: kind, correct: ok }
+    }));
+  }
+
+  /* ============================================================
+     I6. 選擇題 quiz（單選 single／多選 multi／是非 tf）
+     <div class="quiz" data-quiz data-mode="single">
+       <div class="q-stem">題幹</div>
+       <div class="q-options">
+         <button class="q-opt" data-correct>正解</button>
+         <button class="q-opt">誘答</button>
+       </div>
+       <div class="ans-feedback"></div>
+       <div class="row">
+         <button class="ds-btn primary" data-quiz-check>對答案</button>
+         <button class="ds-btn" data-quiz-reset>重做</button>
+       </div>
+     </div>
+     加 data-instant 則點選即判定（適合是非題快問快答）。
+     ============================================================ */
+  function initQuiz(root) {
+    $$("[data-quiz]", root).forEach(function (el) {
+      if (el.dataset.tdsReady) return;
+      el.dataset.tdsReady = "1";
+
+      var mode = el.dataset.mode || "single";
+      var opts = $$(".q-opt", el);
+      var fb = feedbackOf(el);
+      var locked = false;
+
+      opts.forEach(function (opt) {
+        if (opt.tagName !== "BUTTON") {
+          opt.setAttribute("role", mode === "multi" ? "checkbox" : "radio");
+          opt.setAttribute("tabindex", "0");
+        }
+        opt.setAttribute("aria-pressed", "false");
+
+        on(opt, "click", function () {
+          if (locked) return;
+          if (mode === "multi") {
+            opt.classList.toggle("is-picked");
+          } else {
+            opts.forEach(function (o) {
+              o.classList.remove("is-picked");
+              o.setAttribute("aria-pressed", "false");
+            });
+            opt.classList.add("is-picked");
+          }
+          opt.setAttribute("aria-pressed", opt.classList.contains("is-picked") ? "true" : "false");
+          if (el.hasAttribute("data-instant")) check();
+        });
+
+        on(opt, "keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); opt.click(); }
+        });
+      });
+
+      function check() {
+        var picked = opts.filter(function (o) { return o.classList.contains("is-picked"); });
+        if (!picked.length) { showFb(fb, null, "請先選擇答案"); return; }
+
+        var allOk = true;
+        opts.forEach(function (opt) {
+          var isAns = opt.hasAttribute("data-correct");
+          var chosen = opt.classList.contains("is-picked");
+          opt.classList.remove("is-correct", "is-wrong", "is-missed");
+          if (chosen && isAns) opt.classList.add("is-correct");
+          else if (chosen && !isAns) { opt.classList.add("is-wrong"); allOk = false; }
+          else if (!chosen && isAns) { opt.classList.add("is-missed"); allOk = false; }
+        });
+
+        locked = true;
+        el.classList.add("is-locked");
+        showFb(fb, allOk, allOk ? "答對了！" : "再想想，正解已標示。");
+        answered(el, "quiz", allOk);
+      }
+
+      function reset() {
+        locked = false;
+        el.classList.remove("is-locked");
+        opts.forEach(function (o) {
+          o.classList.remove("is-picked", "is-correct", "is-wrong", "is-missed");
+          o.setAttribute("aria-pressed", "false");
+        });
+        hideFb(fb);
+      }
+
+      var checkBtn = el.querySelector("[data-quiz-check]");
+      var resetBtn = el.querySelector("[data-quiz-reset]");
+      if (checkBtn) on(checkBtn, "click", check);
+      if (resetBtn) on(resetBtn, "click", reset);
+      el.tdsCheck = check;
+      el.tdsReset = reset;
+    });
+  }
+
+  /* ============================================================
+     I7. 排列題 order（排順序／流程／時間先後）
+     <div class="order-q" data-order data-shuffle>
+       <div class="q-stem">把步驟排成正確順序</div>
+       <ol class="order-list">
+         <li class="order-item" data-seq="2">第二步的內容</li>
+         <li class="order-item" data-seq="1">第一步的內容</li>
+       </ol>
+       <div class="ans-feedback"></div>
+       <button class="ds-btn primary" data-order-check>對答案</button>
+       <button class="ds-btn" data-order-reset>重來</button>
+     </div>
+     滑鼠：拖曳。觸控／鍵盤：▲▼ 鈕，或聚焦項目後按上下鍵。
+     ============================================================ */
+  function initOrder(root) {
+    $$("[data-order]", root).forEach(function (el) {
+      if (el.dataset.tdsReady) return;
+      el.dataset.tdsReady = "1";
+
+      var list = el.querySelector(".order-list");
+      if (!list) return;
+      var fb = feedbackOf(el);
+      var dragging = null;
+
+      function items() { return $$(".order-item", list); }
+      function clearMarks() {
+        items().forEach(function (i) { i.classList.remove("is-correct", "is-wrong"); });
+        hideFb(fb);
+      }
+      function renumber() {
+        var arr = items();
+        arr.forEach(function (it, i) {
+          var up = it.querySelector(".move.up"), dn = it.querySelector(".move.down");
+          if (up) up.disabled = (i === 0);
+          if (dn) dn.disabled = (i === arr.length - 1);
+        });
+      }
+      function move(it, dir) {
+        var arr = items(), i = arr.indexOf(it), j = i + dir;
+        if (j < 0 || j >= arr.length) return;
+        if (dir < 0) list.insertBefore(it, arr[j]);
+        else list.insertBefore(arr[j], it);
+        clearMarks();
+        renumber();
+        var btn = it.querySelector(dir < 0 ? ".move.up" : ".move.down");
+        if (btn && !btn.disabled) btn.focus(); else it.focus();
+      }
+
+      items().forEach(function (it) {
+        // 把原始文字包進 .txt，讓序號圓點與 ▲▼ 鈕有固定位置
+        if (!it.querySelector(".txt")) {
+          var span = document.createElement("span");
+          span.className = "txt";
+          while (it.firstChild) span.appendChild(it.firstChild);
+          it.appendChild(span);
+        }
+        if (!it.querySelector(".move")) {
+          ["up", "down"].forEach(function (d) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "move " + d;
+            b.textContent = d === "up" ? "▲" : "▼";
+            b.setAttribute("aria-label", d === "up" ? "上移" : "下移");
+            on(b, "click", function (e) { e.stopPropagation(); move(it, d === "up" ? -1 : 1); });
+            it.appendChild(b);
+          });
+        }
+        it.setAttribute("draggable", "true");
+        it.setAttribute("tabindex", "0");
+
+        on(it, "dragstart", function (e) {
+          dragging = it;
+          it.classList.add("is-dragging");
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+        });
+        on(it, "dragend", function () {
+          it.classList.remove("is-dragging");
+          items().forEach(function (x) { x.classList.remove("is-over"); });
+          dragging = null;
+        });
+        on(it, "dragover", function (e) {
+          e.preventDefault();
+          if (dragging && dragging !== it) it.classList.add("is-over");
+        });
+        on(it, "dragleave", function () { it.classList.remove("is-over"); });
+        on(it, "drop", function (e) {
+          e.preventDefault();
+          it.classList.remove("is-over");
+          if (!dragging || dragging === it) return;
+          var arr = items();
+          if (arr.indexOf(dragging) < arr.indexOf(it)) list.insertBefore(dragging, it.nextSibling);
+          else list.insertBefore(dragging, it);
+          clearMarks();
+          renumber();
+        });
+        on(it, "keydown", function (e) {
+          if (e.key === "ArrowUp") { e.preventDefault(); move(it, -1); }
+          else if (e.key === "ArrowDown") { e.preventDefault(); move(it, 1); }
+        });
+      });
+
+      if (el.hasAttribute("data-shuffle")) {
+        var a = items();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        a.forEach(function (n) { list.appendChild(n); });
+      }
+      renumber();
+
+      function check() {
+        var arr = items(), ok = true;
+        arr.forEach(function (it, i) {
+          var good = parseInt(it.dataset.seq, 10) === (i + 1);
+          it.classList.toggle("is-correct", good);
+          it.classList.toggle("is-wrong", !good);
+          if (!good) ok = false;
+        });
+        showFb(fb, ok, ok ? "順序正確！" : "還有位置不對，看看標 ✗ 的那幾項。");
+        answered(el, "order", ok);
+      }
+
+      var checkBtn = el.querySelector("[data-order-check]");
+      var resetBtn = el.querySelector("[data-order-reset]");
+      if (checkBtn) on(checkBtn, "click", check);
+      if (resetBtn) on(resetBtn, "click", function () {
+        var a2 = items();
+        for (var i2 = a2.length - 1; i2 > 0; i2--) {
+          var j2 = Math.floor(Math.random() * (i2 + 1));
+          var t2 = a2[i2]; a2[i2] = a2[j2]; a2[j2] = t2;
+        }
+        a2.forEach(function (n) { list.appendChild(n); });
+        clearMarks();
+        renumber();
+      });
+      el.tdsCheck = check;
+    });
+  }
+
+  /* ============================================================
+     I8. 圖標答題 hotspot（在圖上找出答案並標記）
+     <div class="hotspot" data-hotspot data-tolerance="8">
+       <div class="q-stem">在圖上點出「胃」的位置</div>
+       <div class="q-hint">點圖片放標記；方向鍵可微調，Enter 放置。</div>
+       <div class="hs-stage">
+         <img src="..." alt="消化系統圖">
+         <span class="hs-target" data-x="42" data-y="58" data-r="8"></span>
+       </div>
+       <div class="ans-feedback"></div>
+       <button class="ds-btn primary" data-hs-check>對答案</button>
+       <button class="ds-btn" data-hs-reset>重來</button>
+     </div>
+     座標 data-x/data-y 為圖片的百分比位置，data-r 為容許誤差半徑（佔圖寬 %）。
+     圖片請用內嵌 SVG 或 data: URI，維持離線可用。
+     ============================================================ */
+  function initHotspots(root) {
+    $$("[data-hotspot]", root).forEach(function (el) {
+      if (el.dataset.tdsReady) return;
+      el.dataset.tdsReady = "1";
+
+      var stage = el.querySelector(".hs-stage");
+      if (!stage) return;
+      var fb = feedbackOf(el);
+      var tol = parseFloat(el.dataset.tolerance || "8");
+      var targets = $$(".hs-target", stage);
+      var need = parseInt(el.dataset.count || "0", 10) || targets.length || 1;
+      var marks = [];
+      var ghost = null;
+      var kbX = 50, kbY = 50;
+
+      targets.forEach(function (t) {
+        var r = parseFloat(t.dataset.r || tol);
+        t.style.setProperty("--x", (t.dataset.x || 50) + "%");
+        t.style.setProperty("--y", (t.dataset.y || 50) + "%");
+        t.style.width = (r * 2) + "%";
+        t.style.aspectRatio = "1 / 1";
+      });
+
+      stage.setAttribute("tabindex", "0");
+      stage.setAttribute("role", "application");
+      stage.setAttribute("aria-label", el.dataset.label || "在圖上標記答案；方向鍵移動、Enter 放置標記");
+
+      function renumberMarks() {
+        marks.forEach(function (m, i) {
+          if (!el.classList.contains("is-revealed")) m.textContent = String(i + 1);
+        });
+      }
+
+      function addMark(x, y) {
+        if (el.classList.contains("is-revealed")) return;
+        while (marks.length >= need) {
+          var old = marks.shift();
+          if (old.parentNode) old.parentNode.removeChild(old);
+        }
+        var m = document.createElement("span");
+        m.className = "hs-mark";
+        m.style.setProperty("--x", x + "%");
+        m.style.setProperty("--y", y + "%");
+        m.dataset.x = x;
+        m.dataset.y = y;
+        stage.appendChild(m);
+        marks.push(m);
+        renumberMarks();
+        hideFb(fb);
+      }
+
+      function showGhost() {
+        if (!ghost) {
+          ghost = document.createElement("span");
+          ghost.className = "hs-mark is-ghost";
+          ghost.textContent = "＋";
+          stage.appendChild(ghost);
+        }
+        ghost.style.setProperty("--x", kbX + "%");
+        ghost.style.setProperty("--y", kbY + "%");
+      }
+
+      on(stage, "click", function (e) {
+        var r = stage.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        var x = Math.round(((e.clientX - r.left) / r.width) * 1000) / 10;
+        var y = Math.round(((e.clientY - r.top) / r.height) * 1000) / 10;
+        if (x < 0 || x > 100 || y < 0 || y > 100) return;
+        addMark(x, y);
+      });
+
+      on(stage, "keydown", function (e) {
+        var step = e.shiftKey ? 1 : 5;
+        if (e.key === "ArrowLeft") kbX = Math.max(0, kbX - step);
+        else if (e.key === "ArrowRight") kbX = Math.min(100, kbX + step);
+        else if (e.key === "ArrowUp") kbY = Math.max(0, kbY - step);
+        else if (e.key === "ArrowDown") kbY = Math.min(100, kbY + step);
+        else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); addMark(kbX, kbY); return; }
+        else return;
+        e.preventDefault();
+        showGhost();
+      });
+
+      function check() {
+        if (!marks.length) { showFb(fb, null, "請先在圖上標記位置"); return; }
+        var rect = stage.getBoundingClientRect();
+        var used = [], allOk = true;
+
+        marks.forEach(function (m) {
+          var mx = parseFloat(m.dataset.x), my = parseFloat(m.dataset.y);
+          var hit = -1;
+          targets.forEach(function (t, ti) {
+            if (hit >= 0 || used.indexOf(ti) >= 0) return;
+            var tx = parseFloat(t.dataset.x), ty = parseFloat(t.dataset.y);
+            var r = parseFloat(t.dataset.r || tol);
+            // 換算成實際像素再比距離，否則長方形圖的 x/y 百分比不等距
+            var dx = (mx - tx) / 100 * rect.width;
+            var dy = (my - ty) / 100 * rect.height;
+            if (Math.sqrt(dx * dx + dy * dy) <= (r / 100 * rect.width)) hit = ti;
+          });
+          m.textContent = "";
+          if (hit >= 0) { used.push(hit); m.classList.add("is-correct"); }
+          else { m.classList.add("is-wrong"); allOk = false; }
+        });
+
+        if (used.length < targets.length) allOk = false;
+        el.classList.add("is-revealed");
+        if (ghost && ghost.parentNode) { ghost.parentNode.removeChild(ghost); ghost = null; }
+        showFb(fb, allOk, allOk ? "位置正確！" : "虛線圈是正解位置，再看一次。");
+        answered(el, "hotspot", allOk);
+      }
+
+      function reset() {
+        marks.forEach(function (m) { if (m.parentNode) m.parentNode.removeChild(m); });
+        marks = [];
+        if (ghost && ghost.parentNode) { ghost.parentNode.removeChild(ghost); ghost = null; }
+        el.classList.remove("is-revealed");
+        hideFb(fb);
+      }
+
+      var checkBtn = el.querySelector("[data-hs-check]");
+      var resetBtn = el.querySelector("[data-hs-reset]");
+      if (checkBtn) on(checkBtn, "click", check);
+      if (resetBtn) on(resetBtn, "click", reset);
+      el.tdsCheck = check;
+      el.tdsReset = reset;
+    });
+  }
+
+  /* ---------- 初始化 ---------- */
+  TDS.init = function (root) {
+    root = root || document;
+    initFlipCards(root);
+    initPickers(root);
+    initDragMatch(root);
+    initCountdowns(root);
+    initScoreBoards(root);
+    initQuiz(root);
+    initOrder(root);
+    initHotspots(root);
+  };
+
+  if (document.readyState === "loading") {
+    on(document, "DOMContentLoaded", function () { TDS.init(); });
+  } else {
+    TDS.init();
+  }
+
+  window.TDS = TDS;
+})();
+</script>
+<style>
+/* ─────────────────────────────────────────────
+   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
+   ───────────────────────────────────────────── */
+html, body { overflow: auto; height: auto; background: var(--bg); }
+body { padding: 0; }
+main.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--s6) var(--s4) var(--s7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+.lede { font-size: var(--t4); color: var(--muted); }
+.q-block { display: flex; flex-direction: column; gap: var(--s3); }
+.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
+footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
+@media (max-width: 480px) {
+  main.page { padding: var(--s5) var(--s3) var(--s6); }
+}
+</style>
+</head>
+<body>
+<main class="page" aria-label="鏡頭下的家鄉 內容理解整合複習">
+
+  <header class="page-head">
+    <span class="label">第三課 鏡頭下的家鄉 · 第二節整合複習</span>
+    <h1 class="title">複習速記</h1>
+  </header>
+  <p class="lede">「內容理解」告一段落——花五分鐘從頭到尾複習一次，確認每個重點都還記得。</p>
+
+  <div class="timeline">
+    <div class="node"><div class="when">第1-2段</div><div class="what">家鄉位置與景色</div><div class="note">雲林，濁水溪南邊，農田平房</div></div>
+    <div class="node"><div class="when">第3-4段</div><div class="what">走訪拍照</div><div class="note">假日、放學拍下柳丁與農人</div></div>
+    <div class="node"><div class="when">第5段</div><div class="what">付出行動</div><div class="note">下田、上網、鏡頭記錄</div></div>
+  </div>
+
+  <div class="compare-pair">
+    <div class="side">
+      <div class="head">提取訊息</div>
+      <div class="item">直接找到課文寫的內容</div>
+    </div>
+    <div class="vs">vs</div>
+    <div class="side is-focus">
+      <div class="head">推論</div>
+      <div class="item">從線索猜出沒直接寫的意思</div>
+    </div>
+  </div>
+
+  <div class="misconception">
+    <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">以為推論就是亂猜，只要合理就好。</div></div>
+    <div class="becomes">→</div>
+    <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">推論要有課文裡的線索當證據，不是憑空亂猜。</div></div>
+  </div>
+
+  <div class="concept-card">
+    <div class="head">兩個問句幫你檢查</div>
+    <div class="body">①這句話課文有沒有直接寫出來？②如果沒有，課文的哪些線索讓你這樣推論？</div>
+  </div>
+
+  <div class="takeaway-band">
+    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+    <span class="text">下一節：形式深究，看看作者用了什麼寫作技巧描寫家鄉</span>
+  </div>
+
+  <footer class="page-foot">四上國語 · 第三課 鏡頭下的家鄉 · 第二節 內容理解 · 複習速記</footer>
+
+</main>
+</body>
+</html>
