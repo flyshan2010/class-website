@@ -2008,6 +2008,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 /* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
 .split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
 @media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2056,7 +2058,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
         <div class="ans-feedback"></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
         <span class="text">四要素：圖名、方向標、比例尺、圖例。</span>
       </div>
@@ -2102,7 +2104,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
         <div class="ans-feedback"></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">出生、成長、長期生活——所以有人的家鄉不只一個。旅行去過不算。</span>
       </div>
@@ -2125,7 +2127,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
         <div class="ans-feedback"></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-question"></use></svg></span>
         <span class="text">先問「我想知道什麼」，再決定拿哪一種地圖。</span>
       </div>
@@ -2178,7 +2180,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
         <div class="ans-feedback"></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-eye"></use></svg></span>
         <span class="text">灰白一片＝房子密、人多；深綠一片＝山地樹林、人少。</span>
       </div>
@@ -2201,7 +2203,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
         <div class="ans-feedback"></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
         <span class="text">5 公分 × 200 公尺 ＝ 1000 公尺，也就是 1 公里。</span>
       </div>
@@ -2228,7 +2230,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <!-- 10 挑戰題 3：手寫任務，指向紙本 -->
     <section class="slide" data-slide-id="chal-3" hidden>
       <div class="page-head"><span class="label">挑戰題 3 / 3</span><h2 class="title">動手做：畫一張家鄉探索地圖</h2></div>
-      <div class="task-card">
+      <div class="task-card" data-reveal>
         <div class="mission">為學校附近畫一張地圖，四要素一個都不能少</div>
         <div class="facts">
           <div class="fact"><span class="k">分組</span>四人一組</div>
@@ -2237,20 +2239,21 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
       </div>
       <div class="action-list">
-        <div class="item">先用電子地圖搜尋學校，縮放到看得見整個社區</div>
-        <div class="item">畫完街道與地點後，補上圖名、方向標、比例尺、圖例</div>
+        <div class="item" data-reveal>先用電子地圖搜尋學校，縮放到看得見整個社區</div>
+        <div class="item" data-reveal>畫完街道與地點後，補上圖名、方向標、比例尺、圖例</div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-pencil"></use></svg></span>
         <span class="text">✎ 完整步驟與作圖格在紙本學習單「2c.挑戰題精熟」上。</span>
       </div>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
       <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -2270,7 +2273,41 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+  };
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -2278,11 +2315,27 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       s.hidden = !active;
       s.setAttribute('aria-hidden', String(!active));
     });
-    if (current) current.textContent = String(index + 1);
-    if (total) total.textContent = String(slides.length);
-    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
+
+  const advance = () => {
+    if (revealNext(slides[index])) { updateMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateMeta(); return; }
+    render(index - 1, true, true);
+  };
+
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target.closest('.slide');
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
 
   const slideFromHash = () => {
     const id = decodeURIComponent(location.hash.slice(1));
@@ -2293,14 +2346,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
-    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1, true, true); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
