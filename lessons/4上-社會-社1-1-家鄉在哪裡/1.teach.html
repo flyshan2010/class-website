@@ -2008,6 +2008,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 /* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
 .split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
 @media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2026,20 +2028,20 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="hometown" hidden>
       <div class="page-head"><span class="label">1-1 家鄉在哪裡</span><h2 class="title">什麼地方算是「家鄉」？</h2></div>
       <div class="card-grid">
-        <div class="concept-card">
+        <div class="concept-card" data-reveal>
           <div class="head">出生的地方</div>
           <div class="body">你被生下來的那個縣市。</div>
         </div>
-        <div class="concept-card">
+        <div class="concept-card" data-reveal>
           <div class="head">成長的地方</div>
           <div class="body">從小長大、上學的地方。</div>
         </div>
-        <div class="concept-card">
+        <div class="concept-card" data-reveal>
           <div class="head">長期生活的地方</div>
           <div class="body">住了很久、很熟悉的地方。</div>
         </div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">所以有些人的家鄉<strong>不只一個</strong>——出生和長大的地方不同，兩個都算。</span>
       </div>
@@ -2063,7 +2065,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
             <text x="105" y="322" font-size="19" fill="var(--muted)" text-anchor="middle">（位置示意圖，非實際縣界）</text>
           </svg>
         </div>
-        <div class="caption">
+        <div class="caption" data-reveal>
           <div class="head">先找縣市，再說位置</div>
           <div class="body">
             全臺灣共 <strong>22 個縣市</strong>：6 個直轄市、13 個縣、3 個市。<br><br>
@@ -2078,16 +2080,16 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       <div class="page-head"><span class="label">家鄉與地圖</span><h2 class="title">想知道不一樣的事，要看不一樣的地圖</h2></div>
       <p style="font-size:var(--t4);color:var(--muted);margin-bottom:var(--s3);">點卡片翻開答案：這個問題該看哪一種地圖？</p>
       <div class="card-grid">
-        <button class="flip-card" data-flip>
+        <button class="flip-card" data-flip data-reveal>
           <span class="inner"><span class="face front">家鄉有哪些行政區？</span><span class="face back">行政區圖</span></span>
         </button>
-        <button class="flip-card" data-flip>
+        <button class="flip-card" data-flip data-reveal>
           <span class="inner"><span class="face front">要搭哪條線去外婆家？</span><span class="face back">交通路線圖</span></span>
         </button>
-        <button class="flip-card" data-flip>
+        <button class="flip-card" data-flip data-reveal>
           <span class="inner"><span class="face front">家鄉哪裡是山？哪裡有河？</span><span class="face back">地形圖</span></span>
         </button>
-        <button class="flip-card" data-flip>
+        <button class="flip-card" data-flip data-reveal>
           <span class="inner"><span class="face front">假日可以去哪裡玩？</span><span class="face back">觀光導覽圖</span></span>
         </button>
       </div>
@@ -2106,21 +2108,21 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="name-legend" hidden>
       <div class="page-head"><span class="label">地圖的要素 1・2</span><h2 class="title">圖名說主題，圖例解符號</h2></div>
       <div class="compare-pair">
-        <div class="side">
+        <div class="side" data-reveal>
           <div class="head">圖名</div>
           <div class="item">地圖的名字</div>
           <div class="item">告訴你這張圖在畫什麼</div>
           <div class="item" style="color:var(--accent);font-weight:700;">例：臺北市行政區圖</div>
         </div>
         <div class="vs">＋</div>
-        <div class="side is-focus">
+        <div class="side is-focus" data-reveal>
           <div class="head">圖例</div>
           <div class="item">符號的說明表</div>
           <div class="item">看懂圖上每個記號代表什麼</div>
           <div class="item" style="color:var(--accent);font-weight:700;">例：✚ 是醫院、$ 是銀行</div>
         </div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-question"></use></svg></span>
         <span class="text">先看圖名知道「這是什麼圖」，再看圖例才讀得懂圖上的符號。</span>
       </div>
@@ -2143,12 +2145,12 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
         <div>
           <div class="misconception">
-            <div class="wrong-side">
+            <div class="wrong-side" data-reveal>
               <div class="mark">✗ 常見迷思</div>
               <div class="text">上面就是北方，不用畫方向標。</div>
             </div>
-            <div class="becomes">→</div>
-            <div class="right-side">
+            <div class="becomes" data-reveal>→</div>
+            <div class="right-side" data-reveal>
               <div class="mark">✓ 正確理解</div>
               <div class="text">沒有方向標，就<strong>說不出相對位置</strong>，不算完整的地圖。</div>
             </div>
@@ -2174,7 +2176,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
             <text x="120" y="120" font-size="18" fill="var(--muted)" text-anchor="middle">圖上這一段 ＝ 地面上 100 公尺</text>
           </svg>
         </div>
-        <div class="caption">
+        <div class="caption" data-reveal>
           <div class="head">為什麼要縮小？</div>
           <div class="body">
             真正的家鄉那麼大，一定要<strong>縮小</strong>才畫得進紙上。<br><br>
@@ -2201,7 +2203,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         </div>
         <div class="ans-feedback"></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
         <span class="text">800 公尺 ÷ 8 公分 ＝ 每 1 公分代表 100 公尺。</span>
       </div>
@@ -2211,25 +2213,25 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="emap" hidden>
       <div class="page-head"><span class="label">家鄉的電子地圖</span><h2 class="title">電子地圖可以做三件事</h2></div>
       <div class="flow-steps">
-        <div class="step">
+        <div class="step" data-reveal>
           <div class="badge">1</div>
           <div class="head">搜尋</div>
           <div class="body">打地名或地址，馬上找到位置</div>
         </div>
-        <div class="arrow">→</div>
-        <div class="step">
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal>
           <div class="badge">2</div>
           <div class="head">縮放</div>
           <div class="body">點加減號，看大範圍或看細節</div>
         </div>
-        <div class="arrow">→</div>
-        <div class="step">
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal>
           <div class="badge">3</div>
           <div class="head">切換模式</div>
           <div class="body">在地圖和衛星影像之間換</div>
         </div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-search"></use></svg></span>
         <span class="text">紙本地圖印好就不能改，電子地圖可以隨時放大、縮小、換模式。</span>
       </div>
@@ -2239,21 +2241,21 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="emap-mode" hidden>
       <div class="page-head"><span class="label">家鄉的電子地圖</span><h2 class="title">地圖模式和衛星模式，看到的不一樣</h2></div>
       <div class="compare-pair">
-        <div class="side">
+        <div class="side" data-reveal>
           <div class="head">地圖模式</div>
           <div class="item">用線條和顏色畫出來</div>
           <div class="item">綠塊是公園、藍線是河流</div>
           <div class="item">黃線是主要街道</div>
         </div>
         <div class="vs">vs</div>
-        <div class="side is-focus">
+        <div class="side is-focus" data-reveal>
           <div class="head">衛星模式</div>
           <div class="item">衛星從空中拍的真實照片</div>
           <div class="item">灰白一片＝房子密，人多</div>
           <div class="item">深綠一片＝山地樹林，人少</div>
         </div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-eye"></use></svg></span>
         <span class="text">找路名看地圖模式，想知道實際長什麼樣就看衛星模式。</span>
       </div>
@@ -2263,22 +2265,23 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="summary" hidden>
       <div class="page-head"><span class="label">1-1 家鄉在哪裡</span><h2 class="title">這一節，我們學會了</h2></div>
       <div class="action-list">
-        <div class="item is-done">家鄉是出生、成長或長期生活的地方，不只一個</div>
-        <div class="item is-done">想知道不同的事，要選不同種類的地圖</div>
-        <div class="item is-done">地圖四要素：圖名、方向標、比例尺、圖例</div>
-        <div class="item is-done">電子地圖可以搜尋、縮放、切換模式</div>
+        <div class="item is-done" data-reveal>家鄉是出生、成長或長期生活的地方，不只一個</div>
+        <div class="item is-done" data-reveal>想知道不同的事，要選不同種類的地圖</div>
+        <div class="item is-done" data-reveal>地圖四要素：圖名、方向標、比例尺、圖例</div>
+        <div class="item is-done" data-reveal>電子地圖可以搜尋、縮放、切換模式</div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-map"></use></svg></span>
         <span class="text">接下來分組練習：基礎題認四要素，挑戰題算比例尺。</span>
       </div>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
       <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -2298,7 +2301,41 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+  };
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -2306,11 +2343,27 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       s.hidden = !active;
       s.setAttribute('aria-hidden', String(!active));
     });
-    if (current) current.textContent = String(index + 1);
-    if (total) total.textContent = String(slides.length);
-    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
+
+  const advance = () => {
+    if (revealNext(slides[index])) { updateMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateMeta(); return; }
+    render(index - 1, true, true);
+  };
+
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target.closest('.slide');
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
 
   const slideFromHash = () => {
     const id = decodeURIComponent(location.hash.slice(1));
@@ -2321,14 +2374,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
-    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1, true, true); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
