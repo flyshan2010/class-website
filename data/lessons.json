@@ -84,6 +84,34 @@
     }
   },
   {
+    "title": "國L3-4 鏡頭下的家鄉 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "全課回顧地圖：三段結構＋生字＋修辭＋句型統整",
+      "寫作教學：景物摹寫，寫作題目「我眼中的校園」",
+      "遷移應用：仿課文寫一段家鄉／校園摹寫短文"
+    ],
+    "date": "",
+    "note": "本節為翰林四上國語第三課「鏡頭下的家鄉」教學節次之第4節。與國L3-1、國L3-2、國L3-3同屬一課，依教學進度切分為4節（字詞語詞及大意／內容理解／形式深究／綜合整理），4節共用同一份原教材。課次代碼沿用「國L3-N」格式以利駕駛艙依既有規則自動歸組於「第3課」。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1-Xxk__wgCQKGXaBBbhPNJwFL4QXJ6uU7/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L3-4-綜合整理/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L3-4-綜合整理/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L3-4-綜合整理/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L3-4-綜合整理/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L3-4-綜合整理/3.review.html"
+    }
+  },
+  {
     "title": "國L1-3 美麗島 第三節 形式深究",
     "subject": "國語",
     "grade": "四上",
@@ -679,29 +707,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
-    }
-  },
-  {
-    "title": "國L3-4 鏡頭下的家鄉 第四節 綜合整理",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "全課回顧地圖：三段結構＋生字＋修辭＋句型統整",
-      "寫作教學：景物摹寫，寫作題目「我眼中的校園」",
-      "遷移應用：仿課文寫一段家鄉／校園摹寫短文"
-    ],
-    "date": "",
-    "note": "本節為翰林四上國語第三課「鏡頭下的家鄉」教學節次之第4節。與國L3-1、國L3-2、國L3-3同屬一課，依教學進度切分為4節（字詞語詞及大意／內容理解／形式深究／綜合整理），4節共用同一份原教材。課次代碼沿用「國L3-N」格式以利駕駛艙依既有規則自動歸組於「第3課」。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1-Xxk__wgCQKGXaBBbhPNJwFL4QXJ6uU7/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
