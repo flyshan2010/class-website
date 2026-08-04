@@ -81,15 +81,6 @@
     "notes": ""
   },
   {
-    "title": "開學",
-    "date": "2026-08-31",
-    "endDate": "",
-    "startTime": "07:40",
-    "endTime": "16:00",
-    "type": "活動",
-    "notes": ""
-  },
-  {
     "title": "課照班開始",
     "date": "2026-08-31",
     "endDate": "",
@@ -104,6 +95,15 @@
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:30",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "開學",
+    "date": "2026-08-31",
+    "endDate": "",
+    "startTime": "07:40",
+    "endTime": "16:00",
     "type": "活動",
     "notes": ""
   },
