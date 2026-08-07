@@ -1174,6 +1174,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <symbol id="ico-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
     <symbol id="ico-group" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17.5" cy="9.5" r="2.5"/><path d="M15.5 20a5 5 0 0 1 5.5-4.9"/></symbol>
     <symbol id="ico-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.8 2.8 0 0 1 5.4.9c0 1.9-2.7 2.3-2.7 4"/><path d="M12 17.5h.01"/></symbol>
+    <symbol id="ico-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-9.5A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.5C19 15.5 12 20 12 20Z"/></symbol>
 </svg>
 
 <script>
@@ -2010,17 +2011,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第三課 鏡頭下的家鄉 · 第四節</div>
-        <div class="headline" style="font-size:var(--t1);">綜合整理</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">綜合整理</div>
         <div class="sub">回顧全課，學會「景物摹寫」，寫下我眼中的校園</div>
       </div>
     </section>
 
     <!-- 2 全課地圖 -->
-    <section class="slide" data-slide-id="map" hidden>
-      <div class="page-head"><span class="label">國L3-4 綜合整理</span><h2 class="title">全課地圖：三段內容，一路回顧</h2></div>
+    <section class="slide" data-slide-id="map" aria-labelledby="map-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 綜合整理</span><h2 id="map-t" class="title">全課地圖：三段內容，一路回顧</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal><div class="badge">1</div><div class="head">位置與景色</div><div class="body">雲林，濁水溪南邊</div></div>
         <div class="arrow" data-reveal>→</div>
@@ -2032,8 +2033,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 生字回顧 1/2 -->
-    <section class="slide" data-slide-id="words-1" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 生字回顧 1/2</span><h2 class="title">生字語詞（一）</h2></div>
+    <section class="slide" data-slide-id="words-1" aria-labelledby="words-1-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 生字回顧 1/2</span><h2 id="words-1-t" class="title">生字語詞（一）</h2></div>
       <div class="vocab-grid">
         <div class="vocab-card" data-reveal><div class="word">竟<span class="zhuyin">ㄐㄧㄥˋ</span></div><div class="mean">部首儿．9畫｜竟然</div><div class="example">他竟然忘記帶課本。</div></div>
         <div class="vocab-card" data-reveal><div class="word">鏡<span class="zhuyin">ㄐㄧㄥˋ</span></div><div class="mean">部首金．19畫｜鏡頭</div><div class="example">她拿起鏡頭拍下家鄉。</div></div>
@@ -2043,8 +2044,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 生字回顧 2/2 -->
-    <section class="slide" data-slide-id="words-2" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 生字回顧 2/2</span><h2 class="title">生字語詞（二）</h2></div>
+    <section class="slide" data-slide-id="words-2" aria-labelledby="words-2-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 生字回顧 2/2</span><h2 id="words-2-t" class="title">生字語詞（二）</h2></div>
       <div class="vocab-grid">
         <div class="vocab-card" data-reveal><div class="word">與<span class="zhuyin">ㄩˋ</span></div><div class="mean">部首臼．14畫｜參與</div><div class="example">他參與了社區的活動。</div></div>
         <div class="vocab-card" data-reveal><div class="word">耕<span class="zhuyin">ㄍㄥ</span></div><div class="mean">部首耒．10畫｜耕田</div><div class="example">農夫辛勤耕種稻田。</div></div>
@@ -2057,8 +2058,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 形近字回顧 -->
-    <section class="slide" data-slide-id="lookalike" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 形近字回顧</span><h2 class="title">五組形近字，你都分得清楚嗎？</h2></div>
+    <section class="slide" data-slide-id="lookalike" aria-labelledby="lookalike-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 形近字回顧</span><h2 id="lookalike-t" class="title">五組形近字，你都分得清楚嗎？</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">鏡／境／竟</div><div class="body">金部鏡頭・土部環境・儿部竟然</div></div>
         <div class="concept-card" data-reveal><div class="head">粉／紛／盼</div><div class="body">米部麵粉・糸部紛亂・目部期盼</div></div>
@@ -2069,8 +2070,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 修辭複習 -->
-    <section class="slide" data-slide-id="rhetoric" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 修辭複習</span><h2 class="title">譬喻與映襯，一句話可以同時用</h2></div>
+    <section class="slide" data-slide-id="rhetoric" aria-labelledby="rhetoric-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 修辭複習</span><h2 id="rhetoric-t" class="title">譬喻與映襯，一句話可以同時用</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">譬喻（明喻）</div>
@@ -2089,8 +2090,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 句型複習 -->
-    <section class="slide" data-slide-id="pattern" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 句型複習</span><h2 class="title">兩種句型，讓句子更有力量</h2></div>
+    <section class="slide" data-slide-id="pattern" aria-labelledby="pattern-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 句型複習</span><h2 id="pattern-t" class="title">兩種句型，讓句子更有力量</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">假設複句：即使……也……</div><div class="body">先假設情況，再說即使如此也會發生的結果</div></div>
         <div class="concept-card" style="border-left-color:var(--accent);" data-reveal><div class="head">疊字短語：一＋量詞疊字＋形容詞＋的＋名詞</div><div class="body">例如「一顆顆香甜飽滿的柳丁」，畫面更生動</div></div>
@@ -2098,8 +2099,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 課文主旨統整 -->
-    <section class="slide" data-slide-id="theme" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 主旨統整</span><h2 class="title">沈芯菱，為什麼要拿起鏡頭？</h2></div>
+    <section class="slide" data-slide-id="theme" aria-labelledby="theme-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 主旨統整</span><h2 id="theme-t" class="title">沈芯菱，為什麼要拿起鏡頭？</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">主旨</div><div class="body">透過鏡頭記錄家鄉人事物，表達對家鄉的關懷與愛</div></div>
         <div class="concept-card" style="border-left-color:var(--accent);" data-reveal><div class="head">具體畫面</div><div class="body">賣棉花糖的老先生、烤香腸的阿公、一顆顆柳丁——都被鏡頭記住</div></div>
@@ -2111,8 +2112,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 景物摹寫技巧講解 -->
-    <section class="slide" data-slide-id="skill" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 寫作技巧</span><h2 class="title">景物摹寫：讓畫面動起來的三個技巧</h2></div>
+    <section class="slide" data-slide-id="skill" aria-labelledby="skill-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 寫作技巧</span><h2 id="skill-t" class="title">景物摹寫：讓畫面動起來的三個技巧</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">① 感官摹寫</div><div class="body">視覺／聽覺／嗅覺／觸覺，寫出看到聽到聞到摸到的</div></div>
         <div class="concept-card" data-reveal><div class="head">② 譬喻與映襯</div><div class="body">用「像／如……般」比喻，或用對比凸顯特色</div></div>
@@ -2121,8 +2122,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 10 範文賞析 -->
-    <section class="slide" data-slide-id="model-text" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 範文賞析</span><h2 class="title">課文怎麼寫，我們就怎麼學</h2></div>
+    <section class="slide" data-slide-id="model-text" aria-labelledby="model-text-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 範文賞析</span><h2 id="model-text-t" class="title">課文怎麼寫，我們就怎麼學</h2></div>
       <div class="concept-card" style="flex:1;justify-content:center;" data-reveal>
         <div class="head">「這裡的十一月，陽光照耀滿園柳丁，如金粉從天上落下般美麗，一顆顆香甜飽滿的柳丁，是農人深切的希望。」</div>
         <div class="body">譬喻（如……般）＋疊字短語（一顆顆）＋視覺摹寫，三個技巧疊在一起用</div>
@@ -2130,8 +2131,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 11 寫作任務揭示 -->
-    <section class="slide" data-slide-id="task" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 寫作任務</span><h2 class="title">換你動筆：我眼中的校園 ✍️</h2></div>
+    <section class="slide" data-slide-id="task" aria-labelledby="task-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 寫作任務</span><h2 id="task-t" class="title">換你動筆：我眼中的校園 ✍️</h2></div>
       <div class="task-card" data-reveal>
         <div class="mission">仿照〈鏡頭下的家鄉〉的寫法，選校園裡一個角落，寫一段摹寫短文</div>
         <div class="facts">
@@ -2143,8 +2144,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 12 寫作鷹架 -->
-    <section class="slide" data-slide-id="scaffold" hidden>
-      <div class="page-head"><span class="label">國L3-4 · 寫作鷹架</span><h2 class="title">三個問題，幫你搭出一段話</h2></div>
+    <section class="slide" data-slide-id="scaffold" aria-labelledby="scaffold-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 · 寫作鷹架</span><h2 id="scaffold-t" class="title">三個問題，幫你搭出一段話</h2></div>
       <div class="question-frame">
         <div class="q tier-1" data-reveal><span class="tier">看見</span><span class="text">你選的角落，看起來像什麼樣子？</span></div>
         <div class="q tier-2" data-reveal><span class="tier">像什麼</span><span class="text">可以用「像……」或「如……般」來比喻嗎？</span></div>
@@ -2153,8 +2154,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 13 收束 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">國L3-4 綜合整理</span><h2 class="title">這節課，我們做了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">國L3-4 綜合整理</span><h2 id="summary-t" class="title">這節課，我們做了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的收穫</div>
         <div class="item is-done" data-reveal>全課回顧：三段結構、生字、修辭、句型</div>

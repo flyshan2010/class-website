@@ -2027,17 +2027,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第二單元 乘法 · 2-3</div>
-        <div class="headline" style="font-size:var(--t1);">乘法算式的規律</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">乘法算式的規律</div>
         <div class="sub">不用每次都從頭算——找出算式之間的規律，心算也能又快又準</div>
       </div>
     </section>
 
     <!-- 2 複習銜接 -->
-    <section class="slide" data-slide-id="recap" hidden>
-      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 class="title">前兩節學過什麼？</h2></div>
+    <section class="slide" data-slide-id="recap" aria-labelledby="recap-t" hidden>
+      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 id="recap-t" class="title">前兩節學過什麼？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal>
           <div class="badge">1</div>
@@ -2064,8 +2064,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 0規律（單邊有0） -->
-    <section class="slide" data-slide-id="zero-rule-single" hidden>
-      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 class="title">整十、整百、整千相乘，0 的個數規律</h2></div>
+    <section class="slide" data-slide-id="zero-rule-single" aria-labelledby="zero-rule-single-t" hidden>
+      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 id="zero-rule-single-t" class="title">整十、整百、整千相乘，0 的個數規律</h2></div>
       <div class="figure-block">
         <div class="figure">
           <div style="font-family:'Courier New',monospace;font-size:34px;line-height:1.5;text-align:left;color:var(--ink);">
@@ -2083,8 +2083,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 0規律（雙邊有0） -->
-    <section class="slide" data-slide-id="zero-rule-both" hidden>
-      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 class="title">兩個數都有 0，0 的個數要相加</h2></div>
+    <section class="slide" data-slide-id="zero-rule-both" aria-labelledby="zero-rule-both-t" hidden>
+      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 id="zero-rule-both-t" class="title">兩個數都有 0，0 的個數要相加</h2></div>
       <div class="figure-block">
         <div class="figure">
           <div style="font-family:'Courier New',monospace;font-size:32px;line-height:1.5;text-align:left;color:var(--ink);">
@@ -2101,17 +2101,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 過場 -->
-    <section class="slide" data-slide-id="divider-relation" hidden>
+    <section class="slide" data-slide-id="divider-relation" aria-labelledby="divider-relation-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">換個角度想乘法</div>
-        <div class="headline">已經知道一個乘法算式的答案，可以推算出相鄰的算式嗎？</div>
+        <div id="divider-relation-t" class="headline">已經知道一個乘法算式的答案，可以推算出相鄰的算式嗎？</div>
         <div class="sub">從乘法表的前後項關係找捷徑</div>
       </div>
     </section>
 
     <!-- 6 乘法表前後項關係 -->
-    <section class="slide" data-slide-id="table-relation" hidden>
-      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 class="title">已知一個答案，推算相鄰的算式</h2></div>
+    <section class="slide" data-slide-id="table-relation" aria-labelledby="table-relation-t" hidden>
+      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 id="table-relation-t" class="title">已知一個答案，推算相鄰的算式</h2></div>
       <div class="data-focus">
         <div class="figure-num" data-reveal><span class="num">4602</span><span class="unit">／</span><span class="num" style="font-size:0.5em;">4758</span></div>
         <div class="readout" data-reveal>
@@ -2122,8 +2122,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 前後項關係應用（幾百倍） -->
-    <section class="slide" data-slide-id="table-relation-hundred" hidden>
-      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 class="title">同樣的想法，用在乘以百倍也可以</h2></div>
+    <section class="slide" data-slide-id="table-relation-hundred" aria-labelledby="table-relation-hundred-t" hidden>
+      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 id="table-relation-hundred-t" class="title">同樣的想法，用在乘以百倍也可以</h2></div>
       <div class="figure-block">
         <div class="figure">
           <div style="font-family:'Courier New',monospace;font-size:34px;line-height:1.5;text-align:left;color:var(--ink);">
@@ -2139,8 +2139,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 素養情境：找零判斷 -->
-    <section class="slide" data-slide-id="literacy-scenario" hidden>
-      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 class="title">用乘法關係判斷「怎麼買最划算」</h2></div>
+    <section class="slide" data-slide-id="literacy-scenario" aria-labelledby="literacy-scenario-t" hidden>
+      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 id="literacy-scenario-t" class="title">用乘法關係判斷「怎麼買最划算」</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">情境</div><div class="text">媽媽給皮皮 3000 元去買 15 盒相同的點心，並告訴他要剩下最少的錢。選項：A 220 元、B 198 元、C 128 元、D 201 元，該選哪一款？</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2153,8 +2153,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 class="title">今天學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">2-3 乘法算式的規律</span><h2 id="summary-t" class="title">今天學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個新技能</div>
         <div class="item is-done" data-reveal>0 的個數規律：兩數 0 的個數相加，就是答案 0 的個數</div>

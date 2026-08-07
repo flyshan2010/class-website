@@ -139,10 +139,10 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- ══ 1 封面／選組 ══ -->
-    <section class="slide layout-title is-active" data-slide-id="cover">
+    <section class="slide layout-title is-active" data-slide-id="cover" aria-labelledby="cover-t">
       <p class="hero-badge">🔢</p>
       <p class="eyebrow">第一單元 一億以內的數 · 1-3 · 分組練習</p>
-      <h1>分 組 練 習</h1>
+      <h1 id="cover-t">分 組 練 習</h1>
       <p class="lead">依前測結果，選一個適合的難度，點下去開始</p>
       <div class="group-grid">
         <button class="group-card g-c" data-goto="c1" data-reveal>
@@ -166,17 +166,17 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
     <!-- ══════════ 基礎題 ══════════ -->
 
-    <section class="slide sec-c" data-slide-id="c1" hidden>
+    <section class="slide sec-c" data-slide-id="c1" aria-labelledby="c1-t" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 1</span><span class="qskill">位數優先 · 先數一數再比</span></div>
-      <p class="qstem">位數不同時，根本不用比數字，直接比位數</p>
+      <p id="c1-t" class="qstem">位數不同時，根本不用比數字，直接比位數</p>
       <div class="keybox" data-reveal>🔑 位數越多，數字就越大：7 位數一定比 6 位數大，<b>不管後面的數字是多少</b>。<br>位數一樣多，才需要從最高位開始一位一位往下比。</div>
       <p class="intro" style="text-align:center;margin-top:8px;">甲圖書館全年借閱 <span class="n" style="font-family:var(--font-num);color:var(--text);font-weight:700">6204000</span> 冊（7 位數）；乙圖書館全年借閱 <span class="n" style="font-family:var(--font-num);color:var(--text);font-weight:700">890000</span> 冊（6 位數）→ 甲的借閱冊數比較多，不用比到個位。</p>
       <p class="pagemeta" style="position:static;margin-top:auto;"></p>
     </section>
 
-    <section class="slide sec-c" data-slide-id="c2" hidden>
+    <section class="slide sec-c" data-slide-id="c2" aria-labelledby="c2-t" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 2</span><span class="qskill">辨識練習 · 哪一個比較大</span></div>
-      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <p id="c2-t" class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="3850000 是 7 位數，620000 是 6 位數，位數多的比較大。">
           <span class="sent">1. <span class="n">3850000</span> 和 <span class="n">620000</span>，哪個比較大？</span>
@@ -201,9 +201,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       </ul>
     </section>
 
-    <section class="slide sec-c" data-slide-id="c3" hidden>
+    <section class="slide sec-c" data-slide-id="c3" aria-labelledby="c3-t" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 3</span><span class="qskill">紙本任務 · 動手比一比</span></div>
-      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <p id="c3-t" class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
         <li data-reveal><span class="dot">1</span><span>完成六組<strong>位數不同</strong>的大數比大小圈選題。</span></li>
         <li data-reveal><span class="dot">2</span><span>完成四組<strong>位數相同</strong>、要從最高位逐位比較的填空題。</span></li>
@@ -215,9 +215,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
     <!-- ══════════ 進階題 ══════════ -->
 
-    <section class="slide sec-b" data-slide-id="b1" hidden>
+    <section class="slide sec-b" data-slide-id="b1" aria-labelledby="b1-t" hidden>
       <div class="qhead"><span class="qtag">進階題 · 1</span><span class="qskill">兩家族分段比較＋整萬加減</span></div>
-      <p class="qstem">位數相同時，先比萬的家族；整萬的大數可以直接把萬家族當一般數字加減</p>
+      <p id="b1-t" class="qstem">位數相同時，先比萬的家族；整萬的大數可以直接把萬家族當一般數字加減</p>
       <div class="reveal-grid cols-3">
         <button class="rcard">
           <p class="quote">5480000　vs　5210000</p>
@@ -238,9 +238,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <p class="judgement" data-reveal data-after-answer>萬家族能分出勝負就不用比到底；整萬的數，萬家族就是唯一要算的部分</p>
     </section>
 
-    <section class="slide sec-b" data-slide-id="b2" hidden>
+    <section class="slide sec-b" data-slide-id="b2" aria-labelledby="b2-t" hidden>
       <div class="qhead"><span class="qtag">進階題 · 2</span><span class="qskill">家族比較與整萬加減 · 判斷對不對</span></div>
-      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <p id="b2-t" class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
       <ul class="qlist">
         <li class="qrow" data-answer="1" data-hint="萬的家族 736 比 742 小，742 那組（7420000）比較大。">
           <span class="sent">1. <span class="n">7360000</span> 和 <span class="n">7420000</span>，哪個比較大？</span>
@@ -265,9 +265,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       </ul>
     </section>
 
-    <section class="slide sec-b" data-slide-id="b3" hidden>
+    <section class="slide sec-b" data-slide-id="b3" aria-labelledby="b3-t" hidden>
       <div class="qhead"><span class="qtag">進階題 · 3</span><span class="qskill">紙本任務 · 家族比較與整萬加減</span></div>
-      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <p id="b3-t" class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
         <li data-reveal><span class="dot">1</span><span>完成五組「<strong>萬家族先比、一家族再比</strong>」的比大小題。</span></li>
         <li data-reveal><span class="dot">2</span><span>完成四題<strong>整萬大數</strong>的加減直式（把萬家族當一般數字算）。</span></li>
@@ -279,9 +279,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
     <!-- ══════════ 挑戰題 ══════════ -->
 
-    <section class="slide sec-a" data-slide-id="a1" hidden>
+    <section class="slide sec-a" data-slide-id="a1" aria-labelledby="a1-t" hidden>
       <div class="qhead"><span class="qtag">挑戰題 · 1</span><span class="qskill">複名數加減進位借位＋逆向應用</span></div>
-      <p class="qstem">一的家族滿一萬要多進位；已知合計和其中一筆，也能反推另一筆</p>
+      <p id="a1-t" class="qstem">一的家族滿一萬要多進位；已知合計和其中一筆，也能反推另一筆</p>
       <div class="reveal-grid cols-2">
         <button class="rcard">
           <p class="quote txt">54300 ＋ 38900 ＝？</p>
@@ -297,9 +297,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <p class="judgement" data-reveal data-after-answer>一的家族算出來超過 10000，別忘了多進 1 萬給萬的家族</p>
     </section>
 
-    <section class="slide sec-a" data-slide-id="a2" hidden>
+    <section class="slide sec-a" data-slide-id="a2" aria-labelledby="a2-t" hidden>
       <div class="qhead"><span class="qtag">挑戰題 · 2</span><span class="qskill">複名數進退位與排序 · 判斷對不對</span></div>
-      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <p id="a2-t" class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="一的家族 6200＋7900＝14100，超過 10000 要多進 1 萬給萬的家族：4＋3＋1＝8，一的家族剩 4100。">
           <span class="sent">1. <span class="n">46200</span> ＋ <span class="n">37900</span> ＝？</span>
@@ -324,9 +324,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       </ul>
     </section>
 
-    <section class="slide sec-a" data-slide-id="a3" hidden>
+    <section class="slide sec-a" data-slide-id="a3" aria-labelledby="a3-t" hidden>
       <div class="qhead"><span class="qtag">挑戰題 · 3</span><span class="qskill">紙本任務 · 進退位挑戰＋出題給同學</span></div>
-      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <p id="a3-t" class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
         <li data-reveal><span class="dot">1</span><span>完成四題「<strong>一的家族要進位或借位</strong>」的複名數加減直式。</span></li>
         <li data-reveal><span class="dot">2</span><span>完成一題<strong>逆向應用</strong>（已知合計和其中一筆，求另一筆）。</span></li>

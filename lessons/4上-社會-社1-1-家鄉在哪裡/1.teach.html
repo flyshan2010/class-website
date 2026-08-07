@@ -2016,17 +2016,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 <main class="deck" aria-label="家鄉在哪裡課程教學">
   <div class="stage" id="stage" tabindex="-1">
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第一單元 家鄉的自然環境 · 1-1</div>
-        <div class="headline" style="font-size:var(--t1);">家鄉在哪裡</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">家鄉在哪裡</div>
         <div class="sub">從地圖出發，認識自己生活的地方</div>
       </div>
     </section>
 
     <!-- 2 家鄉是什麼 -->
-    <section class="slide" data-slide-id="hometown" hidden>
-      <div class="page-head"><span class="label">1-1 家鄉在哪裡</span><h2 class="title">什麼地方算是「家鄉」？</h2></div>
+    <section class="slide" data-slide-id="hometown" aria-labelledby="hometown-t" hidden>
+      <div class="page-head"><span class="label">1-1 家鄉在哪裡</span><h2 id="hometown-t" class="title">什麼地方算是「家鄉」？</h2></div>
       <div class="card-grid">
         <div class="concept-card" data-reveal>
           <div class="head">出生的地方</div>
@@ -2048,8 +2048,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 在地圖上找家鄉 -->
-    <section class="slide" data-slide-id="findcity" hidden>
-      <div class="page-head"><span class="label">從地圖看家鄉</span><h2 class="title">在地圖上找出家鄉的縣市</h2></div>
+    <section class="slide" data-slide-id="findcity" aria-labelledby="findcity-t" hidden>
+      <div class="page-head"><span class="label">從地圖看家鄉</span><h2 id="findcity-t" class="title">在地圖上找出家鄉的縣市</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg class="map-svg" viewBox="0 0 210 330" role="img" aria-label="臺灣位置示意圖，分為北部、中部、南部、東部" style="max-height:420px">
@@ -2076,8 +2076,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 四種地圖 -->
-    <section class="slide" data-slide-id="maptypes" hidden>
-      <div class="page-head"><span class="label">家鄉與地圖</span><h2 class="title">想知道不一樣的事，要看不一樣的地圖</h2></div>
+    <section class="slide" data-slide-id="maptypes" aria-labelledby="maptypes-t" hidden>
+      <div class="page-head"><span class="label">家鄉與地圖</span><h2 id="maptypes-t" class="title">想知道不一樣的事，要看不一樣的地圖</h2></div>
       <p style="font-size:var(--t4);color:var(--muted);margin-bottom:var(--s3);">點卡片翻開答案：這個問題該看哪一種地圖？</p>
       <div class="card-grid">
         <button class="flip-card" data-flip data-reveal>
@@ -2096,17 +2096,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 過場 -->
-    <section class="slide" data-slide-id="divider-elements" hidden>
+    <section class="slide" data-slide-id="divider-elements" aria-labelledby="divider-elements-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第二部分</div>
-        <div class="headline">地圖上的四個祕密</div>
+        <div id="divider-elements-t" class="headline">地圖上的四個祕密</div>
         <div class="sub">圖名、方向標、比例尺、圖例——少一個都不好用</div>
       </div>
     </section>
 
     <!-- 6 圖名與圖例 -->
-    <section class="slide" data-slide-id="name-legend" hidden>
-      <div class="page-head"><span class="label">地圖的要素 1・2</span><h2 class="title">圖名說主題，圖例解符號</h2></div>
+    <section class="slide" data-slide-id="name-legend" aria-labelledby="name-legend-t" hidden>
+      <div class="page-head"><span class="label">地圖的要素 1・2</span><h2 id="name-legend-t" class="title">圖名說主題，圖例解符號</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">圖名</div>
@@ -2129,8 +2129,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 方向標 + 迷思 -->
-    <section class="slide" data-slide-id="compass" hidden>
-      <div class="page-head"><span class="label">地圖的要素 3</span><h2 class="title">方向標：地圖的哪一邊是北方？</h2></div>
+    <section class="slide" data-slide-id="compass" aria-labelledby="compass-t" hidden>
+      <div class="page-head"><span class="label">地圖的要素 3</span><h2 id="compass-t" class="title">方向標：地圖的哪一邊是北方？</h2></div>
       <div class="split-2">
         <div>
           <svg class="map-svg" viewBox="0 0 200 200" role="img" aria-label="方向標示意圖，上北下南左西右東" style="max-height:300px;margin:0 auto;">
@@ -2160,8 +2160,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 比例尺是什麼 -->
-    <section class="slide" data-slide-id="scale-1" hidden>
-      <div class="page-head"><span class="label">地圖的要素 4</span><h2 class="title">比例尺：地圖被縮小了多少？</h2></div>
+    <section class="slide" data-slide-id="scale-1" aria-labelledby="scale-1-t" hidden>
+      <div class="page-head"><span class="label">地圖的要素 4</span><h2 id="scale-1-t" class="title">比例尺：地圖被縮小了多少？</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg class="map-svg" viewBox="0 0 340 130" role="img" aria-label="比例尺圖示，全長代表實際兩百公尺" style="max-height:220px">
@@ -2187,8 +2187,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 比例尺換算 -->
-    <section class="slide" data-slide-id="scale-2" hidden>
-      <div class="page-head"><span class="label">地圖的要素 4</span><h2 class="title">算算看：圖上 8 公分是多遠？</h2></div>
+    <section class="slide" data-slide-id="scale-2" aria-labelledby="scale-2-t" hidden>
+      <div class="page-head"><span class="label">地圖的要素 4</span><h2 id="scale-2-t" class="title">算算看：圖上 8 公分是多遠？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">圖上 8 公分代表實際 800 公尺，那麼圖上 1 公分代表多少？</p>
         <div class="q-options" style="grid-template-columns:repeat(4,1fr);">
@@ -2210,8 +2210,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 10 電子地圖三功能 -->
-    <section class="slide" data-slide-id="emap" hidden>
-      <div class="page-head"><span class="label">家鄉的電子地圖</span><h2 class="title">電子地圖可以做三件事</h2></div>
+    <section class="slide" data-slide-id="emap" aria-labelledby="emap-t" hidden>
+      <div class="page-head"><span class="label">家鄉的電子地圖</span><h2 id="emap-t" class="title">電子地圖可以做三件事</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal>
           <div class="badge">1</div>
@@ -2238,8 +2238,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 11 兩種模式對照 -->
-    <section class="slide" data-slide-id="emap-mode" hidden>
-      <div class="page-head"><span class="label">家鄉的電子地圖</span><h2 class="title">地圖模式和衛星模式，看到的不一樣</h2></div>
+    <section class="slide" data-slide-id="emap-mode" aria-labelledby="emap-mode-t" hidden>
+      <div class="page-head"><span class="label">家鄉的電子地圖</span><h2 id="emap-mode-t" class="title">地圖模式和衛星模式，看到的不一樣</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">地圖模式</div>
@@ -2262,8 +2262,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 12 本節統整 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">1-1 家鄉在哪裡</span><h2 class="title">這一節，我們學會了</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">1-1 家鄉在哪裡</span><h2 id="summary-t" class="title">這一節，我們學會了</h2></div>
       <div class="action-list">
         <div class="item is-done" data-reveal>家鄉是出生、成長或長期生活的地方，不只一個</div>
         <div class="item is-done" data-reveal>想知道不同的事，要選不同種類的地圖</div>

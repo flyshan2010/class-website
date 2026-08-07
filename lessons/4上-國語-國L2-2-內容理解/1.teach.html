@@ -1176,6 +1176,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <symbol id="ico-map" viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2Z"/><path d="M9 4v14M15 6v14"/></symbol>
     <symbol id="ico-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
     <symbol id="ico-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+    <symbol id="ico-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6.2L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9.2V3"/><path d="M7.2 14h9.6"/></symbol>
 </svg>
 
 <script>
@@ -2028,17 +2029,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第二課 請到我的家鄉來 · 第二節</div>
-        <div class="headline" style="font-size:var(--t1);">內容理解</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">內容理解</div>
         <div class="sub">仔細讀四封信，找出藏在字裡行間的訊息</div>
       </div>
     </section>
 
     <!-- 2 四封信時間軸 -->
-    <section class="slide" data-slide-id="timeline" hidden>
-      <div class="page-head"><span class="label">國L2-2 內容理解</span><h2 class="title">四封信，往返了一個月</h2></div>
+    <section class="slide" data-slide-id="timeline" aria-labelledby="timeline-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 內容理解</span><h2 id="timeline-t" class="title">四封信，往返了一個月</h2></div>
       <div class="timeline">
         <div class="node" data-reveal><div class="when">8月2日</div><div class="what">柔柔→安安</div><div class="note">回憶臺南泡溫泉、水火同源趣事</div></div>
         <div class="node" data-reveal><div class="when">8月9日</div><div class="what">安安→柔柔</div><div class="note">分享蘇澳冷泉，邀請來宜蘭玩</div></div>
@@ -2048,8 +2049,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 提取訊息：誰住哪裡 -->
-    <section class="slide" data-slide-id="who-where" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 提取訊息</span><h2 class="title">誰寫給誰？住在哪裡？</h2></div>
+    <section class="slide" data-slide-id="who-where" aria-labelledby="who-where-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 提取訊息</span><h2 id="who-where-t" class="title">誰寫給誰？住在哪裡？</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">表姐柔柔</div><div class="body">住在臺南，熟悉水火同源、左鎮化石園區</div></div>
         <div class="concept-card" data-reveal><div class="head">表妹安安</div><div class="body">住在宜蘭，熟悉蘇澳冷泉、傳統藝術中心</div></div>
@@ -2061,8 +2062,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 提取訊息 Quiz -->
-    <section class="slide" data-slide-id="check-extract" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 提取訊息</span><h2 class="title">讀懂了嗎？</h2></div>
+    <section class="slide" data-slide-id="check-extract" aria-labelledby="check-extract-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 提取訊息</span><h2 id="check-extract-t" class="title">讀懂了嗎？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">第三封信是誰寫給誰的？</p>
         <div class="q-options">
@@ -2080,8 +2081,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 推論訊息：水火同源 -->
-    <section class="slide" data-slide-id="infer-fire" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 推論訊息</span><h2 class="title">水火同源，為什麼不會熄滅？</h2></div>
+    <section class="slide" data-slide-id="infer-fire" aria-labelledby="infer-fire-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 推論訊息</span><h2 id="infer-fire-t" class="title">水火同源，為什麼不會熄滅？</h2></div>
       <div class="figure-block">
         <div class="figure"><svg class="ico" style="font-size:160px"><use href="#ico-flask"></use></svg></div>
         <div class="caption" data-reveal>
@@ -2092,8 +2093,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 推論訊息：汽水冷泉 -->
-    <section class="slide" data-slide-id="infer-soda" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 推論訊息</span><h2 class="title">蘇澳冷泉，為什麼叫「汽水冷泉」？</h2></div>
+    <section class="slide" data-slide-id="infer-soda" aria-labelledby="infer-soda-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 推論訊息</span><h2 id="infer-soda-t" class="title">蘇澳冷泉，為什麼叫「汽水冷泉」？</h2></div>
       <div class="data-focus">
         <div class="figure-num" data-reveal><span class="num">22℃</span><span class="unit">左右的天然冷泉</span></div>
         <div class="readout" data-reveal>
@@ -2104,8 +2105,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 迷思澄清 -->
-    <section class="slide" data-slide-id="misconception" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 迷思澄清</span><h2 class="title">「水火同源」是水在燃燒嗎？</h2></div>
+    <section class="slide" data-slide-id="misconception" aria-labelledby="misconception-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 迷思澄清</span><h2 id="misconception-t" class="title">「水火同源」是水在燃燒嗎？</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">以為「水火同源」是水本身變成了火，兩者混在一起燃燒。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2114,8 +2115,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 比較評估 -->
-    <section class="slide" data-slide-id="compare" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 比較評估</span><h2 class="title">兩人的家鄉景點，哪裡一樣？哪裡不同？</h2></div>
+    <section class="slide" data-slide-id="compare" aria-labelledby="compare-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 比較評估</span><h2 id="compare-t" class="title">兩人的家鄉景點，哪裡一樣？哪裡不同？</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">相同處</div>
@@ -2132,8 +2133,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 詮釋整合 -->
-    <section class="slide" data-slide-id="synthesis" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 詮釋整合</span><h2 class="title">兩姐妹感情怎麼樣？找證據！</h2></div>
+    <section class="slide" data-slide-id="synthesis" aria-labelledby="synthesis-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 詮釋整合</span><h2 id="synthesis-t" class="title">兩姐妹感情怎麼樣？找證據！</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">證據一</div><div class="body">四封信一個月一封，寫信、回信的日期緊密相連，可見常常聯絡</div></div>
         <div class="concept-card" data-reveal><div class="head">證據二</div><div class="body">兩人一起把溫泉泥抹在對方臉上，互相邀約旅遊，感情融洽</div></div>
@@ -2145,8 +2146,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 10 課堂小測驗 -->
-    <section class="slide" data-slide-id="check2" hidden>
-      <div class="page-head"><span class="label">國L2-2 · 課堂小測驗</span><h2 class="title">學會了嗎？</h2></div>
+    <section class="slide" data-slide-id="check2" aria-labelledby="check2-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 · 課堂小測驗</span><h2 id="check2-t" class="title">學會了嗎？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">蘇澳冷泉被稱為「汽水冷泉」的原因是什麼？</p>
         <div class="q-options">
@@ -2164,8 +2165,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 11 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">國L2-2 內容理解</span><h2 class="title">這節課學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">國L2-2 內容理解</span><h2 id="summary-t" class="title">這節課學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">閱讀理解的四個層次</div>
         <div class="item is-done" data-reveal>提取訊息：直接從課文找答案（誰、住哪裡）</div>

@@ -2038,8 +2038,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 <main class="deck" aria-label="旋轉角分組練習">
   <div class="stage" id="stage" tabindex="-1">
 
-    <section class="slide is-active" data-slide-id="cover">
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">分組練習</h2></div>
+    <section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="cover-t" class="title">分組練習</h2></div>
       <div class="tier-grid">
         <a class="tier-card" href="#b1" data-reveal>
           <svg class="ico"><use href="#ico-book"></use></svg>
@@ -2060,8 +2060,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- ══ 基礎題 ══ -->
-    <section class="slide" data-slide-id="b1" hidden>
-      <div class="page-head"><span class="label">基礎題 · 1</span><h2 class="title">這是順時針還是逆時針？</h2></div>
+    <section class="slide" data-slide-id="b1" aria-labelledby="b1-t" hidden>
+      <div class="page-head"><span class="label">基礎題 · 1</span><h2 id="b1-t" class="title">這是順時針還是逆時針？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">下圖的一邊固定不動（虛線），另一邊往圖上的方向旋轉，這是哪一種方向？</p>
         <div class="row" style="justify-content:center;margin-bottom:8px;">
@@ -2082,8 +2082,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       </div>
     </section>
 
-    <section class="slide" data-slide-id="b2" hidden>
-      <div class="page-head"><span class="label">基礎題 · 2</span><h2 class="title">6 點鐘的指針夾角</h2></div>
+    <section class="slide" data-slide-id="b2" aria-labelledby="b2-t" hidden>
+      <div class="page-head"><span class="label">基礎題 · 2</span><h2 id="b2-t" class="title">6 點鐘的指針夾角</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">時鐘走到 6 點整，時針和分針的夾角是幾度？</p>
         <div class="row" style="justify-content:center;margin-bottom:8px;">
@@ -2108,8 +2108,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       </div>
     </section>
 
-    <section class="slide" data-slide-id="b3" hidden>
-      <div class="page-head"><span class="label">基礎題 · 3</span><h2 class="title">紙本任務</h2></div>
+    <section class="slide" data-slide-id="b3" aria-labelledby="b3-t" hidden>
+      <div class="page-head"><span class="label">基礎題 · 3</span><h2 id="b3-t" class="title">紙本任務</h2></div>
       <div class="paper-note" data-reveal>
         <svg class="ico"><use href="#ico-pencil"></use></svg>
         <span>這一頁的任務請寫在紙本學習單上：<b>2a.差異化教材_基礎題需鷹架</b>。練習判斷旋轉方向，並用「每大格 30 度」算出 1～6 點鐘的指針夾角。</span>
@@ -2117,8 +2117,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- ══ 進階題 ══ -->
-    <section class="slide" data-slide-id="p1" hidden>
-      <div class="page-head"><span class="label">進階題 · 1</span><h2 class="title">超過 6 點怎麼數比較快？</h2></div>
+    <section class="slide" data-slide-id="p1" aria-labelledby="p1-t" hidden>
+      <div class="page-head"><span class="label">進階題 · 1</span><h2 id="p1-t" class="title">超過 6 點怎麼數比較快？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">時鐘走到 10 點整，時針和分針的夾角是幾度？（提示：從 12 走到 10，逆時針數比較近）</p>
         <div class="row" style="justify-content:center;margin-bottom:8px;">
@@ -2144,8 +2144,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       </div>
     </section>
 
-    <section class="slide" data-slide-id="p2" hidden>
-      <div class="page-head"><span class="label">進階題 · 2</span><h2 class="title">從小排到大</h2></div>
+    <section class="slide" data-slide-id="p2" aria-labelledby="p2-t" hidden>
+      <div class="page-head"><span class="label">進階題 · 2</span><h2 id="p2-t" class="title">從小排到大</h2></div>
       <div class="order-q" data-order>
         <p class="q-stem">把下面四個鐘面時刻的指針夾角，從小到大拖曳排序。</p>
         <ol class="order-list">
@@ -2162,8 +2162,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       </div>
     </section>
 
-    <section class="slide" data-slide-id="p3" hidden>
-      <div class="page-head"><span class="label">進階題 · 3</span><h2 class="title">紙本任務</h2></div>
+    <section class="slide" data-slide-id="p3" aria-labelledby="p3-t" hidden>
+      <div class="page-head"><span class="label">進階題 · 3</span><h2 id="p3-t" class="title">紙本任務</h2></div>
       <div class="paper-note" data-reveal>
         <svg class="ico"><use href="#ico-pencil"></use></svg>
         <span>這一頁的任務請寫在紙本學習單上：<b>2b.差異化教材_進階題基礎穩固</b>。練習找「比較近的方向」計算 7～11 點鐘的指針夾角，並分辨旋轉角是否對應銳角、直角或鈍角。</span>
@@ -2171,8 +2171,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- ══ 挑戰題 ══ -->
-    <section class="slide" data-slide-id="c1" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 1</span><h2 class="title">直接乘會超過半圈，怎麼辦？</h2></div>
+    <section class="slide" data-slide-id="c1" aria-labelledby="c1-t" hidden>
+      <div class="page-head"><span class="label">挑戰題 · 1</span><h2 id="c1-t" class="title">直接乘會超過半圈，怎麼辦？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">時鐘走到 7 點整，時針和分針的夾角是幾度？</p>
         <div class="row" style="justify-content:center;margin-bottom:8px;">
@@ -2196,8 +2196,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       </div>
     </section>
 
-    <section class="slide" data-slide-id="c2" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 2</span><h2 class="title">動手做旋轉角動畫</h2></div>
+    <section class="slide" data-slide-id="c2" aria-labelledby="c2-t" hidden>
+      <div class="page-head"><span class="label">挑戰題 · 2</span><h2 id="c2-t" class="title">動手做旋轉角動畫</h2></div>
       <div class="task-card" data-reveal>
         <div class="mission">用手臂或紙板當指針，逐格示範 0°→90°→180°→270°→360° 的旋轉過程</div>
         <div class="facts">
@@ -2208,8 +2208,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       </div>
     </section>
 
-    <section class="slide" data-slide-id="c3" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 3</span><h2 class="title">時鐘指針角度偵探</h2></div>
+    <section class="slide" data-slide-id="c3" aria-labelledby="c3-t" hidden>
+      <div class="page-head"><span class="label">挑戰題 · 3</span><h2 id="c3-t" class="title">時鐘指針角度偵探</h2></div>
       <div class="task-card" data-reveal>
         <div class="mission">在家中找一個時鐘，選 3 個不同的整點時刻，畫下鐘面並算出指針夾角</div>
         <div class="facts">

@@ -2025,17 +2025,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第二單元 乘法 · 2-1</div>
-        <div class="headline" style="font-size:var(--t1);">乘以一、二位數</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">乘以一、二位數</div>
         <div class="sub">龍眼烘成桂圓，一箱一箱買，總共要付多少錢？</div>
       </div>
     </section>
 
     <!-- 2 複習銜接 -->
-    <section class="slide" data-slide-id="recap" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">三年級學過什麼？</h2></div>
+    <section class="slide" data-slide-id="recap" aria-labelledby="recap-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="recap-t" class="title">三年級學過什麼？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal>
           <div class="badge">1</div>
@@ -2062,8 +2062,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 四位數×一位數，千位不進位 -->
-    <section class="slide" data-slide-id="thousand-noborrow" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">四位數乘以一位數，怎麼記？</h2></div>
+    <section class="slide" data-slide-id="thousand-noborrow" aria-labelledby="thousand-noborrow-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="thousand-noborrow-t" class="title">四位數乘以一位數，怎麼記？</h2></div>
       <div class="figure-block">
         <div class="figure">
           <div style="font-family:'Courier New',monospace;font-size:44px;line-height:1.35;text-align:right;color:var(--ink);letter-spacing:3px;">
@@ -2080,8 +2080,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 四位數×一位數，千位進位 -->
-    <section class="slide" data-slide-id="thousand-borrow" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">先估再算，答案更有把握</h2></div>
+    <section class="slide" data-slide-id="thousand-borrow" aria-labelledby="thousand-borrow-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="thousand-borrow-t" class="title">先估再算，答案更有把握</h2></div>
       <div class="data-focus">
         <div class="figure-num" data-reveal><span class="num">23802</span><span class="unit">元</span></div>
         <div class="readout" data-reveal>
@@ -2092,8 +2092,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 迷思澄清：中間有0 -->
-    <section class="slide" data-slide-id="misconception-zero" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">被乘數中間有 0，可以跳過嗎？</h2></div>
+    <section class="slide" data-slide-id="misconception-zero" aria-labelledby="misconception-zero-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="misconception-zero-t" class="title">被乘數中間有 0，可以跳過嗎？</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">看到中間是 0，覺得不用乘，直接把旁邊的數字搬過來記。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2106,17 +2106,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 過場 -->
-    <section class="slide" data-slide-id="divider-two-digit" hidden>
+    <section class="slide" data-slide-id="divider-two-digit" aria-labelledby="divider-two-digit-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">乘數變多位了</div>
-        <div class="headline">如果乘數不是一位數，而是兩位數呢？</div>
+        <div id="divider-two-digit-t" class="headline">如果乘數不是一位數，而是兩位數呢？</div>
         <div class="sub">先從整十倍開始，找出規律</div>
       </div>
     </section>
 
     <!-- 7 一位數×二位數，整十倍規律 -->
-    <section class="slide" data-slide-id="tens-rule" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">乘以整十倍，個位的 0 可以省略</h2></div>
+    <section class="slide" data-slide-id="tens-rule" aria-labelledby="tens-rule-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="tens-rule-t" class="title">乘以整十倍，個位的 0 可以省略</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">8 × 30</div>
@@ -2133,8 +2133,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 二位數×二位數直式 -->
-    <section class="slide" data-slide-id="two-by-two" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">兩位數乘兩位數，分層併式</h2></div>
+    <section class="slide" data-slide-id="two-by-two" aria-labelledby="two-by-two-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="two-by-two-t" class="title">兩位數乘兩位數，分層併式</h2></div>
       <div class="figure-block">
         <div class="figure">
           <div style="font-family:'Courier New',monospace;font-size:40px;line-height:1.3;text-align:right;color:var(--ink);letter-spacing:3px;">
@@ -2153,8 +2153,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 三位數×二位數直式 -->
-    <section class="slide" data-slide-id="three-by-two" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">數字變大了，先估再算更重要</h2></div>
+    <section class="slide" data-slide-id="three-by-two" aria-labelledby="three-by-two-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="three-by-two-t" class="title">數字變大了，先估再算更重要</h2></div>
       <div class="data-focus">
         <div class="figure-num" data-reveal><span class="num">6195</span><span class="unit">公克</span></div>
         <div class="readout" data-reveal>
@@ -2165,8 +2165,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 10 迷思澄清：估算與精算脫節 -->
-    <section class="slide" data-slide-id="misconception-estimate" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">算完直式，別忘了回頭檢查</h2></div>
+    <section class="slide" data-slide-id="misconception-estimate" aria-labelledby="misconception-estimate-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="misconception-estimate-t" class="title">算完直式，別忘了回頭檢查</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">直式算完就直接寫答案，從來沒有回頭比對估計的範圍。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2175,8 +2175,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 11 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">今天學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 id="summary-t" class="title">今天學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個新技能</div>
         <div class="item is-done" data-reveal>四位數×一位數：分位相乘，注意進位與中間的 0</div>

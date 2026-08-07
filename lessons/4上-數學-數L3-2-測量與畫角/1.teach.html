@@ -2025,17 +2025,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第三單元 角度 · 3-2</div>
-        <div class="headline" style="font-size:var(--t1);">測量與畫角</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">測量與畫角</div>
         <div class="sub">用量角器把角變成一個精確的數字，也能反過來畫出指定的角</div>
       </div>
     </section>
 
     <!-- 2 複習銜接 -->
-    <section class="slide" data-slide-id="recap" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">上一節學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="recap" aria-labelledby="recap-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="recap-t" class="title">上一節學會了什麼？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal>
           <div class="badge">1</div>
@@ -2062,8 +2062,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 量角器實測示範 30° -->
-    <section class="slide" data-slide-id="measure30" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">實際量一個角：三角板的角是幾度？</h2></div>
+    <section class="slide" data-slide-id="measure30" aria-labelledby="measure30-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="measure30-t" class="title">實際量一個角：三角板的角是幾度？</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 400 210" role="img" aria-label="量角器示意圖"><path d="M 45 195 A 155 155 0 0 1 355 195" fill="none" stroke="var(--ink)" stroke-width="4"></path>
@@ -2081,8 +2081,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 迷思澄清：內外圈別看錯 -->
-    <section class="slide" data-slide-id="misconception" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">同一個角，兩人量出不同答案？</h2></div>
+    <section class="slide" data-slide-id="misconception" aria-labelledby="misconception-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="misconception-t" class="title">同一個角，兩人量出不同答案？</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 皮皮看錯圈</div><div class="text">角的一邊對齊<b>內圈 0</b>，皮皮卻看了<b>外圈</b>的數字，量出錯誤的度數。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2095,8 +2095,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 邊長不夠展長 107° -->
-    <section class="slide" data-slide-id="extend" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">角的邊太短，量不到刻度怎麼辦？</h2></div>
+    <section class="slide" data-slide-id="extend" aria-labelledby="extend-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="extend-t" class="title">角的邊太短，量不到刻度怎麼辦？</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 400 210" role="img" aria-label="量角器示意圖"><path d="M 45 195 A 155 155 0 0 1 355 195" fill="none" stroke="var(--ink)" stroke-width="4"></path>
@@ -2114,8 +2114,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 直角銳角鈍角分類 -->
-    <section class="slide" data-slide-id="classify" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">角的三種家族</h2></div>
+    <section class="slide" data-slide-id="classify" aria-labelledby="classify-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="classify-t" class="title">角的三種家族</h2></div>
       <div class="tri-col">
         <div class="card" data-reveal>
           <div class="fig">
@@ -2146,8 +2146,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 畫角步驟 -->
-    <section class="slide" data-slide-id="drawsteps" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">怎麼畫出指定度數的角？</h2></div>
+    <section class="slide" data-slide-id="drawsteps" aria-labelledby="drawsteps-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="drawsteps-t" class="title">怎麼畫出指定度數的角？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal>
           <div class="badge">1</div>
@@ -2176,8 +2176,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 畫角結果 120° -->
-    <section class="slide" data-slide-id="draw120" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">畫一個 120 度的角</h2></div>
+    <section class="slide" data-slide-id="draw120" aria-labelledby="draw120-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="draw120-t" class="title">畫一個 120 度的角</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 400 210" role="img" aria-label="量角器示意圖"><path d="M 45 195 A 155 155 0 0 1 355 195" fill="none" stroke="var(--ink)" stroke-width="4"></path>
@@ -2195,8 +2195,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 class="title">今天學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">3-2 測量與畫角</span><h2 id="summary-t" class="title">今天學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個新技能</div>
         <div class="item is-done" data-reveal>用量角器實測任意角，正確報讀角度</div>

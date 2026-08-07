@@ -1996,17 +1996,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">國語4上 國L1 美麗島 · 第一節 複習</div>
-        <div class="headline" style="font-size:var(--t1);">考前總複習</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">考前總複習</div>
         <div class="sub">用新的例子再練一次，點下面每一關看解說</div>
       </div>
     </section>
 
     <!-- 2 關卡1：部首猜義（新字） -->
-    <section class="slide" data-slide-id="station-1" hidden>
-      <div class="page-head"><span class="label">關卡 1 · 部首猜義</span><h2 class="title">看部首，猜猜這些字和什麼有關</h2></div>
+    <section class="slide" data-slide-id="station-1" aria-labelledby="station-1-t" hidden>
+      <div class="page-head"><span class="label">關卡 1 · 部首猜義</span><h2 id="station-1-t" class="title">看部首，猜猜這些字和什麼有關</h2></div>
       <div class="vocab-grid">
         <div class="vocab-card" data-reveal><div class="word">晴<span class="zhuyin">ㄑㄧㄥˊ</span></div><div class="mean">日部 → 和太陽、天氣有關</div><div class="example">晴天、晴朗</div></div>
         <div class="vocab-card" data-reveal><div class="word">照<span class="zhuyin">ㄓㄠˋ</span></div><div class="mean">灬（火）部 → 和光、熱有關</div><div class="example">照亮、日照</div></div>
@@ -2020,8 +2020,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 關卡2：形近字再複習 -->
-    <section class="slide" data-slide-id="station-2" hidden>
-      <div class="page-head"><span class="label">關卡 2 · 形近字</span><h2 class="title">「甜」和「舌」，換個例子再確認一次</h2></div>
+    <section class="slide" data-slide-id="station-2" aria-labelledby="station-2-t" hidden>
+      <div class="page-head"><span class="label">關卡 2 · 形近字</span><h2 id="station-2-t" class="title">「甜」和「舌」，換個例子再確認一次</h2></div>
       <div class="compare-pair">
         <div class="side is-focus" data-reveal>
           <div class="head">他笑起來很甜</div>
@@ -2040,8 +2040,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 關卡3：小測驗 -->
-    <section class="slide" data-slide-id="station-3" hidden>
-      <div class="page-head"><span class="label">關卡 3 · 小測驗</span><h2 class="title">「照」字的部首和下列哪個字相同？</h2></div>
+    <section class="slide" data-slide-id="station-3" aria-labelledby="station-3-t" hidden>
+      <div class="page-head"><span class="label">關卡 3 · 小測驗</span><h2 id="station-3-t" class="title">「照」字的部首和下列哪個字相同？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <div class="q-options">
           <button class="q-opt" data-correct>熱（灬／火部）</button>
@@ -2058,8 +2058,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 關卡4：大意結構回顧 -->
-    <section class="slide" data-slide-id="station-4" hidden>
-      <div class="page-head"><span class="label">關卡 4 · 大意結構</span><h2 class="title">再確認一次：一首詩，三段話</h2></div>
+    <section class="slide" data-slide-id="station-4" aria-labelledby="station-4-t" hidden>
+      <div class="page-head"><span class="label">關卡 4 · 大意結構</span><h2 id="station-4-t" class="title">再確認一次：一首詩，三段話</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">一</div><div class="body">地理位置與氣候</div></div>
         <div class="concept-card" data-reveal><div class="head">二</div><div class="body">生活情形與物產</div></div>
@@ -2068,8 +2068,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 總結 -->
-    <section class="slide" data-slide-id="close" hidden>
-      <div class="page-head"><span class="label">複習 · 收尾</span><h2 class="title">準備好進入評量了嗎？</h2></div>
+    <section class="slide" data-slide-id="close" aria-labelledby="close-t" hidden>
+      <div class="page-head"><span class="label">複習 · 收尾</span><h2 id="close-t" class="title">準備好進入評量了嗎？</h2></div>
       <div class="action-list">
         <div class="head">複習重點</div>
         <div class="item is-done" data-reveal>部首是猜字義的線索</div>

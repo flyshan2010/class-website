@@ -1995,17 +1995,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">國語4上 國L1 美麗島 · 第三節 複習</div>
-        <div class="headline" style="font-size:var(--t1);">考前總複習</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">考前總複習</div>
         <div class="sub">用新的例子再練一次，點下面每一關看解說</div>
       </div>
     </section>
 
     <!-- 2 關卡1：明喻隱喻再辨析 -->
-    <section class="slide" data-slide-id="station-1" hidden>
-      <div class="page-head"><span class="label">關卡 1 · 明喻與隱喻</span><h2 class="title">換個例子：「時間是一把無情的刀」是明喻還是隱喻？</h2></div>
+    <section class="slide" data-slide-id="station-1" aria-labelledby="station-1-t" hidden>
+      <div class="page-head"><span class="label">關卡 1 · 明喻與隱喻</span><h2 id="station-1-t" class="title">換個例子：「時間是一把無情的刀」是明喻還是隱喻？</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">如果寫成……</div>
@@ -2022,8 +2022,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 關卡2：轉化再練習 -->
-    <section class="slide" data-slide-id="station-2" hidden>
-      <div class="page-head"><span class="label">關卡 2 · 轉化</span><h2 class="title">「太陽公公下班了」用了什麼修辭？</h2></div>
+    <section class="slide" data-slide-id="station-2" aria-labelledby="station-2-t" hidden>
+      <div class="page-head"><span class="label">關卡 2 · 轉化</span><h2 id="station-2-t" class="title">「太陽公公下班了」用了什麼修辭？</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">本來是</div><div class="body">太陽下山</div></div>
         <div class="concept-card" style="border-left-color:var(--accent);" data-reveal><div class="head">寫成</div><div class="body"><strong>太陽公公下班了（轉化：把太陽當人來寫）</strong></div></div>
@@ -2031,8 +2031,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 關卡3：小測驗 -->
-    <section class="slide" data-slide-id="station-3" hidden>
-      <div class="page-head"><span class="label">關卡 3 · 小測驗</span><h2 class="title">「風兒溫柔的、溫柔的吹過草原」，重複「溫柔的」有什麼效果？</h2></div>
+    <section class="slide" data-slide-id="station-3" aria-labelledby="station-3-t" hidden>
+      <div class="page-head"><span class="label">關卡 3 · 小測驗</span><h2 id="station-3-t" class="title">「風兒溫柔的、溫柔的吹過草原」，重複「溫柔的」有什麼效果？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <div class="q-options">
           <button class="q-opt" data-correct>讓感覺更強烈，也有節奏感</button>
@@ -2049,8 +2049,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 關卡4：動態描寫回顧 -->
-    <section class="slide" data-slide-id="station-4" hidden>
-      <div class="page-head"><span class="label">關卡 4 · 動態描寫</span><h2 class="title">再練一次：把靜的畫面加上動作</h2></div>
+    <section class="slide" data-slide-id="station-4" aria-labelledby="station-4-t" hidden>
+      <div class="page-head"><span class="label">關卡 4 · 動態描寫</span><h2 id="station-4-t" class="title">再練一次：把靜的畫面加上動作</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">靜態</div><div class="body">雲</div></div>
         <div class="concept-card" style="border-left-color:var(--accent);" data-reveal><div class="head">動態</div><div class="body"><strong>悠悠飄過天空的雲</strong></div></div>
@@ -2058,8 +2058,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 總結 -->
-    <section class="slide" data-slide-id="close" hidden>
-      <div class="page-head"><span class="label">複習 · 收尾</span><h2 class="title">準備好進入評量了嗎？</h2></div>
+    <section class="slide" data-slide-id="close" aria-labelledby="close-t" hidden>
+      <div class="page-head"><span class="label">複習 · 收尾</span><h2 id="close-t" class="title">準備好進入評量了嗎？</h2></div>
       <div class="action-list">
         <div class="head">複習重點</div>
         <div class="item is-done" data-reveal>明喻用「像」，隱喻用「是」，語氣強度不同</div>

@@ -2020,17 +2020,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第三單元 角度 · 3-4</div>
-        <div class="headline" style="font-size:var(--t1);">角度的計算</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">角度的計算</div>
         <div class="sub">把兩個角合成一個新角，或把一個角拆成兩個角</div>
       </div>
     </section>
 
     <!-- 2 複習銜接 -->
-    <section class="slide" data-slide-id="recap" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">前三節學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="recap" aria-labelledby="recap-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="recap-t" class="title">前三節學會了什麼？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal>
           <div class="badge">1</div>
@@ -2057,8 +2057,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 角的合成 -->
-    <section class="slide" data-slide-id="compose" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">兩個角可以「合成」一個新角</h2></div>
+    <section class="slide" data-slide-id="compose" aria-labelledby="compose-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="compose-t" class="title">兩個角可以「合成」一個新角</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 360 220" role="img" aria-label="角A80度和角B55度合成一個新角"><line x1="160" y1="195" x2="300.00" y2="195.00" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
@@ -2078,8 +2078,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 角的合成算式 -->
-    <section class="slide" data-slide-id="composecalc" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">合成用加法記錄</h2></div>
+    <section class="slide" data-slide-id="composecalc" aria-labelledby="composecalc-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="composecalc-t" class="title">合成用加法記錄</h2></div>
       <div class="data-focus">
         <div class="figure-num" data-reveal><span class="num">135</span><span class="unit">度</span></div>
         <div class="readout" data-reveal>
@@ -2090,8 +2090,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 角的分解 -->
-    <section class="slide" data-slide-id="decompose" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">已知一部分，可以「分解」求另一部分</h2></div>
+    <section class="slide" data-slide-id="decompose" aria-labelledby="decompose-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="decompose-t" class="title">已知一部分，可以「分解」求另一部分</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 360 220" role="img" aria-label="平角180度分解成角C72度和角D"><line x1="160" y1="195" x2="300.00" y2="195.00" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
@@ -2111,8 +2111,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 迷思澄清：加還是減 -->
-    <section class="slide" data-slide-id="misconception" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">什麼時候該加？什麼時候該減？</h2></div>
+    <section class="slide" data-slide-id="misconception" aria-labelledby="misconception-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="misconception-t" class="title">什麼時候該加？什麼時候該減？</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">看到題目有兩個角度數字，不管題意就直接兩個數字相加。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2125,8 +2125,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 旋轉角的合成（同向） -->
-    <section class="slide" data-slide-id="rotatecompose" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">旋轉角也能合成：方向相同就相加</h2></div>
+    <section class="slide" data-slide-id="rotatecompose" aria-labelledby="rotatecompose-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="rotatecompose-t" class="title">旋轉角也能合成：方向相同就相加</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 200 200" role="img" aria-label="順時針旋轉70度後再順時針旋轉80度"><line x1="100" y1="100" x2="188.00" y2="100.00" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
@@ -2148,8 +2148,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 旋轉角的分解／比較（反向） -->
-    <section class="slide" data-slide-id="rotatedecompose" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">方向不同呢？第二次要用「減」的</h2></div>
+    <section class="slide" data-slide-id="rotatedecompose" aria-labelledby="rotatedecompose-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="rotatedecompose-t" class="title">方向不同呢？第二次要用「減」的</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 200 200" role="img" aria-label="順時針旋轉110度後再逆時針旋轉45度"><line x1="100" y1="100" x2="188.00" y2="100.00" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
@@ -2171,8 +2171,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 class="title">今天學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">3-4 角度的計算</span><h2 id="summary-t" class="title">今天學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個新概念</div>
         <div class="item is-done" data-reveal>角的合成：兩個角拼起來，用加法算式記錄</div>
