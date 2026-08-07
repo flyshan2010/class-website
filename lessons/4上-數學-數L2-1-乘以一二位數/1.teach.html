@@ -2016,6 +2016,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
 }
 .paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2035,25 +2037,25 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="recap" hidden>
       <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">三年級學過什麼？</h2></div>
       <div class="flow-steps">
-        <div class="step">
+        <div class="step" data-reveal>
           <div class="badge">1</div>
           <div class="head">三位數×一位數</div>
           <div class="body">直式計算、逐位相乘</div>
         </div>
-        <div class="arrow">→</div>
-        <div class="step">
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal>
           <div class="badge">2</div>
           <div class="head">進位處理</div>
           <div class="body">個位算完進到十位</div>
         </div>
-        <div class="arrow">→</div>
-        <div class="step">
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal>
           <div class="badge">3</div>
           <div class="head">位值概念</div>
           <div class="body">幾個十、幾個百、幾個千</div>
         </div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
         <span class="text">今天要學：位數變多了！四位數乘一位數，還有乘數變成兩位數的問題</span>
       </div>
@@ -2070,7 +2072,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
             <div style="color:var(--accent);font-weight:700;">6256</div>
           </div>
         </div>
-        <div class="caption">
+        <div class="caption" data-reveal>
           <div class="head">一箱桂圓 3128 元，買 2 箱要多少錢？</div>
           <div class="body">分位相乘：8×2=16 記 6 進 1；2×2=4 加進位是 5；1×2=2；3×2=6。合起來是 6256。</div>
         </div>
@@ -2081,8 +2083,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="thousand-borrow" hidden>
       <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">先估再算，答案更有把握</h2></div>
       <div class="data-focus">
-        <div class="figure-num"><span class="num">23802</span><span class="unit">元</span></div>
-        <div class="readout">
+        <div class="figure-num" data-reveal><span class="num">23802</span><span class="unit">元</span></div>
+        <div class="readout" data-reveal>
           <div class="claim">3967 × 6 ＝ 23802</div>
           <div class="note">先估：3967 接近 4000，4000 的 6 倍是 24000，答案應該比 24000 少一些——算出來的 23802 和估計很接近，合理。</div>
         </div>
@@ -2093,11 +2095,11 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="misconception-zero" hidden>
       <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">被乘數中間有 0，可以跳過嗎？</h2></div>
       <div class="misconception">
-        <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">看到中間是 0，覺得不用乘，直接把旁邊的數字搬過來記。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">0 乘以任何數還是 0，中間的 0 一樣要乘、要記錄：1009×7＝7063，每一位都要對齊，不能漏記。</div></div>
+        <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">看到中間是 0，覺得不用乘，直接把旁邊的數字搬過來記。</div></div>
+        <div class="becomes" data-reveal>→</div>
+        <div class="right-side" data-reveal><div class="mark">✓ 正確理解</div><div class="text">0 乘以任何數還是 0，中間的 0 一樣要乘、要記錄：1009×7＝7063，每一位都要對齊，不能漏記。</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
         <span class="text">直式對位是關鍵：漏記一位，答案的位數就會整個錯掉</span>
       </div>
@@ -2116,13 +2118,13 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="tens-rule" hidden>
       <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">乘以整十倍，個位的 0 可以省略</h2></div>
       <div class="compare-pair">
-        <div class="side">
+        <div class="side" data-reveal>
           <div class="head">8 × 30</div>
           <div class="item">8 的 3 倍是 24，再乘 10 倍</div>
           <div class="item">8 × 30 ＝ 240</div>
         </div>
         <div class="vs">vs</div>
-        <div class="side is-focus">
+        <div class="side is-focus" data-reveal>
           <div class="head">25 × 40</div>
           <div class="item">25 的 4 倍是 100，再乘 10 倍</div>
           <div class="item">25 × 40 ＝ 1000</div>
@@ -2143,7 +2145,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
             <div style="color:var(--accent);font-weight:700;">1075</div>
           </div>
         </div>
-        <div class="caption">
+        <div class="caption" data-reveal>
           <div class="head">1 塊紅棗黑糖重 25 公克，43 塊共重幾公克？</div>
           <div class="body">先算 25×3＝75，再算 25×40＝1000（25 的 4 個十倍），兩層合起來是 1075。乘以幾十倍時，個位的 0 可以省略不寫。</div>
         </div>
@@ -2154,8 +2156,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="three-by-two" hidden>
       <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">數字變大了，先估再算更重要</h2></div>
       <div class="data-focus">
-        <div class="figure-num"><span class="num">6195</span><span class="unit">公克</span></div>
-        <div class="readout">
+        <div class="figure-num" data-reveal><span class="num">6195</span><span class="unit">公克</span></div>
+        <div class="readout" data-reveal>
           <div class="claim">295 × 21 ＝ 6195</div>
           <div class="note">先估：295 接近 300、21 接近 20，300×20＝6000，答案應該接近 6000——算出來的 6195 很接近，合理。</div>
         </div>
@@ -2166,9 +2168,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="misconception-estimate" hidden>
       <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">算完直式，別忘了回頭檢查</h2></div>
       <div class="misconception">
-        <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">直式算完就直接寫答案，從來沒有回頭比對估計的範圍。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">先估答案的大概範圍，直式算完後一定要回頭比對——如果差太多，代表哪裡算錯了，要重新檢查。</div></div>
+        <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">直式算完就直接寫答案，從來沒有回頭比對估計的範圍。</div></div>
+        <div class="becomes" data-reveal>→</div>
+        <div class="right-side" data-reveal><div class="mark">✓ 正確理解</div><div class="text">先估答案的大概範圍，直式算完後一定要回頭比對——如果差太多，代表哪裡算錯了，要重新檢查。</div></div>
       </div>
     </section>
 
@@ -2177,21 +2179,22 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       <div class="page-head"><span class="label">2-1 乘以一、二位數</span><h2 class="title">今天學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個新技能</div>
-        <div class="item is-done">四位數×一位數：分位相乘，注意進位與中間的 0</div>
-        <div class="item is-done">乘以二位數：整十倍用規律，兩位數以上用分層併式</div>
-        <div class="item is-done">三位數×二位數：先估算範圍，算完再回頭檢查</div>
+        <div class="item is-done" data-reveal>四位數×一位數：分位相乘，注意進位與中間的 0</div>
+        <div class="item is-done" data-reveal>乘以二位數：整十倍用規律，兩位數以上用分層併式</div>
+        <div class="item is-done" data-reveal>三位數×二位數：先估算範圍，算完再回頭檢查</div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">接下來分組練習：基礎題先練四位數×一位數，挑戰題要處理三位數×二位數的應用題</span>
       </div>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>11</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>11</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
       <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -2210,7 +2213,61 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -2221,6 +2278,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -2233,14 +2293,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

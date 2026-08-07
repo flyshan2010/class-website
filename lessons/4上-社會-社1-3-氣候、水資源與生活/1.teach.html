@@ -72,6 +72,16 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
 .hud button:hover{border-color:var(--accent)}
 .progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
 .progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .28s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1);
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+@media print { [data-reveal] { opacity: 1 !important; transform: none !important; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -89,7 +99,7 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
       <p class="eyebrow">家鄉的氣候</p>
       <h2>氣候：一個地區長時間的天氣平均狀況</h2>
       <div class="body-grid">
-        <div class="card">
+        <div class="card" data-reveal>
           <h3>怎麼讀氣溫圖／雨量圖？</h3>
           <ol>
             <li>先看<b>標題</b>——是氣溫圖還是雨量圖？</li>
@@ -97,7 +107,7 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
             <li>縱軸代表<b>氣溫（℃）或雨量（毫米）</b></li>
           </ol>
         </div>
-        <div class="chart-box">
+        <div class="chart-box" data-reveal>
           <p style="margin:0;font-size:19px;color:var(--muted)">宜蘭 vs 屏東恆春 · 1月與7月氣溫（℃）</p>
           <div class="bar-row">
             <div class="bar" style="height:55%;--sect:var(--l3)"><span>16.6</span></div>
@@ -108,37 +118,37 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
           <div class="bar-label"><span>宜蘭 1月</span><span>宜蘭 7月</span><span>恆春 1月</span><span>恆春 7月</span></div>
         </div>
       </div>
-      <div class="callout">宜蘭<b>夏熱冬冷</b>，溫差大；屏東恆春緯度較低，<b>四季氣溫都高</b>，溫差小。</div>
+      <div class="callout" data-reveal>宜蘭<b>夏熱冬冷</b>，溫差大；屏東恆春緯度較低，<b>四季氣溫都高</b>，溫差小。</div>
     </section>
 
     <section class="slide sec-2" data-slide-id="climatelife" hidden>
       <p class="eyebrow">氣候與居民的生活</p>
       <h2>居民依氣候特色，發展出不同的生活方式</h2>
       <div class="compare-grid" style="grid-template-columns:repeat(3,1fr)">
-        <div class="compare-cell"><div class="emoji">🏠</div><h4>選擇建材、蓋房子</h4><p>依氣候特色興建不同形式的建築</p></div>
-        <div class="compare-cell"><div class="emoji">🌾</div><h4>種植適合的作物</h4><p>依氣溫、雨量條件種植合適的農作物</p></div>
-        <div class="compare-cell"><div class="emoji">🏄</div><h4>多樣化休閒活動</h4><p>依氣候發展不同的休閒與觀光活動</p></div>
+        <div class="compare-cell" data-reveal><div class="emoji">🏠</div><h4>選擇建材、蓋房子</h4><p>依氣候特色興建不同形式的建築</p></div>
+        <div class="compare-cell" data-reveal><div class="emoji">🌾</div><h4>種植適合的作物</h4><p>依氣溫、雨量條件種植合適的農作物</p></div>
+        <div class="compare-cell" data-reveal><div class="emoji">🏄</div><h4>多樣化休閒活動</h4><p>依氣候發展不同的休閒與觀光活動</p></div>
       </div>
-      <div class="callout">案例：基隆<b>四季有雨</b>（受東北季風影響）；高雄<b>夏季多雨、冬季少雨</b>（受西南季風與梅雨影響），10月後進入乾季。</div>
+      <div class="callout" data-reveal>案例：基隆<b>四季有雨</b>（受東北季風影響）；高雄<b>夏季多雨、冬季少雨</b>（受西南季風與梅雨影響），10月後進入乾季。</div>
     </section>
 
     <section class="slide sec-3" data-slide-id="water" hidden>
       <p class="eyebrow">家鄉的水資源</p>
       <h2>家鄉常見的水資源</h2>
       <div class="compare-grid">
-        <div class="compare-cell"><div class="emoji">🏞️</div><h4>河川</h4><p>水量隨季節降雨量而不同</p></div>
-        <div class="compare-cell"><div class="emoji">🌊</div><h4>湖泊</h4><p>蓄積雨水，也可調節水量</p></div>
-        <div class="compare-cell"><div class="emoji">💧</div><h4>地下水</h4><p>雨水滲入地下形成的水資源</p></div>
-        <div class="compare-cell"><div class="emoji">🌅</div><h4>海洋</h4><p>提供漁業與休閒活動的資源</p></div>
+        <div class="compare-cell" data-reveal><div class="emoji">🏞️</div><h4>河川</h4><p>水量隨季節降雨量而不同</p></div>
+        <div class="compare-cell" data-reveal><div class="emoji">🌊</div><h4>湖泊</h4><p>蓄積雨水，也可調節水量</p></div>
+        <div class="compare-cell" data-reveal><div class="emoji">💧</div><h4>地下水</h4><p>雨水滲入地下形成的水資源</p></div>
+        <div class="compare-cell" data-reveal><div class="emoji">🌅</div><h4>海洋</h4><p>提供漁業與休閒活動的資源</p></div>
       </div>
-      <div class="callout">臺灣雖然年平均雨量是世界的 2.5 倍，但因地形陡峭、河川短促，雨水多直接流入大海，其實是<b>缺水地區</b>之一。</div>
+      <div class="callout" data-reveal>臺灣雖然年平均雨量是世界的 2.5 倍，但因地形陡峭、河川短促，雨水多直接流入大海，其實是<b>缺水地區</b>之一。</div>
     </section>
 
     <section class="slide sec-4" data-slide-id="waterlife" hidden>
       <p class="eyebrow">水資源與居民的生活</p>
       <h2>水資源的利用與保護</h2>
       <div class="body-grid">
-        <div class="card">
+        <div class="card" data-reveal>
           <h3>怎麼利用水資源？</h3>
           <ul>
             <li>河川中、上游<b>興建水庫</b>——灌溉、水力發電</li>
@@ -146,7 +156,7 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
             <li>河川、湖泊、海洋——<b>進行休閒活動</b></li>
           </ul>
         </div>
-        <div class="card">
+        <div class="card" data-reveal>
           <h3>怎麼保護水資源？</h3>
           <ul>
             <li>檢查水管、器具，<b>減少漏水</b></li>
@@ -155,26 +165,27 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
           </ul>
         </div>
       </div>
-      <div class="callout"><b>保護家鄉水資源，是我們每個人的責任。</b></div>
+      <div class="callout" data-reveal><b>保護家鄉水資源，是我們每個人的責任。</b></div>
     </section>
 
     <section class="slide sec-4 layout-title" data-slide-id="wrap" hidden>
       <p class="eyebrow">課程總結</p>
       <h2>這一課，我們學會了</h2>
       <div class="wrap-list" style="text-align:left;max-width:1150px">
-        <div class="wrap-item"><span class="dot">1</span><span><b>氣候</b>看氣溫圖／雨量圖，各地夏熱冬冷或四季有雨不同</span></div>
-        <div class="wrap-item"><span class="dot">2</span><span>氣候影響<b>建材、作物、休閒活動</b>的選擇</span></div>
-        <div class="wrap-item"><span class="dot">3</span><span><b>水資源</b>有河川、湖泊、地下水、海洋四種</span></div>
-        <div class="wrap-item"><span class="dot">4</span><span>保護水資源是<b>大家的責任</b></span></div>
+        <div class="wrap-item" data-reveal><span class="dot">1</span><span><b>氣候</b>看氣溫圖／雨量圖，各地夏熱冬冷或四季有雨不同</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">2</span><span>氣候影響<b>建材、作物、休閒活動</b>的選擇</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">3</span><span><b>水資源</b>有河川、湖泊、地下水、海洋四種</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">4</span><span>保護水資源是<b>大家的責任</b></span></div>
       </div>
       <p class="lead" style="margin-top:26px">接下來，一起進行分組練習與小測驗，檢視大家學會了多少！</p>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button data-action="previous">← 上一頁</button>
-      <button data-action="next">下一頁 →</button>
+      <button data-action="previous">← 上一步</button>
+      <button data-action="next">下一步 →</button>
+      <button data-action="reveal-all">整頁攤開</button>
       <button data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -194,7 +205,61 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -205,6 +270,9 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -217,14 +285,19 @@ h2{margin:0 0 14px;font-size:50px;line-height:1.25;color:var(--sect,var(--accent
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

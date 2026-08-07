@@ -2019,6 +2019,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
 }
 .paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2038,10 +2040,10 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="timeline" hidden>
       <div class="page-head"><span class="label">國L2-2 內容理解</span><h2 class="title">四封信，往返了一個月</h2></div>
       <div class="timeline">
-        <div class="node"><div class="when">8月2日</div><div class="what">柔柔→安安</div><div class="note">回憶臺南泡溫泉、水火同源趣事</div></div>
-        <div class="node"><div class="when">8月9日</div><div class="what">安安→柔柔</div><div class="note">分享蘇澳冷泉，邀請來宜蘭玩</div></div>
-        <div class="node"><div class="when">8月16日</div><div class="what">柔柔→安安</div><div class="note">分享左鎮化石園區，邀請一起挖化石</div></div>
-        <div class="node"><div class="when">8月27日</div><div class="what">安安→柔柔</div><div class="note">分享和外公打陀螺，邀請參觀傳統藝術中心</div></div>
+        <div class="node" data-reveal><div class="when">8月2日</div><div class="what">柔柔→安安</div><div class="note">回憶臺南泡溫泉、水火同源趣事</div></div>
+        <div class="node" data-reveal><div class="when">8月9日</div><div class="what">安安→柔柔</div><div class="note">分享蘇澳冷泉，邀請來宜蘭玩</div></div>
+        <div class="node" data-reveal><div class="when">8月16日</div><div class="what">柔柔→安安</div><div class="note">分享左鎮化石園區，邀請一起挖化石</div></div>
+        <div class="node" data-reveal><div class="when">8月27日</div><div class="what">安安→柔柔</div><div class="note">分享和外公打陀螺，邀請參觀傳統藝術中心</div></div>
       </div>
     </section>
 
@@ -2049,10 +2051,10 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="who-where" hidden>
       <div class="page-head"><span class="label">國L2-2 · 提取訊息</span><h2 class="title">誰寫給誰？住在哪裡？</h2></div>
       <div class="concept-grid">
-        <div class="concept-card"><div class="head">表姐柔柔</div><div class="body">住在臺南，熟悉水火同源、左鎮化石園區</div></div>
-        <div class="concept-card"><div class="head">表妹安安</div><div class="body">住在宜蘭，熟悉蘇澳冷泉、傳統藝術中心</div></div>
+        <div class="concept-card" data-reveal><div class="head">表姐柔柔</div><div class="body">住在臺南，熟悉水火同源、左鎮化石園區</div></div>
+        <div class="concept-card" data-reveal><div class="head">表妹安安</div><div class="body">住在宜蘭，熟悉蘇澳冷泉、傳統藝術中心</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-eye"></use></svg></span>
         <span class="text">提取訊息：直接從課文找答案，不用推理</span>
       </div>
@@ -2082,7 +2084,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       <div class="page-head"><span class="label">國L2-2 · 推論訊息</span><h2 class="title">水火同源，為什麼不會熄滅？</h2></div>
       <div class="figure-block">
         <div class="figure"><svg class="ico" style="font-size:160px"><use href="#ico-flask"></use></svg></div>
-        <div class="caption">
+        <div class="caption" data-reveal>
           <div class="head">天然氣持續從地底冒出</div>
           <div class="body">西元1964年白河地震後，水火同源因天然氣分散到多個孔隙而轉弱，但天然氣仍持續從水裡冒出、點燃，所以看起來「水中有火」。</div>
         </div>
@@ -2093,8 +2095,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="infer-soda" hidden>
       <div class="page-head"><span class="label">國L2-2 · 推論訊息</span><h2 class="title">蘇澳冷泉，為什麼叫「汽水冷泉」？</h2></div>
       <div class="data-focus">
-        <div class="figure-num"><span class="num">22℃</span><span class="unit">左右的天然冷泉</span></div>
-        <div class="readout">
+        <div class="figure-num" data-reveal><span class="num">22℃</span><span class="unit">左右的天然冷泉</span></div>
+        <div class="readout" data-reveal>
           <div class="claim">腳一伸進水裡，氣泡就快速布滿全身</div>
           <div class="note">冷泉水中含碳酸氣體，冒出的氣泡彷彿泡在汽水裡，所以被稱為「汽水冷泉」。</div>
         </div>
@@ -2105,9 +2107,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="misconception" hidden>
       <div class="page-head"><span class="label">國L2-2 · 迷思澄清</span><h2 class="title">「水火同源」是水在燃燒嗎？</h2></div>
       <div class="misconception">
-        <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">以為「水火同源」是水本身變成了火，兩者混在一起燃燒。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">其實是天然氣從水裡冒出後被點燃，水和火同時出現在同一個地方，並不是水真的在燃燒。</div></div>
+        <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">以為「水火同源」是水本身變成了火，兩者混在一起燃燒。</div></div>
+        <div class="becomes" data-reveal>→</div>
+        <div class="right-side" data-reveal><div class="mark">✓ 正確理解</div><div class="text">其實是天然氣從水裡冒出後被點燃，水和火同時出現在同一個地方，並不是水真的在燃燒。</div></div>
       </div>
     </section>
 
@@ -2115,13 +2117,13 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="compare" hidden>
       <div class="page-head"><span class="label">國L2-2 · 比較評估</span><h2 class="title">兩人的家鄉景點，哪裡一樣？哪裡不同？</h2></div>
       <div class="compare-pair">
-        <div class="side">
+        <div class="side" data-reveal>
           <div class="head">相同處</div>
           <div class="item">都有獨特的自然景觀</div>
           <div class="item">都有具地方特色的展館</div>
         </div>
         <div class="vs">vs</div>
-        <div class="side is-focus">
+        <div class="side is-focus" data-reveal>
           <div class="head">不同處</div>
           <div class="item">宜蘭蘇澳冷泉是「冷」的天然碳酸泉</div>
           <div class="item">臺南水火同源是天然氣景觀，不是泉水</div>
@@ -2133,10 +2135,10 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="synthesis" hidden>
       <div class="page-head"><span class="label">國L2-2 · 詮釋整合</span><h2 class="title">兩姐妹感情怎麼樣？找證據！</h2></div>
       <div class="concept-grid">
-        <div class="concept-card"><div class="head">證據一</div><div class="body">四封信一個月一封，寫信、回信的日期緊密相連，可見常常聯絡</div></div>
-        <div class="concept-card"><div class="head">證據二</div><div class="body">兩人一起把溫泉泥抹在對方臉上，互相邀約旅遊，感情融洽</div></div>
+        <div class="concept-card" data-reveal><div class="head">證據一</div><div class="body">四封信一個月一封，寫信、回信的日期緊密相連，可見常常聯絡</div></div>
+        <div class="concept-card" data-reveal><div class="head">證據二</div><div class="body">兩人一起把溫泉泥抹在對方臉上，互相邀約旅遊，感情融洽</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-heart"></use></svg></span>
         <span class="text">詮釋整合：把課文中的線索兜起來，說出自己的理解</span>
       </div>
@@ -2166,21 +2168,22 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       <div class="page-head"><span class="label">國L2-2 內容理解</span><h2 class="title">這節課學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">閱讀理解的四個層次</div>
-        <div class="item is-done">提取訊息：直接從課文找答案（誰、住哪裡）</div>
-        <div class="item is-done">推論訊息：用線索想「為什麼」（水火同源、汽水冷泉）</div>
-        <div class="item is-done">比較評估＋詮釋整合：找異同、找感情證據</div>
+        <div class="item is-done" data-reveal>提取訊息：直接從課文找答案（誰、住哪裡）</div>
+        <div class="item is-done" data-reveal>推論訊息：用線索想「為什麼」（水火同源、汽水冷泉）</div>
+        <div class="item is-done" data-reveal>比較評估＋詮釋整合：找異同、找感情證據</div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">下一節：形式深究——書信格式、轉化與譬喻修辭</span>
       </div>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>11</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>11</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
       <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -2199,7 +2202,61 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -2210,6 +2267,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -2222,14 +2282,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
