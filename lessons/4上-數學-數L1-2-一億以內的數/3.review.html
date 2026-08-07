@@ -116,6 +116,16 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 .hud button:hover{border-color:var(--accent)}
 .progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
 .progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .28s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1);
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+@media print { [data-reveal] { opacity: 1 !important; transform: none !important; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -129,35 +139,35 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <h1>觀 念 複 習</h1>
       <p class="lead">這一節的四個重點，點一下直接跳過去</p>
       <div class="map-grid">
-        <button class="map-card m-1" data-goto="r1">
+        <button class="map-card m-1" data-goto="r1" data-reveal>
           <span class="mtag">重點 1</span>
           <h3>位值表擴充</h3>
           <p>十萬位、百萬位、千萬位、億位各表示多少</p>
         </button>
-        <button class="map-card m-2" data-goto="r2">
+        <button class="map-card m-2" data-goto="r2" data-reveal>
           <span class="mtag">重點 2</span>
           <h3>兩個家族報讀</h3>
           <p>四位一撇，分成萬的家族與一的家族</p>
         </button>
-        <button class="map-card m-3" data-goto="r3">
+        <button class="map-card m-3" data-goto="r3" data-reveal>
           <span class="mtag">重點 3</span>
           <h3>0 的讀法</h3>
           <p>後面有數字要讀一個零，整組都是 0 才不讀</p>
         </button>
-        <button class="map-card m-4" data-goto="r4">
+        <button class="map-card m-4" data-goto="r4" data-reveal>
           <span class="mtag">重點 4</span>
           <h3>大數的化聚</h3>
           <p>加減百萬、千萬時，哪一位會變、要不要進退位</p>
         </button>
       </div>
-      <p class="judgement">複習完再做模擬評量，效果最好</p>
+      <p class="judgement" data-reveal>複習完再做模擬評量，效果最好</p>
     </section>
 
     <!-- ══ 2 重點1 位值表擴充 ══ -->
     <section class="slide sec-1" data-slide-id="r1" hidden>
       <div class="qhead"><span class="qtag">重點 1</span><span class="qskill">位值表擴充</span></div>
       <p class="qstem">萬位左邊還有位，一路蓋到億位</p>
-      <div class="keybox">🔑 萬位再往左：<b>十萬位、百萬位、千萬位、億位</b>。每往左一格，就是前一格的 <span class="n">10</span> 倍。</div>
+      <div class="keybox" data-reveal>🔑 萬位再往左：<b>十萬位、百萬位、千萬位、億位</b>。每往左一格，就是前一格的 <span class="n">10</span> 倍。</div>
       <div class="pv-wrap">
         <table class="pv-table">
           <thead><tr><th>千萬</th><th>百萬</th><th>十萬</th><th>萬</th><th>千</th><th>百</th><th>十</th><th>個</th></tr></thead>
@@ -187,7 +197,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     <section class="slide sec-2" data-slide-id="r2" hidden>
       <div class="qhead"><span class="qtag">重點 2</span><span class="qskill">兩個家族報讀</span></div>
       <p class="qstem">從個位由右而左，每 4 位一組，分成萬的家族與一的家族</p>
-      <div class="keybox">🔑 <span class="n">4723|8000</span> ＝ 萬的家族 <b>4723</b>　＋　一的家族 <b>8000</b>　→　各自照四位數讀法讀</div>
+      <div class="keybox" data-reveal>🔑 <span class="n">4723|8000</span> ＝ 萬的家族 <b>4723</b>　＋　一的家族 <b>8000</b>　→　各自照四位數讀法讀</div>
       <div class="reveal-grid cols-2">
         <button class="rcard">
           <p class="quote txt">「六百零九萬三千」寫成數字是多少？位值表上有幾個 0？</p>
@@ -200,14 +210,14 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
           <span class="answer"><b>9</b> 個千萬、<b>1</b> 個百萬、<b>5</b> 個十萬合起來。讀作「九千一百五十萬」。</span>
         </button>
       </div>
-      <p class="judgement">兩個家族各自都用四位數的讀法，合起來就是完整讀法</p>
+      <p class="judgement" data-reveal data-after-answer>兩個家族各自都用四位數的讀法，合起來就是完整讀法</p>
     </section>
 
     <!-- ══ 4 重點3 零的讀法 ══ -->
     <section class="slide sec-3" data-slide-id="r3" hidden>
       <div class="qhead"><span class="qtag">重點 3</span><span class="qskill">0 的讀法（最容易錯的地方）</span></div>
       <p class="qstem">看 0 的後面還有沒有數字</p>
-      <div class="keybox">① 後面<b>還有數字</b>的 0 → 讀<b>一個</b>「零」　　② 後面<b>全部是 0</b> → 整段<b>不讀</b></div>
+      <div class="keybox" data-reveal>① 後面<b>還有數字</b>的 0 → 讀<b>一個</b>「零」　　② 後面<b>全部是 0</b> → 整段<b>不讀</b></div>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="萬的家族 8002，中間連續兩個 0 只讀一次；一的家族 6000 末尾三個 0 不讀。">
           <span class="sent">1. <span class="n">80026000</span> 讀作？</span>
@@ -236,7 +246,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     <section class="slide sec-4" data-slide-id="r4" hidden>
       <div class="qhead"><span class="qtag">重點 4</span><span class="qskill">大數的化聚與進退位</span></div>
       <p class="qstem">加減百萬、千萬時，先看那一位，滿 10 或不夠減就跟左右鄰居借還</p>
-      <div class="keybox">🔑 加 <span class="n">1000000</span> 看百萬位、加 <span class="n">10000000</span> 看千萬位；那一位滿 <span class="n">10</span> 就進位，不夠減就跟左邊借 <span class="n">1</span>。</div>
+      <div class="keybox" data-reveal>🔑 加 <span class="n">1000000</span> 看百萬位、加 <span class="n">10000000</span> 看千萬位；那一位滿 <span class="n">10</span> 就進位，不夠減就跟左邊借 <span class="n">1</span>。</div>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="百萬位是 9，加 1 個百萬後進位給千萬位，千萬位由 6 變 7。">
           <span class="sent">1. <span class="n">69500000</span> 再加 <span class="n">1000000</span> 是？</span>
@@ -266,20 +276,21 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <p class="eyebrow">複習結束</p>
       <h2>檢查一下，這四件事都會了嗎？</h2>
       <div class="wrap-list" style="max-width:1150px">
-        <div class="wrap-item"><span class="dot">1</span><span>說得出位值表<b>十萬到億</b>每一位叫什麼、表示多少</span></div>
-        <div class="wrap-item"><span class="dot">2</span><span>看數字能<b>分家族報讀</b>，聽讀法能寫回<b>數字</b></span></div>
-        <div class="wrap-item"><span class="dot">3</span><span>知道 <b>0</b> 什麼時候要讀、什麼時候整段不讀</span></div>
-        <div class="wrap-item"><span class="dot">4</span><span>加減百萬、千萬時，知道<b>哪一位</b>會進退位</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">1</span><span>說得出位值表<b>十萬到億</b>每一位叫什麼、表示多少</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">2</span><span>看數字能<b>分家族報讀</b>，聽讀法能寫回<b>數字</b></span></div>
+        <div class="wrap-item" data-reveal><span class="dot">3</span><span>知道 <b>0</b> 什麼時候要讀、什麼時候整段不讀</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">4</span><span>加減百萬、千萬時，知道<b>哪一位</b>會進退位</span></div>
       </div>
-      <p class="judgement" style="margin-top:34px">四項都能說出來，就可以去做「線上模擬評量」了</p>
+      <p class="judgement" style="margin-top:34px" data-reveal>四項都能說出來，就可以去做「線上模擬評量」了</p>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
       <button data-action="home">⌂ 回地圖</button>
-      <button data-action="previous">← 上一頁</button>
-      <button data-action="next">下一頁 →</button>
+      <button data-action="previous">← 上一步</button>
+      <button data-action="next">下一步 →</button>
+      <button data-action="reveal-all">整頁攤開</button>
       <button data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -299,7 +310,61 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -310,6 +375,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -355,15 +423,20 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
   document.querySelector('[data-action="home"]')?.addEventListener('click', () => render(0));
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

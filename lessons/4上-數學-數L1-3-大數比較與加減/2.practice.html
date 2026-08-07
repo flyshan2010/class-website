@@ -122,6 +122,16 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 .hud button:hover{border-color:var(--accent)}
 .progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
 .progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .28s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1);
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+@media print { [data-reveal] { opacity: 1 !important; transform: none !important; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -135,23 +145,23 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <h1>分 組 練 習</h1>
       <p class="lead">依前測結果，選一個適合的難度，點下去開始</p>
       <div class="group-grid">
-        <button class="group-card g-c" data-goto="c1">
+        <button class="group-card g-c" data-goto="c1" data-reveal>
           <span class="gtag">基礎題</span>
           <h3>位數優先比大小</h3>
           <p>位數不同直接分勝負，位數相同逐位比</p>
         </button>
-        <button class="group-card g-b" data-goto="b1">
+        <button class="group-card g-b" data-goto="b1" data-reveal>
           <span class="gtag">進階題</span>
           <h3>兩家族比較＋整萬加減</h3>
           <p>萬的家族、一的家族分段比；整萬大數直接加減</p>
         </button>
-        <button class="group-card g-a" data-goto="a1">
+        <button class="group-card g-a" data-goto="a1" data-reveal>
           <span class="gtag">挑戰題</span>
           <h3>複名數加減＋逆向應用</h3>
           <p>一的家族進位借位、已知合計反推另一筆</p>
         </button>
       </div>
-      <p class="judgement">逐題計算寫在紙本學習單，網頁這裡先把觀念弄懂</p>
+      <p class="judgement" data-reveal>逐題計算寫在紙本學習單，網頁這裡先把觀念弄懂</p>
     </section>
 
     <!-- ══════════ 基礎題 ══════════ -->
@@ -159,7 +169,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     <section class="slide sec-c" data-slide-id="c1" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 1</span><span class="qskill">位數優先 · 先數一數再比</span></div>
       <p class="qstem">位數不同時，根本不用比數字，直接比位數</p>
-      <div class="keybox">🔑 位數越多，數字就越大：7 位數一定比 6 位數大，<b>不管後面的數字是多少</b>。<br>位數一樣多，才需要從最高位開始一位一位往下比。</div>
+      <div class="keybox" data-reveal>🔑 位數越多，數字就越大：7 位數一定比 6 位數大，<b>不管後面的數字是多少</b>。<br>位數一樣多，才需要從最高位開始一位一位往下比。</div>
       <p class="intro" style="text-align:center;margin-top:8px;">甲圖書館全年借閱 <span class="n" style="font-family:var(--font-num);color:var(--text);font-weight:700">6204000</span> 冊（7 位數）；乙圖書館全年借閱 <span class="n" style="font-family:var(--font-num);color:var(--text);font-weight:700">890000</span> 冊（6 位數）→ 甲的借閱冊數比較多，不用比到個位。</p>
       <p class="pagemeta" style="position:static;margin-top:auto;"></p>
     </section>
@@ -195,12 +205,12 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <div class="qhead"><span class="qtag">基礎題 · 3</span><span class="qskill">紙本任務 · 動手比一比</span></div>
       <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
-        <li><span class="dot">1</span><span>完成六組<strong>位數不同</strong>的大數比大小圈選題。</span></li>
-        <li><span class="dot">2</span><span>完成四組<strong>位數相同</strong>、要從最高位逐位比較的填空題。</span></li>
-        <li><span class="dot">3</span><span>把三個大數<strong>由小到大排出順序</strong>，並寫下你先看哪一位。</span></li>
+        <li data-reveal><span class="dot">1</span><span>完成六組<strong>位數不同</strong>的大數比大小圈選題。</span></li>
+        <li data-reveal><span class="dot">2</span><span>完成四組<strong>位數相同</strong>、要從最高位逐位比較的填空題。</span></li>
+        <li data-reveal><span class="dot">3</span><span>把三個大數<strong>由小到大排出順序</strong>，並寫下你先看哪一位。</span></li>
       </ul>
-      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2a.差異化教材_基礎題需鷹架</b>。<br>學習單每一題都附有位值表，數不清位數時可以先填格子再比。</div>
-      <p class="judgement">先把「位數優先」練熟，比大小就不會再靠猜的</p>
+      <div class="paper-note" data-reveal>✎ 這一頁的三個任務請寫在紙本學習單上：<b>2a.差異化教材_基礎題需鷹架</b>。<br>學習單每一題都附有位值表，數不清位數時可以先填格子再比。</div>
+      <p class="judgement" data-reveal>先把「位數優先」練熟，比大小就不會再靠猜的</p>
     </section>
 
     <!-- ══════════ 進階題 ══════════ -->
@@ -225,7 +235,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
           <span class="answer">兩個都是整萬，直接減：950－320＝<b>630</b>（萬），也就是 6300000。</span>
         </button>
       </div>
-      <p class="judgement">萬家族能分出勝負就不用比到底；整萬的數，萬家族就是唯一要算的部分</p>
+      <p class="judgement" data-reveal data-after-answer>萬家族能分出勝負就不用比到底；整萬的數，萬家族就是唯一要算的部分</p>
     </section>
 
     <section class="slide sec-b" data-slide-id="b2" hidden>
@@ -259,12 +269,12 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <div class="qhead"><span class="qtag">進階題 · 3</span><span class="qskill">紙本任務 · 家族比較與整萬加減</span></div>
       <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
-        <li><span class="dot">1</span><span>完成五組「<strong>萬家族先比、一家族再比</strong>」的比大小題。</span></li>
-        <li><span class="dot">2</span><span>完成四題<strong>整萬大數</strong>的加減直式（把萬家族當一般數字算）。</span></li>
-        <li><span class="dot">3</span><span>應用題：兩座停車場今年的整修經費（整萬）相加、相減各一題。</span></li>
+        <li data-reveal><span class="dot">1</span><span>完成五組「<strong>萬家族先比、一家族再比</strong>」的比大小題。</span></li>
+        <li data-reveal><span class="dot">2</span><span>完成四題<strong>整萬大數</strong>的加減直式（把萬家族當一般數字算）。</span></li>
+        <li data-reveal><span class="dot">3</span><span>應用題：兩座停車場今年的整修經費（整萬）相加、相減各一題。</span></li>
       </ul>
-      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2b.差異化教材_進階題基礎穩固</b>。</div>
-      <p class="judgement">整萬加減練熟了，下一步就能挑戰「一的家族不是 0」的情況</p>
+      <div class="paper-note" data-reveal>✎ 這一頁的三個任務請寫在紙本學習單上：<b>2b.差異化教材_進階題基礎穩固</b>。</div>
+      <p class="judgement" data-reveal>整萬加減練熟了，下一步就能挑戰「一的家族不是 0」的情況</p>
     </section>
 
     <!-- ══════════ 挑戰題 ══════════ -->
@@ -284,7 +294,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
           <span class="answer">186000－97000，拆成 <b>18萬6000</b>－<b>9萬7000</b>：一的家族 6000 不夠減 7000，向萬的家族借 1 萬變 16000－7000＝9000；萬的家族 18－1－9＝8。乙付了 <b>89000</b> 元。</span>
         </button>
       </div>
-      <p class="judgement">一的家族算出來超過 10000，別忘了多進 1 萬給萬的家族</p>
+      <p class="judgement" data-reveal data-after-answer>一的家族算出來超過 10000，別忘了多進 1 萬給萬的家族</p>
     </section>
 
     <section class="slide sec-a" data-slide-id="a2" hidden>
@@ -318,20 +328,21 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <div class="qhead"><span class="qtag">挑戰題 · 3</span><span class="qskill">紙本任務 · 進退位挑戰＋出題給同學</span></div>
       <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
-        <li><span class="dot">1</span><span>完成四題「<strong>一的家族要進位或借位</strong>」的複名數加減直式。</span></li>
-        <li><span class="dot">2</span><span>完成一題<strong>逆向應用</strong>（已知合計和其中一筆，求另一筆）。</span></li>
-        <li><span class="dot">3</span><span><strong>自己出一題</strong>「一的家族要進位」的加法應用題考同學，並在背面寫下正確答案與理由。</span></li>
+        <li data-reveal><span class="dot">1</span><span>完成四題「<strong>一的家族要進位或借位</strong>」的複名數加減直式。</span></li>
+        <li data-reveal><span class="dot">2</span><span>完成一題<strong>逆向應用</strong>（已知合計和其中一筆，求另一筆）。</span></li>
+        <li data-reveal><span class="dot">3</span><span><strong>自己出一題</strong>「一的家族要進位」的加法應用題考同學，並在背面寫下正確答案與理由。</span></li>
       </ul>
-      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2c.差異化教材_挑戰題精熟</b>。<br>第 3 題出好之後跟同組同學交換作答。</div>
-      <p class="judgement">能出題考別人，才代表複名數加減真的精熟</p>
+      <div class="paper-note" data-reveal>✎ 這一頁的三個任務請寫在紙本學習單上：<b>2c.差異化教材_挑戰題精熟</b>。<br>第 3 題出好之後跟同組同學交換作答。</div>
+      <p class="judgement" data-reveal>能出題考別人，才代表複名數加減真的精熟</p>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
       <button data-action="home">⌂ 回選組</button>
-      <button data-action="previous">← 上一頁</button>
-      <button data-action="next">下一頁 →</button>
+      <button data-action="previous">← 上一步</button>
+      <button data-action="next">下一步 →</button>
+      <button data-action="reveal-all">整頁攤開</button>
       <button data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -351,7 +362,61 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -362,6 +427,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -407,15 +475,20 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
   document.querySelector('[data-action="home"]')?.addEventListener('click', () => render(0));
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

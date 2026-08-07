@@ -84,6 +84,16 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
 .hud button:hover{border-color:var(--accent)}
 .progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
 .progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .28s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1);
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+@media print { [data-reveal] { opacity: 1 !important; transform: none !important; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -95,7 +105,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
       <p class="eyebrow">社會 4 上 第一單元 · 第 2 課 家鄉的地形 · 上課前</p>
       <h1>暖身小測驗</h1>
       <p class="lead">五個問題，看看我們已經會了什麼</p>
-      <p class="judgement">答錯沒關係——這是上課「前」的測驗，本來就還沒教</p>
+      <p class="judgement" data-reveal>答錯沒關係——這是上課「前」的測驗，本來就還沒教</p>
       <p class="start-hint">按 <span class="kbd">→</span> 或 <span class="kbd">空白鍵</span> 開始</p>
     </section>
 
@@ -108,7 +118,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>山地</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>丘陵</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>①</b>。地勢低平、平坦廣闊，是<b>平原</b>的特色。
         <span class="why">這一課會學到台灣五種常見的地形，平原只是其中一種。</span>
       </div>
@@ -123,7 +133,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>山地／丘陵</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>台地</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>③</b>。地勢高、坡度大，居民活動受到限制，這是<b>山地或丘陵</b>的特色。
         <span class="why">這一課會仔細比較五種地形的特徵，以及它們跟居民生活的關係。</span>
       </div>
@@ -138,7 +148,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>起伏很大的丘陵</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>都可以，沒有差別</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>②</b>。地勢平坦的地方有利於建築房屋、交通建設，比較容易發展成都市。
         <span class="why">這一課會學到地形如何影響居民的生活方式與活動。</span>
       </div>
@@ -153,7 +163,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>一定是起伏的</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>無法觀察</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>①</b>。每個人家鄉的地形不同，說出自己實際的觀察就是最好的答案。
         <span class="why">這一課會學到怎麼用實地觀察、空拍照片或地圖，正式地認識家鄉的地形。</span>
       </div>
@@ -163,7 +173,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
       <div class="qhead"><span class="qtag">第 5 題</span><span class="qskill">想一想 · 一起討論（沒有標準答案）</span></div>
       <p class="qstem">如果一個地方地勢起伏很大，居民的生活可能會遇到什麼困難或限制？</p>
       <div class="discuss-grid">
-        <div class="card">
+        <div class="card" data-reveal>
           <h3>① 先想：會遇到什麼困難？</h3>
           <ul>
             <li>蓋房子、修路比較不容易</li>
@@ -171,7 +181,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
             <li>能耕種的平地比較少</li>
           </ul>
         </div>
-        <div class="card">
+        <div class="card" data-reveal>
           <h3>② 再想：居民怎麼因應？</h3>
           <ul>
             <li>在坡度較緩的地方開闢茶園、果園</li>
@@ -180,7 +190,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
           </ul>
         </div>
       </div>
-      <div class="sample">
+      <div class="sample" data-reveal>
         舉例：「新北市石碇區地形起伏大，居民就利用坡地種茶、製茶，發展出特色產業。」
       </div>
     </section>
@@ -189,18 +199,19 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
       <p class="eyebrow">暖身結束</p>
       <h2>這一課，我們要學這些</h2>
       <div class="wrap-list" style="text-align:left;max-width:1100px">
-        <div class="wrap-item"><span class="dot">1</span><span>認識台灣<b>五大地形</b>：平原、盆地、台地、丘陵、山地</span></div>
-        <div class="wrap-item"><span class="dot">2</span><span>了解<b>地形與生活</b>的關聯——地形怎麼影響居民的活動</span></div>
-        <div class="wrap-item"><span class="dot">3</span><span>認識台灣不同地形的<b>家鄉案例</b></span></div>
+        <div class="wrap-item" data-reveal><span class="dot">1</span><span>認識台灣<b>五大地形</b>：平原、盆地、台地、丘陵、山地</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">2</span><span>了解<b>地形與生活</b>的關聯——地形怎麼影響居民的活動</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">3</span><span>認識台灣不同地形的<b>家鄉案例</b></span></div>
       </div>
-      <p class="judgement" style="margin-top:36px">接下來，一起認識家鄉的地形吧！</p>
+      <p class="judgement" style="margin-top:36px" data-reveal>接下來，一起認識家鄉的地形吧！</p>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>7</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>7</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button data-action="previous">← 上一頁</button>
-      <button data-action="next">下一頁 →</button>
+      <button data-action="previous">← 上一步</button>
+      <button data-action="next">下一步 →</button>
+      <button data-action="reveal-all">整頁攤開</button>
       <button data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -220,7 +231,61 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -231,6 +296,9 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -261,14 +329,19 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

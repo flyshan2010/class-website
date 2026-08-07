@@ -1992,6 +1992,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 [data-slide-id="practice"] .drag-match .zone { flex: 1 1 30%; min-width: 260px; min-height: 70px; padding: var(--s2); }
 [data-slide-id="practice"] .drag-match .zone > .zone-head { font-size: var(--t5); font-weight: var(--fw-bold); }
 [data-slide-id="practice"] .drag-match .zone > .drop { min-height: 36px; }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2011,11 +2013,11 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="hook" hidden>
       <div class="page-head"><span class="label">國L1-1 字詞語詞及大意</span><h2 class="title">楊喚放下了筆</h2></div>
       <div class="question-frame">
-        <div class="q tier-1"><span class="tier">起</span><span class="text">詩人楊喚想寫信告訴遠方朋友：我的家鄉有多美。他寫下「臺灣四面環海、氣候溫暖、盛產香蕉和鳳梨」——朋友讀完，卻一點感覺也沒有。</span></div>
-        <div class="q tier-2"><span class="tier">承</span><span class="text">課文開頭卻這樣寫：「有藍色的吐著白色的唾沫的海，小心的忠實的守衛著，寒冷的冰雪永遠也不敢到這裡來。」</span></div>
-        <div class="q tier-3"><span class="tier">問</span><span class="text">「吐著白色的唾沫」，到底在寫海邊的什麼？</span></div>
+        <div class="q tier-1" data-reveal><span class="tier">起</span><span class="text">詩人楊喚想寫信告訴遠方朋友：我的家鄉有多美。他寫下「臺灣四面環海、氣候溫暖、盛產香蕉和鳳梨」——朋友讀完，卻一點感覺也沒有。</span></div>
+        <div class="q tier-2" data-reveal><span class="tier">承</span><span class="text">課文開頭卻這樣寫：「有藍色的吐著白色的唾沫的海，小心的忠實的守衛著，寒冷的冰雪永遠也不敢到這裡來。」</span></div>
+        <div class="q tier-3" data-reveal><span class="tier">問</span><span class="text">「吐著白色的唾沫」，到底在寫海邊的什麼？</span></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">讀懂一首詩，先讀懂它的字——這一節就從字詞開始</span>
       </div>
@@ -2025,13 +2027,13 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="zi-1" hidden>
       <div class="page-head"><span class="label">國L1-1 · 我會寫字 1/3</span><h2 class="title">生字卡①　觀察部首，猜猜看意思</h2></div>
       <div class="vocab-grid">
-        <div class="vocab-card"><div class="word">島<span class="zhuyin">ㄉㄠˇ</span></div><div class="mean">山部</div><div class="example">海島、荒島</div></div>
-        <div class="vocab-card"><div class="word">唾<span class="zhuyin">ㄊㄨㄛˋ</span></div><div class="mean">口部</div><div class="example">唾沫、唾棄</div></div>
-        <div class="vocab-card"><div class="word">沫<span class="zhuyin">ㄇㄛˋ</span></div><div class="mean">水部</div><div class="example">泡沫、唾沫</div></div>
-        <div class="vocab-card"><div class="word">忠<span class="zhuyin">ㄓㄨㄥ</span></div><div class="mean">心部</div><div class="example">忠實、忠心</div></div>
-        <div class="vocab-card"><div class="word">衛<span class="zhuyin">ㄨㄟˋ</span></div><div class="mean">行部</div><div class="example">守衛、防衛</div></div>
+        <div class="vocab-card" data-reveal><div class="word">島<span class="zhuyin">ㄉㄠˇ</span></div><div class="mean">山部</div><div class="example">海島、荒島</div></div>
+        <div class="vocab-card" data-reveal><div class="word">唾<span class="zhuyin">ㄊㄨㄛˋ</span></div><div class="mean">口部</div><div class="example">唾沫、唾棄</div></div>
+        <div class="vocab-card" data-reveal><div class="word">沫<span class="zhuyin">ㄇㄛˋ</span></div><div class="mean">水部</div><div class="example">泡沫、唾沫</div></div>
+        <div class="vocab-card" data-reveal><div class="word">忠<span class="zhuyin">ㄓㄨㄥ</span></div><div class="mean">心部</div><div class="example">忠實、忠心</div></div>
+        <div class="vocab-card" data-reveal><div class="word">衛<span class="zhuyin">ㄨㄟˋ</span></div><div class="mean">行部</div><div class="example">守衛、防衛</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">部首藏著字的意思：口部和嘴巴有關，水部和液體有關</span>
       </div>
@@ -2041,13 +2043,13 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="zi-2" hidden>
       <div class="page-head"><span class="label">國L1-1 · 我會寫字 2/3</span><h2 class="title">生字卡②　哪兩個字和植物有關？</h2></div>
       <div class="vocab-grid">
-        <div class="vocab-card"><div class="word">寒<span class="zhuyin">ㄏㄢˊ</span></div><div class="mean">宀部</div><div class="example">寒冷、寒流</div></div>
-        <div class="vocab-card"><div class="word">椰<span class="zhuyin">ㄧㄝˊ</span></div><div class="mean">木部</div><div class="example">椰子樹、椰果</div></div>
-        <div class="vocab-card"><div class="word">隊<span class="zhuyin">ㄉㄨㄟˋ</span></div><div class="mean">阜部</div><div class="example">排隊、隊伍</div></div>
-        <div class="vocab-card"><div class="word">蕉<span class="zhuyin">ㄐㄧㄠ</span></div><div class="mean">艸部</div><div class="example">香蕉、芭蕉</div></div>
-        <div class="vocab-card"><div class="word">街<span class="zhuyin">ㄐㄧㄝ</span></div><div class="mean">行部</div><div class="example">街道、上街</div></div>
+        <div class="vocab-card" data-reveal><div class="word">寒<span class="zhuyin">ㄏㄢˊ</span></div><div class="mean">宀部</div><div class="example">寒冷、寒流</div></div>
+        <div class="vocab-card" data-reveal><div class="word">椰<span class="zhuyin">ㄧㄝˊ</span></div><div class="mean">木部</div><div class="example">椰子樹、椰果</div></div>
+        <div class="vocab-card" data-reveal><div class="word">隊<span class="zhuyin">ㄉㄨㄟˋ</span></div><div class="mean">阜部</div><div class="example">排隊、隊伍</div></div>
+        <div class="vocab-card" data-reveal><div class="word">蕉<span class="zhuyin">ㄐㄧㄠ</span></div><div class="mean">艸部</div><div class="example">香蕉、芭蕉</div></div>
+        <div class="vocab-card" data-reveal><div class="word">街<span class="zhuyin">ㄐㄧㄝ</span></div><div class="mean">行部</div><div class="example">街道、上街</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">木部的「椰」、艸部的「蕉」，都是植物家族</span>
       </div>
@@ -2057,9 +2059,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="misconception-tian" hidden>
       <div class="page-head"><span class="label">國L1-1 · 常見誤會</span><h2 class="title">「甜」的左邊，不是說話的那個部件</h2></div>
       <div class="misconception">
-        <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">「甜」左邊的部件，跟「話」「活」右邊那個部件長得很像，以為意思也一樣。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">「甜」左邊真的是「舌」——要用舌頭品嘗才嘗得出甜味（甜蜜、甜美）。「話」「活」右邊只是長得像，其實跟舌頭無關；第一筆筆畫也不同：「舌」第一筆是橫，那個部件第一筆是撇。</div></div>
+        <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">「甜」左邊的部件，跟「話」「活」右邊那個部件長得很像，以為意思也一樣。</div></div>
+        <div class="becomes" data-reveal>→</div>
+        <div class="right-side" data-reveal><div class="mark">✓ 正確理解</div><div class="text">「甜」左邊真的是「舌」——要用舌頭品嘗才嘗得出甜味（甜蜜、甜美）。「話」「活」右邊只是長得像，其實跟舌頭無關；第一筆筆畫也不同：「舌」第一筆是橫，那個部件第一筆是撇。</div></div>
       </div>
     </section>
 
@@ -2067,12 +2069,12 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="zi-3" hidden>
       <div class="page-head"><span class="label">國L1-1 · 我會寫字 3/3</span><h2 class="title">生字卡③　哪兩個字嘗起來是甜的？</h2></div>
       <div class="vocab-grid">
-        <div class="vocab-card"><div class="word">甜<span class="zhuyin">ㄊㄧㄢˊ</span></div><div class="mean">甘部</div><div class="example">甜蜜、甜美</div></div>
-        <div class="vocab-card"><div class="word">糖<span class="zhuyin">ㄊㄤˊ</span></div><div class="mean">米部</div><div class="example">糖果、砂糖</div></div>
-        <div class="vocab-card"><div class="word">童<span class="zhuyin">ㄊㄨㄥˊ</span></div><div class="mean">立部</div><div class="example">童話、兒童</div></div>
-        <div class="vocab-card"><div class="word">灣<span class="zhuyin">ㄨㄢ</span></div><div class="mean">水部</div><div class="example">臺灣、港灣</div></div>
+        <div class="vocab-card" data-reveal><div class="word">甜<span class="zhuyin">ㄊㄧㄢˊ</span></div><div class="mean">甘部</div><div class="example">甜蜜、甜美</div></div>
+        <div class="vocab-card" data-reveal><div class="word">糖<span class="zhuyin">ㄊㄤˊ</span></div><div class="mean">米部</div><div class="example">糖果、砂糖</div></div>
+        <div class="vocab-card" data-reveal><div class="word">童<span class="zhuyin">ㄊㄨㄥˊ</span></div><div class="mean">立部</div><div class="example">童話、兒童</div></div>
+        <div class="vocab-card" data-reveal><div class="word">灣<span class="zhuyin">ㄨㄢ</span></div><div class="mean">水部</div><div class="example">臺灣、港灣</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">甘部、米部都和食物有關——本課共 14 個生字</span>
       </div>
@@ -2124,21 +2126,22 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       <div class="page-head"><span class="label">國L1-1 字詞語詞及大意</span><h2 class="title">這節課學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個收穫</div>
-        <div class="item is-done">14 個生字：島唾沫忠衛、寒椰隊蕉街、甜糖童灣，部首藏著字的意思</div>
-        <div class="item is-done">「甜」的部件辨析：左邊是「舌」，和「話」「活」的部件長得像但不同</div>
-        <div class="item is-done">一首詩三段大意：地理位置與氣候 → 生活情形與物產 → 點出真實身分</div>
+        <div class="item is-done" data-reveal>14 個生字：島唾沫忠衛、寒椰隊蕉街、甜糖童灣，部首藏著字的意思</div>
+        <div class="item is-done" data-reveal>「甜」的部件辨析：左邊是「舌」，和「話」「活」的部件長得像但不同</div>
+        <div class="item is-done" data-reveal>一首詩三段大意：地理位置與氣候 → 生活情形與物產 → 點出真實身分</div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">接下來第二節：仔細讀課文內容，理解臺灣的風景與物產</span>
       </div>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>9</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>9</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
       <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -2157,7 +2160,61 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -2168,6 +2225,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -2180,14 +2240,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

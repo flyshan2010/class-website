@@ -109,6 +109,16 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
 .hud button:hover{border-color:var(--accent)}
 .progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
 .progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .28s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1);
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+@media print { [data-reveal] { opacity: 1 !important; transform: none !important; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -121,7 +131,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
       <p class="eyebrow">第一單元 一億以內的數 · 1-1 上課前</p>
       <h1>暖身小測驗</h1>
       <p class="lead">五個問題，看看三年級學的「10000 以內的數」還記得多少</p>
-      <p class="judgement">答錯沒關係——這是上課「前」的測驗，就是要找出還要補的地方</p>
+      <p class="judgement" data-reveal>答錯沒關係——這是上課「前」的測驗，就是要找出還要補的地方</p>
       <p class="start-hint">按 <span class="kbd">→</span> 或 <span class="kbd">空白鍵</span> 開始</p>
     </section>
 
@@ -141,7 +151,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>200</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>2000</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>③</b>。百位的 2 表示 <b>2 個一百</b>，也就是 <b>200</b>。
         <span class="why">同一個數字放在不同的位，代表的量完全不同——這就是「位值」。這節課我們要在千位左邊再加一個「萬位」，道理一模一樣。</span>
       </div>
@@ -163,7 +173,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>三千八</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>三百零八</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>②</b>。百位和十位是<b>連續兩個 0</b>，讀的時候只要讀出<b>一個「零」</b>。
         <span class="why">①把兩個 0 都讀出來；③把 0 整個跳過，會讓人以為是 3800；④讀錯位數。這一條規則等一下在五位數會再用到。</span>
       </div>
@@ -179,7 +189,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>647</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>6407</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>①</b>。題目<b>沒有提到百</b>，所以百位要記上 <b>0</b> 佔位：6047。
         <span class="why">最常見的錯誤是把 0 省略、寫成 647，位數就整個跑掉了。「沒有的位要寫 0」是位值表的鐵則。</span>
       </div>
@@ -195,7 +205,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
         <li><button class="opt"><span class="mark">③</span><span>99100</span></button></li>
         <li><button class="opt"><span class="mark">④</span><span>10000</span></button></li>
       </ul>
-      <div class="explain">
+      <div class="explain" data-reveal data-after-answer>
         答案是 <b>④</b>。個位滿 10 進到十位、十位滿 10 進到百位、百位滿 10 進到千位，千位也滿 10——就進到<b>新的一位：萬位</b>。
         <span class="why">這一題就是今天上課的起點。10000 是四位數的盡頭、五位數的開始，我們接下來要幫它蓋一個新家「萬位」。</span>
       </div>
@@ -206,7 +216,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
       <div class="qhead"><span class="qtag">第 5 題</span><span class="qskill">想一想 · 一起討論（沒有標準答案）</span></div>
       <p class="qstem">生活中，什麼東西要用「比 10000 還大」的數才記得下來？</p>
       <div class="discuss-grid">
-        <div class="card">
+        <div class="card" data-reveal>
           <h3>① 先想：哪裡看過大數字？</h3>
           <ul>
             <li>一臺機車、一輛汽車多少錢</li>
@@ -215,7 +225,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
           </ul>
           <p style="color:var(--muted);font-size:24px">說說看，你還想到哪些？</p>
         </div>
-        <div class="card">
+        <div class="card" data-reveal>
           <h3>② 再想：四位數夠用嗎？</h3>
           <ul>
             <li>四位數最大是 <b>9999</b></li>
@@ -225,7 +235,7 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
           <p style="color:var(--muted);font-size:24px">位數不夠用，就往左邊再加一位。</p>
         </div>
       </div>
-      <div class="sample">
+      <div class="sample" data-reveal>
         想一想：9999 元買不起的東西，要怎麼寫？　→　多一位，就變成 <b>五位數</b>，例如 <b>52000</b> 元。
       </div>
     </section>
@@ -235,19 +245,20 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
       <p class="eyebrow">暖身結束</p>
       <h2>這一節，我們要學這些</h2>
       <div class="wrap-list" style="text-align:left;max-width:1100px">
-        <div class="wrap-item"><span class="dot">1</span><span>10 個一千是一萬——認識新的位：<b>萬位</b></span></div>
-        <div class="wrap-item"><span class="dot">2</span><span>幾個萬 ＋ 幾千幾百幾十幾，<b>合起來命名</b></span></div>
-        <div class="wrap-item"><span class="dot">3</span><span>五位數裡 <b>0 的讀法</b>（跟剛剛第 2 題同一招）</span></div>
-        <div class="wrap-item"><span class="dot">4</span><span>一次加 1000、加 100 的<b>數詞序列</b></span></div>
+        <div class="wrap-item" data-reveal><span class="dot">1</span><span>10 個一千是一萬——認識新的位：<b>萬位</b></span></div>
+        <div class="wrap-item" data-reveal><span class="dot">2</span><span>幾個萬 ＋ 幾千幾百幾十幾，<b>合起來命名</b></span></div>
+        <div class="wrap-item" data-reveal><span class="dot">3</span><span>五位數裡 <b>0 的讀法</b>（跟剛剛第 2 題同一招）</span></div>
+        <div class="wrap-item" data-reveal><span class="dot">4</span><span>一次加 1000、加 100 的<b>數詞序列</b></span></div>
       </div>
-      <p class="judgement" style="margin-top:36px">先備能力都用得上——今天只是把位值表往左邊多蓋一格</p>
+      <p class="judgement" style="margin-top:36px" data-reveal>先備能力都用得上——今天只是把位值表往左邊多蓋一格</p>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>7</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>7</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button data-action="previous">← 上一頁</button>
-      <button data-action="next">下一頁 →</button>
+      <button data-action="previous">← 上一步</button>
+      <button data-action="next">下一步 →</button>
+      <button data-action="reveal-all">整頁攤開</button>
       <button data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -267,7 +278,61 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -278,6 +343,9 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -310,14 +378,19 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

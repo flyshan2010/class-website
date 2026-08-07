@@ -131,6 +131,16 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 .hud button:hover{border-color:var(--accent)}
 .progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
 .progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .28s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1);
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+@media print { [data-reveal] { opacity: 1 !important; transform: none !important; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -144,23 +154,23 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <h1>分 組 練 習</h1>
       <p class="lead">依前測結果，選一個適合的難度，點下去開始</p>
       <div class="group-grid">
-        <button class="group-card g-c" data-goto="c1">
+        <button class="group-card g-c" data-goto="c1" data-reveal>
           <span class="gtag">基礎題</span>
           <h3>把位值表填對</h3>
           <p>萬位在哪裡、0 怎麼佔位，附口訣與小提示</p>
         </button>
-        <button class="group-card g-b" data-goto="b1">
+        <button class="group-card g-b" data-goto="b1" data-reveal>
           <span class="gtag">進階題</span>
           <h3>讀寫與化聚都要穩</h3>
           <p>五位數的讀法、幾個萬幾個千的化聚練習</p>
         </button>
-        <button class="group-card g-a" data-goto="a1">
+        <button class="group-card g-a" data-goto="a1" data-reveal>
           <span class="gtag">挑戰題</span>
           <h3>逆推與跨位進位</h3>
           <p>從讀法推回數字、連續進位的數詞序列</p>
         </button>
       </div>
-      <p class="judgement">逐題計算寫在紙本學習單，網頁這裡先把觀念弄懂</p>
+      <p class="judgement" data-reveal>逐題計算寫在紙本學習單，網頁這裡先把觀念弄懂</p>
     </section>
 
     <!-- ══════════ 基礎題 ══════════ -->
@@ -168,7 +178,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     <section class="slide sec-c" data-slide-id="c1" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 1</span><span class="qskill">基本概念 · 萬位在哪裡</span></div>
       <p class="qstem">五位數的位值表，從右邊數過來就對了</p>
-      <div class="keybox">🔑 從<b>右邊</b>開始念：個、十、百、千、<b>萬</b>——五位數最左邊那一位就是<b>萬位</b>。<br>沒有的位，一定要寫 <span class="n">0</span> 佔位，不能空著。</div>
+      <div class="keybox" data-reveal>🔑 從<b>右邊</b>開始念：個、十、百、千、<b>萬</b>——五位數最左邊那一位就是<b>萬位</b>。<br>沒有的位，一定要寫 <span class="n">0</span> 佔位，不能空著。</div>
       <div class="reveal-grid cols-2">
         <button class="rcard">
           <p class="quote">83245</p>
@@ -214,12 +224,12 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <div class="qhead"><span class="qtag">基礎題 · 3</span><span class="qskill">紙本任務 · 動手填位值表</span></div>
       <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
-        <li><span class="dot">1</span><span>把老師念的五個數字，一格一格<strong>填進位值表</strong>（沒有的位記得寫 0）。</span></li>
-        <li><span class="dot">2</span><span>在每個數的<strong>萬位</strong>下面畫一條線，並寫出它表示多少。</span></li>
-        <li><span class="dot">3</span><span>照樣寫寫看：「<span style="font-family:var(--font-num)">83245</span> 是 8 個萬、3 個千、2 個百、4 個十和 5 個一合起來的。」</span></li>
+        <li data-reveal><span class="dot">1</span><span>把老師念的五個數字，一格一格<strong>填進位值表</strong>（沒有的位記得寫 0）。</span></li>
+        <li data-reveal><span class="dot">2</span><span>在每個數的<strong>萬位</strong>下面畫一條線，並寫出它表示多少。</span></li>
+        <li data-reveal><span class="dot">3</span><span>照樣寫寫看：「<span style="font-family:var(--font-num)">83245</span> 是 8 個萬、3 個千、2 個百、4 個十和 5 個一合起來的。」</span></li>
       </ul>
-      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2a.差異化教材_基礎題需鷹架</b>。<br>學習單上每一題都附有空白位值表，直接填格子即可。</div>
-      <p class="judgement">先把「每一位在哪、表示多少」弄清楚，讀法自然就對了</p>
+      <div class="paper-note" data-reveal>✎ 這一頁的三個任務請寫在紙本學習單上：<b>2a.差異化教材_基礎題需鷹架</b>。<br>學習單上每一題都附有空白位值表，直接填格子即可。</div>
+      <p class="judgement" data-reveal>先把「每一位在哪、表示多少」弄清楚，讀法自然就對了</p>
     </section>
 
     <!-- ══════════ 進階題 ══════════ -->
@@ -244,7 +254,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
           <span class="answer">讀作「五萬<b>零</b>三百<b>零</b>七」。千位的 0 和十位的 0 <b>沒有連在一起</b>，所以各讀一次「零」。</span>
         </button>
       </div>
-      <p class="judgement">拆得開，才寫得對；寫得對，才讀得順</p>
+      <p class="judgement" data-reveal data-after-answer>拆得開，才寫得對；寫得對，才讀得順</p>
     </section>
 
     <section class="slide sec-b" data-slide-id="b2" hidden>
@@ -278,12 +288,12 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <div class="qhead"><span class="qtag">進階題 · 3</span><span class="qskill">紙本任務 · 讀寫與序列</span></div>
       <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
-        <li><span class="dot">1</span><span>看數字<strong>寫出讀法</strong>（含 0 的那幾題要特別小心）。</span></li>
-        <li><span class="dot">2</span><span>看讀法<strong>寫出數字</strong>，並填進位值表檢查位數對不對。</span></li>
-        <li><span class="dot">3</span><span>完成收支簿的<strong>餘額欄</strong>：每月存 1000 元、每月存 100 元各一題。</span></li>
+        <li data-reveal><span class="dot">1</span><span>看數字<strong>寫出讀法</strong>（含 0 的那幾題要特別小心）。</span></li>
+        <li data-reveal><span class="dot">2</span><span>看讀法<strong>寫出數字</strong>，並填進位值表檢查位數對不對。</span></li>
+        <li data-reveal><span class="dot">3</span><span>完成收支簿的<strong>餘額欄</strong>：每月存 1000 元、每月存 100 元各一題。</span></li>
       </ul>
-      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2b.差異化教材_進階題基礎穩固</b>。</div>
-      <p class="judgement">讀法寫得出來，代表位值真的懂了</p>
+      <div class="paper-note" data-reveal>✎ 這一頁的三個任務請寫在紙本學習單上：<b>2b.差異化教材_進階題基礎穩固</b>。</div>
+      <p class="judgement" data-reveal>讀法寫得出來，代表位值真的懂了</p>
     </section>
 
     <!-- ══════════ 挑戰題 ══════════ -->
@@ -303,7 +313,7 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
           <span class="answer">是 <b>80006</b>，位值表上有 <b>3 個 0</b>（千、百、十位）。三個 0 連在一起，所以只讀一個「零」。</span>
         </button>
       </div>
-      <p class="judgement">從讀法推回數字，最容易漏掉的就是 0 的位數</p>
+      <p class="judgement" data-reveal data-after-answer>從讀法推回數字，最容易漏掉的就是 0 的位數</p>
     </section>
 
     <section class="slide sec-a" data-slide-id="a2" hidden>
@@ -337,20 +347,21 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <div class="qhead"><span class="qtag">挑戰題 · 3</span><span class="qskill">紙本任務 · 出題給同學</span></div>
       <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
-        <li><span class="dot">1</span><span>完成三組<strong>連續進退位</strong>的數詞序列填空（含跨萬位的那幾題）。</span></li>
-        <li><span class="dot">2</span><span>逆推題：只給讀法，<strong>寫回數字</strong>並填進位值表。</span></li>
-        <li><span class="dot">3</span><span><strong>自己出一題</strong>「含兩處 0」的五位數考同學，並在背面寫下正確讀法與理由。</span></li>
+        <li data-reveal><span class="dot">1</span><span>完成三組<strong>連續進退位</strong>的數詞序列填空（含跨萬位的那幾題）。</span></li>
+        <li data-reveal><span class="dot">2</span><span>逆推題：只給讀法，<strong>寫回數字</strong>並填進位值表。</span></li>
+        <li data-reveal><span class="dot">3</span><span><strong>自己出一題</strong>「含兩處 0」的五位數考同學，並在背面寫下正確讀法與理由。</span></li>
       </ul>
-      <div class="paper-note">✎ 這一頁的三個任務請寫在紙本學習單上：<b>2c.差異化教材_挑戰題精熟</b>。<br>第 3 題出好之後跟同組同學交換作答，再互相檢查。</div>
-      <p class="judgement">能出題考別人，才代表真的精熟</p>
+      <div class="paper-note" data-reveal>✎ 這一頁的三個任務請寫在紙本學習單上：<b>2c.差異化教材_挑戰題精熟</b>。<br>第 3 題出好之後跟同組同學交換作答，再互相檢查。</div>
+      <p class="judgement" data-reveal>能出題考別人，才代表真的精熟</p>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
       <button data-action="home">⌂ 回選組</button>
-      <button data-action="previous">← 上一頁</button>
-      <button data-action="next">下一頁 →</button>
+      <button data-action="previous">← 上一步</button>
+      <button data-action="next">下一步 →</button>
+      <button data-action="reveal-all">整頁攤開</button>
       <button data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -370,7 +381,61 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -381,6 +446,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -429,15 +497,20 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
   document.querySelector('[data-action="home"]')?.addEventListener('click', () => render(0));
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

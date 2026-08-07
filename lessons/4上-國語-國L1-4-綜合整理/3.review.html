@@ -1986,6 +1986,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
 .progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
 .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2005,11 +2007,11 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="station-1" hidden>
       <div class="page-head"><span class="label">關卡 1 · 五種寫法</span><h2 class="title">全課五種寫法，你都記得嗎？</h2></div>
       <div class="concept-grid">
-        <div class="concept-card"><div class="head">轉化</div><div class="body">把東西當人來寫</div></div>
-        <div class="concept-card"><div class="head">明喻／隱喻</div><div class="body">用「像」或「是」比較</div></div>
-        <div class="concept-card"><div class="head">頂真</div><div class="body">前句尾接後句頭</div></div>
-        <div class="concept-card"><div class="head">堆疊語詞</div><div class="body">一層一層加上形容</div></div>
-        <div class="concept-card" style="border-left-color:var(--accent);"><div class="head">設問</div><div class="body"><strong>問了不一定要你回答</strong></div></div>
+        <div class="concept-card" data-reveal><div class="head">轉化</div><div class="body">把東西當人來寫</div></div>
+        <div class="concept-card" data-reveal><div class="head">明喻／隱喻</div><div class="body">用「像」或「是」比較</div></div>
+        <div class="concept-card" data-reveal><div class="head">頂真</div><div class="body">前句尾接後句頭</div></div>
+        <div class="concept-card" data-reveal><div class="head">堆疊語詞</div><div class="body">一層一層加上形容</div></div>
+        <div class="concept-card" style="border-left-color:var(--accent);" data-reveal><div class="head">設問</div><div class="body"><strong>問了不一定要你回答</strong></div></div>
       </div>
     </section>
 
@@ -2017,12 +2019,12 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="station-2" hidden>
       <div class="page-head"><span class="label">關卡 2 · 設問</span><h2 class="title">「你知道向日葵為什麼總是面向太陽嗎？」是設問嗎？</h2></div>
       <div class="compare-pair">
-        <div class="side is-focus">
+        <div class="side is-focus" data-reveal>
           <div class="head">是設問</div>
           <div class="item">問句是為了引起好奇，接著會說明原因</div>
         </div>
         <div class="vs">＝</div>
-        <div class="side">
+        <div class="side" data-reveal>
           <div class="head">和課文一樣</div>
           <div class="item">「你知道這裡是什麼地方嗎？」把讀者拉進來</div>
         </div>
@@ -2051,9 +2053,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="station-4" hidden>
       <div class="page-head"><span class="label">關卡 4 · 應用寫作</span><h2 class="title">再練一次：先挑東西，再給人的動作</h2></div>
       <div class="concept-grid">
-        <div class="concept-card"><div class="head">1. 挑東西</div><div class="body">教室的窗戶</div></div>
-        <div class="concept-card"><div class="head">2. 給動作</div><div class="body">windows 靜靜的看著我們上課</div></div>
-        <div class="concept-card" style="border-left-color:var(--accent);"><div class="head">3. 加形容</div><div class="body"><strong>陽光灑落的窗戶，靜靜的看著我們上課</strong></div></div>
+        <div class="concept-card" data-reveal><div class="head">1. 挑東西</div><div class="body">教室的窗戶</div></div>
+        <div class="concept-card" data-reveal><div class="head">2. 給動作</div><div class="body">windows 靜靜的看著我們上課</div></div>
+        <div class="concept-card" style="border-left-color:var(--accent);" data-reveal><div class="head">3. 加形容</div><div class="body"><strong>陽光灑落的窗戶，靜靜的看著我們上課</strong></div></div>
       </div>
     </section>
 
@@ -2062,17 +2064,18 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       <div class="page-head"><span class="label">複習 · 收尾</span><h2 class="title">準備好進入評量了嗎？</h2></div>
       <div class="action-list">
         <div class="head">複習重點</div>
-        <div class="item is-done">五種寫法：轉化、明喻／隱喻、頂真、堆疊語詞、設問</div>
-        <div class="item is-done">設問是為了把讀者拉進來，不一定要回答</div>
-        <div class="item is-done">應用寫作三步驟：挑東西 → 給動作 → 加形容</div>
+        <div class="item is-done" data-reveal>五種寫法：轉化、明喻／隱喻、頂真、堆疊語詞、設問</div>
+        <div class="item is-done" data-reveal>設問是為了把讀者拉進來，不一定要回答</div>
+        <div class="item is-done" data-reveal>應用寫作三步驟：挑東西 → 給動作 → 加形容</div>
       </div>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
       <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -2091,7 +2094,61 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -2102,6 +2159,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -2114,14 +2174,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

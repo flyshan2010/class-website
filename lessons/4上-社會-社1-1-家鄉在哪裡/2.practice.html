@@ -2330,6 +2330,15 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     render(index - 1, true, true);
   };
 
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
   // 答對／答錯後才放出含答案的判斷帶
   document.addEventListener('tds:answered', (e) => {
     const slide = e.target.closest('.slide');

@@ -1987,6 +1987,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
 .vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
 .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2006,12 +2008,12 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="hook" hidden>
       <div class="page-head"><span class="label">國L1-2 內容理解</span><h2 class="title">這座島，你猜是哪裡？</h2></div>
       <div class="concept-grid">
-        <div class="concept-card"><div class="head">線索一</div><div class="body">四面被大海圍繞</div></div>
-        <div class="concept-card"><div class="head">線索二</div><div class="body">氣候溫暖，不下冰雪</div></div>
-        <div class="concept-card"><div class="head">線索三</div><div class="body">有椰子樹，四季開花</div></div>
-        <div class="concept-card"><div class="head">線索四</div><div class="body">盛產香蕉和鳳梨</div></div>
+        <div class="concept-card" data-reveal><div class="head">線索一</div><div class="body">四面被大海圍繞</div></div>
+        <div class="concept-card" data-reveal><div class="head">線索二</div><div class="body">氣候溫暖，不下冰雪</div></div>
+        <div class="concept-card" data-reveal><div class="head">線索三</div><div class="body">有椰子樹，四季開花</div></div>
+        <div class="concept-card" data-reveal><div class="head">線索四</div><div class="body">盛產香蕉和鳳梨</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">詩人把答案藏到最後一段才說——為什麼？</span>
       </div>
@@ -2021,11 +2023,11 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="info-1" hidden>
       <div class="page-head"><span class="label">國L1-2 · 提取訊息</span><h2 class="title">課文介紹了臺灣哪些風景和特點？</h2></div>
       <div class="concept-grid">
-        <div class="concept-card"><div class="head">大海</div><div class="body">有藍色的吐著白色的唾沫的海</div></div>
-        <div class="concept-card"><div class="head">椰子樹</div><div class="body">有綠色的伸著大手掌的椰子樹</div></div>
-        <div class="concept-card"><div class="head">美麗的花朵</div><div class="body">美麗的花朵永遠成群結隊的開</div></div>
-        <div class="concept-card"><div class="head">小朋友</div><div class="body">都像健康的牛一樣的健康</div></div>
-        <div class="concept-card" style="border-left-color:var(--accent);"><div class="head">香蕉和鳳梨</div><div class="body"><strong>夢見香蕉跟鳳梨在街上跳舞</strong></div></div>
+        <div class="concept-card" data-reveal><div class="head">大海</div><div class="body">有藍色的吐著白色的唾沫的海</div></div>
+        <div class="concept-card" data-reveal><div class="head">椰子樹</div><div class="body">有綠色的伸著大手掌的椰子樹</div></div>
+        <div class="concept-card" data-reveal><div class="head">美麗的花朵</div><div class="body">美麗的花朵永遠成群結隊的開</div></div>
+        <div class="concept-card" data-reveal><div class="head">小朋友</div><div class="body">都像健康的牛一樣的健康</div></div>
+        <div class="concept-card" style="border-left-color:var(--accent);" data-reveal><div class="head">香蕉和鳳梨</div><div class="body"><strong>夢見香蕉跟鳳梨在街上跳舞</strong></div></div>
       </div>
     </section>
 
@@ -2033,19 +2035,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="info-2" hidden>
       <div class="page-head"><span class="label">國L1-2 · 提取訊息</span><h2 class="title">「白色的唾沫」到底是什麼？</h2></div>
       <div class="compare-pair">
-        <div class="side">
+        <div class="side" data-reveal>
           <div class="head">詩人怎麼寫</div>
           <div class="item">吐著白色的唾沫</div>
           <div class="item">像有生命的東西在吐口水</div>
         </div>
         <div class="vs">→</div>
-        <div class="side is-focus">
+        <div class="side is-focus" data-reveal>
           <div class="head">實際上是什麼</div>
           <div class="item">海面上的浪花</div>
           <div class="item">海浪拍打岸邊時激起的白色泡沫</div>
         </div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
         <span class="text">把比喻還原成事實，才算真的讀懂</span>
       </div>
@@ -2055,11 +2057,11 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="infer" hidden>
       <div class="page-head"><span class="label">國L1-2 · 推論訊息</span><h2 class="title">位置和氣候，藏在哪幾段？</h2></div>
       <div class="flow-steps">
-        <div class="step"><div class="badge">1</div><div class="head">位置：四面環海</div><div class="body">「有藍色的……的海／小心的忠實的守衛著」——海把島圍住，可見是一座島嶼</div></div>
-        <div class="arrow">→</div>
-        <div class="step"><div class="badge">2</div><div class="head">氣候：四季如春</div><div class="body">「寒冷的冰雪永遠也不敢到這裡來」＋「緊緊的拉住親愛的春天」——不下雪、常年溫暖</div></div>
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">位置：四面環海</div><div class="body">「有藍色的……的海／小心的忠實的守衛著」——海把島圍住，可見是一座島嶼</div></div>
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">氣候：四季如春</div><div class="body">「寒冷的冰雪永遠也不敢到這裡來」＋「緊緊的拉住親愛的春天」——不下雪、常年溫暖</div></div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">第一、二段說位置，第二段同時說明了氣候</span>
       </div>
@@ -2069,11 +2071,11 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="interpret" hidden>
       <div class="page-head"><span class="label">國L1-2 · 詮釋整合</span><h2 class="title">香蕉和鳳梨，為什麼會在街上跳舞？</h2></div>
       <div class="flow-steps">
-        <div class="step"><div class="badge">1</div><div class="head">事實</div><div class="body">香蕉、鳳梨是臺灣重要的農產品，產量多、外銷國外</div></div>
-        <div class="arrow">→</div>
-        <div class="step"><div class="badge">2</div><div class="head">寫法</div><div class="body">詩人讓水果「在街上跳舞」，寫出物產多到彷彿滿街都是的熱鬧</div></div>
-        <div class="arrow">→</div>
-        <div class="step"><div class="badge">3</div><div class="head">結論</div><div class="body">臺灣早期種甘蔗、製糖外銷，所以詩人稱它是「甜蜜的糖的王國」</div></div>
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">事實</div><div class="body">香蕉、鳳梨是臺灣重要的農產品，產量多、外銷國外</div></div>
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">寫法</div><div class="body">詩人讓水果「在街上跳舞」，寫出物產多到彷彿滿街都是的熱鬧</div></div>
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal><div class="badge">3</div><div class="head">結論</div><div class="body">臺灣早期種甘蔗、製糖外銷，所以詩人稱它是「甜蜜的糖的王國」</div></div>
       </div>
     </section>
 
@@ -2081,9 +2083,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="misconception-fact" hidden>
       <div class="page-head"><span class="label">國L1-2 · 常見誤會</span><h2 class="title">詩裡寫的，都真的發生過嗎？</h2></div>
       <div class="misconception">
-        <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">以為「香蕉跟鳳梨在街上跳舞」「椰子樹伸著大手掌拉住春天」都是真的發生過的事。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">水果不會跳舞、樹沒有手掌，這些是「轉化」的寫法，用來表達感受；「臺灣氣候溫暖，盛產香蕉和鳳梨」才是可以查證的事實。</div></div>
+        <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">以為「香蕉跟鳳梨在街上跳舞」「椰子樹伸著大手掌拉住春天」都是真的發生過的事。</div></div>
+        <div class="becomes" data-reveal>→</div>
+        <div class="right-side" data-reveal><div class="mark">✓ 正確理解</div><div class="text">水果不會跳舞、樹沒有手掌，這些是「轉化」的寫法，用來表達感受；「臺灣氣候溫暖，盛產香蕉和鳳梨」才是可以查證的事實。</div></div>
       </div>
     </section>
 
@@ -2091,15 +2093,15 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <section class="slide" data-slide-id="practice" hidden>
       <div class="page-head"><span class="label">國L1-2 · 練習</span><h2 class="title">你覺得作者是個怎樣的人？✍️</h2></div>
       <div class="concept-grid">
-        <div class="concept-card">
+        <div class="concept-card" data-reveal>
           <div class="head">我的看法：作者是一個（　　）的人</div>
           <div class="write-field" contenteditable="true" role="textbox" aria-multiline="true" aria-label="主張作答區" spellcheck="false" data-placeholder="例如：有想像力的、很愛家鄉的…"></div>
         </div>
-        <div class="concept-card">
+        <div class="concept-card" data-reveal>
           <div class="head">證據一（請從課文中舉例）</div>
           <div class="write-field" contenteditable="true" role="textbox" aria-multiline="true" aria-label="證據一作答區" spellcheck="false" data-placeholder="點這裡打字…"></div>
         </div>
-        <div class="concept-card">
+        <div class="concept-card" data-reveal>
           <div class="head">證據二（請從課文中舉例）</div>
           <div class="write-field" contenteditable="true" role="textbox" aria-multiline="true" aria-label="證據二作答區" spellcheck="false" data-placeholder="點這裡打字…"></div>
         </div>
@@ -2130,21 +2132,22 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       <div class="page-head"><span class="label">國L1-2 內容理解</span><h2 class="title">三段遞進，最後才揭曉</h2></div>
       <div class="action-list">
         <div class="head">今天的三個收穫</div>
-        <div class="item is-done">先寫景：海、椰子樹、花朵——先讓讀者「看見」這座島</div>
-        <div class="item is-done">再寫人：健康快樂的小朋友、作夢的小妹妹——讓島上有了生活</div>
-        <div class="item is-done">最後點名：「告訴你，她的名字叫臺灣」——謎底揭曉，情感一次湧上來</div>
+        <div class="item is-done" data-reveal>先寫景：海、椰子樹、花朵——先讓讀者「看見」這座島</div>
+        <div class="item is-done" data-reveal>再寫人：健康快樂的小朋友、作夢的小妹妹——讓島上有了生活</div>
+        <div class="item is-done" data-reveal>最後點名：「告訴你，她的名字叫臺灣」——謎底揭曉，情感一次湧上來</div>
       </div>
-      <div class="takeaway-band">
+      <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
         <span class="text">接下來第三節：拆解楊喚用了哪些寫法，讓畫面這麼生動</span>
       </div>
     </section>
 
     <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span></p>
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span> <span data-reveal-meta></span></p>
       <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一頁</button>
-      <button class="ds-btn" data-action="next">下一頁 →</button>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
       <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
     <div class="progress-track"><div class="progress-bar" data-progress></div></div>
@@ -2163,7 +2166,61 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
   const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
-  const render = (next, updateHash = true) => {
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
     index = clamp(next);
     slides.forEach((s, i) => {
       const active = i === index;
@@ -2174,6 +2231,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     if (current) current.textContent = String(index + 1);
     if (total) total.textContent = String(slides.length);
     if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
     if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
   };
 
@@ -2186,14 +2246,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
   addEventListener('keydown', (e) => {
     if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
     else if (e.key === 'Home') { e.preventDefault(); render(0); }
     else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
   });
 
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
-  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
   document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

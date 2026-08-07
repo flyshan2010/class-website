@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<title>單元複習｜美麗島 · 四上第一課</title>
+<style>
+/* ─────────────────────────────────────────────
+   〈美麗島〉單元複習頁（考前總複習，非正式評量）
+   風格同單元簡報／前測／分組練習頁（粉蠟筆童趣風）
+   離線可用：無外部字型、無 CDN、無網路請求
+   注意：本頁範例句與正式評量試卷不同，僅供概念複習，
+        不會洩漏定期評量的實際題目。
+   不收個人作答資料。
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#FFFCF5; --surface:#FFFFFF; --text:#3F352A; --muted:#857868; --line:#E7DCC8;
+  --accent:#F2865E; --sect:#6C9BD2;
+  --right:#4E9E5A; --wrong:#D2705E;
+  --safe-x:88px; --safe-y:40px;
+  --font-sans:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",system-ui,sans-serif;
+  --crayon:255px 18px 235px 18px / 18px 235px 18px 255px;
+  --crayon-alt:18px 240px 18px 250px / 230px 18px 245px 18px;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#2B2621;color:var(--text);font-family:var(--font-sans)}
+button{font:inherit;color:inherit}
+.deck{position:relative;width:100%;height:100%;overflow:hidden}
+.stage{position:absolute;top:50%;left:50%;width:1600px;height:900px;overflow:hidden;background:var(--paper);transform-origin:center center}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:var(--safe-y) var(--safe-x) 34px;
+  background:var(--paper);
+  background-image:radial-gradient(circle at 12% 18%,#00000005 0 2px,transparent 2px),
+                   radial-gradient(circle at 68% 72%,#00000005 0 2px,transparent 2px),
+                   radial-gradient(circle at 88% 28%,#00000004 0 2px,transparent 2px);
+  background-size:140px 140px,180px 180px,220px 220px;
+  opacity:0;visibility:hidden;transition:opacity 220ms ease}
+.slide.is-active{opacity:1;visibility:visible}
+
+.eyebrow{margin:0 0 8px;font-size:25px;letter-spacing:.14em;color:var(--muted)}
+h1{margin:0;font-size:88px;letter-spacing:.16em;line-height:1.1}
+h2{margin:0 0 6px;font-size:50px;line-height:1.22}
+.lead{font-size:30px;color:var(--muted);margin:14px 0 0}
+.judgement{margin-top:auto;padding-top:16px;font-size:30px;color:var(--accent);font-weight:700}
+
+.layout-title{align-items:center;justify-content:center;text-align:center}
+.hero-badge{font-size:76px;margin:0 0 4px}
+.map-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:30px;width:100%}
+.map-card{padding:20px 18px;border:3px solid var(--line);border-radius:var(--crayon);background:var(--surface)}
+.map-card:nth-child(even){border-radius:var(--crayon-alt)}
+.map-card .num{display:inline-block;padding:4px 16px;border-radius:999px;background:var(--sect);color:#fff;font-size:21px;font-weight:700}
+.map-card h3{margin:12px 0 6px;font-size:26px}
+.map-card p{margin:0;font-size:21px;line-height:1.5;color:var(--muted)}
+
+.qhead{display:flex;align-items:baseline;gap:18px;margin-bottom:4px}
+.qtag{flex:none;padding:5px 20px;border-radius:999px;background:var(--sect,var(--accent));color:#fff;font-size:24px;font-weight:700}
+.qskill{font-size:23px;color:var(--muted)}
+.qstem{font-size:36px;line-height:1.4;margin:8px 0 16px;font-weight:700}
+.intro{font-size:26px;line-height:1.5;margin:0 0 14px;color:var(--muted)}
+
+.reveal-grid{display:grid;gap:16px}
+.reveal-grid.cols-2{grid-template-columns:1fr 1fr}
+.reveal-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.rcard{padding:20px 26px;border:3px solid var(--line);border-radius:var(--crayon);background:var(--surface);
+  text-align:left;cursor:pointer;transition:transform 140ms ease,border-color 140ms ease}
+.rcard:nth-child(even){border-radius:var(--crayon-alt)}
+.rcard:hover{transform:translateY(-3px);border-color:var(--sect,var(--accent))}
+.rcard.is-open{cursor:default;border-color:var(--sect,var(--accent))}
+.rcard.is-open:hover{transform:none}
+.rcard h3{margin:0 0 8px;font-size:27px;color:var(--sect,var(--accent))}
+.rcard .quote{font-size:24px;line-height:1.5;margin:0}
+.rcard .answer{display:none;margin-top:12px;padding-top:12px;border-top:2px dashed var(--line);font-size:23px;line-height:1.55}
+.rcard.is-open .answer{display:block}
+.rcard .tap{display:block;margin-top:10px;font-size:20px;color:var(--muted)}
+.rcard.is-open .tap{display:none}
+
+.qlist{display:grid;gap:13px;margin:0;padding:0;list-style:none}
+.qrow{display:flex;align-items:center;gap:18px;padding:13px 22px;border:3px solid var(--line);
+  border-radius:var(--crayon);background:var(--surface)}
+.qrow:nth-child(even){border-radius:var(--crayon-alt)}
+.qrow .sent{flex:1;font-size:27px;line-height:1.4}
+.qrow .picks{flex:none;display:flex;gap:10px}
+.pick{padding:8px 20px;border:3px solid var(--line);border-radius:14px;background:var(--paper);
+  font-size:23px;cursor:pointer;transition:border-color 140ms ease,background 140ms ease}
+.pick:hover{border-color:var(--sect,var(--accent))}
+.pick.is-right{border-color:var(--right);background:#F0F8F0;color:var(--right);font-weight:700}
+.pick.is-wrong{border-color:var(--wrong);background:#FCF1EE;color:var(--wrong)}
+.qrow .hint{display:none;flex-basis:100%;margin-top:8px;font-size:21px;color:#8A6D3B;font-style:italic}
+.qrow.show-hint{flex-wrap:wrap}
+.qrow.show-hint .hint{display:block}
+
+.keybox{margin:0 0 16px;padding:16px 26px;background:#FFF6E8;border:3px dashed #E8A83A;border-radius:16px;
+  font-size:27px;line-height:1.5;font-weight:700}
+
+.exit-list{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.exit-list li{display:flex;gap:16px;align-items:flex-start;font-size:29px;line-height:1.5}
+.exit-list .dot{flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;
+  display:grid;place-items:center;font-size:22px;font-weight:700}
+
+.hud{position:absolute;left:0;right:0;bottom:0;height:52px;display:flex;align-items:center;
+  gap:16px;padding:0 var(--safe-x);background:linear-gradient(to top,#00000010,transparent)}
+.hud .pagemeta{font-size:21px;color:var(--muted);margin:0}
+.hud .spacer{flex:1}
+.hud button{padding:5px 18px;border:2px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:21px}
+.hud button:hover{border-color:var(--accent)}
+.progress-track{position:absolute;left:0;bottom:0;height:6px;width:100%;background:#00000010}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:width 240ms ease}
+</style>
+</head>
+<body>
+<main class="deck" aria-label="美麗島單元複習">
+  <div class="stage" id="stage" tabindex="-1">
+
+    <!-- ══ 1 封面 ══ -->
+    <section class="slide layout-title is-active" data-slide-id="cover">
+      <p class="hero-badge">📝</p>
+      <p class="eyebrow">第壹單元 我愛家鄉 · 第一課 · 考前複習</p>
+      <h1>單 元 複 習</h1>
+      <p class="lead">評量前的最後檢查——四個關卡，點開每一張卡片</p>
+      <div class="map-grid">
+        <div class="map-card"><span class="num">關卡一</span><h3>字詞</h3><p>形近字、部件意義</p></div>
+        <div class="map-card"><span class="num">關卡二</span><h3>內容理解</h3><p>結構、訊息、詮釋</p></div>
+        <div class="map-card"><span class="num">關卡三</span><h3>形式深究</h3><p>修辭辨識</p></div>
+        <div class="map-card"><span class="num">關卡四</span><h3>綜合整理</h3><p>全課地圖回顧</p></div>
+      </div>
+      <p class="judgement">這裡的例句和評量試卷不一樣，重點是把「觀念」弄懂</p>
+    </section>
+
+    <!-- ══ 2 字詞複習 ══ -->
+    <section class="slide" data-slide-id="w1" hidden>
+      <div class="qhead"><span class="qtag">關卡一</span><span class="qskill">字詞複習 · 部件與部首</span></div>
+      <p class="qstem">點開卡片，檢查自己記得對不對</p>
+      <div class="reveal-grid cols-2">
+        <button class="rcard">
+          <h3>「唾」「衛」的部首</h3>
+          <p class="quote">唾沫的「唾」、守衛的「衛」，部首各是什麼？</p>
+          <span class="tap">▸ 點一下看答案</span>
+          <span class="answer">「唾」是<b>口部</b>（和嘴巴有關）；「衛」是<b>行部</b>（外圍的框才是部首，不是中間的「韋」）。</span>
+        </button>
+        <button class="rcard">
+          <h3>「甜」和「話」的左邊</h3>
+          <p class="quote">兩個字左邊的部件長得很像，意思一樣嗎？</p>
+          <span class="tap">▸ 點一下看答案</span>
+          <span class="answer"><b>不一樣！</b>「甜」的左邊是「舌」，因為要用舌頭嘗味道；「話」的左邊只是形狀相似，和舌頭無關——形近字常常完全不同。</span>
+        </button>
+      </div>
+      <p class="judgement">口訣：看到形狀像的字，先想「意思」對不對，不要只看外表</p>
+    </section>
+
+    <!-- ══ 3 內容理解複習 ══ -->
+    <section class="slide" data-slide-id="c1" hidden>
+      <div class="qhead"><span class="qtag">關卡二</span><span class="qskill">內容理解 · 結構與詮釋</span></div>
+      <p class="qstem">這首詩分成三段，各自在說什麼？</p>
+      <div class="reveal-grid cols-3">
+        <button class="rcard">
+          <h3>第一段</h3>
+          <p class="quote">寫了什麼？</p>
+          <span class="tap">▸ 點一下</span>
+          <span class="answer"><b>地理位置與氣候</b>——四面環海、氣候溫暖不下雪。</span>
+        </button>
+        <button class="rcard">
+          <h3>第二段</h3>
+          <p class="quote">寫了什麼？</p>
+          <span class="tap">▸ 點一下</span>
+          <span class="answer"><b>生活情形與物產</b>——小朋友健康快樂、香蕉鳳梨在街上「跳舞」。</span>
+        </button>
+        <button class="rcard">
+          <h3>第三段</h3>
+          <p class="quote">寫了什麼？</p>
+          <span class="tap">▸ 點一下</span>
+          <span class="answer"><b>點出真實身分</b>——原來這座島就是臺灣。</span>
+        </button>
+      </div>
+      <p class="judgement">先寫景、再寫人、最後點名——這是這首詩的章法</p>
+    </section>
+
+    <!-- ══ 4 形式深究複習：辨識練習 ══ -->
+    <section class="slide" data-slide-id="f1" hidden>
+      <div class="qhead"><span class="qtag">關卡三</span><span class="qskill">形式深究 · 修辭辨識（新例句，非試卷原題）</span></div>
+      <p class="qstem">點你覺得對的答案——答錯會出現小提示，可以再試一次</p>
+      <div class="keybox">🔑 有「像」＝明喻；有「是」＝隱喻；沒有喻詞但東西會做人的動作＝轉化</div>
+      <ul class="qlist">
+        <li class="qrow" data-answer="2" data-hint="句子裡沒有「像」也沒有「是」，但「風」做了什麼人的動作？">
+          <span class="sent">1.「風輕輕的梳理著稻田的頭髮」</span>
+          <span class="picks"><button class="pick">明喻</button><button class="pick">隱喻</button><button class="pick">轉化</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="0" data-hint="找找看句子裡有沒有「像」這個字。">
+          <span class="sent">2.「妹妹的笑容像盛開的花朵」</span>
+          <span class="picks"><button class="pick">明喻</button><button class="pick">隱喻</button><button class="pick">轉化</button></span>
+          <span class="hint"></span>
+        </li>
+        <li class="qrow" data-answer="1" data-hint="句子裡是「像」還是「是」？兩個喻詞的語氣強度不同。">
+          <span class="sent">3.「時間是一條靜靜流動的河」</span>
+          <span class="picks"><button class="pick">明喻</button><button class="pick">隱喻</button><button class="pick">轉化</button></span>
+          <span class="hint"></span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ══ 5 綜合整理複習 ══ -->
+    <section class="slide" data-slide-id="s1" hidden>
+      <div class="qhead"><span class="qtag">關卡四</span><span class="qskill">綜合整理 · 全課地圖</span></div>
+      <p class="qstem">最後檢查一次：結構、寫法、主旨，你都說得出來嗎？</p>
+      <div class="reveal-grid cols-3">
+        <button class="rcard">
+          <h3>結構</h3>
+          <p class="quote">三段各寫什麼？</p>
+          <span class="tap">▸ 點一下</span>
+          <span class="answer">位置氣候 → 生活物產 → 點出身分（臺灣）</span>
+        </button>
+        <button class="rcard">
+          <h3>寫法</h3>
+          <p class="quote">用了哪些修辭？</p>
+          <span class="tap">▸ 點一下</span>
+          <span class="answer">轉化（擬人）、譬喻（明喻／隱喻）、頂真、堆疊語詞、設問</span>
+        </button>
+        <button class="rcard">
+          <h3>主旨</h3>
+          <p class="quote">整首詩想表達什麼？</p>
+          <span class="tap">▸ 點一下</span>
+          <span class="answer">透過地形氣候、物產與生活情形的描寫，表達對家鄉臺灣的喜愛之情。</span>
+        </button>
+      </div>
+      <p class="judgement">三格都答得出來，這一課就準備好了</p>
+    </section>
+
+    <!-- ══ 6 結尾 ══ -->
+    <section class="slide layout-title" data-slide-id="close" hidden>
+      <p class="hero-badge">💪</p>
+      <h2>準備好了嗎？</h2>
+      <ul class="exit-list" style="text-align:left;max-width:900px;margin:24px auto 0;">
+        <li><span class="dot">1</span><span>字詞：形近字要看意思，不能只看外形</span></li>
+        <li><span class="dot">2</span><span>內容：三段結構、記得從課文找依據</span></li>
+        <li><span class="dot">3</span><span>形式：像＝明喻、是＝隱喻、沒喻詞但擬人＝轉化</span></li>
+      </ul>
+      <p class="judgement">評量時仔細讀題，加油！</p>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>6</span></p>
+      <span class="spacer"></span>
+      <button data-action="home">回封面</button>
+      <button data-action="previous">← 上一頁</button>
+      <button data-action="next">下一頁 →</button>
+      <button data-action="fullscreen">全螢幕</button>
+    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  const render = (next, updateHash = true) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  document.querySelectorAll('.rcard').forEach((card) => {
+    card.addEventListener('click', () => card.classList.add('is-open'));
+  });
+
+  document.querySelectorAll('.qrow').forEach((row) => {
+    const answer = Number(row.dataset.answer);
+    const picks = [...row.querySelectorAll('.pick')];
+    const hint = row.querySelector('.hint');
+    if (hint) hint.textContent = `💡 小提示：${row.dataset.hint}`;
+    picks.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        if (row.classList.contains('is-done')) return;
+        if (i === answer) {
+          btn.classList.add('is-right');
+          picks.forEach((b) => b.disabled = true);
+          row.classList.add('is-done');
+          row.classList.remove('show-hint');
+        } else {
+          btn.classList.add('is-wrong');
+          row.classList.add('show-hint');
+        }
+      });
+    });
+  });
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); render(index + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); render(index - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="home"]')?.addEventListener('click', () => render(0));
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', () => render(index - 1));
+  document.querySelector('[data-action="next"]')?.addEventListener('click', () => render(index + 1));
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
+</body>
+</html>
