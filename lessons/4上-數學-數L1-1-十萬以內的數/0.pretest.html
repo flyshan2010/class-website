@@ -126,19 +126,19 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- ══ 1 封面 ══ -->
-    <section class="slide layout-title is-active" data-slide-id="cover">
+    <section class="slide layout-title is-active" data-slide-id="cover" aria-labelledby="cover-t">
       <p class="hero-badge">🔢</p>
       <p class="eyebrow">第一單元 一億以內的數 · 1-1 上課前</p>
-      <h1>暖身小測驗</h1>
+      <h1 id="cover-t">暖身小測驗</h1>
       <p class="lead">五個問題，看看三年級學的「10000 以內的數」還記得多少</p>
       <p class="judgement" data-reveal>答錯沒關係——這是上課「前」的測驗，就是要找出還要補的地方</p>
       <p class="start-hint">按 <span class="kbd">→</span> 或 <span class="kbd">空白鍵</span> 開始</p>
     </section>
 
     <!-- ══ 2 第一題 · 位值 ══ -->
-    <section class="slide sec-1" data-slide-id="q1" hidden>
+    <section class="slide sec-1" data-slide-id="q1" aria-labelledby="q1-t" hidden>
       <div class="qhead"><span class="qtag">第 1 題</span><span class="qskill">位值概念 · 每一位表示多少</span></div>
-      <p class="qstem">3245 這個數，百位的 2 表示多少？</p>
+      <p id="q1-t" class="qstem">3245 這個數，百位的 2 表示多少？</p>
       <div class="pv-wrap">
         <table class="pv-table">
           <thead><tr><th>千位</th><th>百位</th><th>十位</th><th>個位</th></tr></thead>
@@ -158,9 +158,9 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
     </section>
 
     <!-- ══ 3 第二題 · 含 0 的讀法 ══ -->
-    <section class="slide sec-2" data-slide-id="q2" hidden>
+    <section class="slide sec-2" data-slide-id="q2" aria-labelledby="q2-t" hidden>
       <div class="qhead"><span class="qtag">第 2 題</span><span class="qskill">數的讀法 · 0 要不要讀出來</span></div>
-      <p class="qstem">3008 這個數，正確的讀法是哪一個？</p>
+      <p id="q2-t" class="qstem">3008 這個數，正確的讀法是哪一個？</p>
       <div class="pv-wrap">
         <table class="pv-table">
           <thead><tr><th>千位</th><th>百位</th><th>十位</th><th>個位</th></tr></thead>
@@ -180,9 +180,9 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
     </section>
 
     <!-- ══ 4 第三題 · 化聚 ══ -->
-    <section class="slide sec-3" data-slide-id="q3" hidden>
+    <section class="slide sec-3" data-slide-id="q3" aria-labelledby="q3-t" hidden>
       <div class="qhead"><span class="qtag">第 3 題</span><span class="qskill">數的化聚 · 幾個千幾個百合起來</span></div>
-      <p class="qstem">6 個千、4 個十和 7 個一合起來，是多少？</p>
+      <p id="q3-t" class="qstem">6 個千、4 個十和 7 個一合起來，是多少？</p>
       <ul class="options" data-answer="0">
         <li><button class="opt"><span class="mark">①</span><span>6047</span></button></li>
         <li><button class="opt"><span class="mark">②</span><span>6470</span></button></li>
@@ -196,9 +196,9 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
     </section>
 
     <!-- ══ 5 第四題 · 數詞序列 ══ -->
-    <section class="slide sec-4" data-slide-id="q4" hidden>
+    <section class="slide sec-4" data-slide-id="q4" aria-labelledby="q4-t" hidden>
       <div class="qhead"><span class="qtag">第 4 題</span><span class="qskill">數詞序列 · 一直加下去會變怎樣</span></div>
-      <p class="qstem">按照順序數下去：9997 → 9998 → 9999 →（　　）</p>
+      <p id="q4-t" class="qstem">按照順序數下去：9997 → 9998 → 9999 →（　　）</p>
       <ul class="options" data-answer="3">
         <li><button class="opt"><span class="mark">①</span><span>99910</span></button></li>
         <li><button class="opt"><span class="mark">②</span><span>9900</span></button></li>
@@ -212,12 +212,12 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
     </section>
 
     <!-- ══ 6 第五題 · 討論 ══ -->
-    <section class="slide sec-5" data-slide-id="q5" hidden>
+    <section class="slide sec-5" data-slide-id="q5" aria-labelledby="q5-t" hidden>
       <div class="qhead"><span class="qtag">第 5 題</span><span class="qskill">想一想 · 一起討論（沒有標準答案）</span></div>
       <p class="qstem">生活中，什麼東西要用「比 10000 還大」的數才記得下來？</p>
       <div class="discuss-grid">
         <div class="card" data-reveal>
-          <h3>① 先想：哪裡看過大數字？</h3>
+          <h3 id="q5-t">① 先想：哪裡看過大數字？</h3>
           <ul>
             <li>一臺機車、一輛汽車多少錢</li>
             <li>我們鄉鎮／縣市有多少人</li>
@@ -241,9 +241,9 @@ h2{margin:0 0 8px;font-size:56px;line-height:1.25}
     </section>
 
     <!-- ══ 7 收尾 ══ -->
-    <section class="slide sec-5 layout-title" data-slide-id="wrap" hidden>
+    <section class="slide sec-5 layout-title" data-slide-id="wrap" aria-labelledby="wrap-t" hidden>
       <p class="eyebrow">暖身結束</p>
-      <h2>這一節，我們要學這些</h2>
+      <h2 id="wrap-t">這一節，我們要學這些</h2>
       <div class="wrap-list" style="text-align:left;max-width:1100px">
         <div class="wrap-item" data-reveal><span class="dot">1</span><span>10 個一千是一萬——認識新的位：<b>萬位</b></span></div>
         <div class="wrap-item" data-reveal><span class="dot">2</span><span>幾個萬 ＋ 幾千幾百幾十幾，<b>合起來命名</b></span></div>

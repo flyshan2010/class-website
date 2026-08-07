@@ -2010,17 +2010,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第三課 鏡頭下的家鄉 · 第三節</div>
-        <div class="headline" style="font-size:var(--t1);">形式深究</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">形式深究</div>
         <div class="sub">作者用了什麼修辭與句型，把家鄉寫得更生動？</div>
       </div>
     </section>
 
     <!-- 2 複習：明喻公式 -->
-    <section class="slide" data-slide-id="simile-review" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 修辭複習</span><h2 class="title">複習：什麼是明喻？</h2></div>
+    <section class="slide" data-slide-id="simile-review" aria-labelledby="simile-review-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 修辭複習</span><h2 id="simile-review-t" class="title">複習：什麼是明喻？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal><div class="badge">1</div><div class="head">本體</div><div class="body">真正描寫的東西</div></div>
         <div class="arrow" data-reveal>→</div>
@@ -2035,8 +2035,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 課文譬喻①：城市人／農人（同時也是映襯） -->
-    <section class="slide" data-slide-id="simile-1" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 課文譬喻①</span><h2 class="title">城市人像動物，農人像植物</h2></div>
+    <section class="slide" data-slide-id="simile-1" aria-labelledby="simile-1-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 課文譬喻①</span><h2 id="simile-1-t" class="title">城市人像動物，農人像植物</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">城市裡的人們</div>
@@ -2055,8 +2055,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 課文譬喻②③：如詩如畫／揮汗如雨 -->
-    <section class="slide" data-slide-id="simile-23" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 課文譬喻②③</span><h2 class="title">喻詞「如」的兩個例子</h2></div>
+    <section class="slide" data-slide-id="simile-23" aria-labelledby="simile-23-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 課文譬喻②③</span><h2 id="simile-23-t" class="title">喻詞「如」的兩個例子</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal>
           <div class="head">如詩如畫</div>
@@ -2070,8 +2070,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 課文譬喻④：陽光如金粉般 -->
-    <section class="slide" data-slide-id="simile-4" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 課文譬喻④</span><h2 class="title">陽光如金粉般落下</h2></div>
+    <section class="slide" data-slide-id="simile-4" aria-labelledby="simile-4-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 課文譬喻④</span><h2 id="simile-4-t" class="title">陽光如金粉般落下</h2></div>
       <div class="concept-card" style="flex:1;justify-content:center;" data-reveal>
         <div class="head">「這裡的十一月，陽光照耀滿園柳丁，如金粉從天上落下般美麗。」</div>
         <div class="body">喻詞是「如……般」。陽光遍灑柳丁園的景象，跟金粉的顏色與灑落方式相似，所以用金粉來比喻陽光。</div>
@@ -2079,8 +2079,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 映襯是什麼 -->
-    <section class="slide" data-slide-id="antithesis-def" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 修辭深究</span><h2 class="title">映襯：把相反的放在一起</h2></div>
+    <section class="slide" data-slide-id="antithesis-def" aria-labelledby="antithesis-def-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 修辭深究</span><h2 id="antithesis-def-t" class="title">映襯：把相反的放在一起</h2></div>
       <div class="concept-card" style="flex:1;justify-content:center;" data-reveal>
         <div class="head">什麼是映襯？</div>
         <div class="body">把意思相反或差異很大的兩件事放在同一句話裡比較，讓語氣增強、意義更明顯，讀者印象更深刻。</div>
@@ -2088,8 +2088,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 映襯例句：冷風／溫暖 -->
-    <section class="slide" data-slide-id="antithesis-example" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 課文映襯</span><h2 class="title">冷風陣陣，卻有一絲溫暖</h2></div>
+    <section class="slide" data-slide-id="antithesis-example" aria-labelledby="antithesis-example-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 課文映襯</span><h2 id="antithesis-example-t" class="title">冷風陣陣，卻有一絲溫暖</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">感受到的冷</div>
@@ -2108,8 +2108,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 迷思澄清：譬喻 vs 映襯 -->
-    <section class="slide" data-slide-id="misconception" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 迷思澄清</span><h2 class="title">譬喻和映襯，怎麼分？</h2></div>
+    <section class="slide" data-slide-id="misconception" aria-labelledby="misconception-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 迷思澄清</span><h2 id="misconception-t" class="title">譬喻和映襯，怎麼分？</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">一句話只能用一種修辭，看到「像」就一定只是譬喻。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2118,8 +2118,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 假設複句：公式 -->
-    <section class="slide" data-slide-id="pattern-even-if" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 句型講解</span><h2 class="title">假設複句：即使……也……</h2></div>
+    <section class="slide" data-slide-id="pattern-even-if" aria-labelledby="pattern-even-if-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 句型講解</span><h2 id="pattern-even-if-t" class="title">假設複句：即使……也……</h2></div>
       <div class="concept-card" style="flex:1;justify-content:center;" data-reveal>
         <div class="head">即使（假設情況），也（產生結果）</div>
         <div class="body">先假設一個情況，再說出即使如此也會發生的結果，透過對比讓語意更鮮明、更有力量。</div>
@@ -2127,8 +2127,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 10 假設複句：例句對照 -->
-    <section class="slide" data-slide-id="pattern-even-if-example" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 句型練習</span><h2 class="title">課文例句與補充例句</h2></div>
+    <section class="slide" data-slide-id="pattern-even-if-example" aria-labelledby="pattern-even-if-example-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 句型練習</span><h2 id="pattern-even-if-example-t" class="title">課文例句與補充例句</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">課文例句</div>
@@ -2143,8 +2143,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 11 疊字短語：結構 -->
-    <section class="slide" data-slide-id="pattern-reduplication" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 句型講解</span><h2 class="title">疊字短語的結構</h2></div>
+    <section class="slide" data-slide-id="pattern-reduplication" aria-labelledby="pattern-reduplication-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 句型講解</span><h2 id="pattern-reduplication-t" class="title">疊字短語的結構</h2></div>
       <div class="concept-card" style="flex:1;justify-content:center;" data-reveal>
         <div class="head">一＋單位量詞疊字＋形容詞＋的＋名詞</div>
         <div class="body">課文例句：「一顆顆香甜飽滿的柳丁」——「顆顆」是疊字，讓數量感覺更多、更有畫面感。</div>
@@ -2152,8 +2152,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 12 疊字短語：補充例句 -->
-    <section class="slide" data-slide-id="pattern-reduplication-example" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 句型練習</span><h2 class="title">再看兩個疊字短語</h2></div>
+    <section class="slide" data-slide-id="pattern-reduplication-example" aria-labelledby="pattern-reduplication-example-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 句型練習</span><h2 id="pattern-reduplication-example-t" class="title">再看兩個疊字短語</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal>
           <div class="head">一滴滴晶瑩剔透的露珠</div>
@@ -2167,8 +2167,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 13 課堂小測驗 -->
-    <section class="slide" data-slide-id="check" hidden>
-      <div class="page-head"><span class="label">國L3-3 · 課堂小測驗</span><h2 class="title">句型應用</h2></div>
+    <section class="slide" data-slide-id="check" aria-labelledby="check-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 · 課堂小測驗</span><h2 id="check-t" class="title">句型應用</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">「＿＿今天下著大雨，妹妹＿＿堅持要去公園盪鞦韆。」空格最適合填入哪一組？</p>
         <div class="q-options">
@@ -2186,8 +2186,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 14 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">國L3-3 形式深究</span><h2 class="title">這節課學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">國L3-3 形式深究</span><h2 id="summary-t" class="title">這節課學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">修辭與句型重點</div>
         <div class="item is-done" data-reveal>譬喻（明喻）：找喻詞「像／如／彷彿」，本體＋喻詞＋喻依</div>

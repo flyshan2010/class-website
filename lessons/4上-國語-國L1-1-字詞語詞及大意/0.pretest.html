@@ -2001,17 +2001,17 @@ details.explain > p { font-size: var(--t4); color: var(--ink); margin-top: var(-
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">國語4上 國L1 美麗島 · 第一節 起始評估</div>
-        <div class="headline" style="font-size:var(--t1);">字詞暖身小測驗</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">字詞暖身小測驗</div>
         <div class="sub">測的是你原本就會的能力，不是這一課的內容——盡量寫，答錯也沒關係</div>
       </div>
     </section>
 
     <!-- 2 Q1 部首 -->
-    <section class="slide" data-slide-id="q1" hidden>
-      <div class="page-head"><span class="label">第 1 題 · 部首概念</span><h2 class="title">「河」、「湖」、「海」有什麼共同的部件？</h2></div>
+    <section class="slide" data-slide-id="q1" aria-labelledby="q1-t" hidden>
+      <div class="page-head"><span class="label">第 1 題 · 部首概念</span><h2 id="q1-t" class="title">「河」、「湖」、「海」有什麼共同的部件？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <div class="q-options">
           <button class="q-opt" data-correct>水部（氵）</button>
@@ -2029,8 +2029,8 @@ details.explain > p { font-size: var(--t4); color: var(--ink); margin-top: var(-
     </section>
 
     <!-- 3 Q2 詞語結構 -->
-    <section class="slide" data-slide-id="q2" hidden>
-      <div class="page-head"><span class="label">第 2 題 · 詞語結構</span><h2 class="title">「甜蜜」是哪一種詞語？</h2></div>
+    <section class="slide" data-slide-id="q2" aria-labelledby="q2-t" hidden>
+      <div class="page-head"><span class="label">第 2 題 · 詞語結構</span><h2 id="q2-t" class="title">「甜蜜」是哪一種詞語？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <div class="q-options">
           <button class="q-opt" data-correct>兩個意思相近的字組成</button>
@@ -2048,8 +2048,8 @@ details.explain > p { font-size: var(--t4); color: var(--ink); margin-top: var(-
     </section>
 
     <!-- 4 Q3 閱讀理解 -->
-    <section class="slide" data-slide-id="q3" hidden>
-      <div class="page-head"><span class="label">第 3 題 · 閱讀理解</span><h2 class="title">小明每天早上都會澆花、餵魚，放學後還會陪奶奶散步。這段話主要在說小明是個怎樣的孩子？</h2></div>
+    <section class="slide" data-slide-id="q3" aria-labelledby="q3-t" hidden>
+      <div class="page-head"><span class="label">第 3 題 · 閱讀理解</span><h2 id="q3-t" class="title">小明每天早上都會澆花、餵魚，放學後還會陪奶奶散步。這段話主要在說小明是個怎樣的孩子？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <div class="q-options">
           <button class="q-opt" data-correct>很有責任感</button>
@@ -2067,8 +2067,8 @@ details.explain > p { font-size: var(--t4); color: var(--ink); margin-top: var(-
     </section>
 
     <!-- 5 Q4 分類歸納 -->
-    <section class="slide" data-slide-id="q4" hidden>
-      <div class="page-head"><span class="label">第 4 題 · 分類歸納</span><h2 class="title">下列哪一組詞語都和「甜的食物」有關？</h2></div>
+    <section class="slide" data-slide-id="q4" aria-labelledby="q4-t" hidden>
+      <div class="page-head"><span class="label">第 4 題 · 分類歸納</span><h2 id="q4-t" class="title">下列哪一組詞語都和「甜的食物」有關？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <div class="q-options">
           <button class="q-opt" data-correct>糖果、蜂蜜、巧克力</button>
@@ -2086,8 +2086,8 @@ details.explain > p { font-size: var(--t4); color: var(--ink); margin-top: var(-
     </section>
 
     <!-- 6 Q5 開放討論 -->
-    <section class="slide" data-slide-id="q5" hidden>
-      <div class="page-head"><span class="label">第 5 題 · 想一想</span><h2 class="title">如果要形容「家鄉」，你會用哪些詞語？✍️</h2></div>
+    <section class="slide" data-slide-id="q5" aria-labelledby="q5-t" hidden>
+      <div class="page-head"><span class="label">第 5 題 · 想一想</span><h2 id="q5-t" class="title">如果要形容「家鄉」，你會用哪些詞語？✍️</h2></div>
       <div class="concept-card" style="flex:1;" data-reveal>
         <div class="head">寫下 3 個你想到的詞語</div>
         <div class="write-field" contenteditable="true" role="textbox" aria-multiline="true" aria-label="家鄉詞語作答區" spellcheck="false" data-placeholder="例如：溫暖、熱鬧、美麗…"></div>
@@ -2095,8 +2095,8 @@ details.explain > p { font-size: var(--t4); color: var(--ink); margin-top: var(-
     </section>
 
     <!-- 7 收尾 -->
-    <section class="slide" data-slide-id="close" hidden>
-      <div class="page-head"><span class="label">起始評估 · 收尾</span><h2 class="title">這一節我們要學這些</h2></div>
+    <section class="slide" data-slide-id="close" aria-labelledby="close-t" hidden>
+      <div class="page-head"><span class="label">起始評估 · 收尾</span><h2 id="close-t" class="title">這一節我們要學這些</h2></div>
       <div class="action-list">
         <div class="head">準備好了嗎？接下來會學到</div>
         <div class="item" data-reveal>用部首猜生字的意思</div>

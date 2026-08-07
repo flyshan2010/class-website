@@ -143,10 +143,10 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- ══ 1 封面／選組 ══ -->
-    <section class="slide layout-title is-active" data-slide-id="cover">
+    <section class="slide layout-title is-active" data-slide-id="cover" aria-labelledby="cover-t">
       <p class="hero-badge">🔢</p>
       <p class="eyebrow">第一單元 一億以內的數 · 1-2 · 分組練習</p>
-      <h1>分 組 練 習</h1>
+      <h1 id="cover-t">分 組 練 習</h1>
       <p class="lead">依前測結果，選一個適合的難度，點下去開始</p>
       <div class="group-grid">
         <button class="group-card g-c" data-goto="c1" data-reveal>
@@ -170,9 +170,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
     <!-- ══════════ 基礎題 ══════════ -->
 
-    <section class="slide sec-c" data-slide-id="c1" hidden>
+    <section class="slide sec-c" data-slide-id="c1" aria-labelledby="c1-t" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 1</span><span class="qskill">基本概念 · 新的位在哪裡</span></div>
-      <p class="qstem">位值表繼續往左蓋，一格一格數過去就對了</p>
+      <p id="c1-t" class="qstem">位值表繼續往左蓋，一格一格數過去就對了</p>
       <div class="keybox" data-reveal>🔑 從萬位開始，<b>再往左</b>：萬位、十萬位、百萬位、千萬位、億位——每往左一格，<br>就是<b>前一格的 10 倍</b>。沒有的位，一定要寫 <span class="n">0</span> 佔位。</div>
       <div class="pv-wrap">
         <table class="pv-table">
@@ -184,9 +184,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <p class="pagemeta" style="position:static;margin-top:auto;"></p>
     </section>
 
-    <section class="slide sec-c" data-slide-id="c2" hidden>
+    <section class="slide sec-c" data-slide-id="c2" aria-labelledby="c2-t" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 2</span><span class="qskill">辨識練習 · 這一位是多少、表示多少</span></div>
-      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <p id="c2-t" class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
       <ul class="qlist">
         <li class="qrow" data-answer="1" data-hint="從個位往左數：個、十、百、千、萬、十萬、百萬、千萬。左邊數來第 2 位就是千萬位。">
           <span class="sent">1. <span class="n">52618000</span> 的千萬位是多少？</span>
@@ -211,9 +211,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       </ul>
     </section>
 
-    <section class="slide sec-c" data-slide-id="c3" hidden>
+    <section class="slide sec-c" data-slide-id="c3" aria-labelledby="c3-t" hidden>
       <div class="qhead"><span class="qtag">基礎題 · 3</span><span class="qskill">紙本任務 · 動手填位值表</span></div>
-      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <p id="c3-t" class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
         <li data-reveal><span class="dot">1</span><span>把老師念的五個大數，一格一格<strong>填進位值表</strong>（沒有的位記得寫 0）。</span></li>
         <li data-reveal><span class="dot">2</span><span>在每個數的<strong>千萬位</strong>下面畫一條線，並寫出它表示多少。</span></li>
@@ -225,9 +225,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
     <!-- ══════════ 進階題 ══════════ -->
 
-    <section class="slide sec-b" data-slide-id="b1" hidden>
+    <section class="slide sec-b" data-slide-id="b1" aria-labelledby="b1-t" hidden>
       <div class="qhead"><span class="qtag">進階題 · 1</span><span class="qskill">兩個家族 · 拆開來讀</span></div>
-      <p class="qstem">四位一撇，分成萬的家族與一的家族，各自讀完再合起來</p>
+      <p id="b1-t" class="qstem">四位一撇，分成萬的家族與一的家族，各自讀完再合起來</p>
       <div class="reveal-grid cols-3">
         <button class="rcard">
           <p class="quote">61540000</p>
@@ -248,9 +248,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <p class="judgement" data-reveal data-after-answer>先讀萬的家族，加一個「萬」字，再讀一的家族</p>
     </section>
 
-    <section class="slide sec-b" data-slide-id="b2" hidden>
+    <section class="slide sec-b" data-slide-id="b2" aria-labelledby="b2-t" hidden>
       <div class="qhead"><span class="qtag">進階題 · 2</span><span class="qskill">讀法與序列 · 判斷對不對</span></div>
-      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <p id="b2-t" class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="萬的家族 5020，百位是 0，前後都有數字，要讀一個「零」：五千零二十。">
           <span class="sent">1. <span class="n">50208000</span> 讀作？</span>
@@ -275,9 +275,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       </ul>
     </section>
 
-    <section class="slide sec-b" data-slide-id="b3" hidden>
+    <section class="slide sec-b" data-slide-id="b3" aria-labelledby="b3-t" hidden>
       <div class="qhead"><span class="qtag">進階題 · 3</span><span class="qskill">紙本任務 · 讀寫與序列</span></div>
-      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <p id="b3-t" class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
         <li data-reveal><span class="dot">1</span><span>看數字<strong>寫出讀法</strong>（含 0 的那幾題要特別小心是不是連著）。</span></li>
         <li data-reveal><span class="dot">2</span><span>看讀法<strong>寫出數字</strong>，並填進位值表檢查兩個家族的位數對不對。</span></li>
@@ -289,9 +289,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 
     <!-- ══════════ 挑戰題 ══════════ -->
 
-    <section class="slide sec-a" data-slide-id="a1" hidden>
+    <section class="slide sec-a" data-slide-id="a1" aria-labelledby="a1-t" hidden>
       <div class="qhead"><span class="qtag">挑戰題 · 1</span><span class="qskill">逆推 · 從線索找出這個數</span></div>
-      <p class="qstem">給你線索，倒過來推回原本的數字</p>
+      <p id="a1-t" class="qstem">給你線索，倒過來推回原本的數字</p>
       <div class="reveal-grid cols-2">
         <button class="rcard">
           <p class="quote txt">一個八位數，千萬位是 6、百位是 3，其他各位都是 0。這個數是多少？怎麼讀？</p>
@@ -307,9 +307,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       <p class="judgement" data-reveal data-after-answer>從讀法推回數字，最容易漏掉的就是中間 0 的位數</p>
     </section>
 
-    <section class="slide sec-a" data-slide-id="a2" hidden>
+    <section class="slide sec-a" data-slide-id="a2" aria-labelledby="a2-t" hidden>
       <div class="qhead"><span class="qtag">挑戰題 · 2</span><span class="qskill">連續進退位 · 大數也會跨好幾位</span></div>
-      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <p id="a2-t" class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
       <ul class="qlist">
         <li class="qrow" data-answer="1" data-hint="萬、十萬、百萬、千萬位全部是 9，加 1 個萬後一路進位，千萬位變成 8。">
           <span class="sent">1. <span class="n">79990000</span> 再加 <span class="n">10000</span> 是？</span>
@@ -334,9 +334,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
       </ul>
     </section>
 
-    <section class="slide sec-a" data-slide-id="a3" hidden>
+    <section class="slide sec-a" data-slide-id="a3" aria-labelledby="a3-t" hidden>
       <div class="qhead"><span class="qtag">挑戰題 · 3</span><span class="qskill">紙本任務 · 出題給同學＋銀行情境延伸</span></div>
-      <p class="qstem">接下來這三件事，寫在紙本學習單上</p>
+      <p id="a3-t" class="qstem">接下來這三件事，寫在紙本學習單上</p>
       <ul class="task-list">
         <li data-reveal><span class="dot">1</span><span>完成三組<strong>連續進退位</strong>的大數序列填空（含跨千萬位的那幾題）。</span></li>
         <li data-reveal><span class="dot">2</span><span>銀行情境：<strong>1 捆是 100 張千元鈔票</strong>，換算幾疊一萬元？寫出算式與答案。</span></li>

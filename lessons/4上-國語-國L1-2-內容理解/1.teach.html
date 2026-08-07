@@ -1996,17 +1996,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">國語4上 國L1 美麗島 · 第二節</div>
-        <div class="headline" style="font-size:var(--t1);">內容理解</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">內容理解</div>
         <div class="sub">詩人把答案藏到最後一段才說——為什麼？</div>
       </div>
     </section>
 
     <!-- 2 HOOK：這座島你猜是哪裡 -->
-    <section class="slide" data-slide-id="hook" hidden>
-      <div class="page-head"><span class="label">國L1-2 內容理解</span><h2 class="title">這座島，你猜是哪裡？</h2></div>
+    <section class="slide" data-slide-id="hook" aria-labelledby="hook-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 內容理解</span><h2 id="hook-t" class="title">這座島，你猜是哪裡？</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">線索一</div><div class="body">四面被大海圍繞</div></div>
         <div class="concept-card" data-reveal><div class="head">線索二</div><div class="body">氣候溫暖，不下冰雪</div></div>
@@ -2020,8 +2020,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 提取訊息①：風景與特點 -->
-    <section class="slide" data-slide-id="info-1" hidden>
-      <div class="page-head"><span class="label">國L1-2 · 提取訊息</span><h2 class="title">課文介紹了臺灣哪些風景和特點？</h2></div>
+    <section class="slide" data-slide-id="info-1" aria-labelledby="info-1-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 · 提取訊息</span><h2 id="info-1-t" class="title">課文介紹了臺灣哪些風景和特點？</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal><div class="head">大海</div><div class="body">有藍色的吐著白色的唾沫的海</div></div>
         <div class="concept-card" data-reveal><div class="head">椰子樹</div><div class="body">有綠色的伸著大手掌的椰子樹</div></div>
@@ -2032,8 +2032,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 提取訊息②：白色的唾沫 -->
-    <section class="slide" data-slide-id="info-2" hidden>
-      <div class="page-head"><span class="label">國L1-2 · 提取訊息</span><h2 class="title">「白色的唾沫」到底是什麼？</h2></div>
+    <section class="slide" data-slide-id="info-2" aria-labelledby="info-2-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 · 提取訊息</span><h2 id="info-2-t" class="title">「白色的唾沫」到底是什麼？</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">詩人怎麼寫</div>
@@ -2054,8 +2054,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 推論訊息：位置和氣候 -->
-    <section class="slide" data-slide-id="infer" hidden>
-      <div class="page-head"><span class="label">國L1-2 · 推論訊息</span><h2 class="title">位置和氣候，藏在哪幾段？</h2></div>
+    <section class="slide" data-slide-id="infer" aria-labelledby="infer-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 · 推論訊息</span><h2 id="infer-t" class="title">位置和氣候，藏在哪幾段？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal><div class="badge">1</div><div class="head">位置：四面環海</div><div class="body">「有藍色的……的海／小心的忠實的守衛著」——海把島圍住，可見是一座島嶼</div></div>
         <div class="arrow" data-reveal>→</div>
@@ -2068,8 +2068,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 詮釋整合：香蕉和鳳梨為什麼跳舞 -->
-    <section class="slide" data-slide-id="interpret" hidden>
-      <div class="page-head"><span class="label">國L1-2 · 詮釋整合</span><h2 class="title">香蕉和鳳梨，為什麼會在街上跳舞？</h2></div>
+    <section class="slide" data-slide-id="interpret" aria-labelledby="interpret-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 · 詮釋整合</span><h2 id="interpret-t" class="title">香蕉和鳳梨，為什麼會在街上跳舞？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal><div class="badge">1</div><div class="head">事實</div><div class="body">香蕉、鳳梨是臺灣重要的農產品，產量多、外銷國外</div></div>
         <div class="arrow" data-reveal>→</div>
@@ -2080,8 +2080,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 迷思澄清：詩裡寫的都真的發生過嗎 -->
-    <section class="slide" data-slide-id="misconception-fact" hidden>
-      <div class="page-head"><span class="label">國L1-2 · 常見誤會</span><h2 class="title">詩裡寫的，都真的發生過嗎？</h2></div>
+    <section class="slide" data-slide-id="misconception-fact" aria-labelledby="misconception-fact-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 · 常見誤會</span><h2 id="misconception-fact-t" class="title">詩裡寫的，都真的發生過嗎？</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">以為「香蕉跟鳳梨在街上跳舞」「椰子樹伸著大手掌拉住春天」都是真的發生過的事。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2090,8 +2090,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 練習：你覺得作者是怎樣的人 -->
-    <section class="slide" data-slide-id="practice" hidden>
-      <div class="page-head"><span class="label">國L1-2 · 練習</span><h2 class="title">你覺得作者是個怎樣的人？✍️</h2></div>
+    <section class="slide" data-slide-id="practice" aria-labelledby="practice-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 · 練習</span><h2 id="practice-t" class="title">你覺得作者是個怎樣的人？✍️</h2></div>
       <div class="concept-grid">
         <div class="concept-card" data-reveal>
           <div class="head">我的看法：作者是一個（　　）的人</div>
@@ -2109,8 +2109,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 課堂小測驗 -->
-    <section class="slide" data-slide-id="check" hidden>
-      <div class="page-head"><span class="label">國L1-2 · 課堂小測驗</span><h2 class="title">學會了嗎？</h2></div>
+    <section class="slide" data-slide-id="check" aria-labelledby="check-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 · 課堂小測驗</span><h2 id="check-t" class="title">學會了嗎？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">「香蕉跟鳳梨在街上跳舞」實際上是在說什麼事實？</p>
         <div class="q-options">
@@ -2128,8 +2128,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 10 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">國L1-2 內容理解</span><h2 class="title">三段遞進，最後才揭曉</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">國L1-2 內容理解</span><h2 id="summary-t" class="title">三段遞進，最後才揭曉</h2></div>
       <div class="action-list">
         <div class="head">今天的三個收穫</div>
         <div class="item is-done" data-reveal>先寫景：海、椰子樹、花朵——先讓讀者「看見」這座島</div>

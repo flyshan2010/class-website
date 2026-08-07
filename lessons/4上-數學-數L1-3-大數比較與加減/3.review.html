@@ -125,10 +125,10 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- ══ 1 概念地圖 ══ -->
-    <section class="slide layout-title is-active" data-slide-id="map">
+    <section class="slide layout-title is-active" data-slide-id="map" aria-labelledby="map-t">
       <p class="hero-badge">🗺️</p>
       <p class="eyebrow">第一單元 一億以內的數 · 1-3 · 複習</p>
-      <h1>觀 念 複 習</h1>
+      <h1 id="map-t">觀 念 複 習</h1>
       <p class="lead">這一節的四個重點，點一下直接跳過去</p>
       <div class="map-grid">
         <button class="map-card m-1" data-goto="r1" data-reveal>
@@ -156,9 +156,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 2 重點1 位數優先 ══ -->
-    <section class="slide sec-1" data-slide-id="r1" hidden>
+    <section class="slide sec-1" data-slide-id="r1" aria-labelledby="r1-t" hidden>
       <div class="qhead"><span class="qtag">重點 1</span><span class="qskill">位數優先比大小</span></div>
-      <p class="qstem">位數不同時，位數多的就比較大；位數相同才逐位比</p>
+      <p id="r1-t" class="qstem">位數不同時，位數多的就比較大；位數相同才逐位比</p>
       <div class="keybox" data-reveal>🔑 先數一數兩個數各是<b>幾位數</b>；位數不同直接分勝負，位數相同才從最高位往下比。</div>
       <div class="reveal-grid cols-3">
         <button class="rcard">
@@ -180,9 +180,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 3 重點2 兩家族分段比較 ══ -->
-    <section class="slide sec-2" data-slide-id="r2" hidden>
+    <section class="slide sec-2" data-slide-id="r2" aria-labelledby="r2-t" hidden>
       <div class="qhead"><span class="qtag">重點 2</span><span class="qskill">兩家族分段比較</span></div>
-      <p class="qstem">位數相同時，先比萬的家族，相同了才比一的家族</p>
+      <p id="r2-t" class="qstem">位數相同時，先比萬的家族，相同了才比一的家族</p>
       <div class="keybox" data-reveal>🔑 <span class="n">2634|0000</span> ＝ 萬的家族 <b>2634</b>　一的家族 <b>0000</b>　→　先比萬家族，能分出勝負就不用再比</div>
       <div class="reveal-grid cols-2">
         <button class="rcard">
@@ -200,9 +200,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 4 重點3 加減對齊算 ══ -->
-    <section class="slide sec-3" data-slide-id="r3" hidden>
+    <section class="slide sec-3" data-slide-id="r3" aria-labelledby="r3-t" hidden>
       <div class="qhead"><span class="qtag">重點 3</span><span class="qskill">大數加減對齊算</span></div>
-      <p class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
+      <p id="r3-t" class="qstem">點你覺得對的那一個——答錯會出現小提示，可以再試一次</p>
       <div class="keybox" data-reveal>🔑 萬的家族、一的家族<b>各自對齊相加減</b>；一家族滿一萬要進位給萬家族，不夠減要向萬家族借 1 萬。</div>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="一的家族 7600＋8900＝16500，超過 10000 要進 1 萬：5＋6＋1＝12，一的家族剩 6500。">
@@ -229,9 +229,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 5 重點4 應用題實戰 ══ -->
-    <section class="slide sec-4" data-slide-id="r4" hidden>
+    <section class="slide sec-4" data-slide-id="r4" aria-labelledby="r4-t" hidden>
       <div class="qhead"><span class="qtag">重點 4</span><span class="qskill">應用題實戰</span></div>
-      <p class="qstem">先弄清楚題目要「相加」還是「相差」，再套進大數加減的方法</p>
+      <p id="r4-t" class="qstem">先弄清楚題目要「相加」還是「相差」，再套進大數加減的方法</p>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="一的家族 2400＋9800＝12200，超過 10000 要進 1 萬：8＋3＋1＝12，一的家族剩 2200。">
           <span class="sent">1. 園遊券上午賣了 82400 元，下午賣了 39800 元，共賣多少元？</span>
@@ -252,9 +252,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 6 收尾 ══ -->
-    <section class="slide sec-5 layout-title" data-slide-id="wrap" hidden>
+    <section class="slide sec-5 layout-title" data-slide-id="wrap" aria-labelledby="wrap-t" hidden>
       <p class="eyebrow">複習結束</p>
-      <h2>檢查一下，這四件事都會了嗎？</h2>
+      <h2 id="wrap-t">檢查一下，這四件事都會了嗎？</h2>
       <div class="wrap-list" style="max-width:1150px">
         <div class="wrap-item" data-reveal><span class="dot">1</span><span>位數不同直接比位數，位數相同才逐位或用<b>家族比較</b></span></div>
         <div class="wrap-item" data-reveal><span class="dot">2</span><span>萬家族先比，<b>相同才比</b>一的家族</span></div>

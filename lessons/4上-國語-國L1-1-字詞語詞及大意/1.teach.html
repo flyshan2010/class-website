@@ -2001,17 +2001,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">國語4上 國L1 美麗島 · 第一節</div>
-        <div class="headline" style="font-size:var(--t1);">字詞語詞及大意</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">字詞語詞及大意</div>
         <div class="sub">讀懂一首詩，先讀懂它的字</div>
       </div>
     </section>
 
     <!-- 2 HOOK：為什麼要讀懂這些字 -->
-    <section class="slide" data-slide-id="hook" hidden>
-      <div class="page-head"><span class="label">國L1-1 字詞語詞及大意</span><h2 class="title">楊喚放下了筆</h2></div>
+    <section class="slide" data-slide-id="hook" aria-labelledby="hook-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 字詞語詞及大意</span><h2 id="hook-t" class="title">楊喚放下了筆</h2></div>
       <div class="question-frame">
         <div class="q tier-1" data-reveal><span class="tier">起</span><span class="text">詩人楊喚想寫信告訴遠方朋友：我的家鄉有多美。他寫下「臺灣四面環海、氣候溫暖、盛產香蕉和鳳梨」——朋友讀完，卻一點感覺也沒有。</span></div>
         <div class="q tier-2" data-reveal><span class="tier">承</span><span class="text">課文開頭卻這樣寫：「有藍色的吐著白色的唾沫的海，小心的忠實的守衛著，寒冷的冰雪永遠也不敢到這裡來。」</span></div>
@@ -2024,8 +2024,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 生字卡① -->
-    <section class="slide" data-slide-id="zi-1" hidden>
-      <div class="page-head"><span class="label">國L1-1 · 我會寫字 1/3</span><h2 class="title">生字卡①　觀察部首，猜猜看意思</h2></div>
+    <section class="slide" data-slide-id="zi-1" aria-labelledby="zi-1-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 · 我會寫字 1/3</span><h2 id="zi-1-t" class="title">生字卡①　觀察部首，猜猜看意思</h2></div>
       <div class="vocab-grid">
         <div class="vocab-card" data-reveal><div class="word">島<span class="zhuyin">ㄉㄠˇ</span></div><div class="mean">山部</div><div class="example">海島、荒島</div></div>
         <div class="vocab-card" data-reveal><div class="word">唾<span class="zhuyin">ㄊㄨㄛˋ</span></div><div class="mean">口部</div><div class="example">唾沫、唾棄</div></div>
@@ -2040,8 +2040,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 生字卡② -->
-    <section class="slide" data-slide-id="zi-2" hidden>
-      <div class="page-head"><span class="label">國L1-1 · 我會寫字 2/3</span><h2 class="title">生字卡②　哪兩個字和植物有關？</h2></div>
+    <section class="slide" data-slide-id="zi-2" aria-labelledby="zi-2-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 · 我會寫字 2/3</span><h2 id="zi-2-t" class="title">生字卡②　哪兩個字和植物有關？</h2></div>
       <div class="vocab-grid">
         <div class="vocab-card" data-reveal><div class="word">寒<span class="zhuyin">ㄏㄢˊ</span></div><div class="mean">宀部</div><div class="example">寒冷、寒流</div></div>
         <div class="vocab-card" data-reveal><div class="word">椰<span class="zhuyin">ㄧㄝˊ</span></div><div class="mean">木部</div><div class="example">椰子樹、椰果</div></div>
@@ -2056,8 +2056,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 迷思澄清：甜的部件 -->
-    <section class="slide" data-slide-id="misconception-tian" hidden>
-      <div class="page-head"><span class="label">國L1-1 · 常見誤會</span><h2 class="title">「甜」的左邊，不是說話的那個部件</h2></div>
+    <section class="slide" data-slide-id="misconception-tian" aria-labelledby="misconception-tian-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 · 常見誤會</span><h2 id="misconception-tian-t" class="title">「甜」的左邊，不是說話的那個部件</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">「甜」左邊的部件，跟「話」「活」右邊那個部件長得很像，以為意思也一樣。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2066,8 +2066,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 生字卡③ -->
-    <section class="slide" data-slide-id="zi-3" hidden>
-      <div class="page-head"><span class="label">國L1-1 · 我會寫字 3/3</span><h2 class="title">生字卡③　哪兩個字嘗起來是甜的？</h2></div>
+    <section class="slide" data-slide-id="zi-3" aria-labelledby="zi-3-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 · 我會寫字 3/3</span><h2 id="zi-3-t" class="title">生字卡③　哪兩個字嘗起來是甜的？</h2></div>
       <div class="vocab-grid">
         <div class="vocab-card" data-reveal><div class="word">甜<span class="zhuyin">ㄊㄧㄢˊ</span></div><div class="mean">甘部</div><div class="example">甜蜜、甜美</div></div>
         <div class="vocab-card" data-reveal><div class="word">糖<span class="zhuyin">ㄊㄤˊ</span></div><div class="mean">米部</div><div class="example">糖果、砂糖</div></div>
@@ -2081,8 +2081,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 詞語填空練習 -->
-    <section class="slide" data-slide-id="practice" hidden>
-      <div class="page-head"><span class="label">國L1-1 · 練習</span><h2 class="title">詞語填空 ✍️　拉語詞到正確位置</h2></div>
+    <section class="slide" data-slide-id="practice" aria-labelledby="practice-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 · 練習</span><h2 id="practice-t" class="title">詞語填空 ✍️　拉語詞到正確位置</h2></div>
       <div class="drag-match" data-drag-match>
         <div class="pool">
           <span class="chip" draggable="true" data-answer="z1">唾沫</span>
@@ -2103,8 +2103,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 課堂小測驗 -->
-    <section class="slide" data-slide-id="check" hidden>
-      <div class="page-head"><span class="label">國L1-1 · 課堂小測驗</span><h2 class="title">學會了嗎？</h2></div>
+    <section class="slide" data-slide-id="check" aria-labelledby="check-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 · 課堂小測驗</span><h2 id="check-t" class="title">學會了嗎？</h2></div>
       <div class="quiz" data-quiz data-mode="single">
         <p class="q-stem">「甜」字左邊的部件，為什麼是「舌」？</p>
         <div class="q-options">
@@ -2122,8 +2122,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">國L1-1 字詞語詞及大意</span><h2 class="title">這節課學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">國L1-1 字詞語詞及大意</span><h2 id="summary-t" class="title">這節課學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個收穫</div>
         <div class="item is-done" data-reveal>14 個生字：島唾沫忠衛、寒椰隊蕉街、甜糖童灣，部首藏著字的意思</div>

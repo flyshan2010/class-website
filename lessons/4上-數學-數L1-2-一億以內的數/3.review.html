@@ -133,10 +133,10 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- ══ 1 概念地圖 ══ -->
-    <section class="slide layout-title is-active" data-slide-id="map">
+    <section class="slide layout-title is-active" data-slide-id="map" aria-labelledby="map-t">
       <p class="hero-badge">🗺️</p>
       <p class="eyebrow">第一單元 一億以內的數 · 1-2 · 複習</p>
-      <h1>觀 念 複 習</h1>
+      <h1 id="map-t">觀 念 複 習</h1>
       <p class="lead">這一節的四個重點，點一下直接跳過去</p>
       <div class="map-grid">
         <button class="map-card m-1" data-goto="r1" data-reveal>
@@ -164,9 +164,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 2 重點1 位值表擴充 ══ -->
-    <section class="slide sec-1" data-slide-id="r1" hidden>
+    <section class="slide sec-1" data-slide-id="r1" aria-labelledby="r1-t" hidden>
       <div class="qhead"><span class="qtag">重點 1</span><span class="qskill">位值表擴充</span></div>
-      <p class="qstem">萬位左邊還有位，一路蓋到億位</p>
+      <p id="r1-t" class="qstem">萬位左邊還有位，一路蓋到億位</p>
       <div class="keybox" data-reveal>🔑 萬位再往左：<b>十萬位、百萬位、千萬位、億位</b>。每往左一格，就是前一格的 <span class="n">10</span> 倍。</div>
       <div class="pv-wrap">
         <table class="pv-table">
@@ -194,9 +194,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 3 重點2 兩個家族 ══ -->
-    <section class="slide sec-2" data-slide-id="r2" hidden>
+    <section class="slide sec-2" data-slide-id="r2" aria-labelledby="r2-t" hidden>
       <div class="qhead"><span class="qtag">重點 2</span><span class="qskill">兩個家族報讀</span></div>
-      <p class="qstem">從個位由右而左，每 4 位一組，分成萬的家族與一的家族</p>
+      <p id="r2-t" class="qstem">從個位由右而左，每 4 位一組，分成萬的家族與一的家族</p>
       <div class="keybox" data-reveal>🔑 <span class="n">4723|8000</span> ＝ 萬的家族 <b>4723</b>　＋　一的家族 <b>8000</b>　→　各自照四位數讀法讀</div>
       <div class="reveal-grid cols-2">
         <button class="rcard">
@@ -214,9 +214,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 4 重點3 零的讀法 ══ -->
-    <section class="slide sec-3" data-slide-id="r3" hidden>
+    <section class="slide sec-3" data-slide-id="r3" aria-labelledby="r3-t" hidden>
       <div class="qhead"><span class="qtag">重點 3</span><span class="qskill">0 的讀法（最容易錯的地方）</span></div>
-      <p class="qstem">看 0 的後面還有沒有數字</p>
+      <p id="r3-t" class="qstem">看 0 的後面還有沒有數字</p>
       <div class="keybox" data-reveal>① 後面<b>還有數字</b>的 0 → 讀<b>一個</b>「零」　　② 後面<b>全部是 0</b> → 整段<b>不讀</b></div>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="萬的家族 8002，中間連續兩個 0 只讀一次；一的家族 6000 末尾三個 0 不讀。">
@@ -243,9 +243,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 5 重點4 化聚 ══ -->
-    <section class="slide sec-4" data-slide-id="r4" hidden>
+    <section class="slide sec-4" data-slide-id="r4" aria-labelledby="r4-t" hidden>
       <div class="qhead"><span class="qtag">重點 4</span><span class="qskill">大數的化聚與進退位</span></div>
-      <p class="qstem">加減百萬、千萬時，先看那一位，滿 10 或不夠減就跟左右鄰居借還</p>
+      <p id="r4-t" class="qstem">加減百萬、千萬時，先看那一位，滿 10 或不夠減就跟左右鄰居借還</p>
       <div class="keybox" data-reveal>🔑 加 <span class="n">1000000</span> 看百萬位、加 <span class="n">10000000</span> 看千萬位；那一位滿 <span class="n">10</span> 就進位，不夠減就跟左邊借 <span class="n">1</span>。</div>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="百萬位是 9，加 1 個百萬後進位給千萬位，千萬位由 6 變 7。">
@@ -272,9 +272,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 6 收尾 ══ -->
-    <section class="slide sec-5 layout-title" data-slide-id="wrap" hidden>
+    <section class="slide sec-5 layout-title" data-slide-id="wrap" aria-labelledby="wrap-t" hidden>
       <p class="eyebrow">複習結束</p>
-      <h2>檢查一下，這四件事都會了嗎？</h2>
+      <h2 id="wrap-t">檢查一下，這四件事都會了嗎？</h2>
       <div class="wrap-list" style="max-width:1150px">
         <div class="wrap-item" data-reveal><span class="dot">1</span><span>說得出位值表<b>十萬到億</b>每一位叫什麼、表示多少</span></div>
         <div class="wrap-item" data-reveal><span class="dot">2</span><span>看數字能<b>分家族報讀</b>，聽讀法能寫回<b>數字</b></span></div>

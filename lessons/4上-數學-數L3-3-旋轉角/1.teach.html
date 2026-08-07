@@ -2038,17 +2038,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" hidden>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
       <div class="section-divider" style="height:100%;justify-content:center;">
         <div class="kicker">第三單元 角度 · 3-3</div>
-        <div class="headline" style="font-size:var(--t1);">旋轉角</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">旋轉角</div>
         <div class="sub">角不只是靜靜張開的形狀，更是「旋轉」出來的量</div>
       </div>
     </section>
 
     <!-- 2 複習銜接 -->
-    <section class="slide" data-slide-id="recap" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">上一節學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="recap" aria-labelledby="recap-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="recap-t" class="title">上一節學會了什麼？</h2></div>
       <div class="flow-steps">
         <div class="step" data-reveal>
           <div class="badge">1</div>
@@ -2075,8 +2075,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 3 旋轉角概念 -->
-    <section class="slide" data-slide-id="rotateconcept" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">角是怎麼「旋轉」出來的？</h2></div>
+    <section class="slide" data-slide-id="rotateconcept" aria-labelledby="rotateconcept-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="rotateconcept-t" class="title">角是怎麼「旋轉」出來的？</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 400 260" role="img" aria-label="一邊固定、一邊旋轉形成50度角"><line x1="200" y1="220" x2="355" y2="220" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/><path d="M 270 220 A 70 70 0 0 0 245 166.38" fill="none" stroke="var(--accent)" stroke-width="4"/>
@@ -2090,8 +2090,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 4 順時針 vs 逆時針 -->
-    <section class="slide" data-slide-id="direction" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">旋轉有兩個方向</h2></div>
+    <section class="slide" data-slide-id="direction" aria-labelledby="direction-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="direction-t" class="title">旋轉有兩個方向</h2></div>
       <div class="compare-pair">
         <div class="side" data-reveal>
           <div class="head">逆時針旋轉</div>
@@ -2118,8 +2118,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 5 迷思澄清 -->
-    <section class="slide" data-slide-id="misconception" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">方向不同，角度大小也不同？</h2></div>
+    <section class="slide" data-slide-id="misconception" aria-labelledby="misconception-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="misconception-t" class="title">方向不同，角度大小也不同？</h2></div>
       <div class="misconception">
         <div class="wrong-side" data-reveal><div class="mark">✗ 常見迷思</div><div class="text">以為順時針轉 70 度和逆時針轉 70 度，因為「方向相反」所以角度大小不一樣。</div></div>
         <div class="becomes" data-reveal>→</div>
@@ -2132,8 +2132,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 6 平角180周角360整合 -->
-    <section class="slide" data-slide-id="integrate" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">轉一整圈，會經過哪些熟面孔？</h2></div>
+    <section class="slide" data-slide-id="integrate" aria-labelledby="integrate-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="integrate-t" class="title">轉一整圈，會經過哪些熟面孔？</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 560 560" role="img" aria-label="從0度依序旋轉經過90度180度270度回到360度周角"><line x1="240" y1="250" x2="420" y2="250" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/><line x1="240" y1="250" x2="240" y2="85" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><line x1="240" y1="250" x2="75" y2="250" stroke="var(--accent-2)" stroke-width="5" stroke-linecap="round"/><line x1="240" y1="250" x2="240" y2="415" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><path d="M 374.49 238.23 A 135 135 0 1 0 374.49 261.77" fill="none" stroke="var(--correct)" stroke-width="5"/>
@@ -2147,8 +2147,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 7 時鐘指針夾角引入 -->
-    <section class="slide" data-slide-id="clockintro" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">時鐘上也藏著旋轉角</h2></div>
+    <section class="slide" data-slide-id="clockintro" aria-labelledby="clockintro-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="clockintro-t" class="title">時鐘上也藏著旋轉角</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 400 400" role="img" aria-label="時鐘指針夾角90°示意"><circle cx="200" cy="200" r="170" fill="var(--surface)" stroke="var(--ink)" stroke-width="4"/>
@@ -2186,8 +2186,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 8 時鐘練習 -->
-    <section class="slide" data-slide-id="clockpractice" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">換一個時間，指針夾角是幾度？</h2></div>
+    <section class="slide" data-slide-id="clockpractice" aria-labelledby="clockpractice-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="clockpractice-t" class="title">換一個時間，指針夾角是幾度？</h2></div>
       <div class="figure-block">
         <div class="figure">
           <svg viewBox="0 0 400 400" role="img" aria-label="時鐘指針夾角120°示意"><circle cx="200" cy="200" r="170" fill="var(--surface)" stroke="var(--ink)" stroke-width="4"/>
@@ -2225,8 +2225,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     </section>
 
     <!-- 9 總結 -->
-    <section class="slide" data-slide-id="summary" hidden>
-      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 class="title">今天學會了什麼？</h2></div>
+    <section class="slide" data-slide-id="summary" aria-labelledby="summary-t" hidden>
+      <div class="page-head"><span class="label">3-3 旋轉角</span><h2 id="summary-t" class="title">今天學會了什麼？</h2></div>
       <div class="action-list">
         <div class="head">今天的三個新概念</div>
         <div class="item is-done" data-reveal>角是「頂點固定、一邊旋轉」形成的，分順時針和逆時針</div>

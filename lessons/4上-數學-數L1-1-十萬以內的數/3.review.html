@@ -141,10 +141,10 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
   <div class="stage" id="stage" tabindex="-1">
 
     <!-- ══ 1 概念地圖 ══ -->
-    <section class="slide layout-title is-active" data-slide-id="map">
+    <section class="slide layout-title is-active" data-slide-id="map" aria-labelledby="map-t">
       <p class="hero-badge">🗺️</p>
       <p class="eyebrow">第一單元 一億以內的數 · 1-1 · 複習</p>
-      <h1>觀 念 複 習</h1>
+      <h1 id="map-t">觀 念 複 習</h1>
       <p class="lead">這一節的四個重點，點一下直接跳過去</p>
       <div class="map-grid">
         <button class="map-card m-1" data-goto="r1" data-reveal>
@@ -172,9 +172,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 2 重點1 位值 ══ -->
-    <section class="slide sec-1" data-slide-id="r1" hidden>
+    <section class="slide sec-1" data-slide-id="r1" aria-labelledby="r1-t" hidden>
       <div class="qhead"><span class="qtag">重點 1</span><span class="qskill">萬位與位值</span></div>
-      <p class="qstem">同一個數字，放在不同的位，表示的量完全不同</p>
+      <p id="r1-t" class="qstem">同一個數字，放在不同的位，表示的量完全不同</p>
       <div class="keybox" data-reveal>🔑 從右邊數：個、十、百、千、<b>萬</b>。<br>萬位的數字有幾，就表示<b>幾個一萬</b>；一個一萬是 <span class="n">10000</span>。</div>
       <div class="pv-wrap">
         <table class="pv-table">
@@ -202,9 +202,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 3 重點2 讀寫 ══ -->
-    <section class="slide sec-2" data-slide-id="r2" hidden>
+    <section class="slide sec-2" data-slide-id="r2" aria-labelledby="r2-t" hidden>
       <div class="qhead"><span class="qtag">重點 2</span><span class="qskill">五位數的讀寫</span></div>
-      <p class="qstem">拆成兩部分：幾個萬　＋　幾千幾百幾十幾</p>
+      <p id="r2-t" class="qstem">拆成兩部分：幾個萬　＋　幾千幾百幾十幾</p>
       <div class="keybox" data-reveal>🔑 <span class="n">45090</span> ＝ <b>4 個萬</b>（40000）　＋　<b>5090</b>　→　讀作「四萬五千零九十」</div>
       <div class="reveal-grid cols-2">
         <button class="rcard">
@@ -222,9 +222,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 4 重點3 零的讀法 ══ -->
-    <section class="slide sec-3" data-slide-id="r3" hidden>
+    <section class="slide sec-3" data-slide-id="r3" aria-labelledby="r3-t" hidden>
       <div class="qhead"><span class="qtag">重點 3</span><span class="qskill">0 的讀法（最容易錯的地方）</span></div>
-      <p class="qstem">三條規則，記熟就不會錯</p>
+      <p id="r3-t" class="qstem">三條規則，記熟就不會錯</p>
       <div class="keybox" data-reveal>
         ① <b>中間連著</b>的 0 → 只讀<b>一個</b>「零」　　② <b>中間分開</b>的 0 → <b>各讀一次</b>「零」<br>
         ③ <b>末尾</b>的 0 → <b>不讀</b>
@@ -254,9 +254,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 5 重點4 序列 ══ -->
-    <section class="slide sec-4" data-slide-id="r4" hidden>
+    <section class="slide sec-4" data-slide-id="r4" aria-labelledby="r4-t" hidden>
       <div class="qhead"><span class="qtag">重點 4</span><span class="qskill">數詞序列與進退位</span></div>
-      <p class="qstem">加多少，就看那一位；那一位滿 10，就往左邊進 1</p>
+      <p id="r4-t" class="qstem">加多少，就看那一位；那一位滿 10，就往左邊進 1</p>
       <div class="keybox" data-reveal>🔑 加 <span class="n">1</span> 看個位、加 <span class="n">10</span> 看十位、加 <span class="n">100</span> 看百位、加 <span class="n">1000</span> 看千位。<br>減的時候相反：不夠減，就<b>跟左邊借 1</b> 換成 10。</div>
       <ul class="qlist">
         <li class="qrow" data-answer="0" data-hint="加 100 就看百位：47026 的百位是 0，加 1 個百變 1 個百。">
@@ -283,9 +283,9 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
     </section>
 
     <!-- ══ 6 收尾 ══ -->
-    <section class="slide sec-5 layout-title" data-slide-id="wrap" hidden>
+    <section class="slide sec-5 layout-title" data-slide-id="wrap" aria-labelledby="wrap-t" hidden>
       <p class="eyebrow">複習結束</p>
-      <h2>檢查一下，這四件事都會了嗎？</h2>
+      <h2 id="wrap-t">檢查一下，這四件事都會了嗎？</h2>
       <div class="wrap-list" style="max-width:1150px">
         <div class="wrap-item" data-reveal><span class="dot">1</span><span>說得出五位數<b>每一位</b>叫什麼、表示多少</span></div>
         <div class="wrap-item" data-reveal><span class="dot">2</span><span>看數字寫得出<b>讀法</b>，聽讀法寫得回<b>數字</b></span></div>
