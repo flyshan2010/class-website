@@ -5,10 +5,16 @@
    ② 📚 依單元    ：原本的「科目 → 單元 → 課卡」摺疊清單，備課找教材時用
 
    資料來源
-   ・data/daily-plan.json   每日進度（由 scripts/build-daily-plan.py 依 xlsx＋日課表產生）
-   ・data/schedule.json     日課表（節次時間、每天每節的科目／老師／教室）
+   ・data/daily-plan.json   每週每科要教的內容（由 scripts/build-daily-plan.py 從進度表 xlsx 產生，
+                            **不含節次對齊**）
+   ・data/schedule.json     日課表（節次時間、每天每節的科目／老師／教室；Notion 每天自動同步）
    ・data/morning-launch.json 早自修 SEL 微儀式（五個主題日 × 四步驟）
    ・data/lessons.json      教學單元與五段連結（Notion「🚀 教學單元」勾「顯示」者，無個資）
+
+   節次對齊在這裡即時算（見 alignWeek）——不是事先算好存檔。
+   因為日課表是 Notion 每天自動同步下來的，隨時可能變；若把進度釘死在「第七節」這種
+   節次名上，日課表一改就只有一半資料被更新，會把數學進度掛到資訊課那一格而毫無警告
+   （2026-08-07 實測確認過的錯法）。改成開頁時依當下的日課表現算，日課表怎麼改都自動跟上。
 
    時間規則（使用者指定）
    ・已過的日期整頁變暗，一眼看得出不是今天
@@ -18,13 +24,67 @@
   await App.init("cockpit");
 
   const [planDoc, sched, ml, lessons] = await Promise.all([
-    App.fetchJSON("data/daily-plan.json").catch(() => ({ days: [] })),
+    App.fetchJSON("data/daily-plan.json").catch(() => ({ days: [], weeks: {} })),
     App.fetchJSON("data/schedule.json").catch(() => ({ periods: [], table: [] })),
     App.fetchJSON("data/morning-launch.json").catch(() => null),
     App.fetchJSON("data/lessons.json").catch(() => []),
   ]);
   const days = planDoc.days || [];
   const dayByDate = new Map(days.map(d => [d.date, d]));
+
+  /* ── 節次對齊（每次開頁依當下的日課表現算） ─────────────────
+     日課表裡「導師自己上、且進度表有寫」的科目才會被排進度；科任課只顯示科目與教室。
+     科目比對去掉括號註記，所以進度表的「英語」對得上日課表的「英語(彈性)」。 */
+  const SUBJ_BASE = s => String(s || "").replace(/\(.*?\)/g, "").trim();
+  const slots = {};                       // {科目: [{dow, period, order}]}，依星期、節次排好
+  sched.periods.forEach((p, i) => {
+    (sched.table[i] || []).forEach((cell, d) => {
+      if (cell && typeof cell === "object" && cell.subject) {
+        const k = SUBJ_BASE(cell.subject);
+        (slots[k] = slots[k] || []).push({ dow: d + 1, period: p.name, order: i });
+      }
+    });
+  });
+  Object.values(slots).forEach(a => a.sort((x, y) => x.dow - y.dow || x.order - y.order));
+
+  /* 進度表每科每天各寫一條（一週 5 條），但日課表的實際節數不見得是 5（國語 5、數學 4、社會 3）。
+     對齊規則：
+       ① 該週該科若有條目標了「第N節：」，就只有那些是正課（社會的課前預習／知識延伸不佔節次）；
+          沒有任何標記的科目（國語、數學）則全部依序當正課。這是看資料寫法，不綁定特定科目。
+       ② 正課依序填進該科當週實際可用的節次（放假日不佔節次）；正課填完還有空節次，
+          就接著把非正課的條目也填進去（換班級時某科節數較多才會遇到，免得節次空著）。
+       ③ 填不下的 → 該週「彈性補充」，列出來讓老師自己決定要不要挪，不靜默丟掉。 */
+  const SECTION_RE = /第\s*\d+\s*節\s*[：:]/;
+  const alignCache = new Map();
+  const alignWeek = week => {
+    if (alignCache.has(week)) return alignCache.get(week);
+    const wk = (planDoc.weeks || {})[String(week)] || {};
+    const holidays = new Set(days.filter(d => d.week === week && d.holiday).map(d => d.dow));
+    const plan = new Map();               // "星期|節次名" → {subject, text}
+    const extras = [];
+    Object.keys(wk).forEach(subject => {
+      const entries = wk[subject] || [];
+      if (!entries.length) return;
+      const marked = entries.filter(e => SECTION_RE.test(e.text));
+      const core = marked.length ? marked : entries;
+      // 正課排前面：節次不夠時優先保住正課，節次有餘時才輪到彈性內容
+      const ordered = [...core, ...entries.filter(e => !core.includes(e))];
+      const avail = (slots[subject] || []).filter(s => !holidays.has(s.dow));
+      avail.forEach((s, i) => {
+        if (i < ordered.length) plan.set(`${s.dow}|${s.period}`, { subject, text: ordered[i].text });
+      });
+      extras.push(...ordered.slice(avail.length).map(e => ({ subject, text: e.text, date: e.date })));
+    });
+    extras.sort((a, b) => a.date.localeCompare(b.date));
+    const seen = new Set();
+    const uniq = extras.filter(e => {
+      const key = `${e.subject}|${e.text}`;
+      return seen.has(key) ? false : (seen.add(key), true);
+    });
+    const out = { plan, extras: uniq };
+    alignCache.set(week, out);
+    return out;
+  };
 
   /* 科目色與圖示：前段是 Notion「🚀 教學單元」用的領域名（依單元檢視），
      後段是日課表 data/schedule.json 用的課名（行事曆檢視的科任課）。 */
@@ -241,8 +301,8 @@
     if (!day) return '<p class="empty-hint">這一天沒有課程安排。</p>';
     const isToday = selected === todayISO;
     const isPast = selected < todayISO;
+    const { plan, extras } = alignWeek(day.week);   // 依當下的日課表現算
 
-    const dowText = "一二三四五六日"[day.dow - 1] || "";
     const title = `
       <div class="cp-day-head ${isPast ? "past" : ""}">
         <div>
@@ -262,7 +322,7 @@
     if (day.holiday) {
       return `${title}
         <div class="cp-holiday">🏖️ 本日不排新課${day.note ? `：${App.esc(day.note)}` : "。"}</div>
-        ${extrasBlock(day)}`;
+        ${extrasBlock(day.week, extras)}`;
     }
 
     const rows = [];
@@ -285,7 +345,7 @@
           <div class="cp-time"><b>${App.esc(p.name)}</b><span>${App.esc(p.time)}</span></div>
           <div class="cp-body">
             ${mlHere ? mlCard(day.dow, day.dow === 3 ? "週三朝會，改在第一節課前 3 分鐘進行" : "") : ""}
-            ${isClass ? classCard(cell, day.plan[p.name]) : `<div class="cp-break">${App.esc(name)}</div>`}
+            ${isClass ? classCard(cell, plan.get(`${day.dow}|${p.name}`)) : `<div class="cp-break">${App.esc(name)}</div>`}
           </div>
         </div>`);
     });
@@ -302,17 +362,17 @@
       ? rows.join("")
       : `<p class="empty-hint">${isToday ? "今天的課都上完了 🎉" : "這一天沒有排定的節次。"}</p>`;
 
-    return `${title}${toggle}<div class="cp-timeline ${isPast ? "past" : ""}">${body}</div>${extrasBlock(day)}`;
+    return `${title}${toggle}<div class="cp-timeline ${isPast ? "past" : ""}">${body}</div>${extrasBlock(day.week, extras)}`;
   };
 
   /* 本週彈性補充：進度表寫了、但日課表沒有對應節次可放的內容（社會的課前預習／知識延伸、
      數學週五的複習訂正…）。掛在該週每一天，老師任何一天都看得到，自行決定要不要挪。 */
-  const extrasBlock = day => {
-    if (!day.extras?.length) return "";
+  const extrasBlock = (week, extras) => {
+    if (!extras.length) return "";
     return `
       <details class="cp-extras">
-        <summary>🧩 第 ${day.week} 週彈性補充（未排入固定節次，共 ${day.extras.length} 則）</summary>
-        <ul>${day.extras.map(e => {
+        <summary>🧩 第 ${week} 週彈性補充（未排入固定節次，共 ${extras.length} 則）</summary>
+        <ul>${extras.map(e => {
           const color = SUBJECT_COLOR[e.subject] || "#8395A7";
           return `<li><span class="badge" style="background:${color};color:#fff">${App.esc(e.subject)}</span>
                   ${App.esc(e.text)}</li>`;
