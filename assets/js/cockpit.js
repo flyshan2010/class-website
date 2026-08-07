@@ -1,29 +1,53 @@
-/* 🚀 教學駕駛艙：教學五段流程的單元入口頁（老師課堂一鍵開）
-   資料：data/lessons.json（Notion「🚀 教學單元」勾「顯示」者，無個資）
-   五段：起始評估 → 課程教學 → 差異化指導 → 學習評量 → 成果回流（回流在紀錄庫，無連結）
-   排列：主分類＝科目，次分群＝單元（數L1、社1…，由小而大），單元內依小節排序；
-         沒有小節的課（國L1）不歸單元，直接掛科目底下；狀態改為卡片徽章＋上方篩選
-   卡片：標題列只留「課次＋課名＋狀態」，年段・版本・開始日收成一行小字，其下條列內容重點 */
+/* 🚀 教學駕駛艙：老師上課前打開的「今天要教什麼」單一入口
+   ─────────────────────────────────────────────────────────
+   兩種檢視（分頁切換）
+   ① 📅 行事曆（預設）：選一天 → 由早到晚的節次時間軸，每節掛上該節進度與五段教材連結
+   ② 📚 依單元    ：原本的「科目 → 單元 → 課卡」摺疊清單，備課找教材時用
+
+   資料來源
+   ・data/daily-plan.json   每日進度（由 scripts/build-daily-plan.py 依 xlsx＋日課表產生）
+   ・data/schedule.json     日課表（節次時間、每天每節的科目／老師／教室）
+   ・data/morning-launch.json 早自修 SEL 微儀式（五個主題日 × 四步驟）
+   ・data/lessons.json      教學單元與五段連結（Notion「🚀 教學單元」勾「顯示」者，無個資）
+
+   時間規則（使用者指定）
+   ・已過的日期整頁變暗，一眼看得出不是今天
+   ・「今天」只留還沒上的節次，上完的自動收起（可按「顯示全天」攤開回看）
+   ・過去／未來的日期一律完整顯示，避免翻回去查卻是空的 */
 (async () => {
   await App.init("cockpit");
-  const lessons = await App.fetchJSON("data/lessons.json").catch(() => []);
 
+  const [planDoc, sched, ml, lessons] = await Promise.all([
+    App.fetchJSON("data/daily-plan.json").catch(() => ({ days: [] })),
+    App.fetchJSON("data/schedule.json").catch(() => ({ periods: [], table: [] })),
+    App.fetchJSON("data/morning-launch.json").catch(() => null),
+    App.fetchJSON("data/lessons.json").catch(() => []),
+  ]);
+  const days = planDoc.days || [];
+  const dayByDate = new Map(days.map(d => [d.date, d]));
+
+  /* 科目色與圖示：前段是 Notion「🚀 教學單元」用的領域名（依單元檢視），
+     後段是日課表 data/schedule.json 用的課名（行事曆檢視的科任課）。 */
   const SUBJECT_COLOR = {
     "國語": "#FF6B81", "數學": "#54A0FF", "社會": "#FF9F43", "自然": "#1DD1A1",
     "英語": "#5F27CD", "健體": "#FECA57", "藝術": "#FF9FF3", "綜合": "#8395A7", "其他": "#8395A7",
+    "體育": "#FECA57", "健康": "#FECA57", "崑山活力Go": "#FECA57",
+    "音樂": "#48DBFB", "視覺藝術": "#FF9FF3", "玩美": "#FF9FF3",
+    "本土語": "#c99a3a", "資訊": "#8395A7",
   };
-  // 科目分區的顯示順序（未列到的科目排在最後，依字母序）
   const SUBJECT_ORDER = ["國語", "數學", "社會", "自然", "英語", "健體", "藝術", "綜合", "其他"];
   const SUBJECT_ICON = {
     "國語": "📖", "數學": "🔢", "社會": "🗺️", "自然": "🔬",
     "英語": "🔤", "健體": "🤸", "藝術": "🎨", "綜合": "🧩", "其他": "📦",
+    "體育": "🤸", "健康": "💪", "崑山活力Go": "🏃",
+    "音樂": "🎵", "視覺藝術": "🎨", "玩美": "🖌️",
+    "本土語": "🗣️", "資訊": "💻",
   };
   const STATUS_META = {
     "進行中": { icon: "🔥", style: "background:#d0ebff;color:#1864ab" },
     "備課中": { icon: "🌱", style: "background:#fff3bf;color:#8a6d00" },
     "已完成": { icon: "✅", style: "background:#e9ecef;color:#666" },
   };
-  // 五段流程順序＝進度條；「成果回流」完成代表單元收尾（紀錄已回紀錄庫）
   const STAGES = ["起始評估", "課程教學", "差異化指導", "學習評量", "成果回流"];
   const LINKS = [
     ["pretest", "0 📝 起始評估"],
@@ -34,25 +58,276 @@
     ["material", "5 📚 原教材"],
   ];
 
-  /* 課次代碼：單元名稱中形如「國L1」「社1-1」「數L10」「SEL1-1」的那一段。
-     命名規範見 AGENTS.md 第 10 條；取不到就退回用整個標題排序。 */
+  /* ── 教材對應 ─────────────────────────────────────────────
+     把進度表的一句話（「第三課 鏡頭下的家鄉 — 週三：文本形式深究」）換算成
+     lessons.json 的課次代碼（國L3-3），才能把五段連結掛到對的節次上。 */
   const CODE_RE = /(?:^|\s)((?:國|數|社|自|英|健康|藝|綜)[A-Za-z]*\d+(?:-\d+)*|SEL\d+(?:-\d+)*)(?=\s|$)/;
   const codeOf = l => (CODE_RE.exec(l.title || "") || [])[1] || "";
-  /* 自然排序：把代碼拆成「文字段／數字段」交錯比較，讓 數L2 排在 數L10 前面 */
+  const lessonByCode = new Map();
+  lessons.forEach(l => { const c = codeOf(l); if (c && !lessonByCode.has(c)) lessonByCode.set(c, l); });
+
+  const CN_NUM = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
+  const cnNum = s => {                               // 「十二」→12、「三」→3
+    if (/^\d+$/.test(s)) return Number(s);
+    if (s.length === 1) return CN_NUM[s] || 0;
+    if (s[0] === "十") return 10 + (CN_NUM[s[1]] || 0);
+    if (s[1] === "十") return (CN_NUM[s[0]] || 0) * 10 + (CN_NUM[s[2]] || 0);
+    return 0;
+  };
+  // 國語一課拆四節（字詞語詞及大意／內容理解／形式深究／綜合整理）＝週一～週四；
+  // 週五是「課後評量與驗收」，教材沿用第四節那份（綜合整理內含評量卷）。
+  const CHI_DAY_TO_PART = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 4 };
+
+  const matchLesson = (subject, text) => {
+    const t = text || "";
+    if (subject === "國語") {
+      const c = /第([一二三四五六七八九十]+)課/.exec(t);
+      const d = /週([一二三四五])[：:]/.exec(t);
+      if (!c || !d) return null;
+      const code = `國L${cnNum(c[1])}-${CHI_DAY_TO_PART[d[1]]}`;
+      return { lesson: lessonByCode.get(code) || null, code, isExam: d[1] === "五" };
+    }
+    if (subject === "數學") {
+      const m = /(?:^|[\s—－-])(\d+)-(\d+)/.exec(t);
+      if (!m) return null;
+      const code = `數L${Number(m[1])}-${Number(m[2])}`;
+      return { lesson: lessonByCode.get(code) || null, code, isExam: false };
+    }
+    if (subject === "社會") {
+      const m = /^\s*(\d+)-(\d+)/.exec(t);
+      if (!m) return null;
+      const code = `社${Number(m[1])}-${Number(m[2])}`;
+      return { lesson: lessonByCode.get(code) || null, code, isExam: false };
+    }
+    return null;
+  };
+
+  /* ── 時間工具 ───────────────────────────────────────────── */
+  const todayISO = App.todayISO();
+  const nowMin = (() => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); })();
+  const toMin = hhmm => { const m = /(\d{1,2}):(\d{2})/.exec(hhmm || ""); return m ? +m[1] * 60 + +m[2] : null; };
+  const periodEnd = p => toMin((p.time || "").split(/[-–~]/)[1]);
+
+  /* 預設日期：今天有課就今天；沒有就跳到最近的下一個上課日（學期結束後退回最後一天） */
+  const defaultDate = () => {
+    if (dayByDate.has(todayISO)) return todayISO;
+    const next = days.find(d => d.date >= todayISO);
+    return next ? next.date : (days.length ? days[days.length - 1].date : todayISO);
+  };
+  /* 網址可帶 ?date=YYYY-MM-DD 直接開某一天（方便把某天加書籤或貼給代課老師）；
+     切換日期時同步改寫網址，重新整理不會跳回今天。 */
+  const qsDate = new URLSearchParams(location.search).get("date");
+  let selected = (qsDate && dayByDate.has(qsDate)) ? qsDate : defaultDate();
+  let showAll = false;                       // 今天是否攤開已上完的節次
+  let viewMonth = selected.slice(0, 7);      // 月曆顯示的月份 YYYY-MM
+  const syncURL = () => {
+    const u = new URL(location.href);
+    u.searchParams.set("date", selected);
+    history.replaceState(null, "", u);
+  };
+
+  /* ── 月曆（找某一天用） ───────────────────────────────────── */
+  const monthGrid = () => {
+    const [y, m] = viewMonth.split("-").map(Number);
+    const first = new Date(y, m - 1, 1);
+    const lead = (first.getDay() + 6) % 7;          // 以週一為每週第一天
+    const total = new Date(y, m, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < lead; i++) cells.push('<div class="cp-cell blank"></div>');
+    for (let d = 1; d <= total; d++) {
+      const iso = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const day = dayByDate.get(iso);
+      const cls = ["cp-cell"];
+      if (!day) cls.push("off");                     // 沒有課程安排的日子（週末／寒暑假）
+      if (day?.holiday) cls.push("holiday");
+      if (iso < todayISO) cls.push("past");
+      if (iso === todayISO) cls.push("today");
+      if (iso === selected) cls.push("sel");
+      const tag = day ? (day.holiday ? "🏖" : `W${day.week}`) : "";
+      cells.push(day
+        ? `<button type="button" class="${cls.join(" ")}" data-date="${iso}">
+             <span class="cp-cell-d">${d}</span><span class="cp-cell-t">${tag}</span></button>`
+        : `<div class="${cls.join(" ")}"><span class="cp-cell-d">${d}</span></div>`);
+    }
+    const prev = new Date(y, m - 2, 1), next = new Date(y, m, 1);
+    const iso7 = dt => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+    return `
+      <div class="cp-cal">
+        <div class="cp-cal-head">
+          <button type="button" class="cp-nav" data-month="${iso7(prev)}">‹</button>
+          <strong>${y} 年 ${m} 月</strong>
+          <button type="button" class="cp-nav" data-month="${iso7(next)}">›</button>
+        </div>
+        <div class="cp-cal-grid">
+          ${["一", "二", "三", "四", "五", "六", "日"].map(w => `<div class="cp-wd">${w}</div>`).join("")}
+          ${cells.join("")}
+        </div>
+      </div>`;
+  };
+
+  /* ── Morning Launch（早自修 SEL 微儀式） ─────────────────────
+     週一二四五掛在「早自修」；週三是朝會，依老師決定改掛第一節課前 3 分鐘。 */
+  const mlCard = (dow, compactNote) => {
+    const d = ml?.days?.find(x => x.dow === dow);
+    if (!d) return "";
+    const stepName = n => ml.steps.find(s => s.no === n) || {};
+    return `
+      <div class="cp-ml" style="--ml:${App.esc(d.color)}">
+        <div class="cp-ml-head">
+          <span class="cp-ml-emoji">${d.emoji}</span>
+          <div>
+            <strong>🌅 Morning Launch・${App.esc(d.theme)}</strong>
+            <div class="meta">3 分鐘心態重置與目標對齊${compactNote ? `｜${App.esc(compactNote)}` : ""}</div>
+          </div>
+          <a class="cp-ml-go" href="morning-launch.html?dow=${dow}" target="_blank" rel="noopener">▶ 開啟投影</a>
+        </div>
+        <div class="cp-ml-grid">
+          ${d.cards.map(c => {
+            const s = stepName(c.step);
+            return `
+              <div class="cp-ml-card">
+                <div class="cp-ml-step">${s.icon || ""} ${App.esc(s.name || "")}</div>
+                <div class="cp-ml-title">【${App.esc(c.title)}】</div>
+                <div class="cp-ml-prompt">${App.esc(c.prompt || "")}</div>
+                ${c.options ? `<div class="cp-ml-opts">${c.options
+                  .map(o => `<span>${o.icon} ${App.esc(o.label)}</span>`).join("")}</div>` : ""}
+              </div>`;
+          }).join("")}
+        </div>
+      </div>`;
+  };
+
+  /* ── 節次卡：導師三科掛進度與教材連結，科任課只標科目／老師／教室 ── */
+  const lessonLinks = l => {
+    const btns = LINKS.filter(([k]) => l.links?.[k])
+      .map(([k, label]) => `<a class="cockpit-link" href="${App.esc(l.links[k])}" target="_blank" rel="noopener">${label}</a>`);
+    return btns.length ? `<div class="cockpit-links">${btns.join("")}</div>` : "";
+  };
+
+  const classCard = (cell, entry) => {
+    const subject = cell.subject || "";
+    const base = subject.replace(/\(.*?\)/g, "").trim();
+    const color = SUBJECT_COLOR[base] || "#8395A7";
+    const head = `
+      <div class="cp-slot-head">
+        <span class="badge" style="background:${color};color:#fff">${SUBJECT_ICON[base] || "📦"} ${App.esc(subject)}</span>
+        <span class="meta">${App.esc(cell.teacher || "")}${cell.room ? `・${App.esc(cell.room)}` : ""}</span>
+      </div>`;
+    if (!entry) {
+      return `<div class="cp-slot" style="--accent:${color}">${head}</div>`;
+    }
+    const hit = matchLesson(entry.subject, entry.text);
+    const l = hit?.lesson;
+    return `
+      <div class="cp-slot" style="--accent:${color}">
+        ${head}
+        <p class="cp-progress">${App.esc(entry.text)}</p>
+        ${hit?.isExam ? '<p class="meta">📝 本節為課後評量與驗收，教材沿用該課「綜合整理」那份。</p>' : ""}
+        ${l ? `
+          <div class="cp-lesson">
+            <span class="badge" style="background:${color};color:#fff">${App.esc(hit.code)}</span>
+            <strong>${App.esc(l.title)}</strong>
+          </div>
+          ${(l.points || []).length ? `<ul class="cockpit-points">${l.points.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>` : ""}
+          ${lessonLinks(l)}`
+          : hit ? `<p class="meta">尚未建立 <b>${App.esc(hit.code)}</b> 的教材——對 AI 說「/lesson-flow 開新單元 ${App.esc(hit.code)}」就會自動掛上。</p>`
+                : ""}
+      </div>`;
+  };
+
+  /* ── 當日時間軸 ─────────────────────────────────────────── */
+  const dayPanel = () => {
+    const day = dayByDate.get(selected);
+    if (!day) return '<p class="empty-hint">這一天沒有課程安排。</p>';
+    const isToday = selected === todayISO;
+    const isPast = selected < todayISO;
+
+    const dowText = "一二三四五六日"[day.dow - 1] || "";
+    const title = `
+      <div class="cp-day-head ${isPast ? "past" : ""}">
+        <div>
+          <h3>${App.fmtDate(day.date)}<span class="badge cp-week">第 ${day.week} 週</span>
+            ${isToday ? '<span class="badge cp-badge-today">今天</span>' : ""}
+            ${isPast ? '<span class="badge cp-badge-past">已過</span>' : ""}
+          </h3>
+          ${day.note ? `<p class="cp-note">📌 ${App.esc(day.note)}</p>` : ""}
+        </div>
+        <div class="cp-day-nav">
+          <button type="button" class="cockpit-link" data-step="-1">‹ 前一天</button>
+          <button type="button" class="cockpit-link" data-jump="today">回今天</button>
+          <button type="button" class="cockpit-link" data-step="1">後一天 ›</button>
+        </div>
+      </div>`;
+
+    if (day.holiday) {
+      return `${title}
+        <div class="cp-holiday">🏖️ 本日不排新課${day.note ? `：${App.esc(day.note)}` : "。"}</div>
+        ${extrasBlock(day)}`;
+    }
+
+    const rows = [];
+    let hidden = 0;
+    sched.periods.forEach((p, i) => {
+      const cell = (sched.table[i] || [])[day.dow - 1];
+      if (!cell || (typeof cell === "string" && !cell.trim())) return;      // 半天課的空節次
+
+      const end = periodEnd(p);
+      const past = isToday && end !== null && nowMin > end;
+      if (past && !showAll) { hidden++; return; }                           // 今天：上完的節次收起
+
+      const isClass = typeof cell === "object";
+      const name = isClass ? "" : String(cell);
+      // Morning Launch：週三是朝會 → 改掛第一節課前；其餘掛早自修
+      const mlHere = ml && ((day.dow !== 3 && name === "早自修") || (day.dow === 3 && p.name === "第一節"));
+
+      rows.push(`
+        <div class="cp-row ${isClass ? "" : "break"} ${past ? "done" : ""}">
+          <div class="cp-time"><b>${App.esc(p.name)}</b><span>${App.esc(p.time)}</span></div>
+          <div class="cp-body">
+            ${mlHere ? mlCard(day.dow, day.dow === 3 ? "週三朝會，改在第一節課前 3 分鐘進行" : "") : ""}
+            ${isClass ? classCard(cell, day.plan[p.name]) : `<div class="cp-break">${App.esc(name)}</div>`}
+          </div>
+        </div>`);
+    });
+
+    const toggle = isToday
+      ? `<div class="cp-toggle">
+           <button type="button" class="cockpit-link" data-toggle="all" aria-pressed="${showAll}">
+             ${showAll ? "🙈 只看接下來的節次" : `👀 顯示全天${hidden ? `（已收起 ${hidden} 節）` : ""}`}
+           </button>
+         </div>`
+      : "";
+
+    const body = rows.length
+      ? rows.join("")
+      : `<p class="empty-hint">${isToday ? "今天的課都上完了 🎉" : "這一天沒有排定的節次。"}</p>`;
+
+    return `${title}${toggle}<div class="cp-timeline ${isPast ? "past" : ""}">${body}</div>${extrasBlock(day)}`;
+  };
+
+  /* 本週彈性補充：進度表寫了、但日課表沒有對應節次可放的內容（社會的課前預習／知識延伸、
+     數學週五的複習訂正…）。掛在該週每一天，老師任何一天都看得到，自行決定要不要挪。 */
+  const extrasBlock = day => {
+    if (!day.extras?.length) return "";
+    return `
+      <details class="cp-extras">
+        <summary>🧩 第 ${day.week} 週彈性補充（未排入固定節次，共 ${day.extras.length} 則）</summary>
+        <ul>${day.extras.map(e => {
+          const color = SUBJECT_COLOR[e.subject] || "#8395A7";
+          return `<li><span class="badge" style="background:${color};color:#fff">${App.esc(e.subject)}</span>
+                  ${App.esc(e.text)}</li>`;
+        }).join("")}</ul>
+      </details>`;
+  };
+
+  /* ── 檢視二：原本的「科目 → 單元」摺疊清單（備課找教材用） ────── */
   const sortKey = l => {
     const c = codeOf(l) || l.title || "";
     return c.split(/(\d+)/).map(p => (/^\d+$/.test(p) ? p.padStart(6, "0") : p)).join("");
   };
-  /* 單元分群：代碼有小節（數L1-2、社1-1）才歸單元，單元代碼＝最後一段小節之前的部分；
-     沒有小節的課（國L1）自成一組、不顯示單元標題。單元序號取代碼尾端數字，用來寫「第 N 單元」。 */
-  const UNIT_RE = /^(.*\d)-\d+$/; // 數L1-2 → 數L1；社1-1 → 社1；國L1（無小節）→ 不成單元
+  const UNIT_RE = /^(.*\d)-\d+$/;
   const unitOf = l => (UNIT_RE.exec(codeOf(l)) || [])[1] || "";
   const unitNo = u => (/(\d+)$/.exec(u) || [])[1] || "";
-
-  /* 節次分組判斷：國語這類「同一課依教學進度切成第N節」的分組，代碼雖有 -N 尾碼、
-     邏輯上仍是同一課，要顯示成「第 N 課（代碼 課名）」；數學／社會的小節（乘以一二位數、
-     乘以三位數…）是同一單元底下不同課，維持「第 N 單元（代碼・N 課）」。
-     判斷法：把每一列標題「第N節」之前的文字取出來比對，全部相同才視為同一課。 */
   const NODE_NAME_RE = /^(.*?)\s*第[一二三四五六七八九十0-9]+節/;
   const sameCourseName = rows => {
     const names = rows.map(l => {
@@ -62,10 +337,6 @@
     });
     return names.every(n => n && n === names[0]) ? names[0] : null;
   };
-
-  /* 單元名稱（數學／社會小節適用）：標題若寫成「代碼 單元名稱｜課名」（｜前後皆可留空白），
-     取「｜」前的單元名稱，同一單元底下每列都相同才採用；沒有寫「｜」的舊資料不受影響，
-     單元標題退回原本「第N單元（代碼・N課）」的樣子。 */
   const UNIT_NAME_RE = /^(.*?)\s*｜/;
   const sameUnitName = rows => {
     const names = rows.map(l => {
@@ -75,12 +346,10 @@
     });
     return names.every(n => n && n === names[0]) ? names[0] : null;
   };
-
   const stageChips = done => `
     <div class="cockpit-stages">
       ${STAGES.map(s => `<span class="cockpit-stage ${done.includes(s) ? "done" : ""}">${done.includes(s) ? "✓" : "○"} ${s}</span>`).join("")}
     </div>`;
-
   const linkBtns = l => {
     const btns = LINKS.filter(([k]) => l.links[k])
       .map(([k, label]) => `<a class="cockpit-link" href="${App.esc(l.links[k])}" target="_blank" rel="noopener">${label}</a>`);
@@ -88,21 +357,14 @@
       ? `<div class="cockpit-links">${btns.join("")}</div>`
       : `<p class="meta">尚未有教學連結——用 /lesson-flow 產出後會自動掛上。</p>`;
   };
-
-  /* 內容重點：Notion 多行文字，一行一則；條列呈現，讓老師掃一眼就知道這課要教什麼 */
   const pointList = pts => (pts && pts.length)
-    ? `<ul class="cockpit-points">${pts.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>`
-    : "";
-
+    ? `<ul class="cockpit-points">${pts.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>` : "";
   const card = (l, stripPrefix) => {
     const st = STATUS_META[l.status] || STATUS_META["備課中"];
     const color = SUBJECT_COLOR[l.subject] || "#8395A7";
     const code = codeOf(l);
-    // 標題已含課次代碼，前面的代碼徽章就不重複顯示課次以外的字
     let name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
-    // 同課節次分組時，課名已顯示在上方摺疊列標題，卡片標題只留節次描述避免重複
     if (stripPrefix && name.startsWith(stripPrefix)) name = name.slice(stripPrefix.length).trim();
-    // 年段・版本・開始日整併成一行小字，標題列只留課名與狀態
     const meta = [l.grade, l.version, l.date ? `${App.fmtDateShort(l.date)} 開始` : ""]
       .filter(Boolean).map(App.esc).join(" ・ ");
     return `
@@ -119,7 +381,6 @@
         ${l.note ? `<p class="meta">${App.esc(l.note)}</p>` : ""}
       </div>`;
   };
-
   const subjectsOf = list => {
     const names = [...new Set(list.map(l => l.subject || "其他"))];
     return names.sort((a, b) => {
@@ -127,11 +388,6 @@
       return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b, "zh-Hant");
     });
   };
-
-  /* 科目內再依單元分塊：rows 已依課次代碼排好，照順序切開就是「單元由小而大、單元內小節由小而大」。
-     每塊都做成 <details> 摺疊列表（點標題收合／展開），**預設全部收合**——一進來只看到
-     單元清單，要用哪課再點開。有小節的（數L1-1…）合成「第 N 單元」；沒有小節的（國L1）
-     一課自成一列，標題直接顯示課次與課名。 */
   const blockHead = b => {
     if (b.unit) {
       const courseName = sameCourseName(b.rows);
@@ -146,14 +402,12 @@
         : `📘 第 ${App.esc(unitNo(b.unit))} 單元
            <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 課）</span>`;
     }
-    // 單課列：標題列就把課次與課名寫清楚，收合狀態下也認得出是哪一課
     const l = b.rows[0], code = codeOf(l);
     const name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
     return code
       ? `📄 第 ${App.esc(unitNo(code))} 課 <span class="meta">（${App.esc(code)}・${App.esc(name)}）</span>`
       : `📄 ${App.esc(l.title || "")}`;
   };
-
   const unitBlocks = (rows, color) => {
     const blocks = [];
     rows.forEach(l => {
@@ -163,7 +417,6 @@
       else blocks.push({ unit, rows: [l] });
     });
     return blocks.map(b => {
-      // 卡片標題要去掉的前綴：同課節次（課名）或同單元小節（單元名稱｜），已在摺疊列標題顯示過
       let stripPrefix = null;
       if (b.unit) {
         const courseName = sameCourseName(b.rows);
@@ -182,15 +435,19 @@
         </details>`;
     }).join("");
   };
-
-  const renderList = onlyActive => {
+  const unitPanel = onlyActive => {
     const list = onlyActive ? lessons.filter(l => l.status === "進行中") : lessons;
+    const filter = `
+      <div class="cockpit-filter" style="display:flex;gap:10px;margin:14px 0 6px">
+        <button type="button" class="cockpit-link" data-unitfilter="all" aria-pressed="${!onlyActive}">全部單元</button>
+        <button type="button" class="cockpit-link" data-unitfilter="active" aria-pressed="${onlyActive}">🔥 只看進行中</button>
+      </div>`;
     if (!list.length) {
-      return onlyActive
+      return filter + (onlyActive
         ? '<p class="empty-hint">目前沒有「進行中」的單元。</p>'
-        : '<p class="empty-hint">還沒有教學單元。對 AI 說「/lesson-flow 開新單元」開始第一個單元吧！</p>';
+        : '<p class="empty-hint">還沒有教學單元。對 AI 說「/lesson-flow 開新單元」開始第一個單元吧！</p>');
     }
-    return subjectsOf(list).map(sub => {
+    return filter + subjectsOf(list).map(sub => {
       const rows = list.filter(l => (l.subject || "其他") === sub)
         .sort((a, b) => sortKey(a).localeCompare(sortKey(b), "zh-Hant"));
       const color = SUBJECT_COLOR[sub] || "#8395A7";
@@ -201,23 +458,48 @@
     }).join("");
   };
 
-  document.getElementById("main").innerHTML = `
-    <h2 class="page-title"><span class="dot"></span>🚀 教學駕駛艙</h2>
-    <p class="meta">教學五段流程（起始評估→教學→差異化→評量→回流）的單元入口：課堂要用的連結都在這裡。
-    依<b>科目</b>分區、區內再依<b>單元</b>做成摺疊列表（單元由小而大，單元內依小節排序）——
-    <b>預設全部收合</b>，點單元標題展開該單元的課卡與連結。
-    單元與連結在 Notion「🚀 教學單元」維護（勾「顯示」上站），
-    或對 AI 說「/lesson-flow 開新單元」。</p>
-    <div class="cockpit-filter" style="display:flex;gap:10px;margin:14px 0 6px">
-      <button type="button" class="cockpit-link" data-filter="all" aria-pressed="true">全部單元</button>
-      <button type="button" class="cockpit-link" data-filter="active" aria-pressed="false">🔥 只看進行中</button>
-    </div>
-    <div id="cockpit-list">${renderList(false)}</div>`;
+  /* ── 組裝與事件 ─────────────────────────────────────────── */
+  let view = "day";
+  let unitActiveOnly = false;
+  const main = document.getElementById("main");
 
-  document.querySelectorAll("[data-filter]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-filter]").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-      document.getElementById("cockpit-list").innerHTML = renderList(btn.dataset.filter === "active");
-    });
+  const render = () => {
+    main.innerHTML = `
+      <h2 class="page-title"><span class="dot"></span>🚀 教學駕駛艙</h2>
+      <p class="meta">選一天，就看到<b>當天由早到晚</b>的節次、該節進度與教材連結。
+      節次來自<a href="schedule.html">日課表</a>，進度來自學期課程進度表，教材連結來自
+      Notion「🚀 教學單元」（或對 AI 說「/lesson-flow 開新單元」）。
+      <b>已過的日期會變暗</b>；今天只留還沒上的節次。</p>
+      <div class="cp-tabs">
+        <button type="button" class="cockpit-link" data-view="day" aria-pressed="${view === "day"}">📅 行事曆</button>
+        <button type="button" class="cockpit-link" data-view="unit" aria-pressed="${view === "unit"}">📚 依單元</button>
+      </div>
+      ${view === "day"
+        ? `<div class="cp-layout">${monthGrid()}<div class="cp-day">${dayPanel()}</div></div>`
+        : unitPanel(unitActiveOnly)}`;
+  };
+
+  main.addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    if (btn.dataset.view) { view = btn.dataset.view; return render(); }
+    if (btn.dataset.unitfilter) { unitActiveOnly = btn.dataset.unitfilter === "active"; return render(); }
+    if (btn.dataset.month) { viewMonth = btn.dataset.month; return render(); }
+    if (btn.dataset.toggle === "all") { showAll = !showAll; return render(); }
+    if (btn.dataset.jump === "today") {
+      selected = defaultDate(); viewMonth = selected.slice(0, 7); showAll = false; syncURL(); return render();
+    }
+    if (btn.dataset.date) {
+      selected = btn.dataset.date; viewMonth = selected.slice(0, 7); showAll = false; syncURL(); return render();
+    }
+    if (btn.dataset.step) {                       // 前／後一天＝上課日清單裡的前後一筆
+      const i = days.findIndex(d => d.date === selected);
+      const j = i + Number(btn.dataset.step);
+      if (j >= 0 && j < days.length) {
+        selected = days[j].date; viewMonth = selected.slice(0, 7); showAll = false; syncURL(); render();
+      }
+    }
   });
+
+  render();
 })();
