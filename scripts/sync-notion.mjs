@@ -336,6 +336,17 @@ const SCHEDULE_META = {
     "午休": "#F5F5F5", "晨掃": "#F5F5F5", "早自修": "#FAFAF5", "朝會": "#FAFAF5",
   },
   notes: "週三、週五為半天課，中午 12:40 放學\n體育課與崑山活力Go請穿運動服與運動鞋",
+  /* 排課固定節數（老師提供，2026-08-07）。教學駕駛艙會拿它對一次日課表，對不上就標警示。
+     為什麼要這道護欄：教學進度的節次對齊完全依賴日課表，日課表若被改錯（某科少排一節），
+     那一科每週就會有一節進度默默掉進「彈性補充」，畫面上不會說哪裡不對。
+     英語是「正課 1 節＋彈性 1 節」，兩者分開算，所以帶括號的名稱要照日課表原樣寫。
+     這裡沒列到的科目（崑山活力Go、玩美、資訊等彈性課）不檢查，只在警示出現時附帶列出。 */
+  weeklyRules: {
+    "國語": 5, "數學": 4, "社會": 3, "自然": 3,
+    "體育": 2, "視覺藝術": 2, "綜合": 2,
+    "健康": 1, "音樂": 1, "本土語": 1,
+    "英語": 1, "英語(彈性)": 1,
+  },
 };
 
 async function syncSchedule() {
@@ -355,6 +366,7 @@ async function syncSchedule() {
     table,
     subjectColors: SCHEDULE_META.subjectColors,
     notes: SCHEDULE_META.notes,
+    weeklyRules: SCHEDULE_META.weeklyRules,
   });
 }
 

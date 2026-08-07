@@ -47,6 +47,35 @@
   });
   Object.values(slots).forEach(a => a.sort((x, y) => x.dow - y.dow || x.order - y.order));
 
+  /* ── 日課表節數護欄 ─────────────────────────────────────────
+     進度對齊完全依賴日課表，所以日課表被改錯的後果是安靜的：某科少排一節，
+     那一科每週就有一節進度默默掉進「彈性補充」，畫面上不會說哪裡不對。
+     這裡拿排課的固定節數規則（schedule.json 的 weeklyRules，正本在 scripts/sync-notion.mjs
+     的 SCHEDULE_META，repo 管理、Notion 同步不會覆蓋）對一次，對不上就在頁面頂端標出來。
+     英語是「正課 1 節＋彈性 1 節」，所以用完整科目名比對，不像進度對齊那樣去掉括號。
+     只在駕駛艙顯示——這是教師端的資料檢查，班網日課表頁家長也看得到，不適合出現在那裡。 */
+  const scheduleAudit = () => {
+    const rules = sched.weeklyRules || {};
+    if (!Object.keys(rules).length) return "";
+    const cnt = {};
+    (sched.table || []).forEach(row => (row || []).forEach(c => {
+      if (c && typeof c === "object" && c.subject) cnt[c.subject] = (cnt[c.subject] || 0) + 1;
+    }));
+    const bad = Object.entries(rules)
+      .map(([subject, want]) => ({ subject, want, got: cnt[subject] || 0 }))
+      .filter(x => x.got !== x.want);
+    if (!bad.length) return "";
+    const others = Object.keys(cnt).filter(s => !(s in rules));
+    return `
+      <div class="cp-audit">
+        <strong>⚠️ 日課表節數與排課規則不符</strong>
+        <ul>${bad.map(x => `<li>${App.esc(x.subject)}：應 ${x.want} 節，日課表排了 <b>${x.got}</b> 節</li>`).join("")}</ul>
+        <p class="meta">節數不對，該科每週會有進度排不進節次（掉到下方「彈性補充」）。
+        到 Notion「🕐 日課表」改好後按「立即更新班網」即可。${others.length
+          ? `<br>未列入檢查的彈性課程：${others.map(App.esc).join("、")}。` : ""}</p>
+      </div>`;
+  };
+
   /* 進度表每科每天各寫一條（一週 5 條），但日課表的實際節數不見得是 5（國語 5、數學 4、社會 3）。
      對齊規則：
        ① 該週該科若有條目標了「第N節：」，就只有那些是正課（社會的課前預習／知識延伸不佔節次）；
@@ -530,6 +559,7 @@
       節次來自<a href="schedule.html">日課表</a>，進度來自學期課程進度表，教材連結來自
       Notion「🚀 教學單元」（或對 AI 說「/lesson-flow 開新單元」）。
       <b>已過的日期會變暗</b>；今天只留還沒上的節次。</p>
+      ${scheduleAudit()}
       <div class="cp-tabs">
         <button type="button" class="cockpit-link" data-view="day" aria-pressed="${view === "day"}">📅 行事曆</button>
         <button type="button" class="cockpit-link" data-view="unit" aria-pressed="${view === "unit"}">📚 依單元</button>

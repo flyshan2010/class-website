@@ -1222,3 +1222,13 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   .cp-time b { font-size: 13.5px; }
   .cp-ml-grid { grid-template-columns: 1fr; }
 }
+
+/* 日課表節數護欄：只在節數與排課規則對不上時出現（正常不顯示） */
+.cp-audit {
+  background: #fff4f4; border: 2px solid #ffc9c9; border-radius: 14px;
+  padding: 12px 18px; margin: 14px 0; color: #c0392b;
+}
+.cp-audit strong { font-size: 17px; }
+.cp-audit ul { margin: 8px 0 6px 4px; padding-left: 18px; }
+.cp-audit li { font-size: 15px; line-height: 1.8; }
+.cp-audit .meta { color: #a5453a; font-size: 14px; line-height: 1.7; margin: 0; }
