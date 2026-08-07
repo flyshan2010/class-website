@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<title>Morning Launch 學習啟動站</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌅</text></svg>" />
+<style>
+/* 投影用單頁：無外部字型與 CDN。逐步揭露一律 opacity＋transform（不用 display:none，
+   免得元件出現時把後面的內容往下推、整頁跳動）。 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --ml: #FF9F43;
+  --ink: #2d3436; --ink-soft: #57606f; --line: #ece7dc;
+}
+html, body { height: 100%; }
+body {
+  font-family: "Huninn", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  color: var(--ink); background: #FDFCF7;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* ── HUD ── */
+.hud {
+  flex: none; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 8px 16px; background: #fff; border-bottom: 2px solid var(--line);
+  font-size: clamp(12px, 1.05vw, 15px);
+}
+.hud .brand { font-weight: 700; color: var(--ml); }
+.hud .sp { flex: 1; }
+.hud button, .hud a {
+  font-family: inherit; font-size: inherit; cursor: pointer;
+  border: 1px solid var(--line); background: #f6f6f2; color: var(--ink-soft);
+  border-radius: 999px; padding: 4px 12px; text-decoration: none;
+}
+.hud button:hover, .hud a:hover { background: var(--ml); color: #fff; border-color: var(--ml); }
+.hud button[aria-pressed="true"] { background: var(--ml); color: #fff; border-color: var(--ml); }
+.hud .count { color: var(--ink-soft); }
+.hud .timer { font-variant-numeric: tabular-nums; font-weight: 700; font-size: clamp(15px, 1.5vw, 22px); color: var(--ml); min-width: 4.2em; text-align: center; }
+.hud .timer.over { color: #c0392b; }
+
+/* ── 投影區 ── */
+.stage { flex: 1; position: relative; min-height: 0; }
+.slide {
+  position: absolute; inset: 0; padding: clamp(16px, 3vh, 40px) clamp(20px, 4vw, 72px);
+  display: flex; flex-direction: column; justify-content: center; gap: clamp(10px, 2.2vh, 26px);
+  opacity: 0; pointer-events: none; transition: opacity .28s ease;
+}
+.slide.active { opacity: 1; pointer-events: auto; }
+
+/* 逐步揭露單位：先佔位再顯現，不改變版面高度 */
+[data-reveal] { opacity: 0; transform: translateY(10px); transition: opacity .3s ease, transform .3s ease; }
+[data-reveal].is-shown { opacity: 1; transform: none; }
+
+.eyebrow { font-size: clamp(14px, 1.5vw, 22px); color: var(--ink-soft); letter-spacing: 2px; }
+.cover { text-align: center; }
+.cover .emoji { font-size: clamp(56px, 12vh, 132px); line-height: 1; }
+.cover h1 { font-size: clamp(30px, 5.4vw, 76px); color: var(--ml); margin: 8px 0; }
+.cover .sub { font-size: clamp(15px, 1.8vw, 26px); color: var(--ink-soft); }
+.cover .intro { font-size: clamp(13px, 1.35vw, 20px); color: var(--ink-soft); line-height: 1.8; max-width: 62ch; margin: 10px auto 0; }
+
+.steprow { display: flex; align-items: center; gap: clamp(10px, 1.6vw, 22px); }
+.stepno {
+  flex: none; width: clamp(46px, 5.2vw, 78px); height: clamp(46px, 5.2vw, 78px);
+  border-radius: 50%; background: var(--ml); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(22px, 2.8vw, 40px); font-weight: 700;
+}
+.stepname { font-size: clamp(22px, 3vw, 44px); font-weight: 700; }
+.stepen { font-size: clamp(12px, 1.2vw, 18px); color: var(--ink-soft); letter-spacing: 1px; }
+
+.cardname { font-size: clamp(28px, 4.4vw, 66px); font-weight: 700; color: var(--ml); }
+.prompt { font-size: clamp(24px, 3.8vw, 56px); line-height: 1.5; }
+.why { font-size: clamp(13px, 1.4vw, 21px); color: var(--ink-soft); line-height: 1.7; }
+.opts { display: flex; gap: clamp(10px, 1.8vw, 28px); flex-wrap: wrap; }
+.opt {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; border: 2px solid var(--ml); border-radius: 999px;
+  padding: clamp(6px, 1.1vh, 14px) clamp(14px, 1.8vw, 30px);
+  font-size: clamp(18px, 2.4vw, 34px);
+}
+.opt .ic { font-size: 1.15em; }
+
+.notes { list-style: none; display: flex; flex-direction: column; gap: clamp(8px, 1.6vh, 20px); }
+.notes li {
+  background: #fff; border-left: 8px solid var(--ml); border-radius: 12px;
+  padding: clamp(10px, 1.6vh, 18px) clamp(14px, 1.8vw, 26px);
+  font-size: clamp(15px, 1.7vw, 26px); line-height: 1.7;
+}
+.notes b { color: var(--ml); }
+
+/* ── 控制列 ── */
+.ctrl { flex: none; display: flex; justify-content: center; gap: 12px; padding: 8px; background: #fff; border-top: 2px solid var(--line); }
+.ctrl button {
+  font-family: inherit; cursor: pointer; border: none; border-radius: 999px;
+  padding: clamp(6px, 1vh, 11px) clamp(18px, 2.4vw, 34px);
+  font-size: clamp(14px, 1.3vw, 19px); background: #f2f4f6; color: var(--ink-soft);
+}
+.ctrl button.main { background: var(--ml); color: #fff; font-weight: 700; }
+.ctrl button:disabled { opacity: .35; cursor: default; }
+.err { padding: 40px; text-align: center; color: #c0392b; font-size: 20px; }
+</style>
+</head>
+<body>
+<div class="hud">
+  <span class="brand">🌅 Morning Launch</span>
+  <span id="daybtns"></span>
+  <span class="sp"></span>
+  <span class="timer" id="timer">3:00</span>
+  <button type="button" id="tstart">▶ 開始</button>
+  <button type="button" id="treset">↺ 歸零</button>
+  <span class="count" id="count"></span>
+  <button type="button" id="revealAll">整頁攤開</button>
+  <a href="cockpit.html">← 駕駛艙</a>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<div class="ctrl">
+  <button type="button" id="prev">‹ 上一步</button>
+  <button type="button" class="main" id="next">下一步 ›</button>
+</div>
+
+<script>
+(async () => {
+  const stage = document.getElementById("stage");
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, m =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+
+  let data;
+  try {
+    data = await (await fetch("data/morning-launch.json", { cache: "no-cache" })).json();
+  } catch {
+    stage.innerHTML = '<p class="err">讀不到 data/morning-launch.json，請確認網站資料檔存在。</p>';
+    return;
+  }
+
+  // 預設顯示今天的主題日；週末或網址帶 ?dow=N 時以指定的為準
+  const qs = Number(new URLSearchParams(location.search).get("dow"));
+  const wd = new Date().getDay();                       // 0=日
+  let dow = (qs >= 1 && qs <= 5) ? qs : (wd >= 1 && wd <= 5 ? wd : 1);
+
+  const stepOf = n => data.steps.find(s => s.no === n) || {};
+
+  /* 建投影頁：封面 → 四個步驟各一頁 → 教師須知
+     常駐可見＝步驟編號與名稱（學生隨時知道在第幾步）；
+     卡名／提問／選項才是逐步揭露單位，一次出一個。 */
+  const build = () => {
+    const d = data.days.find(x => x.dow === dow);
+    document.documentElement.style.setProperty("--ml", d.color);
+    const slides = [];
+
+    slides.push(`
+      <section class="slide cover">
+        <div data-reveal>
+          <div class="emoji">${d.emoji}</div>
+          <h1>週${"一二三四五"[dow - 1]}・${esc(d.theme)}</h1>
+          <div class="sub">${esc(data.meta.title)}｜${esc(data.meta.subtitle)}</div>
+          <p class="intro">${esc(data.meta.intro)}</p>
+        </div>
+      </section>`);
+
+    d.cards.forEach(c => {
+      const s = stepOf(c.step);
+      slides.push(`
+        <section class="slide">
+          <div class="steprow">
+            <span class="stepno">${s.no}</span>
+            <div>
+              <div class="stepname">${esc(s.icon || "")} ${esc(s.name || "")}</div>
+              <div class="stepen">${esc(s.en || "")}・${esc(s.ask || "")}</div>
+            </div>
+          </div>
+          <div data-reveal><div class="cardname">【${esc(c.title)}】</div></div>
+          <div data-reveal><p class="prompt">${esc(c.prompt || "")}</p></div>
+          ${c.options ? `<div data-reveal><div class="opts">${c.options
+            .map(o => `<span class="opt"><span class="ic">${o.icon}</span>${esc(o.label)}</span>`).join("")}</div></div>` : ""}
+          <div data-reveal><p class="why">💡 ${esc(s.why || "")}</p></div>
+        </section>`);
+    });
+
+    slides.push(`
+      <section class="slide">
+        <div class="eyebrow">給老師與家長的三個原則</div>
+        <ul class="notes">
+          ${data.notes.map(n => {
+            const i = n.indexOf("：");
+            return `<li data-reveal><b>${esc(i > 0 ? n.slice(0, i) : "")}</b>${esc(i > 0 ? n.slice(i) : n)}</li>`;
+          }).join("")}
+        </ul>
+      </section>`);
+
+    stage.innerHTML = slides.join("");
+  };
+
+  /* ── 逐步揭露引擎：一次只出一個元件，本頁出完才換頁 ── */
+  let page = 0;
+  const slidesEl = () => [...stage.querySelectorAll(".slide")];
+  const unitsOf = i => [...slidesEl()[i].querySelectorAll("[data-reveal]")];
+
+  const paint = () => {
+    slidesEl().forEach((s, i) => s.classList.toggle("active", i === page));
+    const u = unitsOf(page), shown = u.filter(x => x.classList.contains("is-shown")).length;
+    document.getElementById("count").textContent =
+      `第 ${page + 1}/${slidesEl().length} 頁 · 揭露 ${shown}/${u.length}`;
+    document.getElementById("prev").disabled = page === 0 && shown === 0;
+    document.getElementById("next").disabled = page === slidesEl().length - 1 && shown === u.length;
+  };
+
+  const next = () => {
+    const u = unitsOf(page), hidden = u.find(x => !x.classList.contains("is-shown"));
+    if (hidden) hidden.classList.add("is-shown");
+    else if (page < slidesEl().length - 1) page++;
+    paint();
+  };
+  const prev = () => {
+    const u = unitsOf(page), shown = u.filter(x => x.classList.contains("is-shown"));
+    if (shown.length) shown[shown.length - 1].classList.remove("is-shown");
+    else if (page > 0) { page--; unitsOf(page).forEach(x => x.classList.add("is-shown")); }
+    paint();
+  };
+
+  document.getElementById("next").onclick = next;
+  document.getElementById("prev").onclick = prev;
+  document.getElementById("revealAll").onclick = () => { unitsOf(page).forEach(x => x.classList.add("is-shown")); paint(); };
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+  });
+
+  /* ── 3 分鐘計時 ── */
+  const SEC = data.meta.seconds || 180;
+  let left = SEC, tick = null;
+  const tEl = document.getElementById("timer"), tBtn = document.getElementById("tstart");
+  const show = () => {
+    const m = Math.floor(Math.abs(left) / 60), s = Math.abs(left) % 60;
+    tEl.textContent = `${left < 0 ? "+" : ""}${m}:${String(s).padStart(2, "0")}`;
+    tEl.classList.toggle("over", left <= 0);
+  };
+  tBtn.onclick = () => {
+    if (tick) { clearInterval(tick); tick = null; tBtn.textContent = "▶ 繼續"; return; }
+    tBtn.textContent = "⏸ 暫停";
+    tick = setInterval(() => { left--; show(); }, 1000);
+  };
+  document.getElementById("treset").onclick = () => {
+    clearInterval(tick); tick = null; left = SEC; tBtn.textContent = "▶ 開始"; show();
+  };
+  show();
+
+  /* ── 主題日切換 ── */
+  const dayBtns = document.getElementById("daybtns");
+  const renderDays = () => {
+    dayBtns.innerHTML = data.days.map(x =>
+      `<button type="button" data-dow="${x.dow}" aria-pressed="${x.dow === dow}">${x.emoji} 週${"一二三四五"[x.dow - 1]}</button>`
+    ).join(" ");
+  };
+  dayBtns.onclick = e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    dow = Number(b.dataset.dow); page = 0;
+    renderDays(); build(); paint();
+  };
+
+  renderDays();
+  build();
+  paint();
+})();
+</script>
+</body>
+</html>

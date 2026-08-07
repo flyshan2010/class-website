@@ -79,6 +79,7 @@
     const MENU = [
       { icon: "🖥️", label: "班級工作台", href: "https://crimson-wind-7a22.changsheng0612.workers.dev/", color: "#5F27CD", ext: true },
       { icon: "🚀", label: "教學駕駛艙", href: "cockpit.html", color: "#54A0FF" },
+      { icon: "🌅", label: "Morning Launch", href: "morning-launch.html", color: "#FF9F43" },
       { icon: "💬", label: "一句話交辦", href: "#sec-task", color: "#FF9F43" },
       { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
       { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },

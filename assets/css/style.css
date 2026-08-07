@@ -1137,3 +1137,88 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   .cb-grid { grid-template-columns: 1fr; }
   .cal-cell { min-height: 40px; font-size: 14px; }
 }
+
+/* ── 🚀 教學駕駛艙：行事曆檢視 ─────────────────────────────
+   左欄月曆挑日期、右欄當日時間軸。已過的日期整區降彩度＋淡化（.past），
+   今天已上完的節次由 JS 直接不輸出（可按「顯示全天」攤開，攤開時標 .done）。 */
+.cp-tabs { display: flex; gap: 10px; margin: 14px 0 10px; }
+.cp-tabs .cockpit-link { cursor: pointer; background: #e9ecef; color: #666; box-shadow: none; }
+.cp-tabs .cockpit-link[aria-pressed="true"] { background: var(--accent, var(--sky)); color: #fff; }
+
+.cp-layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; align-items: start; }
+.cp-cal { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; position: sticky; top: 12px; }
+.cp-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-size: 17px; }
+.cp-nav { border: none; background: #f2f4f6; color: var(--ink-soft); border-radius: 8px; width: 32px; height: 32px; font-size: 18px; cursor: pointer; font-family: inherit; }
+.cp-nav:hover { background: var(--accent, var(--sky)); color: #fff; }
+.cp-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cp-wd { text-align: center; font-size: 12px; color: var(--ink-soft); padding-bottom: 2px; }
+.cp-cell {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 40px; gap: 1px; padding: 2px 0; font-family: inherit;
+  border: 2px solid transparent; border-radius: 10px; background: #f2f4f6; color: var(--ink-soft);
+}
+.cp-cell.blank { background: none; }
+.cp-cell.off { opacity: .35; }                     /* 週末／寒暑假：沒有課程安排 */
+.cp-cell[data-date] { background: #e7f2ff; color: var(--ink); font-weight: 700; cursor: pointer; }
+.cp-cell[data-date]:hover { border-color: var(--sky); }
+.cp-cell.holiday { background: #fff1f1; }
+.cp-cell.past { opacity: .38; }                    /* 已過的日期變暗，仍可點開回查 */
+.cp-cell.today { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255, 159, 67, .22); }
+.cp-cell.sel { background: var(--sky); color: #fff; opacity: 1; }
+.cp-cell-d { font-size: 15px; line-height: 1.1; }
+.cp-cell-t { font-size: 10px; opacity: .75; line-height: 1.1; }
+
+.cp-day-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.cp-day-head h3 { font-size: 22px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cp-week { background: #e7f2ff; color: #1864ab; }
+.cp-badge-today { background: var(--orange); color: #fff; }
+.cp-badge-past { background: #dee2e6; color: #666; }
+.cp-note { margin-top: 4px; color: #c0392b; font-size: 15px; }
+.cp-day-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.cp-day-nav .cockpit-link { cursor: pointer; background: #e9ecef; color: #666; box-shadow: none; }
+.cp-day-nav .cockpit-link:hover { background: var(--sky); color: #fff; }
+.cp-toggle { margin: 0 0 10px; }
+.cp-toggle .cockpit-link { cursor: pointer; background: #fff3bf; color: #8a6d00; box-shadow: none; }
+.cp-holiday { background: #fff1f1; border-radius: var(--radius); padding: 22px; text-align: center; font-size: 18px; color: #c0392b; }
+
+.cp-timeline.past, .cp-day-head.past { filter: grayscale(.75); opacity: .55; }  /* 已過日期整區變暗 */
+.cp-row { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; margin-bottom: 10px; }
+.cp-row.done { opacity: .45; }
+.cp-time { text-align: right; padding-top: 10px; line-height: 1.4; }
+.cp-time b { display: block; font-size: 15px; }
+.cp-time span { font-size: 12px; color: var(--ink-soft); }
+.cp-break { background: #f6f6f2; border-radius: 12px; padding: 8px 14px; color: var(--ink-soft); font-size: 15px; }
+.cp-slot { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 12px 16px; border-left: 6px solid var(--accent, var(--sky)); }
+.cp-slot-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cp-progress { margin: 8px 0 0; font-size: 16px; font-weight: 700; line-height: 1.6; }
+.cp-lesson { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 15px; }
+
+.cp-extras { margin-top: 18px; background: #fbfaf5; border: 1px dashed var(--line); border-radius: 14px; padding: 10px 16px; }
+.cp-extras summary { cursor: pointer; font-weight: 700; color: var(--ink-soft); }
+.cp-extras ul { margin: 10px 0 4px; padding-left: 4px; list-style: none; }
+.cp-extras li { margin-bottom: 6px; font-size: 14.5px; line-height: 1.7; display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+
+/* Morning Launch：早自修 3 分鐘 SEL 微儀式（週三改掛第一節課前） */
+.cp-ml { background: linear-gradient(135deg, #fffdf7, #fff); border: 2px solid var(--ml, var(--orange)); border-radius: 14px; padding: 12px 16px; margin-bottom: 10px; }
+.cp-ml-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cp-ml-head > div { flex: 1; min-width: 180px; }
+.cp-ml-emoji { font-size: 30px; }
+.cp-ml-go { background: var(--ml, var(--orange)); color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 14px; white-space: nowrap; }
+.cp-ml-go:hover { filter: brightness(1.08); text-decoration: none; }
+.cp-ml-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.cp-ml-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.cp-ml-step { font-size: 11.5px; color: var(--ink-soft); }
+.cp-ml-title { font-size: 14.5px; font-weight: 700; color: var(--ml, var(--orange)); margin-top: 2px; }
+.cp-ml-prompt { font-size: 13.5px; line-height: 1.6; margin-top: 2px; }
+.cp-ml-opts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; font-size: 12px; color: var(--ink-soft); }
+
+@media (max-width: 900px) {
+  .cp-layout { grid-template-columns: 1fr; }
+  .cp-cal { position: static; }
+  .cp-ml-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .cp-row { grid-template-columns: 68px minmax(0, 1fr); gap: 8px; }
+  .cp-time b { font-size: 13.5px; }
+  .cp-ml-grid { grid-template-columns: 1fr; }
+}
