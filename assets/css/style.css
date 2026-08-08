@@ -878,25 +878,15 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .rules-sub { font-size: 0.9rem; color: #5f7784; margin-top: 2px; font-weight: 600; }
 
 /* ── 公約 × 班規 × 獎懲對照（沿用海報 rules-c0～c4 色系，一條公約一張卡） ── */
-.rule-chain {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px;
-  font-size: 13.5px; font-weight: 700; color: var(--ink-soft);
-  background: #faf7ee; border: 1px dashed var(--line); border-radius: 12px;
-  padding: 8px 12px; margin: 10px 0 14px;
-}
-.rule-chain b { color: #b9b2a0; }
 .rule-cards { display: flex; flex-direction: column; gap: 14px; }
 .rule-card { border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px 14px; border-left-width: 8px; }
 .rule-card-common { background: #f7f6f2; border-left-color: #b9b2a0; margin-top: 14px; }
+.rule-card-serious { background: #fdecea; border-left-color: #c0392b; margin-top: 14px; }
 .rule-card-head { display: flex; align-items: center; gap: 12px; }
-.rule-card-title { font-size: 1.1rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
-.rule-card-idea { font-size: 12.5px; color: #5f7784; font-weight: 700; margin-top: 2px; }
-.rule-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 4px; }
-.rule-tag { font-size: 12.5px; font-weight: 800; color: var(--ink-soft); }
-.rule-chip {
-  background: #fff; border: 1px solid var(--line); border-radius: 999px;
-  padding: 3px 10px; font-size: 14px; font-weight: 800; color: #2f4858;
-}
+/* 班規是主標題（大字），公約退成下方小標籤 */
+.rule-names { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.rule-name-big { font-size: 1.15rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
+.rule-covenant { font-size: 12.5px; font-weight: 700; color: #5f7784; margin: 4px 0 8px; }
 .rule-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
 .rule-col { background: #fff; border-radius: 12px; padding: 8px 10px; }
 .rule-col-head { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
@@ -914,11 +904,6 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .rule-col.bad .rr-coin { color: #c0392b; }
 .rule-notes { margin: 14px 0 0; padding-left: 20px; font-size: 14.5px; line-height: 1.75; color: var(--ink-soft); }
 .rule-notes b { color: var(--ink); }
-
-/* 重大安全事件：不走扣點，獨立一張紅框卡 */
-.serious-card { border-top-color: #c0392b !important; }
-.serious-item { font-size: 1.05rem; font-weight: 900; color: #c0392b; margin: 4px 0 6px; }
-.serious-act { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0; }
 
 /* 一日作息與常規（執行層 routine） */
 .routine-list { display: flex; flex-direction: column; margin-top: 6px; }
