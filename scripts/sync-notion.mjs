@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { webcrypto as crypto } from "node:crypto";
 import { uniqueMaskNames } from "./lib/mask-name.mjs";
+import { buildDutyData } from "./lib/build-duties.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -36,6 +37,7 @@ const DS = {
   redeem: "f4c697c6-7c27-4d20-b54a-febac0fc5d64", // 🛒 兌換申請（已完成的特權列＝學生手上的特權券）
   portfolio: "8eb38e48-334b-45b1-ad0a-7d720782d15a", // 🎨 學生作品集（照片＝Drive 外部連結，只進加密報告）
   lessons: "d28efc6b-3f34-4a97-b72b-ddeb5ec51147", // 🚀 教學單元（教學駕駛艙；一列＝一單元，勾「顯示」上站）
+  duties: "ccd4b894-5455-49f9-97e7-d56b42b51713", // 🧹 班級工作分配（打掃＋午餐；老師填座號，同步時換成遮罩姓名）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -777,6 +779,27 @@ async function syncRecapExtras() {
   }
 }
 
+// ── 打掃／午餐／座位表（🧹 班級工作分配 ＋ ⚙️ 網站設定）───────────────────
+// 老師在 Notion 用**座號**填分配，寫進 data/ 前一律換成遮罩姓名：class-website
+// 整個 repo 都發布到 GitHub Pages，data/*.json 任何人都下載得到，而座號在班內
+// 等同完整識別資訊（鐵則 10：公開頁不得出現姓名／座號）。
+// 轉換邏輯與護欄在 lib/build-duties.mjs（純函式，可離線用真實名冊驗證）。
+async function syncClassDuties() {
+  const [dutyRows, rosterRows, settingRows] = await Promise.all([
+    queryDataSource(DS.duties).then(rs => rs.map(props)),
+    queryDataSource(DS.roster).then(rs => rs.map(props)),
+    queryDataSource(DS.settings).then(rs => rs.map(props)),
+  ]);
+  const kv = {};
+  for (const r of settingRows) if (r["項目"]) kv[r["項目"]] = String(r["內容"] ?? "").trim();
+
+  const { duties, lunch, seating, warnings } = buildDutyData({ dutyRows, rosterRows, kv });
+  for (const w of warnings) console.warn(`⚠️ ${w}`);
+  await save("duties.json", duties);
+  await save("lunch.json", lunch);
+  await save("seating.json", seating);
+}
+
 // 先決定現行學年，後續各 sync 的查詢才知道要過濾哪一年（各 sync 為平行執行）
 await resolveCurrentYear();
 
@@ -793,6 +816,7 @@ await Promise.all([
   syncBank(),
   syncLessons(),
   syncRecapExtras(),
+  syncClassDuties(),
 ]);
 // ── Phase F fail-loud：學年漏填即報錯（SPEC_學年升級 §5）────────────────
 // 空學年在 2026-07-25 全庫回填後已無合法情境，出現即代表某支寫入端漏填。
