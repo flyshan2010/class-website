@@ -122,15 +122,15 @@
     </div>`;
 
   // ── 班規與獎懲（資料來自 Notion「📋 班規與獎懲」→ data/class-rules.json）──
-  // 老師在 Notion 改行為、點數、改過方式，按「立即更新班網」即生效，不必動程式。
+  // 老師在 Notion 改行為、點數、改正方式，按「立即更新班網」即生效，不必動程式。
   // 制度正本仍是 Notion 📜 班級獎懲規定頁與 docs/班級經營與生活常規.md（三處要一致）。
   // n：1–8＝八條班規、9＝上課時間、10＝重大安全事件（決定卡序與卡片樣式）。
 
   // 卡片樣式：1–8 用公約海報的五色循環、9 上課時間灰卡、10 重大安全事件紅卡
   const ruleCardClass = (n, i) => n >= 10 ? "rule-card-serious" : n === 9 ? "rule-card-common" : `rules-c${i % 5}`;
 
-  // 重大安全事件不是「改過」就了事的層級，標籤改稱「處理方式」
-  const ruleRows = (list, withFix, fixLabel = "改過方式") => list.map(x => `
+  // 重大安全事件不是「改正」就了事的層級，標籤改稱「處理方式」
+  const ruleRows = (list, withFix, fixLabel = "改正方式") => list.map(x => `
     <div class="rule-row">
       <span class="rr-act">${App.esc(x.act)}${withFix && x.fix ? `
         <em class="rr-fix">${fixLabel}：${App.esc(x.fix)}</em>` : ""}</span>
@@ -138,7 +138,7 @@
     </div>`).join("");
 
   const ruleCard = (r, i) => {
-    const fixLabel = r.n >= 10 ? "處理方式" : "改過方式";
+    const fixLabel = r.n >= 10 ? "處理方式" : "改正方式";
     return `
     <div class="rule-card ${ruleCardClass(r.n, i)}">
       <div class="rule-card-head">
@@ -328,7 +328,7 @@
         </section>` : ""}
         <section class="card" style="border-top-color:var(--orange)">
           <h3>📋 我們的班規（Rules）</h3>
-          <p class="meta">做到會加崑山幣，沒做到就照「改過方式」把事情補好。</p>
+          <p class="meta">做到會加崑山幣，沒做到就照「改正方式」把事情補好。</p>
           ${classRules?.cards?.length ? rulesLadder(classRules) : '<p class="meta">班規尚未建立。</p>'}
         </section>
         <section class="card" style="border-top-color:var(--mint)">
