@@ -1232,3 +1232,99 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .cp-audit ul { margin: 8px 0 6px 4px; padding-left: 18px; }
 .cp-audit li { font-size: 15px; line-height: 1.8; }
 .cp-audit .meta { color: #a5453a; font-size: 14px; line-height: 1.7; margin: 0; }
+
+/* ===== 關於我們：分頁與工作分配表（2026-08-08） ===== */
+/* 分頁列在手機上會超出螢幕寬，改成可橫向捲動而不是換行擠成兩排 */
+.about-tabs { overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+.about-tabs button { white-space: nowrap; flex: 0 0 auto; }
+.tab-panel[hidden] { display: none; }
+
+/* 寬表格（午餐輪值、座位表）自己捲，不讓整頁出現橫向捲軸 */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ── 一項工作＝一次：獎懲階梯 ── */
+.duty-score { border: 2px solid var(--line); border-radius: 16px; overflow: hidden; }
+.duty-score-head {
+  background: #fff6e8; padding: 10px 14px; font-size: 15px; color: var(--ink-soft);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.duty-score-badge {
+  background: var(--orange); color: #fff; font-weight: 900;
+  padding: 3px 12px; border-radius: 999px; font-size: 15px; white-space: nowrap;
+}
+.duty-score-row {
+  display: grid; grid-template-columns: 34px 1fr 1fr 84px;
+  align-items: center; gap: 8px;
+  padding: 9px 14px; border-top: 1px solid var(--line); font-size: 16px;
+}
+.duty-score-row .ds-act { color: var(--ink-soft); font-size: 15px; }
+.duty-score-row .ds-coin { text-align: right; font-weight: 900; white-space: nowrap; }
+.duty-score-row.t-good .ds-coin, .duty-score-row.t-star .ds-coin { color: #1a8f6b; }
+.duty-score-row.t-bad .ds-coin { color: #c0392b; }
+.duty-score-row.t-warn .ds-coin { color: var(--ink-soft); }
+.duty-score-note { margin: 10px 14px 12px; font-size: 15px; color: var(--ink-soft); }
+@media (max-width: 620px) {
+  .duty-score-row { grid-template-columns: 28px 1fr 70px; }
+  .duty-score-row .ds-act { grid-column: 2 / 4; }
+}
+
+/* ── 打掃工作 ── */
+.duty-zone { margin-top: 16px; }
+.duty-zone-head {
+  font-weight: 900; font-size: 1.05rem; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 8px;
+  background: #eaf6f1; color: #1f6b53; padding: 8px 14px; border-radius: 12px;
+}
+.duty-zone-count { margin-left: auto; font-size: 14px; font-weight: normal; opacity: .8; }
+.duty-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 10px; }
+.duty-card { border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: var(--card); }
+.duty-card-head { font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.duty-people { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.duty-chip {
+  background: #eef4ff; color: #2c5aa0; border-radius: 999px;
+  padding: 2px 12px; font-size: 15px; white-space: nowrap;
+}
+.duty-chip.sup { background: #f3f0e6; color: var(--ink-soft); }
+.duty-chip small { font-size: 12px; margin-left: 4px; opacity: .75; }
+.duty-work { font-size: 15px; line-height: 1.75; }
+.duty-tools { font-size: 14px; color: var(--ink-soft); margin-top: 6px; }
+.duty-todo {
+  margin-top: 14px; padding: 10px 14px; border-radius: 12px;
+  background: #fdf3d6; color: #7a5c14; font-size: 15px;
+}
+
+/* ── 午餐工作 ── */
+.mock-tag {
+  background: #ffe3e6; color: #b83446; border-radius: 999px;
+  padding: 2px 10px; font-size: 13px; font-weight: normal; white-space: nowrap;
+}
+.lunch-fixed { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.lunch-rot { margin-top: 16px; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; }
+.lunch-rot-head { display: flex; align-items: center; gap: 12px; font-weight: 900; flex-wrap: wrap; }
+.lunch-week-pick { margin-left: auto; font-size: 15px; font-weight: normal; color: var(--ink-soft); }
+.lunch-week-pick select { font: inherit; font-size: 16px; padding: 3px 8px; border-radius: 10px; border: 2px solid var(--line); }
+.lunch-week-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 10px 0; }
+.lunch-slot { background: #f4f9ff; border-radius: 14px; padding: 8px 12px; text-align: center; }
+.lunch-slot-post { font-size: 14px; color: var(--ink-soft); }
+.lunch-slot-name { font-weight: 900; font-size: 17px; }
+.lunch-rules { margin: 14px 0 0 4px; padding-left: 20px; font-size: 15px; color: var(--ink-soft); }
+.lunch-all { margin-top: 12px; }
+.lunch-all summary { cursor: pointer; font-size: 15px; color: var(--sky); }
+.lunch-table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 15px; }
+.lunch-table th, .lunch-table td { border: 1px solid var(--line); padding: 6px 10px; text-align: center; white-space: nowrap; }
+.lunch-table thead th { background: #eef4ff; }
+.lunch-table tbody tr:nth-child(even) { background: #fafbfd; }
+
+/* ── 座位表 ── */
+.seat-board {
+  background: #3d4b3f; color: #fff; text-align: center; font-weight: 900;
+  padding: 8px; border-radius: 12px; letter-spacing: 3px; margin-bottom: 12px;
+}
+.seat-grid { border-collapse: separate; border-spacing: 8px; margin: 0 auto; }
+.seat-grid th { font-size: 14px; color: var(--ink-soft); font-weight: normal; padding-bottom: 2px; }
+.seat-grid td.seat {
+  background: #fff; border: 2px solid #d9e6f7; border-radius: 14px;
+  padding: 12px 10px; text-align: center; font-weight: 900;
+  min-width: 92px; white-space: nowrap; box-shadow: var(--shadow);
+}
+.seat-grid td.seat.empty { background: transparent; border: 2px dashed var(--line); box-shadow: none; }

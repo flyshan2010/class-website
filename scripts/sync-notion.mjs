@@ -7,6 +7,7 @@ import { writeFile, readFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { webcrypto as crypto } from "node:crypto";
+import { uniqueMaskNames } from "./lib/mask-name.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -262,12 +263,9 @@ async function syncGalleryIndex() {
   await save("gallery-index.json", rows);
 }
 
-// 去識別化姓名（公開頁用）：「王小明」→「王○明」
-function maskName(full) {
-  const name = String(full || "").replace(/^\s*\d+\s*/, "").trim();
-  if (name.length <= 1) return name || "○○○";
-  return name[0] + "○".repeat(Math.max(1, name.length - 2)) + (name.length > 2 ? name[name.length - 1] : "");
-}
+// 去識別化姓名（公開頁用）：「王小明」→「王○明」。
+// 正本在 scripts/lib/mask-name.mjs，與 build-class-duties.mjs 共用同一套規則——
+// 幹部區與打掃／午餐／座位表同頁並列，兩邊遮罩不一致會被當成兩個不同的人。
 
 // ── 網站設定與關於我們（項目→內容 對照表；nav 與模組色維持在 repo）──
 async function syncSettings() {
@@ -296,12 +294,16 @@ async function syncSettings() {
   const rulesRow = settingRows.find(r => r["項目"] === "班級公約");
   about.rulesImages = rulesRow ? await saveImages(rulesRow["圖片"], rulesRow._id) : [];
   // 班級幹部（名冊在學且有職務者；姓名去識別化後才公開，並帶出週薪連動獎懲制度）
-  about.cadres = (await queryDataSource(DS.roster)).map(props)
+  // 遮罩以「全班在學名單」為基準算，不能只拿有職務的人算——同名判斷的母體是全班，
+  // 母體縮小會讓某些人拿到與非幹部同學相同的遮罩名。
+  const rosterRows = (await queryDataSource(DS.roster)).map(props);
+  const maskMap = uniqueMaskNames(rosterRows.filter(r => r["在學"]).map(r => r["姓名"]));
+  about.cadres = rosterRows
     .filter(r => r["在學"] && String(r["職務"]).trim())
     .sort((a, b) => (a["座號"] || 0) - (b["座號"] || 0))
     .map(r => ({
       role: String(r["職務"]).trim(),
-      name: maskName(r["姓名"]),
+      name: maskMap.get(String(r["姓名"]).trim()),
       desc: r["職務說明"],
       salary: r["週薪"] || 0,
     }));
