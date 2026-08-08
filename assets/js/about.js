@@ -195,18 +195,15 @@
   const 抽獎池 = ["作業減少", "豁免金牌", "合作社物品（不超過 20 元）", "三天不午睡",
     "蓋好兒童卡三格", "二十元禮券", "獎勵金牌", "再抽一次"];
 
+  // 以「班規」為主標題、公約退為小標籤——學生要先看到的是自己該守的那一條規則。
   const ruleCard = (r, i) => `
     <div class="rule-card rules-c${i % 5}">
       <div class="rule-card-head">
-        <span class="rules-num">${App.esc(r.n)}</span>
-        <div>
-          <div class="rule-card-title">${App.esc(r.title)}</div>
+        <div class="rule-names">
+          ${r.rules.map(x => `<span class="rule-name-big">${App.esc(x)}</span>`).join("")}
         </div>
       </div>
-      <div class="rule-line">
-        <span class="rule-tag">📋 我們的班規</span>
-        ${r.rules.map(x => `<span class="rule-chip">${App.esc(x)}</span>`).join("")}
-      </div>
+      <div class="rule-covenant">🤝 公約 ${App.esc(r.n)}｜${App.esc(r.title)}</div>
       <div class="rule-cols">
         <div class="rule-col good">
           <div class="rule-col-head">✅ 做到的樣子</div>
@@ -229,19 +226,13 @@
     </div>`;
 
   const rulesLadder = () => `
-    <div class="rule-chain">
-      <span>🤝 公約（往哪走）</span><b>→</b>
-      <span>📋 班規（什麼可以、什麼不行）</span><b>→</b><span>🪙 崑山幣（做到／沒做到）</span>
-    </div>
     <div class="rule-cards">${CLASS_RULES.map(ruleCard).join("")}</div>
 
     <div class="rule-card rule-card-common">
       <div class="rule-card-head">
-        <span class="rules-num">＋</span>
-        <div>
-          <div class="rule-card-title">上課時間</div>
-        </div>
+        <div class="rule-names"><span class="rule-name-big">上課時間</span></div>
       </div>
+      <div class="rule-covenant">🤝 五條公約都適用</div>
       <div class="rule-col bad">
         ${CLASS_RULES_CLASSTIME.map(b => `
         <div class="rule-row">
@@ -252,16 +243,24 @@
       </div>
     </div>
 
+    <div class="rule-card rule-card-serious">
+      <div class="rule-card-head">
+        <div class="rule-names"><span class="rule-name-big">🚨 重大安全事件</span></div>
+      </div>
+      <div class="rule-col bad">
+        <div class="rule-row">
+          <span class="rr-act">重大安全事件、霸凌、性平
+            <em class="rr-fix">處理方式：依校內相關防治準則流程處理</em></span>
+          <span class="rr-coin">🪙 −15</span>
+        </div>
+      </div>
+    </div>
+
     <ul class="rule-notes">
       <li><b>扣到 0 就停</b>，不會變成負的。</li>
       <li><b>當天同一不當行為第一次改過，不扣點</b>；若再有，則需改過且扣點。</li>
       <li>另外還有亮點、進步獎、比賽獲獎、布可星球等獎勵，詳見「🏦 小小銀行」。</li>
     </ul>`;
-
-  // 重大安全事件不走扣點，依校內防治準則處理（獨立呈現，避免與班規獎懲混為一談）
-  const seriousCard = () => `
-    <p class="serious-item">重大安全事件、霸凌、性平</p>
-    <p class="serious-act">➜ 依校內相關防治準則流程處理</p>`;
 
   // ── 一日作息與常規（執行層 routine）──
   // 正本＝docs/班級經營與生活常規.md §二（時間軸）與 §二之二（課堂五流程），此處為學生版精簡文字。
@@ -293,7 +292,7 @@
         <span class="rt-sop">${App.esc(r.sop)}</span>
       </div>`).join("")}
     </div>
-    <div class="routine-sub">🔁 每天都會用到的五個流程</div>
+    <div class="routine-sub">🔁 上課常規</div>
     <div class="routine-list">
       ${LESSON_FLOWS.map(f => `
       <div class="routine-row flow">
@@ -432,23 +431,22 @@
           </div>` : ""}
         </section>` : ""}
         <section class="card" style="border-top-color:var(--orange)">
-          <h3>📋 公約 × 班規 × 獎懲</h3>
-          <p class="meta">公約說「往哪走」，班規說「什麼可以、什麼不行」，
-            做到會加崑山幣、沒做到就照「改過方式」把事情補好——這是同一條線上的三件事。</p>
+          <h3>📋 我們的班規（Rules）</h3>
+          <p class="meta">做到會加崑山幣，沒做到就照「改過方式」把事情補好。</p>
           ${rulesLadder()}
-        </section>
-        <section class="card serious-card">
-          <h3>🚨 重大安全事件</h3>
-          ${seriousCard()}
-        </section>
-        <section class="card" style="border-top-color:var(--sky)">
-          <h3>🕗 一日作息與常規</h3>
-          <p class="meta">常規是「怎麼做」——每天照著做，班上就會順。</p>
-          ${routineCard()}
         </section>
         <section class="card" style="border-top-color:var(--mint)">
           <h3>🎁 連續兩週沒有違規，可以抽獎</h3>
           ${luckyDrawCard()}
+        </section>`,
+    },
+    {
+      id: "routines", icon: "🕗", label: "作息與常規",
+      html: () => `
+        <section class="card" style="border-top-color:var(--sky)">
+          <h3>🕗 一日作息與常規（Routines）</h3>
+          <p class="meta">常規是「怎麼做」——每天照著做，班上就會順。</p>
+          ${routineCard()}
         </section>`,
     },
     {
