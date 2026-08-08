@@ -18,6 +18,8 @@ Google Drive 活動照片資料夾（sync-drive.mjs 產生縮圖清單）
 - `index.html` 等 9 頁：前台頁面，讀 `data/*.json` 渲染。
 - `data/site-config.json`：校名、班級、導覽、模組色彩。
 - `data/schedule.json`、`data/about.json`：日課表與關於我們（手動維護）。
+- `data/class-rules.json`：班規與獎懲、一日作息與上課常規、抽獎池（由 Notion「📋 班規與獎懲」
+  「🕗 作息與常規」與「🏪 班級商店」的抽獎池勾選同步產生，**勿手改**）。
 - `scripts/sync-notion.mjs`：Notion → JSON（需 `NOTION_TOKEN`）。
 - `scripts/sync-drive.mjs`：Drive 相簿 → `gallery.json`（需 `DRIVE_API_KEY`，選用）。
 - `.github/workflows/sync.yml`：排程與手動同步。
