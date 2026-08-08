@@ -914,6 +914,28 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .rule-col.bad .rr-coin { color: #c0392b; }
 .rule-notes { margin: 14px 0 0; padding-left: 20px; font-size: 14.5px; line-height: 1.75; color: var(--ink-soft); }
 .rule-notes b { color: var(--ink); }
+
+/* 重大安全事件：不走扣點，獨立一張紅框卡 */
+.serious-card { border-top-color: #c0392b !important; }
+.serious-item { font-size: 1.05rem; font-weight: 900; color: #c0392b; margin: 4px 0 6px; }
+.serious-act { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0; }
+
+/* 一日作息與常規（執行層 routine） */
+.routine-list { display: flex; flex-direction: column; margin-top: 6px; }
+.routine-row {
+  display: grid; grid-template-columns: 104px 92px minmax(0, 1fr); gap: 10px;
+  align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line);
+}
+.routine-row:first-child { border-top: 0; }
+.rt-time { font-size: 13.5px; font-weight: 800; color: var(--ink-soft); white-space: nowrap; }
+.routine-row.flow .rt-time { font-size: 1.05rem; color: #2f5d6e; }
+.rt-name { font-size: 15px; font-weight: 800; color: #2f4858; }
+.rt-sop { font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); }
+.routine-sub { margin-top: 14px; font-size: 15px; font-weight: 800; color: #2f4858; }
+@media (max-width: 640px) {
+  .routine-row { grid-template-columns: 88px minmax(0, 1fr); }
+  .routine-row .rt-sop { grid-column: 1 / 3; }
+}
 .draw-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .draw-chip {
   background: #fdf6dd; border: 1px solid #e8c95a; border-radius: 999px;
