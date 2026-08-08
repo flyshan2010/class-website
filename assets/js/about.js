@@ -120,6 +120,156 @@
       </p>
     </div>`;
 
+  // ── 公約 × 班規 × 獎懲對照 ──
+  // 制度鏈：四大理念 → 公約（往哪走）→ 班規（什麼可以不可以）→ 獎懲（做到／做不到怎麼辦）。
+  // 正本＝Notion「📜 班級獎懲規定（崑山幣加扣標準）」＋ docs/班級經營與生活常規.md；
+  // 行為文字與金額全部照抄該頁正向表／偏差表，**要改就三處一起改**（本檔、📜 頁、制度正本 md）。
+  const CLASS_RULES = [
+    {
+      n: "1", title: "說話有禮貌，也有分寸", idea: "尊重他人",
+      rules: ["② 待人有禮貌"],
+      good: [
+        { act: "主動問好、應對有禮、好好說話化解不愉快", coin: "+5" },
+        { act: "用語氣化解同學衝突、幫兩邊和好", coin: "+10" },
+      ],
+      bad: [
+        { act: "說話不禮貌、取外號、頂嘴", fix: "當面道歉，再用有禮貌的說法重說一次", coin: "−5" },
+      ],
+    },
+    {
+      n: "2", title: "想法不一樣，也能好好相處", idea: "尊重他人",
+      rules: ["⑤ 上課守秩序"],
+      good: [
+        { act: "討論時先聽完再回應、接納不同意見修正自己", coin: "+5" },
+        { act: "分組合作完成任務、接納不同的同學一起玩", coin: "+5" },
+        { act: "吵架後主動道歉和好、把關係修回來", coin: "+10" },
+      ],
+      bad: [
+        { act: "打斷、嘲笑同學發言", fix: "下一次討論先當主持人，練習聽完再回應", coin: "−5" },
+        { act: "衝突動口（罵人、挑釁）", fix: "道歉，並和老師約定下次要改說的話", coin: "−5" },
+        { act: "衝突動手（推人、打人）", fix: "負責讓對方重新感到安全（一起完成一週合作任務）", coin: "−10" },
+      ],
+    },
+    {
+      n: "3", title: "看見需要，主動幫忙", idea: "主動關懷",
+      rules: ["⑧ 口說好話"],
+      good: [
+        { act: "幫同學或老師的忙、教同學功課、主動服務", coin: "+5" },
+        { act: "主動照顧受傷或難過的同學、看到沒人做的事主動補上", coin: "+10" },
+      ],
+      bad: [
+        { act: "同學求助時刻意不理，還故意擋著不讓別人幫", fix: "補做一次同樣的服務", coin: "−5" },
+      ],
+    },
+    {
+      n: "4", title: "照顧自己，也照顧別人的安全", idea: "注意安全",
+      rules: ["⑥ 走廊（教室）不奔跑"],
+      good: [
+        { act: "提醒同學小心、自己先停下來不做危險動作、排隊不推擠", coin: "+5" },
+        { act: "制止危險行為、發現危險主動報告老師、幫受傷同學求助", coin: "+10" },
+      ],
+      bad: [
+        { act: "奔跑追逐、危險動作、拿掃具玩鬧", fix: "站立反省 5 分鐘，並向被撞到、嚇到的人說明", coin: "−5" },
+      ],
+    },
+    {
+      n: "5", title: "答應的事，努力完成", idea: "認真負責",
+      rules: ["① 上學（課）不遲到", "③ 打掃要認真", "④ 作業要用心", "⑦ 管好自己（自律）"],
+      good: [
+        { act: "作業準時又確實、答應的任務如期完成", coin: "+5" },
+        { act: "克服困難完成任務、主動重做到好", coin: "+10" },
+      ],
+      bad: [
+        { act: "作業缺交、複習卷沒交", fix: "下課補寫完成（欠的時間自己補回來）", coin: "−5" },
+        { act: "答應的工作或幹部職務擺爛", fix: "當週薪水減半，而且還是要補做", coin: "−5" },
+      ],
+    },
+  ];
+
+  // 不屬於單一條公約、全班共同適用的三條（📜 頁偏差表「共同」列）
+  const CLASS_RULES_COMMON = [
+    { act: "干擾上課（講話、吵到旁邊同學）", fix: "下課把落掉的進度補齊", coin: "−5" },
+    { act: "一直提醒還是繼續干擾", fix: "座位暫時移開（最多兩堂課）", coin: "−10" },
+    { act: "重大安全事件、欺負同學、霸凌", fix: "立刻開輔導個案，並聯繫家長一起處理", coin: "−15" },
+  ];
+
+  const 抽獎池 = ["作業減少", "豁免金牌", "合作社物品（不超過 20 元）", "三天不午睡",
+    "蓋好兒童卡三格", "二十元禮券", "獎勵金牌", "再抽一次"];
+
+  const ruleCard = (r, i) => `
+    <div class="rule-card rules-c${i % 5}">
+      <div class="rule-card-head">
+        <span class="rules-num">${App.esc(r.n)}</span>
+        <div>
+          <div class="rule-card-title">${App.esc(r.title)}</div>
+          <div class="rule-card-idea">理念：${App.esc(r.idea)}</div>
+        </div>
+      </div>
+      <div class="rule-line">
+        <span class="rule-tag">📋 我們的班規</span>
+        ${r.rules.map(x => `<span class="rule-chip">${App.esc(x)}</span>`).join("")}
+      </div>
+      <div class="rule-cols">
+        <div class="rule-col good">
+          <div class="rule-col-head">✅ 做到的樣子</div>
+          ${r.good.map(g => `
+          <div class="rule-row">
+            <span class="rr-act">${App.esc(g.act)}</span>
+            <span class="rr-coin">🪙 ${App.esc(g.coin)}</span>
+          </div>`).join("")}
+        </div>
+        <div class="rule-col bad">
+          <div class="rule-col-head">⚠️ 沒做到怎麼辦</div>
+          ${r.bad.map(b => `
+          <div class="rule-row">
+            <span class="rr-act">${App.esc(b.act)}
+              <em class="rr-fix">先做到：${App.esc(b.fix)}</em></span>
+            <span class="rr-coin">🪙 ${App.esc(b.coin)}</span>
+          </div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+
+  const rulesLadder = () => `
+    <div class="rule-chain">
+      <span>💛 四大理念</span><b>→</b><span>🤝 公約（往哪走）</span><b>→</b>
+      <span>📋 班規（什麼可以、什麼不行）</span><b>→</b><span>🪙 崑山幣（做到／沒做到）</span>
+    </div>
+    <div class="rule-cards">${CLASS_RULES.map(ruleCard).join("")}</div>
+
+    <div class="rule-card rule-card-common">
+      <div class="rule-card-head">
+        <span class="rules-num">＋</span>
+        <div>
+          <div class="rule-card-title">全班共同</div>
+          <div class="rule-card-idea">五條公約都適用</div>
+        </div>
+      </div>
+      <div class="rule-col bad">
+        ${CLASS_RULES_COMMON.map(b => `
+        <div class="rule-row">
+          <span class="rr-act">${App.esc(b.act)}
+            <em class="rr-fix">先做到：${App.esc(b.fix)}</em></span>
+          <span class="rr-coin">🪙 ${App.esc(b.coin)}</span>
+        </div>`).join("")}
+      </div>
+    </div>
+
+    <ul class="rule-notes">
+      <li><b>還在學的流程沒做到，不扣崑山幣</b>——像進教室、排隊、收拾這些「怎麼做」的流程，
+        沒做好就重做一次練到會，不扣錢。</li>
+      <li><b>扣到 0 就停</b>，不會變成負的，也不用還。</li>
+      <li><b>扣幣一定要搭配把事情補好</b>：補好、修好、道歉才是重點，扣幣只是提醒的訊號。</li>
+      <li>另外還有亮點、進步獎、比賽獲獎、布可星球等獎勵，詳見「🏦 小小銀行」。</li>
+    </ul>`;
+
+  const luckyDrawCard = () => `
+    <p class="meta">連續兩週都沒有違規紀錄，就可以抽一次獎（8 選 1）。</p>
+    <div class="draw-pool">
+      ${抽獎池.map((x, i) => `<span class="draw-chip">${i + 1}. ${App.esc(x)}</span>`).join("")}
+    </div>
+    <p class="duty-score-note">抽獎是「連續兩週都做得好」的里程碑獎勵，和崑山幣（每次的即時回饋）並行，不衝突。</p>`;
+
   // ── 打掃工作表 ──
   const dutySection = d => !d ? "" : `
     <p class="meta">打掃時間：${App.esc(d.時段)}</p>
@@ -239,9 +389,14 @@
           </div>` : ""}
         </section>` : ""}
         <section class="card" style="border-top-color:var(--orange)">
-          <h3>🪙 工作做到了，怎麼算？</h3>
-          <p class="meta">班上的每一項工作，都是公約第 5 條「答應的事，努力完成」的實際練習。</p>
-          ${scoringCard()}
+          <h3>📋 公約 × 班規 × 獎懲</h3>
+          <p class="meta">公約說「往哪走」，班規說「什麼可以、什麼不行」，
+            做到會加崑山幣、沒做到要先把事情補好——這是同一條線上的四件事。</p>
+          ${rulesLadder()}
+        </section>
+        <section class="card" style="border-top-color:var(--mint)">
+          <h3>🎁 連續兩週沒有違規，可以抽獎</h3>
+          ${luckyDrawCard()}
         </section>`,
     },
     {
