@@ -38,6 +38,8 @@ const DS = {
   portfolio: "8eb38e48-334b-45b1-ad0a-7d720782d15a", // 🎨 學生作品集（照片＝Drive 外部連結，只進加密報告）
   lessons: "d28efc6b-3f34-4a97-b72b-ddeb5ec51147", // 🚀 教學單元（教學駕駛艙；一列＝一單元，勾「顯示」上站）
   duties: "ccd4b894-5455-49f9-97e7-d56b42b51713", // 🧹 班級工作分配（打掃＋午餐；老師填座號，同步時換成遮罩姓名）
+  classRules: "1aaeec2b-0dc3-49f3-a915-4ac3fc3ed8bd", // 📋 班規與獎懲（一列＝一筆行為；同班規併成一張卡）
+  routines: "effc4788-5a86-4349-aa02-60f982a0c10e", // 🕗 作息與常規（一日作息＋上課常規）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -800,6 +802,61 @@ async function syncClassDuties() {
   await save("seating.json", seating);
 }
 
+// ── 班規與獎懲、作息與常規、抽獎池（班網「班級公約」「作息與常規」兩分頁）──────
+// 三者都是**設定型資料**（就地編輯、無「學年」欄），比照 🧹 班級工作分配 不走學年過濾。
+// 班規卡以「班規」欄分組：同一條班規的所有行為併成一張卡，卡序由「班規序號」決定。
+// 制度正本仍是 Notion 📜 班級獎懲規定頁與 repo docs/班級經營與生活常規.md——
+// 這裡只負責把老師在 Notion 維護的內容搬上班網，不是另一套規則。
+async function syncClassRules() {
+  const [ruleRows, routineRows, storeRows] = await Promise.all([
+    queryDataSource(DS.classRules).then(rs => rs.map(props)),
+    queryDataSource(DS.routines).then(rs => rs.map(props)),
+    queryDataSource(DS.store).then(rs => rs.map(props)),
+  ]);
+
+  const num = v => (typeof v === "number" ? v : Number(v) || 0);
+  const txt = v => String(v ?? "").trim();
+  const shown = r => r["顯示"] !== false;   // 未勾＝不上站
+
+  // 班規卡（依班規序號排卡、排序排列內）
+  const byRule = new Map();
+  for (const r of ruleRows.filter(shown)) {
+    const name = txt(r["班規"]);
+    if (!name) continue;
+    if (!byRule.has(name)) {
+      byRule.set(name, { rule: name, n: num(r["班規序號"]), covenant: txt(r["對應公約"]), good: [], bad: [] });
+    }
+    const card = byRule.get(name);
+    if (!card.covenant && txt(r["對應公約"])) card.covenant = txt(r["對應公約"]);
+    const coin = num(r["點數"]);
+    const item = { act: txt(r["行為"]), coin: coin > 0 ? `+${coin}` : String(coin).replace("-", "−"), sort: num(r["排序"]) };
+    if (txt(r["方向"]) === "偏差") card.bad.push({ ...item, fix: txt(r["改過方式"]) });
+    else card.good.push(item);
+  }
+  const cards = [...byRule.values()]
+    .sort((a, b) => a.n - b.n)
+    .map(c => ({
+      // n 同時決定卡序與卡片樣式：1–8＝八條班規（彩色）、9＝上課時間（灰）、10＝重大安全事件（紅）
+      n: c.n, rule: c.rule, covenant: c.covenant,
+      good: c.good.sort((a, b) => a.sort - b.sort).map(({ sort, ...x }) => x),
+      bad: c.bad.sort((a, b) => a.sort - b.sort).map(({ sort, ...x }) => x),
+    }));
+
+  // 作息與常規
+  const pick = type => routineRows
+    .filter(r => shown(r) && txt(r["類型"]) === type)
+    .sort((a, b) => num(a["排序"]) - num(b["排序"]))
+    .map(r => ({ label: txt(r["時間或編號"]), name: txt(r["名稱"]), sop: txt(r["內容"]) }));
+
+  // 抽獎池＝🏪 班級商店勾「抽獎池」的品項（與商店同源，學生看到的獎品就是換得到的特權）
+  const draw = storeRows
+    .filter(r => r["抽獎池"] === true)
+    .sort((a, b) => num(a["價格"]) - num(b["價格"]))
+    .map(r => ({ icon: txt(r["圖示"]), name: txt(r["品項"]), price: num(r["價格"]), desc: txt(r["說明"]) }));
+
+  await save("class-rules.json", { cards, daily: pick("一日作息"), flows: pick("上課常規"), draw });
+}
+
 // 先決定現行學年，後續各 sync 的查詢才知道要過濾哪一年（各 sync 為平行執行）
 await resolveCurrentYear();
 
@@ -817,6 +874,7 @@ await Promise.all([
   syncLessons(),
   syncRecapExtras(),
   syncClassDuties(),
+  syncClassRules(),
 ]);
 // ── Phase F fail-loud：學年漏填即報錯（SPEC_學年升級 §5）────────────────
 // 空學年在 2026-07-25 全庫回填後已無合法情境，出現即代表某支寫入端漏填。
