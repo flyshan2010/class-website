@@ -830,7 +830,7 @@ async function syncClassRules() {
     if (!card.covenant && txt(r["對應公約"])) card.covenant = txt(r["對應公約"]);
     const coin = num(r["點數"]);
     const item = { act: txt(r["行為"]), coin: coin > 0 ? `+${coin}` : String(coin).replace("-", "−"), sort: num(r["排序"]) };
-    if (txt(r["方向"]) === "偏差") card.bad.push({ ...item, fix: txt(r["改過方式"]) });
+    if (txt(r["方向"]) === "偏差") card.bad.push({ ...item, fix: txt(r["改正方式"]) });
     else card.good.push(item);
   }
   const cards = [...byRule.values()]
