@@ -805,8 +805,8 @@ async function syncClassDuties() {
 // ── 班規與獎懲、作息與常規、抽獎池（班網「班級公約」「作息與常規」兩分頁）──────
 // 三者都是**設定型資料**（就地編輯、無「學年」欄），比照 🧹 班級工作分配 不走學年過濾。
 // 班規卡以「班規」欄分組：同一條班規的所有行為併成一張卡，卡序由「班規序號」決定。
-// 制度正本仍是 Notion 📜 班級獎懲規定頁與 repo docs/班級經營與生活常規.md——
-// 這裡只負責把老師在 Notion 維護的內容搬上班網，不是另一套規則。
+// 2026-08-09 起這三個庫就是制度正本：📜 班級獎懲規定頁只留理念與原則說明，
+// repo docs/班級經營與生活常規.md 降為匯出快照，兩者都不必再跟著改。
 async function syncClassRules() {
   const [ruleRows, routineRows, storeRows] = await Promise.all([
     queryDataSource(DS.classRules).then(rs => rs.map(props)),
