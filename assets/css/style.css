@@ -925,6 +925,8 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .rt-covenant b { color: #463d5e; }
 .rt-redo { color: #8a5a2b; }
 .rt-redo b { color: #7a4a1b; }
+.rt-ps { color: #3f6079; }
+.rt-ps b { color: #2f4a5e; margin-right: 3px; }
 .routine-sub { margin-top: 14px; font-size: 15px; font-weight: 800; color: #2f4858; }
 @media (max-width: 640px) {
   .routine-row { grid-template-columns: 88px minmax(0, 1fr); }
