@@ -120,7 +120,8 @@
       "icon": "❓",
       "href": "guide.html",
       "hidden": true,
-      "_hidden說明": "hidden=true 代表不出現在導覽列與首頁選單（直接輸入網址仍可看）。要公開就改成 false，不必改程式。"
+      "_hidden說明": "hidden=true 代表學生找不到（直接輸入網址仍可看）。要開放給學生就改成 false，入口會出現在「🌈 關於我們」的分頁列最後一格，不占頂部導覽列。",
+      "navPlacement": "about"
     }
   ],
   "moduleColors": {
