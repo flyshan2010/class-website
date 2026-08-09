@@ -916,6 +916,15 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .routine-row.flow .rt-time { font-size: 1.05rem; color: #2f5d6e; }
 .rt-name { font-size: 15px; font-weight: 800; color: #2f4858; }
 .rt-sop { font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); }
+/* 期待行為／對應公約／重做練習：S.O.P. 下方的標籤化子行（2026-08-09 新增） */
+.rt-line { display: block; margin-top: 5px; font-size: 13.5px; line-height: 1.55; }
+.rt-line b { font-weight: 800; }
+.rt-expect { color: #2f6b4f; }
+.rt-expect b { color: #1f5c3f; }
+.rt-covenant { color: #5a5170; }
+.rt-covenant b { color: #463d5e; }
+.rt-redo { color: #8a5a2b; }
+.rt-redo b { color: #7a4a1b; }
 .routine-sub { margin-top: 14px; font-size: 15px; font-weight: 800; color: #2f4858; }
 @media (max-width: 640px) {
   .routine-row { grid-template-columns: 88px minmax(0, 1fr); }

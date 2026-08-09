@@ -173,11 +173,21 @@
     </ul>`;
 
   // ── 一日作息與常規（Notion「🕗 作息與常規」）──
+  // 期待行為／重做練習／對應公約班規為 2026-08-09 新增，四欄擠不進一列，
+  // 所以放在 S.O.P. 下方做成標籤化子行——維持原本三欄 grid，手機版不必再改。
+  // 每欄都可能沒填（老師還沒補），沒填就整行不出現，不留空標籤。
+  const rtLine = (cls, label, text) => !text ? "" :
+    `<span class="rt-line ${cls}"><b>${label}</b>${App.esc(text)}</span>`;
   const routineRows = list => list.map(r => `
     <div class="routine-row">
       <span class="rt-time">${App.esc(r.label)}</span>
       <span class="rt-name">${App.esc(r.name)}</span>
-      <span class="rt-sop">${App.esc(r.sop)}</span>
+      <span class="rt-sop">
+        ${App.esc(r.sop)}
+        ${rtLine("rt-expect", "做到的樣子｜", r.expect)}
+        ${rtLine("rt-covenant", "對應｜", r.covenant)}
+        ${rtLine("rt-redo", "沒做到 → 重做練習｜", r.redo)}
+      </span>
     </div>`).join("");
 
   const routineCard = cr => `
