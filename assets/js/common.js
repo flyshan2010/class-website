@@ -49,6 +49,11 @@ const App = {
           ${moreItems.map(n => `<a href="${n.href}" class="${n.id === activeId ? "active" : ""}">${n.icon} ${n.label}</a>`).join("")}
         </div>
       </div>`;
+    // 告訴 CSS「12 個分頁都已經平鋪出來了」，桌機才可以放心收掉「⋯ 更多」。
+    // 這個 class 是防呆：瀏覽器若快取到舊版 common.js（沒渲染次要分頁），
+    // body 上就不會有 nav-flat，「更多」照常出現，導覽列不會只剩 4 個按鈕。
+    document.body.classList.add("nav-flat");
+
     const moreWrap = document.querySelector(".nav-more");
     const moreBtn = document.querySelector(".nav-more-btn");
     const morePanel = document.querySelector(".nav-more-panel");
