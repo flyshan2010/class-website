@@ -34,8 +34,15 @@ const App = {
     const mainItems = navItems.filter(n => this.MAIN_NAV_IDS.includes(n.id));
     const moreItems = navItems.filter(n => !this.MAIN_NAV_IDS.includes(n.id));
     const moreActive = moreItems.some(n => n.id === activeId);
+    // 全部分頁都渲染出來，且**照 site-config 的原順序**——桌機就是原本平鋪一排的樣子。
+    // 手機（≤719px）由 CSS 隱藏 .nav-secondary、改用「⋯ 更多」下拉；主項的相對順序不變，
+    // 所以不必再用 flex order 搬位置。
     document.getElementById("site-nav").innerHTML = `
-      ${mainItems.map(n => `<a href="${n.href}" class="${n.id === activeId ? "active" : ""}">${n.icon} ${n.label}</a>`).join("")}
+      ${navItems.map(n => {
+        const cls = [this.MAIN_NAV_IDS.includes(n.id) ? "" : "nav-secondary", n.id === activeId ? "active" : ""]
+          .filter(Boolean).join(" ");
+        return `<a href="${n.href}" class="${cls}">${n.icon} ${n.label}</a>`;
+      }).join("")}
       <div class="nav-more${moreActive ? " active" : ""}">
         <button type="button" class="nav-more-btn${moreActive ? " active" : ""}" aria-haspopup="true" aria-expanded="false">⋯ 更多</button>
         <div class="nav-more-panel">
