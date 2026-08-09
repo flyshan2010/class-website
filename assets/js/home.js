@@ -49,7 +49,7 @@
     ${App.sparPoster(c.spar, true)}
     <div class="home-layout">
       <aside class="side-menu" aria-label="功能選單">
-        ${c.nav.filter(n => n.id !== "home").map(n => `
+        ${App.visibleNav(c).filter(n => n.id !== "home").map(n => `
           <a class="module-card" href="${n.href}" style="--mc:${c.moduleColors[n.id] || "#54A0FF"}">
             <span class="icon">${n.icon}</span>
             <span class="label">${n.label}</span>

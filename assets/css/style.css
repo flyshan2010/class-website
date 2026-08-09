@@ -1480,3 +1480,38 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   .seat-grid { border-spacing: 6px; }
   .seat-grid td.seat { min-width: 88px; padding: 12px 8px; font-size: 1.05rem; }
 }
+
+/* ---------- ❓ 怎麼用這個網站（guide.html，由 docs/學生操作手冊.md 產生） ---------- */
+.guide-hero .guide-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.guide-hero .guide-jump a {
+  padding: 6px 12px; border-radius: 999px; background: var(--bg);
+  color: var(--ink); font-size: 15px; text-decoration: none; border: 2px solid var(--line);
+}
+.guide-hero .guide-jump a:hover { border-color: var(--accent, var(--sky)); }
+
+/* 章節錨點：頁內跳轉時上方留白，標題不會被貼在螢幕最上緣 */
+.guide-card { scroll-margin-top: 16px; }
+.guide-card > h2 { font-size: 21px; line-height: 1.45; }
+.guide-card h3 { margin: 18px 0 6px; font-size: 18px; }
+.guide-card > h3:first-of-type { margin-top: 8px; }
+.guide-card p { margin: 8px 0; line-height: 1.75; }
+.guide-list { margin: 8px 0 8px 22px; line-height: 1.8; }
+.guide-list li { margin-bottom: 4px; }
+.guide-note {
+  margin: 12px 0; padding: 10px 14px; border-left: 4px solid var(--accent, var(--sky));
+  background: var(--bg); border-radius: 0 12px 12px 0; line-height: 1.75; font-size: 15.5px;
+}
+
+/* 表格在手機上一定會比螢幕寬（手冊裡有三欄說明表），
+   所以固定包在可橫滑的容器裡——只有表格自己滑，整頁不會左右晃。 */
+.guide-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 10px 0; }
+.guide-table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 15.5px; }
+.guide-table th, .guide-table td {
+  border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; line-height: 1.7;
+}
+.guide-table thead th { background: #eef4ff; white-space: nowrap; }
+.guide-table tbody tr:nth-child(even) td { background: #fafaf5; }
+@media (max-width: 480px) {
+  .guide-table { font-size: 14.5px; min-width: 420px; }
+  .guide-table th, .guide-table td { padding: 6px 8px; }
+}

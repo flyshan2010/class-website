@@ -5,6 +5,11 @@ const App = {
   // 導覽列收成 5 主項＋更多：其餘的塞進「更多」下拉，手機／桌機都不必橫向長滑一排。
   MAIN_NAV_IDS: ["home", "contactbook", "announcements", "report"],
 
+  // 導覽用的分頁清單（濾掉 hidden 的草稿頁）
+  visibleNav(c = this.config) {
+    return (c?.nav ?? []).filter(n => !n.hidden);
+  },
+
   async fetchJSON(path) {
     const res = await fetch(path, { cache: "no-cache" });
     if (!res.ok) throw new Error(`載入失敗：${path}`);
@@ -23,8 +28,11 @@ const App = {
       <h1>${c.className} 班級網站</h1>
       <div class="motto">${c.motto}</div>`;
 
-    const mainItems = c.nav.filter(n => this.MAIN_NAV_IDS.includes(n.id));
-    const moreItems = c.nav.filter(n => !this.MAIN_NAV_IDS.includes(n.id));
+    // site-config.json 的 nav 項可加 "hidden": true ——頁面照樣部署得到、輸網址看得到，
+    // 但不出現在導覽列與首頁選單。老師想公開時把該項改成 false 即可，不必動程式。
+    const navItems = this.visibleNav(c);
+    const mainItems = navItems.filter(n => this.MAIN_NAV_IDS.includes(n.id));
+    const moreItems = navItems.filter(n => !this.MAIN_NAV_IDS.includes(n.id));
     const moreActive = moreItems.some(n => n.id === activeId);
     document.getElementById("site-nav").innerHTML = `
       ${mainItems.map(n => `<a href="${n.href}" class="${n.id === activeId ? "active" : ""}">${n.icon} ${n.label}</a>`).join("")}
