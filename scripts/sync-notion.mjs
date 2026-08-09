@@ -843,10 +843,16 @@ async function syncClassRules() {
     }));
 
   // 作息與常規
+  // expect/redo/covenant 為 2026-08-09 新增（B2）：學生原本只看得到「怎麼做」，
+  // 看不到「沒做到要怎麼重做」——而那正是「常規不扣點、只重做」這條規則的落地處。
+  // 三欄都可能是空字串（老師還沒填），前端各自判空，不會排出空欄位。
   const pick = type => routineRows
     .filter(r => shown(r) && txt(r["類型"]) === type)
     .sort((a, b) => num(a["排序"]) - num(b["排序"]))
-    .map(r => ({ label: txt(r["時間或編號"]), name: txt(r["名稱"]), sop: txt(r["內容"]) }));
+    .map(r => ({
+      label: txt(r["時間或編號"]), name: txt(r["名稱"]), sop: txt(r["內容"]),
+      expect: txt(r["期待行為"]), redo: txt(r["重做練習"]), covenant: txt(r["對應公約班規"]),
+    }));
 
   // 抽獎池＝🏪 班級商店勾「抽獎池」的品項（與商店同源，學生看到的獎品就是換得到的特權）
   const draw = storeRows
