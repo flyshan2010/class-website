@@ -70,13 +70,17 @@
       "id": "weekly",
       "label": "班級週報",
       "icon": "📰",
-      "href": "weekly.html"
+      "href": "weekly.html",
+      "autoHidden": true,
+      "_autoHidden說明": "由 sync-notion.mjs 依實際資料自動維護：這頁目前沒有內容所以不上導覽列，資料一進來就自動移除本欄、分頁自己回來。不要手改。"
     },
     {
       "id": "gallery",
       "label": "活動相簿",
       "icon": "🖼️",
-      "href": "gallery.html"
+      "href": "gallery.html",
+      "autoHidden": true,
+      "_autoHidden說明": "由 sync-notion.mjs 依實際資料自動維護：這頁目前沒有內容所以不上導覽列，資料一進來就自動移除本欄、分頁自己回來。不要手改。"
     },
     {
       "id": "schedule",
@@ -106,7 +110,9 @@
       "id": "recap",
       "label": "學期回顧",
       "icon": "🎓",
-      "href": "recap.html"
+      "href": "recap.html",
+      "autoHidden": true,
+      "_autoHidden說明": "由 sync-notion.mjs 依實際資料自動維護：這頁目前沒有內容所以不上導覽列，資料一進來就自動移除本欄、分頁自己回來。不要手改。"
     },
     {
       "id": "about",

@@ -898,6 +898,40 @@ if (yearMissing.length) {
   process.exit(1);
 }
 
+// ── 空分頁自動收起（2026-08-10）────────────────────────────────────────
+// 相簿、週報、學期回顧在還沒有內容時，導覽列上是三格點進去只有一句「還沒有…」的分頁。
+// 這裡在同步收尾時看實際資料決定要不要掛上導覽列：**有資料就自動回來，老師不必記得改**。
+// 只寫 autoHidden，不動老師手動設的 hidden（guide 那種草稿頁仍由老師自己決定何時開放）。
+async function applyAutoHiddenNav() {
+  const readArr = async name => {
+    try { const v = JSON.parse(await readFile(path.join(DATA_DIR, name), "utf8")); return Array.isArray(v) ? v : []; }
+    catch { return []; }
+  };
+  const [gallery, weekly] = await Promise.all([readArr("gallery.json"), readArr("weekly.json")]);
+  let recapExtra = null;
+  try { recapExtra = JSON.parse(await readFile(path.join(DATA_DIR, "recap-extra.json"), "utf8")); } catch { /* 檔案還沒產出 */ }
+  // 學期回顧＝週報彙整＋相簿＋（SEL 雷達／經濟大事記的逐週資料），四者全空才算沒內容。
+  // 註：economy.totals 有數字但 weeks 為空時圖表畫不出來，所以判 weeks 而不是 totals。
+  const hasRecap = weekly.length > 0 || gallery.length > 0
+    || (recapExtra?.sel?.weeks?.length ?? 0) > 0
+    || (recapExtra?.economy?.weeks?.length ?? 0) > 0;
+  const empty = { gallery: gallery.length === 0, weekly: weekly.length === 0, recap: !hasRecap };
+
+  const cfg = JSON.parse(await readFile(path.join(DATA_DIR, "site-config.json"), "utf8"));
+  const changed = [];
+  for (const n of cfg.nav ?? []) {
+    if (!(n.id in empty)) continue;
+    const next = empty[n.id];
+    if (Boolean(n.autoHidden) !== next) changed.push(`${n.icon} ${n.label} → ${next ? "收起" : "重新出現"}`);
+    if (next) n.autoHidden = true; else delete n.autoHidden;
+  }
+  await save("site-config.json", cfg);
+  const hiddenNow = Object.entries(empty).filter(([, v]) => v).map(([k]) => k);
+  console.log(`🙈 空分頁自動收起：${hiddenNow.length ? hiddenNow.join("、") : "無（三頁都有內容）"}`);
+  if (changed.length) console.log(`   本次變動：${changed.join("；")}`);
+}
+await applyAutoHiddenNav();
+
 // 同步時間戳（頁尾顯示「最後同步」，同步斷了看得見）——無個資
 await writeFile(path.join(DATA_DIR, "synced-at.json"),
   JSON.stringify({ at: new Date().toISOString() }) + "\n", "utf8");
