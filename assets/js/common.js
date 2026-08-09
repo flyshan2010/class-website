@@ -15,6 +15,8 @@ const App = {
     this.config = await this.fetchJSON("data/site-config.json");
     const c = this.config;
     document.title = `${c.siteTitle}｜${document.body.dataset.pageTitle || ""}`.replace(/｜$/, "");
+    // 讓 CSS 能針對單一頁面調整（例：首頁有 SPAR 海報，頁首的 motto 就不重複出現）
+    if (activeId) document.body.classList.add(`page-${activeId}`);
 
     document.getElementById("site-header").innerHTML = `
       <div class="school">${c.schoolYear} ${c.schoolName}</div>

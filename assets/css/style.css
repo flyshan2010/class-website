@@ -51,6 +51,9 @@ img { max-width: 100%; display: block; }
 .site-header h1 { font-size: 30px; letter-spacing: 3px; margin: 2px 0; text-shadow: 0 2px 4px rgba(0,0,0,.12); }
 /* 班級口號可含換行（Notion「班級口號」欄裡按 Enter 就會斷行） */
 .site-header .motto { font-size: 15px; opacity: .92; white-space: pre-line; }
+/* 首頁另有完整的 SPAR 海報（中英文＋說明），頁首就不再重複同一串英文口號，
+   省下手機首屏約 50px。其他分頁沒有海報，口號照常顯示在頁首。 */
+body.page-home .site-header .motto { display: none; }
 
 /* ===== 導覽列 ===== */
 .site-nav {
@@ -188,6 +191,23 @@ main {
   .home-layout { grid-template-columns: 1fr; }
   .side-menu { position: static; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .home-right { grid-column: auto; }
+}
+
+/* 手機首頁的資訊優先序：當天聯絡簿 → 最新公告 → 倒數／近期行事 → SPAR 海報。
+   桌機維持原本三欄（左選單／中內容／右倒數），這裡只動 ≤719px。
+   side-menu 在手機上與導覽列完全重複（同樣 11 個分頁），直接隱藏省掉約 400px 的空滑。 */
+@media (max-width: 719px) {
+  body.page-home #main { display: flex; flex-direction: column; }
+  body.page-home #main > .spar-poster { order: 2; }
+  body.page-home #main > .home-layout { order: 1; }
+  .home-layout .side-menu { display: none; }
+  .home-main { display: flex; flex-direction: column; }
+  .home-main > .chalkboard { order: 1; }
+  .home-main > .fixed-slot { order: 2; }
+  .home-main > * { order: 3; }
+  .home-right { display: flex; flex-direction: column; }
+  .home-right > .emotion-widget { order: 2; }
+  .home-right > * { order: 1; }
 }
 
 /* 日期倒數 */
