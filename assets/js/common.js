@@ -2,6 +2,9 @@
 const App = {
   config: null,
 
+  // 導覽列收成 5 主項＋更多：其餘的塞進「更多」下拉，手機／桌機都不必橫向長滑一排。
+  MAIN_NAV_IDS: ["home", "contactbook", "announcements", "report"],
+
   async fetchJSON(path) {
     const res = await fetch(path, { cache: "no-cache" });
     if (!res.ok) throw new Error(`載入失敗：${path}`);
@@ -18,9 +21,38 @@ const App = {
       <h1>${c.className} 班級網站</h1>
       <div class="motto">${c.motto}</div>`;
 
-    document.getElementById("site-nav").innerHTML = c.nav
-      .map(n => `<a href="${n.href}" class="${n.id === activeId ? "active" : ""}">${n.icon} ${n.label}</a>`)
-      .join("");
+    const mainItems = c.nav.filter(n => this.MAIN_NAV_IDS.includes(n.id));
+    const moreItems = c.nav.filter(n => !this.MAIN_NAV_IDS.includes(n.id));
+    const moreActive = moreItems.some(n => n.id === activeId);
+    document.getElementById("site-nav").innerHTML = `
+      ${mainItems.map(n => `<a href="${n.href}" class="${n.id === activeId ? "active" : ""}">${n.icon} ${n.label}</a>`).join("")}
+      <div class="nav-more${moreActive ? " active" : ""}">
+        <button type="button" class="nav-more-btn${moreActive ? " active" : ""}" aria-haspopup="true" aria-expanded="false">⋯ 更多</button>
+        <div class="nav-more-panel">
+          ${moreItems.map(n => `<a href="${n.href}" class="${n.id === activeId ? "active" : ""}">${n.icon} ${n.label}</a>`).join("")}
+        </div>
+      </div>`;
+    const moreWrap = document.querySelector(".nav-more");
+    const moreBtn = document.querySelector(".nav-more-btn");
+    const morePanel = document.querySelector(".nav-more-panel");
+    // 面板用 fixed 定位，開啟時依按鈕實際座標夾在視窗內——導覽列還沒滑到底、按鈕貼在螢幕邊緣時，面板也不會被切掉。
+    const placeMorePanel = () => {
+      if (!morePanel) return;
+      const btnRect = moreBtn.getBoundingClientRect();
+      const panelW = morePanel.offsetWidth || 170;
+      const left = Math.min(Math.max(8, btnRect.right - panelW), window.innerWidth - panelW - 8);
+      morePanel.style.top = `${btnRect.bottom + 8}px`;
+      morePanel.style.left = `${left}px`;
+    };
+    moreBtn?.addEventListener("click", e => {
+      e.stopPropagation();
+      const opening = !moreWrap.classList.contains("open");
+      moreWrap.classList.toggle("open", opening);
+      moreBtn.setAttribute("aria-expanded", opening);
+      if (opening) placeMorePanel();
+    });
+    document.addEventListener("click", () => moreWrap?.classList.remove("open"));
+    window.addEventListener("resize", () => { if (moreWrap?.classList.contains("open")) placeMorePanel(); });
 
     document.getElementById("site-footer").innerHTML =
       `${c.schoolYear} ${c.schoolName} ${c.className} ❤ 本站由老師與 AI 共同維護

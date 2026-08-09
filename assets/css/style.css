@@ -82,6 +82,34 @@ img { max-width: 100%; display: block; }
 .site-nav a:hover { transform: translateY(-2px); text-decoration: none; border-color: var(--sky); }
 .site-nav a.active { background: var(--ink); color: #fff; }
 
+/* 導覽「更多」下拉：收其餘分頁，手機／桌機都不必橫向長滑一排 */
+.site-nav .nav-more { position: relative; flex: 0 0 auto; }
+.site-nav .nav-more-btn {
+  display: flex; align-items: center; gap: 6px; padding: 8px 16px;
+  border-radius: 999px; background: var(--card); color: var(--ink);
+  font-size: 16px; font-family: inherit; white-space: nowrap; cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06); border: 2px solid transparent;
+  transition: transform .15s, border-color .15s;
+}
+.site-nav .nav-more-btn:hover { transform: translateY(-2px); border-color: var(--sky); }
+.site-nav .nav-more.active .nav-more-btn { background: var(--ink); color: #fff; }
+.site-nav .nav-more-panel {
+  display: none; position: fixed; top: 0; left: 0;
+  background: var(--card); border-radius: 16px; box-shadow: var(--shadow-hover);
+  padding: 8px; flex-direction: column; gap: 2px; z-index: 60; min-width: 170px;
+}
+.site-nav .nav-more.open .nav-more-panel { display: flex; }
+.site-nav .nav-more-panel a { padding: 8px 12px; border-radius: 10px; color: var(--ink); font-size: 15px; white-space: nowrap; }
+.site-nav .nav-more-panel a:hover { background: var(--bg); text-decoration: none; }
+.site-nav .nav-more-panel a.active { background: var(--ink); color: #fff; }
+
+/* 手機縮小導覽 pill，讓 5 主項＋更多盡量一次擠進一屏，不必橫滑找「更多」 */
+@media (max-width: 480px) {
+  .site-nav { gap: 6px; padding: 12px 10px; }
+  .site-nav a, .site-nav .nav-more-btn { padding: 7px 11px; font-size: 14px; gap: 4px; }
+  .site-nav .nav-more-panel { min-width: 150px; }
+}
+
 /* ===== 主要版面 ===== */
 main {
   max-width: 1080px;
