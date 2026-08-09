@@ -178,12 +178,20 @@
   // 每欄都可能沒填（老師還沒補），沒填就整行不出現，不留空標籤。
   const rtLine = (cls, label, text) => !text ? "" :
     `<span class="rt-line ${cls}"><b>${label}</b>${App.esc(text)}</span>`;
+  // S.O.P. 裡老師常在句尾補「p.s.…」提醒細節（例：p.s.清楚說句型提示:我覺得…，因為…。）。
+  // 混在流程箭頭後面學生看不到，這裡把每個 p.s. 拆成獨立一行；沒寫 p.s. 就照原樣輸出。
+  const rtSop = text => {
+    const parts = String(text || "").split(/\s*[；;，,]?\s*p\s*\.\s*s\s*\.\s*/i);
+    return App.esc(parts[0].trim().replace(/[；;，,]\s*$/, "")) +
+      parts.slice(1).map(t => t.trim()).filter(Boolean)
+        .map(t => `<span class="rt-line rt-ps"><b>p.s.</b>${App.esc(t)}</span>`).join("");
+  };
   const routineRows = list => list.map(r => `
     <div class="routine-row">
       <span class="rt-time">${App.esc(r.label)}</span>
       <span class="rt-name">${App.esc(r.name)}</span>
       <span class="rt-sop">
-        ${App.esc(r.sop)}
+        ${rtSop(r.sop)}
         ${rtLine("rt-expect", "做到的樣子｜", r.expect)}
         ${rtLine("rt-covenant", "對應｜", r.covenant)}
         ${rtLine("rt-redo", "沒做到 → 重做練習｜", r.redo)}
