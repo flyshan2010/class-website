@@ -88,8 +88,14 @@ img { max-width: 100%; display: block; }
 .site-nav a.active { background: var(--ink); color: #fff; }
 
 /* 導覽「更多」下拉：**只在手機（≤719px）出現**。
-   桌機維持原本呈現——12 個分頁平鋪成一排（放不下時整條橫滑），不收進下拉。 */
-.site-nav .nav-more { display: none; position: relative; flex: 0 0 auto; }
+   桌機維持原本呈現——12 個分頁平鋪成一排（放不下時整條橫滑），不收進下拉。
+   ⚠️ 預設是「顯示」，桌機要靠 body.nav-flat 才收起來（common.js 渲染完次要分頁後才掛）。
+   這是防呆：若瀏覽器快取到舊版 common.js（次要分頁沒渲染出來），「更多」會照常出現，
+   導覽列不會變成只剩 4 個按鈕、其餘分頁進不去。 */
+.site-nav .nav-more { position: relative; flex: 0 0 auto; }
+@media (min-width: 720px) {
+  body.nav-flat .site-nav .nav-more { display: none; }
+}
 .site-nav .nav-more-btn {
   display: flex; align-items: center; gap: 6px; padding: 8px 16px;
   border-radius: 999px; background: var(--card); color: var(--ink);
@@ -113,7 +119,6 @@ img { max-width: 100%; display: block; }
    桌機不套用，維持原本一排平鋪的樣子。 */
 @media (max-width: 719px) {
   .site-nav .nav-secondary { display: none; }
-  .site-nav .nav-more { display: block; }
 }
 
 /* 手機縮小導覽 pill，讓 5 主項＋更多盡量一次擠進一屏，不必橫滑找「更多」 */
