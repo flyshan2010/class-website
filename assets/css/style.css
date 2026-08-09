@@ -905,19 +905,41 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .rule-notes { margin: 14px 0 0; padding-left: 20px; font-size: 14.5px; line-height: 1.75; color: var(--ink-soft); }
 .rule-notes b { color: var(--ink); }
 
-/* 一日作息與常規（執行層 routine） */
-.routine-list { display: flex; flex-direction: column; margin-top: 6px; }
-.routine-row {
-  display: grid; grid-template-columns: 104px 92px minmax(0, 1fr); gap: 10px;
-  align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line);
+/* 一日作息與常規（執行層 routine）
+   2026-08-09 改版：比照班級公約海報做成一段一張卡（色系沿用 rules-c0～c4），
+   整體字級放大、S.O.P. 拆成編號步驟卡，學生一眼看得到流程順序。 */
+.routine-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.routine-item {
+  border-radius: 16px; border-left: 8px solid transparent;
+  padding: 12px 16px 14px; background: #fbfaf6;
 }
-.routine-row:first-child { border-top: 0; }
-.rt-time { font-size: 13.5px; font-weight: 800; color: var(--ink-soft); white-space: nowrap; }
-.routine-row.flow .rt-time { font-size: 1.05rem; color: #2f5d6e; }
-.rt-name { font-size: 15px; font-weight: 800; color: #2f4858; }
-.rt-sop { font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); }
-/* 期待行為／對應公約／重做練習：S.O.P. 下方的標籤化子行（2026-08-09 新增） */
-.rt-line { display: block; margin-top: 5px; font-size: 13.5px; line-height: 1.55; }
+.routine-item.rt-c0 { background: #fdf6dd; border-left-color: #e8c95a; }
+.routine-item.rt-c1 { background: #f1e9f7; border-left-color: #b79cd8; }
+.routine-item.rt-c2 { background: #e3f2f8; border-left-color: #7cc0dc; }
+.routine-item.rt-c3 { background: #fdeadd; border-left-color: #eba36a; }
+.routine-item.rt-c4 { background: #ecf5e4; border-left-color: #9cc47a; }
+.rt-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 12px; margin-bottom: 8px; }
+.rt-time { font-size: 1rem; font-weight: 800; color: #5f7784; white-space: nowrap; }
+.rt-name { font-size: 1.3rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
+/* 流程步驟：白底圓角卡＋序號，中間夾箭頭；手機會自動換行 */
+.rt-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; }
+.rt-step {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff; border-radius: 12px; padding: 6px 12px;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.45; color: #2f4858;
+  box-shadow: 0 1px 3px rgba(0,0,0,.10);
+}
+.rt-step b {
+  flex: 0 0 22px; width: 22px; height: 22px; border-radius: 50%;
+  background: #eef3f6; color: #4a6b7a; font-size: 13px; font-weight: 900;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.rt-step em { font-style: normal; font-size: 0.85em; font-weight: 600; color: #5f7784; }
+.rt-step.solo { font-weight: 700; }
+.rt-arrow { font-size: 1.05rem; font-weight: 900; color: #7c8f9b; }
+/* 做到的樣子／對應公約／重做練習／p.s.：卡片下方的小字子行 */
+.rt-notes { margin-top: 8px; }
+.rt-line { display: block; margin-top: 5px; font-size: 15px; line-height: 1.6; }
 .rt-line b { font-weight: 800; }
 .rt-expect { color: #2f6b4f; }
 .rt-expect b { color: #1f5c3f; }
@@ -925,12 +947,18 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .rt-covenant b { color: #463d5e; }
 .rt-redo { color: #8a5a2b; }
 .rt-redo b { color: #7a4a1b; }
-.rt-ps { color: #3f6079; }
-.rt-ps b { color: #2f4a5e; margin-right: 3px; }
-.routine-sub { margin-top: 14px; font-size: 15px; font-weight: 800; color: #2f4858; }
+.rt-ps { color: #2f4a5e; font-weight: 700; }
+.rt-ps b { color: #1f3b4d; margin-right: 4px; }
+.routine-sub { margin-top: 18px; font-size: 1.15rem; font-weight: 900; color: #2f4858; letter-spacing: 1px; }
 @media (max-width: 640px) {
-  .routine-row { grid-template-columns: 88px minmax(0, 1fr); }
-  .routine-row .rt-sop { grid-column: 1 / 3; }
+  .routine-item { padding: 10px 12px 12px; }
+  .rt-name { font-size: 1.15rem; }
+  .rt-line { font-size: 14.5px; }
+  /* 手機一行放不下兩張步驟卡，改成直式流程：箭頭轉向下、補充說明自己一行 */
+  .rt-flow { flex-direction: column; align-items: stretch; gap: 2px; }
+  .rt-step { font-size: 1rem; padding: 6px 10px; flex-wrap: wrap; }
+  .rt-step em { flex-basis: 100%; margin-left: 28px; }
+  .rt-arrow { transform: rotate(90deg); align-self: flex-start; margin-left: 12px; line-height: 1; }
 }
 .draw-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .draw-pool { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }

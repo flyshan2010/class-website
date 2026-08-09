@@ -174,30 +174,52 @@
     </ul>`;
 
   // ── 一日作息與常規（Notion「🕗 作息與常規」）──
-  // 期待行為／重做練習／對應公約班規為 2026-08-09 新增，四欄擠不進一列，
-  // 所以放在 S.O.P. 下方做成標籤化子行——維持原本三欄 grid，手機版不必再改。
-  // 每欄都可能沒填（老師還沒補），沒填就整行不出現，不留空標籤。
+  // 2026-08-09 改為海報式卡片（沿用班級公約 rules-c0～c4 色系）：時段＋名稱做大標，
+  // S.O.P. 拆成編號步驟卡讓學生一眼抓到流程順序，做到的樣子／對應公約／重做練習
+  // 退成卡片下方的小字子行。每欄都可能沒填（老師還沒補），沒填就整行不出現。
   const rtLine = (cls, label, text) => !text ? "" :
     `<span class="rt-line ${cls}"><b>${label}</b>${App.esc(text)}</span>`;
   // S.O.P. 裡老師常在句尾補「p.s.…」提醒細節（例：p.s.清楚說句型提示:我覺得…，因為…。）。
-  // 混在流程箭頭後面學生看不到，這裡把每個 p.s. 拆成獨立一行；沒寫 p.s. 就照原樣輸出。
-  const rtSop = text => {
+  // 混在流程箭頭後面學生看不到，這裡把每個 p.s. 拆出來單獨一行。
+  const splitPs = text => {
     const parts = String(text || "").split(/\s*[；;，,]?\s*p\s*\.\s*s\s*\.\s*/i);
-    return App.esc(parts[0].trim().replace(/[；;，,]\s*$/, "")) +
-      parts.slice(1).map(t => t.trim()).filter(Boolean)
-        .map(t => `<span class="rt-line rt-ps"><b>p.s.</b>${App.esc(t)}</span>`).join("");
+    return {
+      main: parts[0].trim().replace(/[；;，,]\s*$/, ""),
+      notes: parts.slice(1).map(t => t.trim()).filter(Boolean),
+    };
   };
-  const routineRows = list => list.map(r => `
-    <div class="routine-row">
-      <span class="rt-time">${App.esc(r.label)}</span>
-      <span class="rt-name">${App.esc(r.name)}</span>
-      <span class="rt-sop">
-        ${rtSop(r.sop)}
+  // 老師用箭頭寫流程（➜ ➔ → ⇒），拆成編號步驟卡；沒有箭頭的敘述句就整段當一張。
+  const rtFlow = main => {
+    const steps = main.split(/[➜➔→⇒➞>]+/)
+      .map(t => t.trim().replace(/^[；;，,]+\s*/, "").replace(/\s*[；;，,]+$/, ""))
+      .filter(Boolean);
+    if (steps.length < 2) return `<span class="rt-step solo">${App.esc(main)}</span>`;
+    // 步驟裡若還接了「；…」的補充說明（例：聽指示操作；拿到自己的，看看旁邊同學缺不缺），
+    // 補充退成同一張卡裡的小字，動作本身才是學生要一眼抓到的重點。
+    return steps.map((s, i) => {
+      const [act, ...rest] = s.split(/[；;]/);
+      const note = rest.join("；").trim();
+      return `<span class="rt-step"><b>${i + 1}</b>${App.esc(act.trim())}` +
+        (note ? `<em>${App.esc(note)}</em>` : "") + `</span>`;
+    }).join('<span class="rt-arrow">➜</span>');
+  };
+  const routineRows = list => list.map((r, i) => {
+    const sop = splitPs(r.sop);
+    return `
+    <div class="routine-item rt-c${i % 5}">
+      <div class="rt-head">
+        <span class="rt-time">${App.esc(r.label)}</span>
+        <span class="rt-name">${App.esc(r.name)}</span>
+      </div>
+      <div class="rt-flow">${rtFlow(sop.main)}</div>
+      <div class="rt-notes">
+        ${sop.notes.map(t => `<span class="rt-line rt-ps"><b>p.s.</b>${App.esc(t)}</span>`).join("")}
         ${rtLine("rt-expect", "做到的樣子｜", r.expect)}
         ${rtLine("rt-covenant", "對應｜", r.covenant)}
         ${rtLine("rt-redo", "沒做到 → 重做練習｜", r.redo)}
-      </span>
-    </div>`).join("");
+      </div>
+    </div>`;
+  }).join("");
 
   const routineCard = cr => `
     <div class="routine-list">${routineRows(cr?.daily || [])}</div>
