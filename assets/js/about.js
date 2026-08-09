@@ -421,11 +421,19 @@
     },
   ];
 
+  // 「❓ 怎麼用這個網站」的入口放在這一排分頁的最後面——學生要找使用說明時會來「關於我們」，
+  // 不必再占頂部導覽列一格。site-config.json 的 guide 項 hidden 改成 false 才會出現。
+  const guideNav = App.navItem("guide");
+  const guideEntry = guideNav && !guideNav.hidden
+    ? `<a class="tab-link" href="${guideNav.href}">${guideNav.icon} ${App.esc(guideNav.label)}</a>`
+    : "";
+
   const main = document.getElementById("main");
   main.innerHTML = `
     <h2 class="page-title"><span class="dot"></span>🌈 關於我們</h2>
     <div class="tabs about-tabs" role="tablist">
       ${TABS.map(t => `<button role="tab" data-tab="${t.id}">${t.icon} ${App.esc(t.label)}</button>`).join("")}
+      ${guideEntry}
     </div>
     <div id="tab-body"></div>`;
 

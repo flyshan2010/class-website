@@ -5,9 +5,16 @@ const App = {
   // 導覽列收成 5 主項＋更多：其餘的塞進「更多」下拉，手機／桌機都不必橫向長滑一排。
   MAIN_NAV_IDS: ["home", "contactbook", "announcements", "report"],
 
-  // 導覽用的分頁清單（濾掉 hidden 的草稿頁）
+  // 頂部導覽列與首頁選單用的分頁清單。濾掉兩種：
+  //   hidden: true          → 還沒開放的草稿頁（輸網址仍看得到）
+  //   navPlacement: "about" → 入口刻意放在「🌈 關於我們」的分頁列裡，不占頂部導覽的位置
   visibleNav(c = this.config) {
-    return (c?.nav ?? []).filter(n => !n.hidden);
+    return (c?.nav ?? []).filter(n => !n.hidden && n.navPlacement !== "about");
+  },
+
+  // 取某一個分頁的設定（含 hidden／navPlacement），給各頁自行決定要不要放入口
+  navItem(id, c = this.config) {
+    return (c?.nav ?? []).find(n => n.id === id) || null;
   },
 
   async fetchJSON(path) {
