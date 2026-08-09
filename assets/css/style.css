@@ -51,9 +51,11 @@ img { max-width: 100%; display: block; }
 .site-header h1 { font-size: 30px; letter-spacing: 3px; margin: 2px 0; text-shadow: 0 2px 4px rgba(0,0,0,.12); }
 /* 班級口號可含換行（Notion「班級口號」欄裡按 Enter 就會斷行） */
 .site-header .motto { font-size: 15px; opacity: .92; white-space: pre-line; }
-/* 首頁另有完整的 SPAR 海報（中英文＋說明），頁首就不再重複同一串英文口號，
-   省下手機首屏約 50px。其他分頁沒有海報，口號照常顯示在頁首。 */
-body.page-home .site-header .motto { display: none; }
+/* 首頁另有完整的 SPAR 海報（中英文＋說明），**手機**首屏就不再重複同一串英文口號，
+   省下約 50px。桌機空間夠、原本就有這行，照常顯示；其他分頁沒有海報，一律顯示。 */
+@media (max-width: 719px) {
+  body.page-home .site-header .motto { display: none; }
+}
 
 /* ===== 導覽列 ===== */
 .site-nav {
@@ -85,8 +87,9 @@ body.page-home .site-header .motto { display: none; }
 .site-nav a:hover { transform: translateY(-2px); text-decoration: none; border-color: var(--sky); }
 .site-nav a.active { background: var(--ink); color: #fff; }
 
-/* 導覽「更多」下拉：收其餘分頁，手機／桌機都不必橫向長滑一排 */
-.site-nav .nav-more { position: relative; flex: 0 0 auto; }
+/* 導覽「更多」下拉：**只在手機（≤719px）出現**。
+   桌機維持原本呈現——12 個分頁平鋪成一排（放不下時整條橫滑），不收進下拉。 */
+.site-nav .nav-more { display: none; position: relative; flex: 0 0 auto; }
 .site-nav .nav-more-btn {
   display: flex; align-items: center; gap: 6px; padding: 8px 16px;
   border-radius: 999px; background: var(--card); color: var(--ink);
@@ -105,6 +108,13 @@ body.page-home .site-header .motto { display: none; }
 .site-nav .nav-more-panel a { padding: 8px 12px; border-radius: 10px; color: var(--ink); font-size: 15px; white-space: nowrap; }
 .site-nav .nav-more-panel a:hover { background: var(--bg); text-decoration: none; }
 .site-nav .nav-more-panel a.active { background: var(--ink); color: #fff; }
+
+/* 手機才把次要分頁收進「⋯ 更多」：導覽列從 12 個 pill（約 1464px 橫滑）縮成 5 個。
+   桌機不套用，維持原本一排平鋪的樣子。 */
+@media (max-width: 719px) {
+  .site-nav .nav-secondary { display: none; }
+  .site-nav .nav-more { display: block; }
+}
 
 /* 手機縮小導覽 pill，讓 5 主項＋更多盡量一次擠進一屏，不必橫滑找「更多」 */
 @media (max-width: 480px) {
@@ -1074,19 +1084,23 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .growth-leg i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
 
 /* ===== 班級幹部・六大分組（海報式色塊，呼應班級公約色盤） ===== */
-/* 2026-08-09 放大字級（比照作息與常規）：職務名與擔任的人是學生要一眼抓到的重點，
-   工作說明退成小字。欄寬同步加寬，字放大後才不會一個職務擠成三行。 */
-.cadre-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 12px; }
-.cadre-group { border-radius: 16px; overflow: hidden; border: 2px solid; }
-.cadre-group-head { padding: 10px 16px; font-weight: 900; font-size: 1.2rem; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
-.cadre-group-count { margin-left: auto; font-size: 0.85rem; font-weight: 700; background: rgba(255,255,255,.65); border-radius: 999px; padding: 2px 12px; }
-.cadre-group-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; background: #fff; }
-.cadre-role-block { border-left: 5px solid; padding: 2px 0 4px 12px; }
+/* 2026-08-09 放大字級（比照作息與常規）；2026-08-09 再改單欄大卡：六組一路往下看，
+   不用左右掃視找自己的組；組卡內部改成responsive grid 排職務，寬螢幕不會留一堆空白。
+   人名是找「我是不是幹部」的關鍵字，字級再加大一級到 1.3rem。 */
+.cadre-groups { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 12px; }
+.cadre-group { border-radius: 18px; overflow: hidden; border: 2px solid; }
+.cadre-group-head { padding: 12px 18px; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+.cadre-group-count { margin-left: auto; font-size: 0.9rem; font-weight: 700; background: rgba(255,255,255,.65); border-radius: 999px; padding: 3px 14px; }
+.cadre-group-body {
+  padding: 14px 18px; background: #fff;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px 22px;
+}
+.cadre-role-block { border-left: 5px solid; padding: 2px 0 4px 14px; }
 .cadre-role-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.cadre-role-name { font-weight: 900; font-size: 1.1rem; color: #2f4858; letter-spacing: 0.5px; }
+.cadre-role-name { font-weight: 900; font-size: 1.15rem; color: #2f4858; letter-spacing: 0.5px; }
 .cadre-salary-tag { font-size: 14px; color: #c97b12; font-weight: 800; }
-.cadre-people { font-size: 1.05rem; font-weight: 700; color: #2c5aa0; margin-top: 3px; }
-.cadre-role-block .cadre-desc { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin-top: 3px; }
+.cadre-people { font-size: 1.3rem; font-weight: 800; color: #2c5aa0; margin-top: 4px; }
+.cadre-role-block .cadre-desc { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin-top: 4px; }
 .cadre-g0 { border-color: #7cc0dc; } .cadre-g0 .cadre-group-head { background: #d5eef7; color: #2b6076; } .cadre-g0 .cadre-role-block { border-left-color: #7cc0dc; }
 .cadre-g1 { border-color: #9cc47a; } .cadre-g1 .cadre-group-head { background: #e2f0d3; color: #46652c; } .cadre-g1 .cadre-role-block { border-left-color: #9cc47a; }
 .cadre-g2 { border-color: #e8c95a; } .cadre-g2 .cadre-group-head { background: #fbf1cf; color: #856a1a; } .cadre-g2 .cadre-role-block { border-left-color: #e8c95a; }
