@@ -113,6 +113,14 @@
       "label": "關於我們",
       "icon": "🌈",
       "href": "about.html"
+    },
+    {
+      "id": "guide",
+      "label": "怎麼用網站",
+      "icon": "❓",
+      "href": "guide.html",
+      "hidden": true,
+      "_hidden說明": "hidden=true 代表不出現在導覽列與首頁選單（直接輸入網址仍可看）。要公開就改成 false，不必改程式。"
     }
   ],
   "moduleColors": {
@@ -126,7 +134,8 @@
     "bank": "#F0932B",
     "links": "#48DBFB",
     "recap": "#FF9F43",
-    "about": "#FF9FF3"
+    "about": "#FF9FF3",
+    "guide": "#7D5FFF"
   },
   "updateProxyUrl": "https://script.google.com/macros/s/AKfycbwg5bl37OTb0-NNLamP50AAgFuOYBNPMqXPsPZYBRQ96N4sXHusKGFw4Rr9_IYKoOTOUA/exec"
 }
