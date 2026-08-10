@@ -1,5 +1,68 @@
 [
   {
+    "title": "社2-2 家鄉的傳統住屋與器物｜器物與生活",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "傳統器物就地取材：竹、藤、木頭、植物葉子、泥土",
+      "原住民族：魚筌（捕魚蝦）、木杵（搗食物）、月桃葉（包裹食物）",
+      "漢人：土灶、粽葉、菜櫥、水桶、砧板；灰燼可悶地瓜、可做肥料",
+      "魚筌留空隙讓小魚游出──魚群生生不息的永續智慧",
+      "功能對應：菜櫥→冰箱、竹蒸籠→電鍋、瓠瓢→塑膠水杓",
+      "塑膠輕便便宜卻不易分解；淨灘前十名約 91% 為塑膠製品",
+      "3R 順序：減量 → 重複使用 → 回收；小小探究家畫器物階層圖"
+    ],
+    "date": "",
+    "note": "康軒版四上第二單元第2課。依顆粒度鐵則，第二單元依課本小節拆為社2-1、社2-2 兩份教材，各跑完整五段。\n\n2026-08-10 產出五份網頁並上線：套教學 Design System（society 主題）、教學頁 14 頁（含淨灘統計長條圖）、練習頁 10 頁、前測測先備能力、評量選擇 8＋填充 4。老師裁示已落實：「小小探究家：器物大不同？」比照社1-3 放在挑戰題（挑戰 1 用背簍範例教階層圖判讀，挑戰 2 為階層圖紙本探究任務）。實測：1600×900 逐頁無溢出（最高 898）、SVG 有效字級全 ≥24px（最小 24.7）、480/678/1024 無橫向捲動、離線無外部資源、揭露序列零違規、作答後答案帶才出現，五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a/2b/2c（docx＋pdf，2c 為小小探究家四步驟紀錄單）、前測六合一 6 檔（5 題）、評量六合一 6 檔（選擇 10×6分＋填充 4×5分＋問答 1×20分），網頁與紙本為平行題本（同範圍、不同題）。原教材 PDF 已由教材資料搬入本單元資料夾為 5.原教材.pdf。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1y1lmOuTWb9FANiheVy4ye4ppWbgBLNI7/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-2-器物與生活/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-2-器物與生活/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-2-器物與生活/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-2-器物與生活/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-2-器物與生活/3.review.html"
+    }
+  },
+  {
+    "title": "社2-1 家鄉的傳統住屋與器物｜傳統住屋與生活",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "就地取材：附近有什麼材料就用什麼蓋房子，是適應環境的智慧",
+      "原住民族住屋：石板屋（冬暖夏涼）／蘭嶼地下屋（低矮躲強風）／泰雅族木竹屋",
+      "漢人住屋：竹管仔厝、土埆厝就地取材；磚瓦為人工燒製",
+      "形式演變：一條龍 → 單伸手 → 三合院，隨人口與經濟改變",
+      "三合院空間：正廳、護龍（以左為尊）、稻埕、水池、竹林、堆肥場",
+      "改變與保存：工商發展與建材革新致拆除改建；列古蹟、聚落保存區、觀光活化"
+    ],
+    "date": "",
+    "note": "康軒版四上第二單元第1課。依顆粒度鐵則，第二單元依課本小節拆為社2-1、社2-2 兩份教材，各跑完整五段。\n\n2026-08-10 產出五份網頁並上線：套教學 Design System（society 主題）、教學頁 15 頁、練習頁 10 頁（基礎／進階／挑戰）、前測測先備能力、評量選擇 8＋填充 4。老師裁示已落實：族名沿用課本「雅美族（達悟族）」雙稱並加一頁說明由來；三合院做成可點擊互動平面圖（7 個空間，點選顯示該空間的生活功能）。實測：1600×900 逐頁無溢出（最高 810）、SVG 有效字級全 ≥24px、480/678/1024 無橫向捲動、離線無外部資源、揭露序列零違規、「整頁攤開」不洩答案，五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a/2b/2c（docx＋pdf）、前測六合一 6 檔（5 題）、評量六合一 6 檔（選擇 10×6分＋填充 4×5分＋問答 1×20分），網頁與紙本為平行題本（同範圍、不同題）。原教材 PDF 已由教材資料搬入本單元資料夾為 5.原教材.pdf。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1Roy6O6yowv07OF2d3HwH_t8aQhMMEgc0/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-1-傳統住屋與生活/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-1-傳統住屋與生活/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-1-傳統住屋與生活/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-1-傳統住屋與生活/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社2-1-傳統住屋與生活/3.review.html"
+    }
+  },
+  {
     "title": "國L3-1 鏡頭下的家鄉 第一節 字詞語詞及大意",
     "subject": "國語",
     "grade": "四上",
