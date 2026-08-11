@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-08-10T23:38:11.966Z",
+  "fetchedAt": "2026-08-11T08:49:08.407Z",
   "items": [
+    {
+      "date": "2026-08-11",
+      "title": "115學年度崑山國小學生美術比賽實施辦法",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=588&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-08-10",
       "title": "本市語文競賽增設頒發資深優良指導教師獎勵金案，請依說明辦理。",
@@ -53,12 +59,6 @@
       "date": "2026-08-06",
       "title": "臺南市身心障礙適齡國民暫緩入學申請實施計畫。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=567&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-08-06",
-      "title": "臺南市國民教育階段身心障礙學生延長修業年限申 請實施計畫",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=566&type=news&from_op=school_department_show",
       "dept": "輔導室"
     }
   ]
