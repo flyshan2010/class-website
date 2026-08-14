@@ -69,6 +69,11 @@ const App = {
     const moreWrap = document.querySelector(".nav-more");
     const moreBtn = document.querySelector(".nav-more-btn");
     const morePanel = document.querySelector(".nav-more-panel");
+    // 2026-08-14 修（手機點「更多」選項被切掉、選不到）：
+    // .site-nav 有 overflow-x:auto ＋ -webkit-overflow-scrolling:touch，
+    // iOS Safari 會把 position:fixed 的子元素**當成 absolute 並裁在容器內**，
+    // 面板因此只露出貼著導覽列的那一角。把面板搬到 body 直屬就不受裁切。
+    if (morePanel) document.body.appendChild(morePanel);
     // 面板用 fixed 定位，開啟時依按鈕實際座標夾在視窗內——導覽列還沒滑到底、按鈕貼在螢幕邊緣時，面板也不會被切掉。
     const placeMorePanel = () => {
       if (!morePanel) return;
@@ -78,15 +83,23 @@ const App = {
       morePanel.style.top = `${btnRect.bottom + 8}px`;
       morePanel.style.left = `${left}px`;
     };
+    const closeMore = () => {
+      moreWrap?.classList.remove("open");
+      morePanel?.classList.remove("open");
+      moreBtn?.setAttribute("aria-expanded", "false");
+    };
     moreBtn?.addEventListener("click", e => {
       e.stopPropagation();
-      const opening = !moreWrap.classList.contains("open");
+      const opening = !morePanel.classList.contains("open");
       moreWrap.classList.toggle("open", opening);
+      morePanel.classList.toggle("open", opening);   // 面板已搬到 body，狀態掛在它自己身上
       moreBtn.setAttribute("aria-expanded", opening);
       if (opening) placeMorePanel();
     });
-    document.addEventListener("click", () => moreWrap?.classList.remove("open"));
-    window.addEventListener("resize", () => { if (moreWrap?.classList.contains("open")) placeMorePanel(); });
+    morePanel?.addEventListener("click", e => e.stopPropagation());  // 點面板本身不要關掉
+    document.addEventListener("click", closeMore);
+    window.addEventListener("resize", () => { if (morePanel?.classList.contains("open")) placeMorePanel(); });
+    window.addEventListener("scroll", () => { if (morePanel?.classList.contains("open")) placeMorePanel(); }, { passive: true });
 
     document.getElementById("site-footer").innerHTML =
       `${c.schoolYear} ${c.schoolName} ${c.className} ❤ 本站由老師與 AI 共同維護

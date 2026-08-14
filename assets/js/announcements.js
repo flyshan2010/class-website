@@ -39,6 +39,10 @@
 
   // 內文長就摺疊：先露前 3 行，其餘點「看全文」再展開——一頁能一眼掃完幾則標題，
   // 而不是被一則長公告佔滿整個畫面。
+  //
+  // 2026-08-14 改用自製按鈕，不用 <details>：details 的 summary 必須是第一個子元素，
+  // 展開後那行「看全文」會卡在第 3 行與其餘內文中間，手機上讀起來被硬生生打斷。
+  // 按鈕放在最後，展開後它自然落到全文末尾，變成「收合」，閱讀不會被切開。
   const FOLD_LINES = 3;
   const body = a => {
     const ls = App.lines(a.content);
@@ -48,10 +52,11 @@
     return `
       <div class="ann-body">
         ${ls.slice(0, FOLD_LINES).map(p).join("")}
-        <details class="ann-more">
-          <summary>看全文（還有 ${ls.length - FOLD_LINES} 行）</summary>
-          ${ls.slice(FOLD_LINES).map(p).join("")}
-        </details>
+        <div class="ann-rest" hidden>${ls.slice(FOLD_LINES).map(p).join("")}</div>
+        <button type="button" class="ann-toggle" aria-expanded="false"
+                data-more="看全文（還有 ${ls.length - FOLD_LINES} 行）" data-less="收合 ▲">
+          看全文（還有 ${ls.length - FOLD_LINES} 行）
+        </button>
       </div>`;
   };
 
@@ -117,6 +122,17 @@
   };
   tabs.forEach(b => b.onclick = () => show(b.dataset.tab));
 
+  // 看全文／收合：按鈕在內文最後，展開後它落到全文末尾，不會卡在中間打斷閱讀
+  list.addEventListener("click", e => {
+    const btn = e.target.closest(".ann-toggle");
+    if (!btn) return;
+    const rest = btn.parentElement.querySelector(".ann-rest");
+    const open = btn.getAttribute("aria-expanded") === "true";
+    if (rest) rest.hidden = open;
+    btn.setAttribute("aria-expanded", String(!open));
+    btn.textContent = open ? btn.dataset.more : btn.dataset.less;
+  });
+
   // 首頁點公告標題會帶 #ann-<id> 過來：自動切到那則所在的分頁、展開全文、捲過去並高亮
   const focusFromHash = () => {
     const id = decodeURIComponent(location.hash.replace(/^#ann-/, ""));
@@ -125,7 +141,7 @@
     show(!hit ? "班級" : isExpired(hit) ? "歷史" : (hit.source || "班級"));
     const el = document.getElementById(`ann-${id}`);
     if (!el) return;
-    el.querySelectorAll("details.ann-more").forEach(d => d.open = true);
+    el.querySelectorAll("button.ann-toggle[aria-expanded='false']").forEach(b => b.click());
     el.classList.add("ann-focus");
     el.scrollIntoView({ block: "center", behavior: "smooth" });
     setTimeout(() => el.classList.remove("ann-focus"), 2600);
