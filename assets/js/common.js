@@ -28,6 +28,9 @@ const App = {
   async init(activeId) {
     this.config = await this.fetchJSON("data/site-config.json");
     const c = this.config;
+    // 四大理念的代表角色（data/characters.json）。載不到就當沒有——
+    // 海報會自動退回純文字版，不會整頁壞掉。
+    this.characters = await this.fetchJSON("data/characters.json").catch(() => null);
     document.title = `${c.siteTitle}｜${document.body.dataset.pageTitle || ""}`.replace(/｜$/, "");
     // 讓 CSS 能針對單一頁面調整（例：首頁有 S.T.A.R. 海報，頁首的 motto 就不重複出現）
     if (activeId) document.body.classList.add(`page-${activeId}`);
@@ -115,7 +118,8 @@ const App = {
         </div>
         <div class="spar-items">
           ${spar.items.map(it => `
-            <div class="spar-item" style="--sc:${this.esc(it.color || "#54A0FF")}">
+            <div class="spar-item${this.charOf(it.letter) ? " has-char" : ""}" style="--sc:${this.esc(it.color || "#54A0FF")}">
+              ${this.charImg(it.letter, compact ? "sm" : "lg")}
               <span class="spar-letter" aria-hidden="true">${this.esc(it.letter)}</span>
               <div class="spar-text">
                 <div class="spar-zh">${this.esc(it.zh)}</div>
@@ -125,6 +129,27 @@ const App = {
             </div>`).join("")}
         </div>
       </div>`;
+  },
+
+  // ── 四大理念代表角色（data/characters.json）──
+  // 圖檔放 assets/img/characters/<pack>/，一個理念兩種尺寸：
+  //   <file>.webp（600 高，海報用）／<file>-sm.webp（220 高，小圖用）
+  // 換班只要換一個資料夾＋改 characters.json 的 pack，不必動程式。
+  // 找不到角色或圖時一律回傳空字串，版面自動退回純文字版。
+  charOf(letter) {
+    const cs = this.characters;
+    const pack = cs?.packs?.[cs?.pack];
+    const it = pack?.items?.[letter];
+    if (!it?.file) return null;
+    const base = `assets/img/characters/${cs.pack}/${it.file}`;
+    return { lg: `${base}.webp`, sm: `${base}-sm.webp`, name: it.name || "", alt: it.alt || it.name || "" };
+  },
+
+  charImg(letter, size = "lg", extraClass = "") {
+    const ch = this.charOf(letter);
+    if (!ch) return "";
+    return `<img class="spar-char ${size} ${extraClass}" src="${this.esc(ch[size] || ch.lg)}"
+      alt="${this.esc(ch.alt)}" title="${this.esc(ch.name)}" loading="lazy" decoding="async" />`;
   },
 
   // 每日小叮嚀：用班級口號 S.T.A.R. 四則輪播，依日期決定（同一天全班看到同一則）。
@@ -168,8 +193,13 @@ const App = {
           <section class="cb-panel tip">
             <h3>🌟 每日小叮嚀</h3>
             ${tip
-              ? `<p class="cb-tip-zh"><span class="cb-tip-letter">${this.esc(tip.letter)}</span>${this.esc(tip.zh)}</p>
-                 <p class="cb-tip-desc">${this.esc(tip.desc || tip.en || "")}</p>`
+              ? `<div class="cb-tip-row">
+                   ${this.charImg(tip.letter, "sm", "cb-tip-char")}
+                   <div>
+                     <p class="cb-tip-zh"><span class="cb-tip-letter">${this.esc(tip.letter)}</span>${this.esc(tip.zh)}</p>
+                     <p class="cb-tip-desc">${this.esc(tip.desc || tip.en || "")}</p>
+                   </div>
+                 </div>`
               : '<p class="cb-empty">今天也要當個閃耀的自己 ✨</p>'}
           </section>
         </div>`
