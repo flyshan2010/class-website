@@ -108,15 +108,19 @@ img { max-width: 100%; display: block; }
 }
 .site-nav .nav-more-btn:hover { transform: translateY(-2px); border-color: var(--sky); }
 .site-nav .nav-more.active .nav-more-btn { background: var(--ink); color: #fff; }
-.site-nav .nav-more-panel {
+/* 面板由 common.js 搬到 body 直屬（見該檔註解）——.site-nav 的 overflow-x + 
+   -webkit-overflow-scrolling 會讓 iOS 把 fixed 子元素裁在導覽列裡，面板只露一角選不到。
+   所以這裡的選擇器**不能**再掛 .site-nav 前綴。 */
+.nav-more-panel {
   display: none; position: fixed; top: 0; left: 0;
   background: var(--card); border-radius: 16px; box-shadow: var(--shadow-hover);
-  padding: 8px; flex-direction: column; gap: 2px; z-index: 60; min-width: 170px;
+  padding: 8px; flex-direction: column; gap: 2px; z-index: 300; min-width: 170px;
+  max-height: 70vh; overflow-y: auto;
 }
-.site-nav .nav-more.open .nav-more-panel { display: flex; }
-.site-nav .nav-more-panel a { padding: 8px 12px; border-radius: 10px; color: var(--ink); font-size: 0.8333rem; white-space: nowrap; }
-.site-nav .nav-more-panel a:hover { background: var(--bg); text-decoration: none; }
-.site-nav .nav-more-panel a.active { background: var(--ink); color: #fff; }
+.nav-more-panel.open { display: flex; }
+.nav-more-panel a { padding: 10px 12px; border-radius: 10px; color: var(--ink); font-size: 0.8333rem; white-space: nowrap; }
+.nav-more-panel a:hover { background: var(--bg); text-decoration: none; }
+.nav-more-panel a.active { background: var(--ink); color: #fff; }
 
 /* 手機才把次要分頁收進「⋯ 更多」：導覽列從 12 個 pill（約 1464px 橫滑）縮成 5 個。
    桌機不套用，維持原本一排平鋪的樣子。 */
@@ -341,10 +345,13 @@ main {
 .ann-exp.done { background: #eef0f2; color: var(--ink-soft); }
 .ann-body { margin-top: 4px; }
 .ann-body p { margin: 3px 0; }
-.ann-more > summary {
-  cursor: pointer; color: var(--sky); font-size: 0.8889rem;
-  padding: 4px 0; list-style-position: inside;
+/* 看全文／收合鈕：放在內文最後，展開後自然落到全文末尾（不像 <summary> 會卡在中間） */
+.ann-toggle {
+  display: inline-block; margin-top: 6px; padding: 5px 16px;
+  font: inherit; font-size: 0.8333rem; color: var(--sky);
+  background: #f2f7ff; border: 1.5px solid #d7e6ff; border-radius: 999px; cursor: pointer;
 }
+.ann-toggle:hover { background: #e6f0ff; }
 .ann-actions { margin-top: 10px; }
 .ann-link {
   display: inline-block; padding: 6px 18px; border-radius: 999px;
@@ -1341,9 +1348,18 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .spar-spark { font-size: 1.0667rem; margin: 0 6px; }
 .spar-sub { font-size: 0.8444rem; color: #5f7784; font-weight: 600; margin-top: 2px; letter-spacing: 1px; }
 
-/* 欄數自動：寬度不夠就自己降成 2 欄／1 欄，文字永遠有 230px 以上可讀寬度
-   （加了角色圖之後，固定 4 欄會在中間寬度把說明文字擠成一行三個字）。 */
-.spar-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+/* 桌機一律 **4 欄一行**（四個字母就該排成一列，跳行不好看）。
+   內容區實測只有約 950px，4 欄每欄約 228px——扣掉角色圖與大字母，橫排文字會被擠成
+   一行三、四個字。所以有角色圖時改成「角色＋字母在上、說明文字整欄在下」的直式排法，
+   文字拿回整欄寬度。窄螢幕才降成 2 欄／1 欄。 */
+.spar-items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 861px) {
+  .spar-item.has-char { flex-wrap: wrap; justify-content: center; text-align: center; row-gap: 2px; }
+  .spar-item.has-char .spar-text { flex: 1 1 100%; }
+}
+@media (max-width: 860px) {
+  .spar-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .spar-item {
   display: flex; align-items: center; gap: 12px;
   background: #fff; border-radius: 16px; padding: 12px 14px;
@@ -1380,6 +1396,7 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .spar-poster.compact .spar-item.has-char .spar-letter { font-size: 1.8rem; }
 
 @media (max-width: 520px) {
+  .spar-items { grid-template-columns: 1fr; }
   .spar-title { font-size: 1.2444rem; }
 }
 

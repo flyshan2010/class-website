@@ -6,12 +6,12 @@
     .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 10);
 
   // 活動說明：Google 日曆的說明欄已在 sync-gcal 剝成純文字換行。
-  // 短的直接攤開；長的收進 <details>，避免一則活動就把整頁佔滿。
+  // 一律用同一種摺疊呈現，長短都一樣——近期事件一次列 10 則，
+  // 有的攤開有的收起會讓整頁參差；統一收起後每則就是一行標題＋一行日期，掃一眼就看完。
   const notesHtml = notes => {
     const ls = App.lines(notes);
     if (!ls.length) return "";
     const body = ls.map(t => `<p>${App.esc(t)}</p>`).join("");
-    if (notes.length <= 120) return `<div class="event-notes">${body}</div>`;
     return `<details class="event-notes"><summary>活動說明（點開看全文）</summary>${body}</details>`;
   };
 
