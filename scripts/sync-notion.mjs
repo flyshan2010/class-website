@@ -701,6 +701,66 @@ async function syncStore() {
   await save("store.json", rows);
 }
 
+// ── 班級共同目標（集資；公開進度條，只出總額與人數，無個資）──
+//
+// 為什麼不開新資料庫：系統的帳本每一筆都必須掛在一位學生身上，沒有「班級共同帳戶」這種東西。
+// 硬做一個共同帳戶，等於多一份要對帳、要防呆、要寫進手冊的資料源——換來的只是一條進度條。
+// 所以集資就用**既有帳本**表達：學生捐款＝一筆普通的「消費」，事由以「集資」開頭。
+//   類型：消費　金額：−N　事由：集資・期末夢幻餐點
+// 這樣做的三個好處：
+//   1. 學生的存摺自己就看得到「我捐了多少」，不必另外查。
+//   2. 捐款是消費會扣崑山幣，但 **XP 不受影響**（XP 只增不減）——孩子不會因為慷慨而掉稱號。
+//   3. 老師的操作跟平常記一筆消費完全一樣，不必學新流程。
+//
+// 開關與參數全在 Notion「⚙️ 網站設定」（項目／內容），老師自己就能開，不必動程式：
+//   班級共同目標      → 填「開」才上站；留空或填「否/關/停」都是關閉（預設關閉）
+//   班級共同目標名稱  → 例：期末夢幻餐點
+//   班級共同目標金額  → 例：5000
+//   班級共同目標說明  → 選填，顯示在進度條下方的一句話
+//
+// 隱私：只輸出總額與「幾個人捐過」，不出姓名、座號、也不出誰捐多少——
+// 公開頁列出個別捐款金額，等於把「誰家比較有餘裕」攤在班網上。
+const GOAL_PREFIX = /^\s*集資/;  // 事由前綴；分隔符（・‧·：等）愛用哪個都行
+
+async function syncClassGoal() {
+  const kv = {};
+  for (const r of (await queryDataSource(DS.settings)).map(props)) {
+    if (r["項目"] && String(r["內容"]).trim()) kv[r["項目"]] = String(r["內容"]).trim();
+  }
+  const raw = kv["班級共同目標"] || "";
+  const goal = Math.round(Number(String(kv["班級共同目標金額"] || "").replace(/[^\d.-]/g, "")) || 0);
+  // 預設關閉：沒設定、或明講否／關／停／隱藏，一律不上站
+  const on = !!raw && !/否|關|停|隱藏|不開/.test(raw) && goal > 0;
+  if (!on) {
+    await save("class-goal.json", { enabled: false });
+    return;
+  }
+
+  const txRows = (await queryDataSource(DS.bank)).map(props)
+    .filter(r => r["學生"]?.length && r["金額"] !== "" &&
+                 (r["類型"] || "") === "消費" && GOAL_PREFIX.test(String(r["事由"] || "")));
+  let raised = 0;
+  const backers = new Set();
+  let lastDate = "";
+  for (const t of txRows) {
+    raised += Math.abs(Math.round(Number(t["金額"]) || 0));
+    backers.add(t["學生"][0]);            // 只拿來數人頭，不輸出
+    const d = t["日期"]?.start || "";
+    if (d > lastDate) lastDate = d;
+  }
+
+  await save("class-goal.json", {
+    enabled: true,
+    name: kv["班級共同目標名稱"] || "班級共同目標",
+    note: kv["班級共同目標說明"] || "",
+    goal,
+    raised,
+    backers: backers.size,
+    lastDate,
+    reached: raised >= goal,
+  });
+}
+
 // ── 教學駕駛艙（🚀 教學單元；公開頁，只放連結與進度，無個資）──
 async function syncLessons() {
   const STATUS_ORDER = { "進行中": 0, "備課中": 1, "已完成": 2 };
@@ -985,6 +1045,7 @@ await Promise.all([
   syncReports(),
   syncStore(),
   syncBank(),
+  syncClassGoal(),
   syncLessons(),
   syncRecapExtras(),
   syncClassDuties(),

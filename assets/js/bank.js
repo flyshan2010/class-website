@@ -10,6 +10,11 @@
   let store = [];
   try { store = await App.fetchJSON("data/store.json"); } catch { /* 尚未上架 */ }
 
+  // 班級共同目標（集資）：預設關閉，老師在 Notion「⚙️ 網站設定」填「班級共同目標＝開」才出現。
+  // 資料只有總額與人數，沒有誰捐多少——公開頁列個別金額等於攤開各家的餘裕程度。
+  let goal = { enabled: false };
+  try { goal = await App.fetchJSON("data/class-goal.json"); } catch { /* 尚未產生 */ }
+
   // 金融小知識（中年級適齡，輪播）
   // 2026-08-14：利息機制停用（改推雙貨幣制），原本那則「利息是什麼」換成 XP 的說明。
   const TIPS = [
@@ -88,6 +93,37 @@
           <div class="store-grid">${html}</div>` : "";
       }).join("") : `<p class="meta">商店籌備中，敬請期待！</p>`}
       <div class="bank-tip card" id="bank-tip">💡 ${App.esc(TIPS[0])}</div>`;
+  };
+
+  // 班級共同目標：一條全班一起推的進度條。
+  // 這是四層架構裡「延宕滿足」的極致——一個人存不到的東西，全班一起就存得到。
+  // 關閉時整塊不渲染（回傳空字串），班網跟沒這功能一樣乾淨。
+  const goalSection = () => {
+    if (!goal || !goal.enabled || !(goal.goal > 0)) return "";
+    const raised = Math.max(0, Math.round(goal.raised || 0));
+    const target = Math.round(goal.goal);
+    const pct = Math.min(100, Math.round((raised / target) * 100));
+    const left = Math.max(0, target - raised);
+    const done = raised >= target;
+    return `
+      <h3 class="bank-section-title">🎯 班級共同目標</h3>
+      <div class="card goal-card ${done ? "reached" : ""}">
+        <div class="goal-head">
+          <span class="goal-name">${done ? "🎉 " : ""}${App.esc(goal.name || "班級共同目標")}</span>
+          <span class="goal-target">目標 🪙 ${target}</span>
+        </div>
+        <div class="goal-bar" role="img"
+             aria-label="目前進度 ${pct}%，已集資 ${raised} 枚，共 ${goal.backers || 0} 人參與">
+          <span class="goal-fill" style="width:${pct}%"></span>
+          <span class="goal-pct">${pct}%</span>
+        </div>
+        <p class="goal-stat">已經集到 <strong>🪙 ${raised}</strong>${
+          done ? "　<em>目標達成，等老師實現囉！</em>" : `，還差 <strong>🪙 ${left}</strong>`
+        }<span class="goal-backers">・${goal.backers || 0} 位同學一起出力</span></p>
+        ${goal.note ? `<p class="goal-note">${App.esc(goal.note)}</p>` : ""}
+        <p class="goal-how">想參加就跟老師說「我要捐 N 幣」，老師會幫你記一筆。
+          捐出去的崑山幣會從存摺扣掉，但 <strong>XP 不會減少</strong>——你的努力紀錄一直都在。</p>
+      </div>`;
   };
 
   // 兌換申請：確認 → 送代理（品項與價格由代理以 Notion 商店為準重新驗證）
@@ -169,6 +205,7 @@
         ${msg ? `<p class="report-error">${msg}</p>` : ""}
         <p class="meta" style="margin-top:10px">🔒 存摺內容經加密保護；查詢碼請向老師索取，不要外流。</p>
       </div>
+      ${goalSection()}
       ${storeSection()}`;
     startTips();
     document.getElementById("bank-form").addEventListener("submit", async e => {
@@ -224,6 +261,7 @@
         <p class="report-footnote">本存摺僅供 ${App.esc(acc.name)} 同學與家長參考，請勿外傳。　${App.esc(c.schoolYear)} ${App.esc(c.className)}</p>
       </div>
       ${privilegeSection(acc)}
+      ${goalSection()}
       ${storeSection()}`;
     startTips();
     bindBuyButtons();
