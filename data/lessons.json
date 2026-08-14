@@ -1,5 +1,92 @@
 [
   {
+    "title": "國L4-2 飛行夢 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "課文結構：夢想緣起 → 試飛經過 → 實驗結果（三大段六自然段）",
+      "關鍵事件：以老鷹為靈感、滑翔機安全改良、汽車引擎當動力、1903 年小鷹鎮首飛",
+      "人物特質：堅持、細心觀察、不斷試驗、不怕別人批評",
+      "提取與推論：面對「異想天開」的質疑仍朝目標前進"
+    ],
+    "date": "",
+    "note": "翰林四上國語第四課「飛行夢」第 2 節。4 節共用同一份原教材 PDF。\n\n2026-08-14 產出五份網頁並上線：教學頁 14 頁（含老師裁示的科普延伸頁：1903 年首飛 12 秒、第四次 59 秒約 260 公尺，素材均取自課本教學小祕書）、練習頁 10 頁、前測測擷取訊息先備能力、線上模擬評量選擇 10＋填答 6。實測：1600×900 逐頁無溢出（最高 813；timeline 原 1042 已拆成兩頁）、揭露序列正確、「整頁攤開」不洩答、作答後答案帶才現、480px 無橫向捲動且最小字 25px，五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a/2b/2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100）。已程式驗證：與網頁 4.exam.html 題幹零重複（平行題本）、答案分布均勻無連續同號、配分加總＝100。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1LSUTvSaIUd4yOHaHiiH42x1QPg4dExDa/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-2-內容理解/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-2-內容理解/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-2-內容理解/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-2-內容理解/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-2-內容理解/3.review.html"
+    }
+  },
+  {
+    "title": "國L4-3 飛行夢 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "修辭焦點：譬喻（像老鷹一樣飛行）、設問（如果失去生命，飛翔還有什麼意義？）",
+      "句型：條件複句「無論／不管……都……」",
+      "短語結構：讓＋誰＋能夠＋動作；動詞＋了一次又一次的＋名詞",
+      "寫作手法：設問開頭、引用話語、內心獨白呈現人物性格"
+    ],
+    "date": "",
+    "note": "翰林四上國語第四課「飛行夢」第 3 節。4 節共用同一份原教材 PDF。\n\n2026-08-14 產出五份網頁並上線：教學頁 14 頁（譬喻三零件、課文兩個譬喻與三個設問、無論…都…、兩組短語、寫作手法）、練習頁 10 頁、前測測修辭與句型先備能力、線上模擬評量選擇 10＋填答 6。實測：1600×900 逐頁無溢出（最高 849）、揭露序列正確、含答案判斷帶持 data-after-answer 不隨「整頁攤開」現形，五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a/2b/2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100，問答題為「改寫平淡短文並指出所用寫法」）。已程式驗證：與網頁 4.exam.html 題幹零重複（平行題本）、答案分布均勻、配分加總＝100。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1LSUTvSaIUd4yOHaHiiH42x1QPg4dExDa/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-3-形式深究/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-3-形式深究/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-3-形式深究/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-3-形式深究/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-3-形式深究/3.review.html"
+    }
+  },
+  {
+    "title": "國L4-4 飛行夢 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "統整：全課生字語詞、修辭與句型總複習",
+      "「想」字家族：左思右想、胡思亂想、突發奇想、異想天開",
+      "寫作實作：改成問句更強調（肯定句／否定句轉問句）",
+      "讀寫延伸：用事例描寫人物特質——人物摹寫「我最敬佩的人」"
+    ],
+    "date": "",
+    "note": "翰林四上國語第四課「飛行夢」第 4 節（全課統整）。4 節共用同一份原教材 PDF。統整活動含篇章寫作「選材」與語文自學樂園第二篇。\n\n2026-08-14 產出五份網頁並上線：教學頁 15 頁（全課地圖、生字快閃翻牌、「想」字家族、改成問句、人物摹寫）。老師裁示已落實：寫作採「主內容段落仿寫＋挑戰篇完整作文前導」兩部——主任務放進階題紙本（約 100 字段落），挑戰題紙本含審題、選材、完整範文與賞析題、四段結構與交稿檢核表；投影頁只放審題→選材→範文結構三頁，範文全文在紙本。實測：1600×900 逐頁無溢出（最高 813；summary 原 921 已精簡至三條）、揭露與答案帶行為正確，五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a/2b/2c（docx＋pdf）、評量六合一 6 檔（全課範圍；選擇 10×6＋填充 4×5＋素養問答 1×20＝100）。首次程式檢查拉出 3 題與網頁重複（第 6、8、9 題），已換題重產，複驗重複＝0（平行題本 PASS）。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1LSUTvSaIUd4yOHaHiiH42x1QPg4dExDa/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-4-綜合整理/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-4-綜合整理/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-4-綜合整理/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-4-綜合整理/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-4-綜合整理/3.review.html"
+    }
+  },
+  {
     "title": "國L4-1 飛行夢 第一節 字詞語詞及大意",
     "subject": "國語",
     "grade": "四上",
@@ -18,7 +105,7 @@
       "課文大意：萊特兄弟為實現飛行夢，不斷改良與試驗，終於讓飛機飛起來"
     ],
     "date": "",
-    "note": "翰林四上國語第四課「飛行夢」（林茂興，記敘文），屬第貳單元「天空的奇想」。依國語顆粒度鐵則拆 4 節，本節為第 1 節。4 節共用同一份原教材 PDF（教材資料/4上翰林CL04.pdf）。",
+    "note": "翰林四上國語第四課「飛行夢」（林茂興，記敘文），屬第貳單元「天空的奇想」。依國語顆粒度鐵則拆 4 節，本節為第 1 節。4 節共用同一份原教材 PDF（仍存於 教學簡報/教材資料/4上翰林CL04.pdf，未搬入單節資料夾）。\n\n2026-08-14 產出五份網頁並上線：套教學 Design System（chinese 主題）、教學頁 16 頁、練習頁 10 頁（基礎／進階／挑戰）、前測測先備能力、線上模擬評量選擇 10＋填答 6。老師裁示已落實：多音字「行」獨立一頁。實測：1600×900 逐頁無溢出（最高 813）、揭露序列一次一個且出完才換頁、「整頁攤開」不洩答、作答後答案帶才現、揭露前後元件 offsetTop/Height 完全相同（無位移）、480／768／1440 無橫向捲動且最小字 25px、離線無外部資源，五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a/2b/2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6 分＋填充 4×5 分＋素養問答 1×20 分＝100）。已程式驗證：紙本與網頁 4.exam.html 題幹零重複（平行題本）、選擇題答案分布 C A D B A C B D C B（無連續同號）、配分加總＝100。\n\n第五段成果回流待實際教學後登記。",
     "links": {
       "material": "https://drive.google.com/file/d/1LSUTvSaIUd4yOHaHiiH42x1QPg4dExDa/view?usp=drivesdk",
       "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L4-1-字詞語詞及大意/0.pretest.html",
@@ -802,78 +889,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
-    }
-  },
-  {
-    "title": "國L4-2 飛行夢 第二節 內容理解",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "課文結構：夢想緣起 → 試飛經過 → 實驗結果（三大段六自然段）",
-      "關鍵事件：以老鷹為靈感、滑翔機安全改良、汽車引擎當動力、1903 年小鷹鎮首飛",
-      "人物特質：堅持、細心觀察、不斷試驗、不怕別人批評",
-      "提取與推論：面對「異想天開」的質疑仍朝目標前進"
-    ],
-    "date": "",
-    "note": "翰林四上國語第四課「飛行夢」第 2 節。4 節共用同一份原教材 PDF。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1LSUTvSaIUd4yOHaHiiH42x1QPg4dExDa/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "國L4-3 飛行夢 第三節 形式深究",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "修辭焦點：譬喻（像老鷹一樣飛行）、設問（如果失去生命，飛翔還有什麼意義？）",
-      "句型：條件複句「無論／不管……都……」",
-      "短語結構：讓＋誰＋能夠＋動作；動詞＋了一次又一次的＋名詞",
-      "寫作手法：設問開頭、引用話語、內心獨白呈現人物性格"
-    ],
-    "date": "",
-    "note": "翰林四上國語第四課「飛行夢」第 3 節。4 節共用同一份原教材 PDF。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1LSUTvSaIUd4yOHaHiiH42x1QPg4dExDa/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "國L4-4 飛行夢 第四節 綜合整理",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "統整：全課生字語詞、修辭與句型總複習",
-      "「想」字家族：左思右想、胡思亂想、突發奇想、異想天開",
-      "寫作實作：改成問句更強調（肯定句／否定句轉問句）",
-      "讀寫延伸：用事例描寫人物特質——人物摹寫「我最敬佩的人」"
-    ],
-    "date": "",
-    "note": "翰林四上國語第四課「飛行夢」第 4 節。4 節共用同一份原教材 PDF。統整活動含篇章寫作「選材」與語文自學樂園第二篇。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1LSUTvSaIUd4yOHaHiiH42x1QPg4dExDa/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
