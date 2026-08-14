@@ -73,13 +73,15 @@
           ${topAnn.length ? `<ul class="ann-brief">${topAnn.map(a => `
             <li class="${a.pinned ? "pinned" : ""}">
               <a href="announcements.html#ann-${App.esc(annId(a))}">
-                <span class="ab-title">${App.esc(a.title)}</span>
-                <span class="ab-tags">
-                  ${a.pinned ? '<span class="badge pin">置頂</span>' : ""}
-                  <span class="badge src-${App.esc(a.source || "班級")}">${App.esc(a.source || "班級")}</span>
-                  <span class="badge cat-${App.esc(a.category || "其他")}">${App.esc(a.category || "公告")}</span>
+                <span class="ab-head">
+                  <span class="ab-tags">
+                    ${a.pinned ? '<span class="badge pin">置頂</span>' : ""}
+                    <span class="badge src-${App.esc(a.source || "班級")}">${App.esc(a.source || "班級")}公告</span>
+                    <span class="badge cat-${App.esc(a.category || "其他")}">${App.esc(a.category || "公告")}</span>
+                  </span>
                   <span class="ab-date">${App.fmtDateShort(a.date)}</span>
                 </span>
+                <span class="ab-title">${App.esc(a.title)}</span>
               </a>
             </li>`).join("")}</ul>` : '<p class="empty-hint">目前沒有公告</p>'}
           <p><a href="announcements.html">全部公告 →</a></p>

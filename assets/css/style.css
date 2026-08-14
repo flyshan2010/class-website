@@ -319,9 +319,15 @@ main {
   border-radius: 10px;
 }
 .ann-brief a:hover { background: #f3f8ff; text-decoration: none; }
+/* 排列與公告頁的卡片一致：標籤列在上（日期靠右），標題在下——
+   兩個頁面看同一則公告，眼睛掃描的順序要一樣，不然會覺得是兩套東西。 */
+.ann-brief .ab-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; flex-wrap: wrap; margin-bottom: 3px;
+}
+.ann-brief .ab-tags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .ann-brief .ab-title { display: block; font-weight: bold; line-height: 1.5; }
-.ann-brief .ab-tags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 3px; }
-.ann-brief .ab-date { color: var(--ink-soft); font-size: 0.8333rem; }
+.ann-brief .ab-date { color: var(--ink-soft); font-size: 0.8333rem; margin-left: auto; }
 
 /* 公告頁卡片 */
 .ann-pinned-zone { margin-bottom: 6px; }
@@ -910,6 +916,37 @@ main {
 .store-buy:hover:not(:disabled) { background: #ffa722; }
 .store-buy:disabled { background: #eee; color: #999; box-shadow: none; cursor: default; }
 .bank-tip { margin-top: 18px; text-align: center; font-size: 0.8611rem; background: #fff8e8; }
+
+/* 班級共同目標（集資）：預設關閉，Notion「⚙️ 網站設定」填「班級共同目標＝開」才出現 */
+.goal-card { border: 3px solid #ffd9a0; background: linear-gradient(180deg, #fffaf2, var(--card)); }
+.goal-card.reached { border-color: #9fe0b6; background: linear-gradient(180deg, #f2fff7, var(--card)); }
+.goal-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.goal-name { font-weight: bold; font-size: 1.0556rem; }
+.goal-target { font-size: 0.8056rem; color: var(--ink-soft); }
+/* 進度條：用固定高度的軌道 + 內層寬度百分比，數字疊在軌道上，短進度時也讀得到 */
+.goal-bar {
+  position: relative; margin-top: 10px; height: 26px; border-radius: 13px;
+  background: #f0e6d6; overflow: hidden;
+}
+.goal-fill {
+  display: block; height: 100%; border-radius: 13px;
+  background: linear-gradient(90deg, #ffc266, #ff9f43);
+  transition: width .6s ease;
+}
+.goal-card.reached .goal-fill { background: linear-gradient(90deg, #7fd6a2, #1dd1a1); }
+.goal-pct {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7778rem; font-weight: bold; color: #5b3a00;
+}
+.goal-stat { margin-top: 8px; font-size: 0.8889rem; }
+.goal-stat em { font-style: normal; color: #159c78; font-weight: bold; }
+.goal-backers { color: var(--ink-soft); font-size: 0.7778rem; }
+.goal-note { margin-top: 4px; font-size: 0.8056rem; color: var(--ink-soft); }
+.goal-how {
+  margin-top: 10px; font-size: 0.7778rem; line-height: 1.6;
+  background: #fff8e8; border-radius: 12px; padding: 8px 10px;
+}
+@media (prefers-reduced-motion: reduce) { .goal-fill { transition: none; } }
 
 /* ===== 教師專區（左側快速鍵＋內容，沿用首頁 side-menu 圖例） ===== */
 html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨點一併平滑（字級總開關在檔案開頭，這裡不重複宣告） */
