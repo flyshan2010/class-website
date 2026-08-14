@@ -11,9 +11,10 @@
   try { store = await App.fetchJSON("data/store.json"); } catch { /* 尚未上架 */ }
 
   // 金融小知識（中年級適齡，輪播）
+  // 2026-08-14：利息機制停用（改推雙貨幣制），原本那則「利息是什麼」換成 XP 的說明。
   const TIPS = [
     "🐷 儲蓄小祕訣：先存一點點，再花剩下的，錢包才不會空空的！",
-    "🌱 利息是什麼？把錢存在銀行，銀行會多給你一點點錢當謝禮，存越久長越多。",
+    "⭐ 崑山幣會花掉，XP 不會：XP 記錄你做過的每一件好事，是拿來解鎖職務的資格。",
     "🤔 買東西前先問自己：這是「需要」還是「想要」？需要先買，想要可以等一等。",
     "🎯 訂一個存錢目標（例如自由閱讀券），每週看存摺離目標越來越近，超有成就感！",
     "💪 崑山幣是用工作和好表現賺來的，每一枚都是你努力的證明。",
@@ -49,8 +50,18 @@
   const alreadyRequested = item => !!sessionStorage.getItem(requestedKey(item));
 
   // 公開區：商店櫥窗＋小知識（表單下方常駐）；登入後多「我要兌換」鈕
+  //
+  // 2026-08-14 起改依「層級」分組（獎勵制度 V3 的四層架構）：
+  //   ① 社會性・免費即時　② 活動特權・消費型　③ 職務公會・解鎖型　④ 創造沙盒・系統演化
+  // 舊的「特權／小物」分類沒有消失——它是功能性的（特權要核銷、小物直接給），
+  // 兌換流程與 Apps Script 都還靠它，只是不再用來排櫥窗。
   const storeSection = () => {
-    const cats = [["特權", "🎟️ 特權商品"], ["小物", "🎁 可愛小物"]];
+    const TIERS = [
+      ["① 社會性・免費即時", "🤝 社會性獎勵（免費）", "做到了就有，不用花崑山幣。"],
+      ["② 活動特權・消費型", "🎟️ 特權商品", "用累積的崑山幣兌換。"],
+      ["③ 職務公會・解鎖型", "🛡️ 職務公會（要先解鎖）", "不是有錢就能買——要先累積到門檻，換到的是責任與薪水。"],
+      ["④ 創造沙盒・系統演化", "🧪 創造沙盒", "解鎖後可以提案，讓班級制度跟著你的想法長大。"],
+    ];
     const buyBtn = i => {
       if (!session || !i.id || !c.updateProxyUrl) return "";
       if (i.stock <= 0) return "";
@@ -58,21 +69,23 @@
       if (session.balance < i.price) return `<button class="store-buy" disabled title="崑山幣還不夠">🪙 還差 ${i.price - session.balance} 幣</button>`;
       return `<button class="store-buy" data-id="${App.esc(i.id)}">🛒 我要兌換</button>`;
     };
-    const cards = cat => store.filter(i => i.category === cat).map(i => `
+    const cards = tier => store.filter(i => (i.tier || "② 活動特權・消費型") === tier).map(i => `
       <div class="store-card ${i.stock <= 0 ? "soldout" : ""}">
         <div class="store-icon">${App.esc(i.icon)}</div>
         <div class="store-name">${App.esc(i.name)}</div>
-        <div class="store-price">🪙 ${i.price} 幣</div>
+        <div class="store-price">${i.price > 0 ? `🪙 ${i.price} 幣` : "免費"}</div>
         <div class="store-stock">${i.stock <= 0 ? "😢 售完" : `庫存 ${i.stock}`}</div>
         ${i.note ? `<div class="store-note">${App.esc(i.note)}</div>` : ""}
+        ${i.unlock ? `<div class="store-unlock">🔑 ${App.esc(i.unlock)}</div>` : ""}
         ${buyBtn(i)}
       </div>`).join("");
     return `
       <h3 class="bank-section-title">🏪 班級商店櫥窗</h3>
       ${session ? `<p class="meta">看到喜歡的就按「🛒 我要兌換」送出申請，老師確認後才會扣崑山幣喔！</p>` : ""}
-      ${store.length ? cats.map(([cat, label]) => {
-        const html = cards(cat);
-        return html ? `<p class="bank-cat-label">${label}</p><div class="store-grid">${html}</div>` : "";
+      ${store.length ? TIERS.map(([tier, label, hint]) => {
+        const html = cards(tier);
+        return html ? `<p class="bank-cat-label">${label}<span class="bank-cat-hint">${hint}</span></p>
+          <div class="store-grid">${html}</div>` : "";
       }).join("") : `<p class="meta">商店籌備中，敬請期待！</p>`}
       <div class="bank-tip card" id="bank-tip">💡 ${App.esc(TIPS[0])}</div>`;
   };
