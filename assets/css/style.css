@@ -372,6 +372,15 @@ main {
   .cal-cell { min-height: 52px; }
   .cal-event { font-size: 10.5px; padding: 0 3px; }
 }
+/* 近期事件的活動說明：Google 日曆說明欄（已剝成純文字換行）。
+   長文收進 <details>，一則活動不會把整頁佔滿。 */
+.event-notes { margin-top: 8px; }
+.event-notes p { margin: 2px 0; }
+.event-notes summary {
+  cursor: pointer; color: var(--sky); font-size: 15px;
+  padding: 4px 0; list-style-position: inside;
+}
+.event-notes[open] summary { margin-bottom: 4px; }
 
 /* ===== 週報（固定版型海報：1280×720 畫布等比縮放，永不重排）===== */
 .wk-stage {
