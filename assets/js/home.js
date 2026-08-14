@@ -17,10 +17,21 @@
   const nextSchoolDay = [...contact].filter(x => x.date > today)
     .sort((a, b) => a.date.localeCompare(b.date))[0];
 
-  // 最新公告：置頂＋兩週內（班級與學校都收，標籤區分）。
+  // 最新公告：只顯示「還在有效期內」的（班級與學校都收，標籤區分）。
+  // 有效期＝Notion「日期」欄填的區間結束日；沒填就發布日 +30 天。過期的自動下架，
+  // 不再留在公告欄裡卡版面，要回頭找去「公告 → 歷史公告」。
   // 校網公告自動匯入後量會變大，首頁最多 5 則，其餘到「公告」頁看。
-  const twoWeeksAgo = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
-  const topAnn = ann.filter(a => a.pinned || a.date >= twoWeeksAgo)
+  const ANN_DEFAULT_DAYS = 30;
+  const addDays = (iso, n) => {
+    const d = new Date(iso + "T00:00:00");
+    d.setDate(d.getDate() + n);
+    return d.toISOString().slice(0, 10);
+  };
+  const annExpiry = a => a.expiry || a.endDate || addDays(a.date, ANN_DEFAULT_DAYS);
+  // 舊資料沒有 id 時就地補一個，與公告頁同一套算法，錨點才對得上
+  const annId = a => a.id || `x${a.date.replace(/-/g, "")}${
+    [...`${a.title}`].reduce((h, ch) => (h * 31 + ch.codePointAt(0)) >>> 0, 0).toString(36)}`;
+  const topAnn = ann.filter(a => annExpiry(a) >= today)
     .sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date))
     .slice(0, 5);
 
@@ -59,9 +70,18 @@
       <div class="home-main">
         <section class="card fixed-slot" style="--accent:${c.moduleColors.announcements}">
           <h2>📣 最新公告</h2>
-          ${topAnn.length ? topAnn.map(a => `
-            <p>${a.pinned ? '<span class="badge pin">置頂</span> ' : ""}<span class="badge src-${App.esc(a.source || "班級")}">${App.esc(a.source || "班級")}公告</span> <span class="badge cat-${App.esc(a.category || "其他")}">${App.esc(a.category || "公告")}</span>
-            <strong>${App.esc(a.title)}</strong> <span class="meta">${App.fmtDateShort(a.date)}</span></p>`).join("") : '<p class="empty-hint">目前沒有公告</p>'}
+          ${topAnn.length ? `<ul class="ann-brief">${topAnn.map(a => `
+            <li class="${a.pinned ? "pinned" : ""}">
+              <a href="announcements.html#ann-${App.esc(annId(a))}">
+                <span class="ab-title">${App.esc(a.title)}</span>
+                <span class="ab-tags">
+                  ${a.pinned ? '<span class="badge pin">置頂</span>' : ""}
+                  <span class="badge src-${App.esc(a.source || "班級")}">${App.esc(a.source || "班級")}</span>
+                  <span class="badge cat-${App.esc(a.category || "其他")}">${App.esc(a.category || "公告")}</span>
+                  <span class="ab-date">${App.fmtDateShort(a.date)}</span>
+                </span>
+              </a>
+            </li>`).join("")}</ul>` : '<p class="empty-hint">目前沒有公告</p>'}
           <p><a href="announcements.html">全部公告 →</a></p>
         </section>
 
