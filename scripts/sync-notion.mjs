@@ -430,7 +430,39 @@ async function avatarDataURL(files) {
 }
 
 // 各座號的理財概況（帳本金額加總；供學習報告「理財表現」顯示，隨報告一起加密）
-// 回傳 { [座號]: { balance, income, expense } }：income＝收入(正)總和、expense＝支出(負)總和之絕對值
+// 回傳 { [座號]: { balance, income, expense, xp } }
+//   income＝收入(正)總和、expense＝支出(負)總和之絕對值
+//   xp    ＝**累積經驗值**：只加總「薪水」與「獎勵金」的正數，只增不減（見下）
+//
+// XP（2026-08-14 雙貨幣制）：
+//   崑山幣是流動資產，花掉就少；XP 是年輪，記錄「這學期做過多少好事、扛過多少責任」，
+//   消費與扣點都不會讓它變少，所以拿來當解鎖條件才公平——不會因為買了東西就失去資格。
+//   **利息不計入 XP**（利息是餘額的函數，計入就變成「越有錢 XP 漲越快」，
+//   XP 就不再是行為的累積）；2026-08-14 起利息機制本身也停用，只留歷史帳。
+const XP_TYPES = new Set(["薪水", "獎勵金"]);
+
+// XP 稱號階梯。**只出現在該生自己的加密報告裡**，不做全班排行——
+// XP 只增不減、公開排序等於一張永遠追不上的排行榜，與「成績不排名」是同一個道理。
+const XP_TITLES = [
+  { min: 0,    emoji: "🌱", name: "新芽" },
+  { min: 150,  emoji: "⭐", name: "小星星" },
+  { min: 400,  emoji: "🌟", name: "閃耀之星" },
+  { min: 800,  emoji: "💫", name: "超新星" },
+  { min: 1400, emoji: "🏆", name: "星際隊長" },
+];
+
+function xpTitleOf(xp) {
+  const n = Math.max(0, Math.round(Number(xp) || 0));
+  let i = 0;
+  while (i + 1 < XP_TITLES.length && n >= XP_TITLES[i + 1].min) i++;
+  const cur = XP_TITLES[i], next = XP_TITLES[i + 1] || null;
+  return {
+    emoji: cur.emoji, name: cur.name,
+    next: next ? `${next.emoji} ${next.name}` : "",
+    toNext: next ? next.min - n : 0,
+  };
+}
+
 async function bankFinanceBySeat() {
   const roster = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "");
@@ -443,9 +475,10 @@ async function bankFinanceBySeat() {
     if (!stu) continue;
     const seat = Number(stu["座號"]);
     const amt = Math.round(Number(t["金額"]) || 0);
-    const f = fin[seat] ||= { balance: 0, income: 0, expense: 0 };
+    const f = fin[seat] ||= { balance: 0, income: 0, expense: 0, xp: 0 };
     f.balance += amt;
     if (amt >= 0) f.income += amt; else f.expense += -amt;
+    if (amt > 0 && XP_TYPES.has(t["類型"] || "")) f.xp += amt;
   }
   return fin;
 }
@@ -607,6 +640,8 @@ async function syncReports() {
     const fin = f ? {
       balance: f.balance, income: f.income, expense: f.expense,
       savingsRate: f.income > 0 ? Math.round((f.balance / f.income) * 100) : null,
+      xp: f.xp,                    // 累積經驗值（只增不減，見 bankFinanceBySeat）
+      xpTitle: xpTitleOf(f.xp),    // { name, emoji, next, toNext } 或 null
     } : null;
     const payload = await encryptReport(
       { name: s.name, seat: s.seat, avatar: s.avatar, balance: f ? f.balance : null, finance: fin, periods: s.periods }, s.code, s.seat);
@@ -620,19 +655,29 @@ async function syncReports() {
 }
 
 // ── 班級商店（公開櫥窗，無個資）──
+// 商店四層架構（2026-08-14，獎勵制度 V3）：
+//   ① 社會性・免費即時　② 活動特權・消費型　③ 職務公會・解鎖型　④ 創造沙盒・系統演化
+// 目的是把增強物從「只能用崑山幣買」往「靠累積的責任解鎖」推。
+// 老師沒填層級的品項一律當第二層，既有品項不必逐一補填也不會消失。
+const STORE_DEFAULT_TIER = "② 活動特權・消費型";
+
 async function syncStore() {
   const rows = (await queryDataSource(DS.store)).map(props)
     .filter(r => r["上架"] && r["品項"])
     .map(r => ({
       id: r._id, // Notion 頁 ID：小小銀行「兌換申請」與教師核可扣庫存靠它對回品項
       name: r["品項"],
+      // 「分類」是**功能性**的（特權要核銷、小物直接給），兌換流程與 Apps Script 都靠它判斷，
+      // 2026-08-14 導入四層架構時刻意不動它，改用獨立的「層級」欄，避免動到兌換流程。
       category: r["分類"] || "小物",
+      tier: r["層級"] || STORE_DEFAULT_TIER,   // 沒填就當第二層（消費型特權）
+      unlock: r["解鎖條件"] || "",             // 第三、四層的資格門檻（例：累積 XP 達 200）
       price: Number(r["價格"]) || 0,
       stock: Number(r["庫存"]) || 0,
       icon: r["圖示"] || "🎁",
       note: r["說明"],
     }))
-    .sort((a, b) => a.category.localeCompare(b.category, "zh-Hant") || a.price - b.price);
+    .sort((a, b) => a.tier.localeCompare(b.tier, "zh-Hant") || a.price - b.price);
   await save("store.json", rows);
 }
 

@@ -93,6 +93,26 @@
     return "支出超過收入，先緩一緩消費";
   };
 
+  // 累積經驗值（XP）與稱號（2026-08-14 雙貨幣制）
+  // XP 只加總「薪水」與「獎勵金」，消費與扣點都不會讓它變少——它記的是
+  // 「做過多少好事、扛過多少責任」，不是「現在還剩多少錢」。
+  // 刻意只顯示自己的 XP 與下一階，不做全班排序（XP 只增不減，公開排名等於
+  // 一張永遠追不上的排行榜，與成績不排名同一個道理）。
+  const xpBlock = fin => {
+    if (!fin || fin.xp == null) return "";
+    const t = fin.xpTitle;
+    return `
+      <div class="fin-xp">
+        <div class="xp-head">
+          <span class="xp-title">${App.esc(t ? `${t.emoji} ${t.name}` : "🌱 新芽")}</span>
+          <span class="xp-num">累積 XP <strong>${fin.xp}</strong></span>
+        </div>
+        ${t && t.next ? `<div class="xp-next">再 ${t.toNext} XP 就是 ${App.esc(t.next)}</div>`
+                      : '<div class="xp-next">已經是最高稱號，繼續帶著大家一起前進 ✨</div>'}
+        <div class="xp-hint">XP＝薪水＋獎勵金的累積，<b>花錢不會減少</b>，它記錄你做過的每一件好事。</div>
+      </div>`;
+  };
+
   // 期考成績級距圖表 v2：解析考週「考試成績摘要」→ 各科「分數級距分布長條＋我的落點★＋全班平均▽」。
   // 依成績評量規定：不呈現個人三科平均與名次；解析失敗退回純文字，向後相容。
   const examChart = raw => {
@@ -314,6 +334,7 @@
                    <div class="fin-row"><span>收入 ${report.finance.income}</span><span>支出 ${report.finance.expense}</span></div>
                    <div class="fin-rate">💰 儲蓄率 <strong>${report.finance.savingsRate != null ? report.finance.savingsRate + "%" : "—"}</strong></div>
                    <div class="fin-note">${App.esc(financeNote(report.finance))}</div>` : ""}
+                   ${xpBlock(report.finance)}
                  </div>`
               : ((c.showReportBalance !== false && report.balance != null && !anon)
                   ? `<p class="report-balance">🏦 班級存款 <strong>${report.balance}</strong> 崑山幣</p>` : "")}

@@ -877,6 +877,13 @@ main {
 /* ===== 小小銀行 ===== */
 .bank-section-title { font-size: 1.1667rem; margin: 26px 0 4px; }
 .bank-cat-label { font-weight: bold; color: var(--ink-soft); margin: 12px 0 8px; }
+/* 四層架構的分組標題：層名後面接一句「這一層是什麼」，學生才知道差在哪 */
+.bank-cat-hint { font-weight: normal; font-size: 0.8056rem; color: var(--ink-soft); margin-left: 10px; }
+/* 第三、四層的解鎖門檻 */
+.store-unlock {
+  margin-top: 6px; font-size: 0.7222rem; line-height: 1.5;
+  background: #eef4ff; color: #2b5c9b; border-radius: 10px; padding: 4px 8px;
+}
 .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .store-card {
   background: var(--card); border: 3px dashed #f6d8a8; border-radius: 18px;
@@ -1211,6 +1218,18 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .report-finance .fin-row { display: flex; gap: 12px; font-size: 0.75rem; color: var(--ink-soft); }
 .report-finance .fin-rate { color: #10AC84; font-weight: 700; }
 .report-finance .fin-note { font-size: 0.6944rem; color: var(--ink-soft); text-align: center; }
+/* 累積經驗值（XP）與稱號——只給本人看，不做全班排序 */
+.fin-xp {
+  margin-top: 6px; width: 100%; text-align: center;
+  background: linear-gradient(135deg, #fff8e6, #f3f0ff);
+  border: 2px solid #ffe3a3; border-radius: 14px; padding: 7px 10px;
+}
+.fin-xp .xp-head { display: flex; align-items: baseline; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.fin-xp .xp-title { font-weight: 900; color: #8a5b00; }
+.fin-xp .xp-num { font-size: 0.7778rem; color: var(--ink-soft); }
+.fin-xp .xp-num strong { color: #c97b12; font-size: 0.9444rem; }
+.fin-xp .xp-next { font-size: 0.7222rem; color: #6b5b4b; margin-top: 2px; }
+.fin-xp .xp-hint { font-size: 0.6667rem; color: var(--ink-soft); margin-top: 3px; line-height: 1.5; }
 
 /* 期末總報告：五向度逐週成長曲線 */
 .report-term { border-color: #d9c7f0; }
