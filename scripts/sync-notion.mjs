@@ -437,18 +437,34 @@ async function avatarDataURL(files) {
 // XP（2026-08-14 雙貨幣制）：
 //   崑山幣是流動資產，花掉就少；XP 是年輪，記錄「這學期做過多少好事、扛過多少責任」，
 //   消費與扣點都不會讓它變少，所以拿來當解鎖條件才公平——不會因為買了東西就失去資格。
-//   **利息不計入 XP**（利息是餘額的函數，計入就變成「越有錢 XP 漲越快」，
-//   XP 就不再是行為的累積）；2026-08-14 起利息機制本身也停用，只留歷史帳。
-const XP_TYPES = new Set(["薪水", "獎勵金"]);
+//
+// **XP 分兩條軌**（2026-08-14 擴充，讓在校的每一種行為都有數值回饋）：
+//   責任 XP（薪水）＝幹部週薪＋打掃薪水（依次）＋午餐工作（依次）＋班級常規獎勵（以日計）
+//   貢獻 XP（獎勵金）＝正向行為（量尺 ×5）＋亮點（×10）＋定期評量進步獎（+20）
+//   總 XP＝兩者相加。
+//
+// 為什麼要拆兩條：薪水類幾乎是「有來上學、有把本分做完」就會穩定累積，
+// 全部混在一起算，XP 就變成「出席時數」，職務公會的門檻也就變成「熬到就有」。
+// 拆開之後，職務可以要求「總 XP 到門檻**且**貢獻 XP 也到門檻」——光出席拿不到。
+//
+// 不計入 XP 的：
+//   ·「調整」——那是補正／更正用的類型，計入等於 XP 可以人工灌水。
+//   ·「利息」——利息是餘額的函數，計入就變成「越有錢 XP 漲越快」；
+//     2026-08-14 起利息機制本身也停用，只留歷史帳。
+//   ·「消費」「懲罰金」——負數本來就不加，而且 XP 只增不減，扣點不會讓它變少。
+const XP_DUTY_TYPES = new Set(["薪水"]);        // → 責任 XP
+const XP_MERIT_TYPES = new Set(["獎勵金"]);     // → 貢獻 XP
 
-// XP 稱號階梯。**只出現在該生自己的加密報告裡**，不做全班排行——
+// XP 稱號階梯（以總 XP 計）。**只出現在該生自己的加密報告裡**，不做全班排行——
 // XP 只增不減、公開排序等於一張永遠追不上的排行榜，與「成績不排名」是同一個道理。
+// 門檻依「一學期 20 週、責任 XP 約 45–55／週」估算：
+//   一學期只把本分做好 ≈ 900–1100；再加上穩定的正向表現 ≈ 1400–2000。
 const XP_TITLES = [
   { min: 0,    emoji: "🌱", name: "新芽" },
-  { min: 150,  emoji: "⭐", name: "小星星" },
-  { min: 400,  emoji: "🌟", name: "閃耀之星" },
-  { min: 800,  emoji: "💫", name: "超新星" },
-  { min: 1400, emoji: "🏆", name: "星際隊長" },
+  { min: 300,  emoji: "⭐", name: "小星星" },
+  { min: 700,  emoji: "🌟", name: "閃耀之星" },
+  { min: 1200, emoji: "💫", name: "超新星" },
+  { min: 1800, emoji: "🏆", name: "星際隊長" },
 ];
 
 function xpTitleOf(xp) {
@@ -475,10 +491,12 @@ async function bankFinanceBySeat() {
     if (!stu) continue;
     const seat = Number(stu["座號"]);
     const amt = Math.round(Number(t["金額"]) || 0);
-    const f = fin[seat] ||= { balance: 0, income: 0, expense: 0, xp: 0 };
+    const f = fin[seat] ||= { balance: 0, income: 0, expense: 0, xp: 0, xpDuty: 0, xpMerit: 0 };
     f.balance += amt;
     if (amt >= 0) f.income += amt; else f.expense += -amt;
-    if (amt > 0 && XP_TYPES.has(t["類型"] || "")) f.xp += amt;
+    const type = t["類型"] || "";
+    if (amt > 0 && XP_DUTY_TYPES.has(type)) { f.xpDuty += amt; f.xp += amt; }
+    if (amt > 0 && XP_MERIT_TYPES.has(type)) { f.xpMerit += amt; f.xp += amt; }
   }
   return fin;
 }
@@ -640,7 +658,9 @@ async function syncReports() {
     const fin = f ? {
       balance: f.balance, income: f.income, expense: f.expense,
       savingsRate: f.income > 0 ? Math.round((f.balance / f.income) * 100) : null,
-      xp: f.xp,                    // 累積經驗值（只增不減，見 bankFinanceBySeat）
+      xp: f.xp,                    // 總 XP（只增不減，見 bankFinanceBySeat）
+      xpDuty: f.xpDuty,            // 責任 XP：幹部週薪＋打掃＋午餐＋常規獎勵
+      xpMerit: f.xpMerit,          // 貢獻 XP：正向行為＋亮點＋進步獎
       xpTitle: xpTitleOf(f.xp),    // { name, emoji, next, toNext } 或 null
     } : null;
     const payload = await encryptReport(

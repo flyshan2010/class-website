@@ -1230,6 +1230,24 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .fin-xp .xp-num strong { color: #c97b12; font-size: 0.9444rem; }
 .fin-xp .xp-next { font-size: 0.7222rem; color: #6b5b4b; margin-top: 2px; }
 .fin-xp .xp-hint { font-size: 0.6667rem; color: var(--ink-soft); margin-top: 3px; line-height: 1.5; }
+/* 責任／貢獻兩條軌：看得出「把本分做穩」與「額外多做」各占多少 */
+.fin-xp .xp-bar {
+  display: flex; height: 9px; border-radius: 999px; overflow: hidden;
+  background: #eee6d6; margin: 6px 0 4px;
+}
+.fin-xp .xp-seg.duty { background: #54A0FF; }
+.fin-xp .xp-seg.merit { background: #FF9F43; }
+.fin-xp .xp-split {
+  display: flex; justify-content: center; gap: 14px;
+  font-size: 0.7222rem; color: #6b5b4b;
+}
+.fin-xp .xp-split small { color: var(--ink-soft); margin-left: 4px; font-size: 0.6389rem; }
+.fin-xp .xp-split .dot {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  margin-right: 5px; vertical-align: 0;
+}
+.fin-xp .xp-split .dot.duty { background: #54A0FF; }
+.fin-xp .xp-split .dot.merit { background: #FF9F43; }
 
 /* 期末總報告：五向度逐週成長曲線 */
 .report-term { border-color: #d9c7f0; }
