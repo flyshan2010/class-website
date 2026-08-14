@@ -130,10 +130,66 @@
   // 卡片樣式：1–8 用公約海報的五色循環、9 上課時間灰卡、10 重大安全事件紅卡
   const ruleCardClass = (n, i) => n >= 10 ? "rule-card-serious" : n === 9 ? "rule-card-common" : `rules-c${i % 5}`;
 
+  // ── 品格量尺（2026-08-14）──
+  // 學生原本只看得到「這件事扣 5 點」，看不出「這件事有多重」，也不知道「要往哪裡進步」。
+  // 量尺把每個行為放到 +3～−3 的同一把尺上，並在每一級寫明「再進一步」要做什麼。
+  // 級數不是另外填的欄位，是由點數推導（±5→±1、±10→±2、±15→±3、|點數|≥100→紅線），
+  // 所以量尺永遠不會和實際扣加的點數說不一樣的話。
+  const SCALE = [
+    { lv: 3,  emoji: "🤩", zone: "行有餘力可行", label: "大大幫助他人",
+      next: "你已經在量尺的最上面了——把這件事變成習慣，帶著更多同學一起做。" },
+    { lv: 2,  emoji: "😄", zone: "行有餘力可行", label: "不但自己好，還幫助他人",
+      next: "在關鍵時刻挺身而出（例如制止危險、照顧受傷的同學），就會到 +3。" },
+    { lv: 1,  emoji: "🙂", zone: "行有餘力可行", label: "做好自己的本分，造成正面影響",
+      next: "做完自己的事之後，順手幫一個人，就會到 +2。" },
+    { lv: -1, emoji: "😟", zone: "萬不可行", label: "沒做到自己的本分，造成負面影響",
+      next: "先把自己該做的補回來（改正方式），下一次就能站回 +1。" },
+    { lv: -2, emoji: "😠", zone: "萬不可行", label: "不但自己不好，還傷害他人",
+      next: "先修復對別人造成的傷害，再把自己的本分補起來。" },
+    { lv: -3, emoji: "😡", zone: "萬不可行", label: "嚴重傷害他人",
+      next: "這是絕對不能跨過的紅線，會依校內防治準則處理。" },
+  ];
+  const scaleOf = lv => SCALE.find(s => s.lv === (lv === 9 ? 3 : lv === -9 ? -3 : lv));
+  const lvText = lv => (lv > 0 ? `+${lv}` : String(lv)).replace("-", "−");
+
+  const characterScale = () => `
+    <div class="cscale">
+      <div class="cscale-zone top">行有餘力可行</div>
+      ${SCALE.filter(s => s.lv > 0).map(s => scaleRow(s)).join("")}
+      <div class="cscale-duty"><span>義　務</span></div>
+      ${SCALE.filter(s => s.lv < 0).map(s => scaleRow(s)).join("")}
+      <div class="cscale-zone bottom">萬不可行</div>
+      <p class="cscale-foot">
+        當我們被善良觸動時，一天可以多麼美好；<br />
+        而你永遠可以為自己的一言一行做出選擇。
+      </p>
+    </div>`;
+
+  function scaleRow(s) {
+    const coin = s.lv === -3 ? "紅線" : `${s.lv > 0 ? "+" : "−"}${Math.abs(s.lv) * 5}`;
+    return `
+      <div class="cscale-row lv${s.lv > 0 ? "p" : "n"}${Math.abs(s.lv)}">
+        <span class="cs-num">${lvText(s.lv)}</span>
+        <span class="cs-emoji" aria-hidden="true">${s.emoji}</span>
+        <span class="cs-body">
+          <span class="cs-label">${s.label}</span>
+          <span class="cs-next">↗ ${s.next}</span>
+        </span>
+        <span class="cs-coin">🪙 ${coin}</span>
+      </div>`;
+  }
+
   // 重大安全事件不是「改正」就了事的層級，標籤改稱「處理方式」
+  const lvBadge = lv => {
+    if (!lv) return "";
+    if (Math.abs(lv) === 9) return '<span class="rr-lv red" title="紅線：不在量尺上量，依校內防治準則處理">紅線</span>';
+    const s = scaleOf(lv);
+    return `<span class="rr-lv ${lv > 0 ? "p" : "n"}${Math.abs(lv)}" title="品格量尺 ${lvText(lv)}｜${s ? s.label : ""}">${lvText(lv)}</span>`;
+  };
+
   const ruleRows = (list, withFix, fixLabel = "改正方式") => list.map(x => `
     <div class="rule-row">
-      <span class="rr-act">${App.esc(x.act)}${withFix && x.fix ? `
+      <span class="rr-act">${lvBadge(x.level)}${App.esc(x.act)}${withFix && x.fix ? `
         <em class="rr-fix">${fixLabel}：${App.esc(x.fix)}</em>` : ""}</span>
       <span class="rr-coin">🪙 ${App.esc(x.coin)}</span>
     </div>`).join("");
@@ -367,9 +423,22 @@
             ${about.rulesImages.map(src => `<img src="${App.esc(src)}" alt="班級公約" loading="lazy" />`).join("")}
           </div>` : ""}
         </section>` : ""}
+        <section class="card" style="border-top-color:var(--purple)">
+          <h3>🧭 品格量尺——想一想、量一量</h3>
+          <p class="meta">
+            每一個行為都可以放在同一把尺上量：往上是「行有餘力可行」，往下是「萬不可行」，
+            中間那條線是「義務」——本來就該做到的事。看看自己現在在哪一格，再看「↗」那行，
+            就知道下一步可以往哪裡走。
+          </p>
+          ${characterScale()}
+        </section>
         <section class="card" style="border-top-color:var(--orange)">
           <h3>📋 我們的班規（Rules）</h3>
-          <p class="meta">做到會加崑山幣，沒做到就照「改正方式」把事情補好。</p>
+          <p class="meta">
+            做到會加崑山幣，沒做到就照「改正方式」把事情補好。
+            每一則前面的 <span class="rr-lv p1">+1</span> <span class="rr-lv n2">−2</span>
+            就是它在品格量尺上的位置。
+          </p>
           ${classRules?.cards?.length ? rulesLadder(classRules) : '<p class="meta">班規尚未建立。</p>'}
         </section>
         <section class="card" style="border-top-color:var(--mint)">

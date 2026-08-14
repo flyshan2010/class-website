@@ -830,6 +830,21 @@ async function syncClassDuties() {
 // 班規卡以「班規」欄分組：同一條班規的所有行為併成一張卡，卡序由「班規序號」決定。
 // 2026-08-09 起這三個庫就是制度正本：📜 班規制度說明頁只留理念與原則說明，
 // repo docs/班級經營與生活常規.md 降為匯出快照，兩者都不必再跟著改。
+/**
+ * 品格量尺級數（2026-08-14）：+3 / +2 / +1 / −1 / −2 / −3，另有「紅線」。
+ *
+ * **刻意不在 Notion 開欄位**——「點數」欄本來就是「程度 × 5」，級數直接由點數推導，
+ * 老師改點數、量尺自動跟著對，永遠不會出現「級數寫 +2 但點數是 +5」這種說謊的資料。
+ *   ±5 → ±1（本分）　±10 → ±2（影響到他人）　±15 → ±3（大大幫助／嚴重傷害）
+ *   |點數| ≥ 100 → "red"：重大安全事件是紅線，不在量尺上量，定額處理。
+ */
+function scaleLevel(coin) {
+  if (!coin) return 0;
+  if (Math.abs(coin) >= 100) return coin > 0 ? 9 : -9;   // ±9＝紅線（量尺外）
+  const lv = Math.min(3, Math.max(1, Math.round(Math.abs(coin) / 5)));
+  return coin > 0 ? lv : -lv;
+}
+
 async function syncClassRules() {
   const [ruleRows, routineRows, storeRows] = await Promise.all([
     queryDataSource(DS.classRules).then(rs => rs.map(props)),
@@ -852,7 +867,12 @@ async function syncClassRules() {
     const card = byRule.get(name);
     if (!card.covenant && txt(r["對應公約"])) card.covenant = txt(r["對應公約"]);
     const coin = num(r["點數"]);
-    const item = { act: txt(r["行為"]), coin: coin > 0 ? `+${coin}` : String(coin).replace("-", "−"), sort: num(r["排序"]) };
+    const item = {
+      act: txt(r["行為"]),
+      coin: coin > 0 ? `+${coin}` : String(coin).replace("-", "−"),
+      level: scaleLevel(coin),
+      sort: num(r["排序"]),
+    };
     if (txt(r["方向"]) === "偏差") card.bad.push({ ...item, fix: txt(r["改正方式"]) });
     else card.good.push(item);
   }
