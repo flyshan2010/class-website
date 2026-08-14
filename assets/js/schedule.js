@@ -13,6 +13,7 @@
 
   document.getElementById("main").innerHTML = `
     <h2 class="page-title"><span class="dot"></span>🕐 日課表</h2>
+    <p class="scroll-hint">← 左右滑動看完整課表 →</p>
     <div class="card" style="overflow-x:auto">
       <table class="schedule-table">
         <colgroup><col class="col-period" />${days.map(() => "<col />").join("")}</colgroup>

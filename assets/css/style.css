@@ -656,10 +656,20 @@ main {
   font-size: 0.8889rem;
 }
 .schedule-table thead th { background: var(--sky); color: #fff; }
-.schedule-table tbody th { background: #eef5ff; font-weight: normal; font-size: 0.7778rem; white-space: nowrap; }
+/* 不用 nowrap：欄寬不夠時 nowrap 會讓「07:40-08:00」整串溢出去疊到隔壁欄，
+   而且是無聲的——表格看起來只是「怪怪的」，不會有任何錯誤。 */
+.schedule-table tbody th { background: #eef5ff; font-weight: normal; font-size: 0.7778rem; }
 .schedule-table td { background: #fafaf5; }
+.schedule-table th, .schedule-table td { overflow-wrap: break-word; }
+.scroll-hint { display: none; }
 @media (max-width: 640px) {
+  /* 手機（2026-08-14 修）：節次欄原本 15%＝38px，裝不下 72px 的時間字串。
+     改成表格橫向捲動＋節次欄給足 80px；其餘五欄也才不會把「科任老師・自然教室」拆成六行。 */
+  .schedule-table { min-width: 510px; }
+  .schedule-table col.col-period { width: 80px; }
   .schedule-table th, .schedule-table td { padding: 8px 2px; font-size: 0.75rem; }
+  /* 表格改成橫向捲動後要講一聲，否則會被當成「右邊被切掉」 */
+  .scroll-hint { display: block; margin: 0 0 6px; color: var(--ink-soft); font-size: 0.75rem; text-align: center; }
 }
 
 /* ===== 學期回顧 ===== */
