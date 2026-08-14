@@ -890,5 +890,177 @@
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
     }
+  },
+  {
+    "title": "數L4-3 假分數與帶分數｜分數的大小比較",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [
+      "帶分數比大小：先比整數部分，相同再比分數部分",
+      "帶分數與假分數比較：先換成同一種形式再比",
+      "用 <、=、> 記錄兩數大小關係",
+      "素養題：找出介於兩數之間的分數"
+    ],
+    "date": "",
+    "note": "課本 4-3（建議 1 節）；教材 pp.60-61",
+    "links": {
+      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "數L4-1 假分數與帶分數｜認識真分數、假分數與帶分數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [
+      "真分數：分子比分母小，比 1 小",
+      "假分數：分子等於或大於分母，等於 1 或比 1 大",
+      "二階單位：整數單位＋分數單位並置認識帶分數",
+      "帶分數讀法：1 又六分之二，「又」表示「和」"
+    ],
+    "date": "",
+    "note": "課本 4-1（建議 2 節）；教材 pp.52-55",
+    "links": {
+      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "數L4-4 假分數與帶分數｜認識分數數線",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [
+      "數線上的數表示位置：從 0 到該點的長度",
+      "分數數線：把 0 到 1 等分，用單位分數接排標記",
+      "大於 1 的位置可用假分數或帶分數兩種記法",
+      "數線上越往右越大，越往左越小"
+    ],
+    "date": "",
+    "note": "課本 4-4（建議 1 節）＋練習園地(四) 0.5 節；教材 pp.62-65",
+    "links": {
+      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "數L4-2 假分數與帶分數｜假分數與帶分數互換",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [
+      "假分數換帶分數：連減同分母單位→改記成除法",
+      "除法算式的意義：商＝整數部分，餘＝分子",
+      "整數換假分數：1 等於分母個單位分數",
+      "帶分數換假分數：整數部分先化成假分數再合起來"
+    ],
+    "date": "",
+    "note": "課本 4-2（建議 1.5 節）；教材 pp.56-59",
+    "links": {
+      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L5-4 月光下 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第五課「月光下」第 4 節（全課統整）。4 節共用同一份原教材 PDF。統整活動含語文百寶箱四字語詞與強調句型。內容重點待第 0 段分析或教學頁完成後補上。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1s5BKT-8EjCuR4OzqdQvZaBzrNkD7vuif/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L5-1 月光下 第一節 字詞語詞及大意",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第五課「月光下」（林茵，記敘文），第參單元第一課。依國語顆粒度鐵則拆 4 節，本節為第 1 節。4 節共用同一份原教材 PDF（教學簡報/教材資料/4上翰林CL05.pdf）。內容重點待第 0 段分析或教學頁完成後補上。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1s5BKT-8EjCuR4OzqdQvZaBzrNkD7vuif/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L5-2 月光下 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第五課「月光下」第 2 節。4 節共用同一份原教材 PDF。內容重點待第 0 段分析或教學頁完成後補上。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1s5BKT-8EjCuR4OzqdQvZaBzrNkD7vuif/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L5-3 月光下 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第五課「月光下」第 3 節。4 節共用同一份原教材 PDF。內容重點待第 0 段分析或教學頁完成後補上。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1s5BKT-8EjCuR4OzqdQvZaBzrNkD7vuif/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
   }
 ]
