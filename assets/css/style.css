@@ -1304,7 +1304,9 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .spar-spark { font-size: 1.0667rem; margin: 0 6px; }
 .spar-sub { font-size: 0.8444rem; color: #5f7784; font-weight: 600; margin-top: 2px; letter-spacing: 1px; }
 
-.spar-items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+/* 欄數自動：寬度不夠就自己降成 2 欄／1 欄，文字永遠有 230px 以上可讀寬度
+   （加了角色圖之後，固定 4 欄會在中間寬度把說明文字擠成一行三個字）。 */
+.spar-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
 .spar-item {
   display: flex; align-items: center; gap: 12px;
   background: #fff; border-radius: 16px; padding: 12px 14px;
@@ -1321,18 +1323,26 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .spar-en { font-size: 0.7111rem; color: var(--sc); font-weight: 700; letter-spacing: .5px; }
 .spar-desc { font-size: 0.7822rem; color: #5f7784; margin-top: 4px; line-height: 1.6; }
 
+/* 理念代表角色（data/characters.json；換班換一個資料夾即可，見該檔說明）。
+   圖是配角不是主角：固定高度、不擠壓文字，沒有圖時整欄自動消失、版面不變形。 */
+.spar-char {
+  flex: 0 0 auto; width: auto; align-self: flex-end;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .14));
+}
+.spar-char.lg { height: 82px; margin-bottom: -10px; }
+.spar-char.sm { height: 68px; margin-bottom: -8px; }
+.spar-item.has-char { gap: 8px; padding-bottom: 8px; }
+.spar-item.has-char .spar-letter { font-size: 2.1rem; }
+
 /* 首頁橫幅版：矮一點、字母再放大一點 */
 .spar-poster.compact { padding: 14px 18px; }
 .spar-poster.compact .spar-head { margin-bottom: 10px; }
 .spar-poster.compact .spar-title { font-size: 1.2rem; }
 .spar-poster.compact .spar-item { padding: 8px 12px; }
 .spar-poster.compact .spar-letter { font-size: 2.3111rem; }
+.spar-poster.compact .spar-item.has-char .spar-letter { font-size: 1.8rem; }
 
-@media (max-width: 900px) {
-  .spar-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 @media (max-width: 520px) {
-  .spar-items { grid-template-columns: 1fr; }
   .spar-title { font-size: 1.2444rem; }
 }
 
@@ -1395,6 +1405,9 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   font-size: 0.9444rem; color: #fff; background: var(--pc);
 }
 .cb-tip-desc { margin: 0; font-size: 0.8333rem; line-height: 1.7; color: var(--ink-soft); }
+/* 每日小叮嚀輪播到哪個理念，就由哪一位理念角色出來說話（characters.json 沒設就只有文字） */
+.cb-tip-row { display: flex; align-items: flex-end; gap: 10px; }
+.cb-tip-char { height: 66px; width: auto; flex: 0 0 auto; filter: drop-shadow(0 2px 3px rgba(0,0,0,.14)); }
 .cb-more { margin: 14px 0 0; text-align: right; }
 
 /* ── 聯絡簿頁月曆 ─────────────────────────────────────────────── */
