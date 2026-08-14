@@ -190,15 +190,38 @@ async function syncContactbook() {
 }
 
 // ── 公告（班級＋學校合併，「來源」欄區分）──
+//
+// 起迄日（2026-08-14）：直接用「日期」欄的**日期區間**，不另開欄位——
+//   日期.start＝發布日（畫面上顯示的那個日期）
+//   日期.end  ＝下架日（含當天）。沒填就套 ANN_DEFAULT_DAYS 天。
+// 過期公告不是刪掉，是由前端收進「歷史公告」分頁；超過保留期才真的不輸出，
+// 免得 announcements.json 無限長大。
+const ANN_DEFAULT_DAYS = 30;   // 沒填結束日期時的預設有效天數
+const ANN_KEEP_DAYS = 180;     // 過期後仍保留在「歷史公告」的天數
+
+const addDays = (iso, n) => {
+  const d = new Date(iso + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+
 async function syncAnnouncements() {
   const pages = (await queryDataSource(DS.announcements)).map(props)
     .filter(r => r["發布"] && r["日期"]?.start);
+  const today = new Date().toISOString().slice(0, 10);
   const rows = [];
   for (const r of pages) {
+    const date = r["日期"].start.slice(0, 10);
+    const endDate = (r["日期"].end || "").slice(0, 10);
+    const expiry = endDate || addDays(date, ANN_DEFAULT_DAYS);
+    if (addDays(expiry, ANN_KEEP_DAYS) < today) continue;   // 過期太久，不再輸出
     rows.push({
+      id: `n${String(r._id).replace(/-/g, "").slice(0, 10)}`,  // 首頁標題連結用的錨點
       title: r["標題"],
       content: r["內容"],
-      date: r["日期"].start,
+      date,
+      endDate,                 // 老師填的下架日；空＝沿用預設天數
+      expiry,                  // 實際生效的下架日（含當天），前端只看這個
       source: r["來源"] || "班級",
       category: r["分類"] || "其他",
       pinned: !!r["置頂"],

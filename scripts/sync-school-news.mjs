@@ -140,12 +140,29 @@ const file = path.join(DATA, "announcements.json");
 const all = JSON.parse(await readFile(file, "utf8"));
 const kept = all.filter((a) => a.auto !== "school");
 
+// 校網公告沒有「下架日」可填，一律套與班級公告相同的預設有效天數；
+// id 供首頁標題連到公告頁時定位用（校網沒有 Notion page id，用日期＋標題湊一個穩定值）。
+const ANN_DEFAULT_DAYS = 30;
+const addDays = (iso, n) => {
+  const d = new Date(iso + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+const slugId = (date, title) => {
+  let h = 0;
+  for (const ch of `${date}|${title}`) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+  return `s${date.replace(/-/g, "")}${h.toString(36)}`;
+};
+
 const merged = [
   ...kept,
   ...picked.map((it) => ({
+    id: slugId(it.date, it.title),
     title: it.title,
     content: it.dept ? `發布單位：${it.dept}` : "",
     date: it.date,
+    endDate: "",
+    expiry: addDays(it.date, ANN_DEFAULT_DAYS),
     source: "學校",
     category: "公告",
     pinned: false,          // 校網置頂不沿用，避免長期壓過班級公告

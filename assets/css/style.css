@@ -298,6 +298,65 @@ main {
 .badge.type-活動 { background: var(--mint); }
 .badge.type-放假 { background: var(--yellow); color: var(--ink); }
 .badge.type-其他 { background: var(--sky); }
+.badge.cat-公告 { background: var(--purple); }
+
+/* ===== 公告（2026-08-14 重點化改版）=====
+   目標：學生／家長掃一眼就抓到「哪一則、什麼時候、要做什麼」。
+   作法：標題最大最粗且可被首頁連結定位；標籤與日期退到同一列的小字；
+   長內文摺疊只露前三行；快下架的才顯示倒數，平常不占版面。 */
+
+/* 首頁「最新公告」：整列可點，連到公告頁的該則（#ann-<id>） */
+.ann-brief { list-style: none; margin: 6px 0 10px; }
+.ann-brief li { border-bottom: 1px dashed var(--line); }
+.ann-brief li:last-child { border-bottom: none; }
+.ann-brief li.pinned { background: #fff7f8; border-radius: 10px; }
+.ann-brief a {
+  display: block; padding: 9px 8px; color: var(--ink); text-decoration: none;
+  border-radius: 10px;
+}
+.ann-brief a:hover { background: #f3f8ff; text-decoration: none; }
+.ann-brief .ab-title { display: block; font-weight: bold; line-height: 1.5; }
+.ann-brief .ab-tags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 3px; }
+.ann-brief .ab-date { color: var(--ink-soft); font-size: 0.8333rem; }
+
+/* 公告頁卡片 */
+.ann-pinned-zone { margin-bottom: 6px; }
+.ann-card { border-left: 6px solid var(--sky); }
+.ann-card.pinned { border-left-color: var(--pink); background: #fffafb; }
+.ann-card.cat-活動 { border-left-color: var(--mint); }
+.ann-card.cat-作業 { border-left-color: var(--orange); }
+.ann-card.cat-提醒 { border-left-color: var(--pink); }
+.ann-card.cat-公告 { border-left-color: var(--purple); }
+.ann-card.expired { opacity: .72; border-left-color: var(--ink-soft); }
+.ann-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ann-tags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ann-when { color: var(--ink-soft); font-size: 0.8333rem; display: flex; align-items: baseline; gap: 8px; }
+.ann-when .ago { background: #f1f4f8; border-radius: 999px; padding: 1px 10px; }
+.ann-title { font-size: 1.2778rem; line-height: 1.5; margin: 6px 0 2px; }
+.ann-exp {
+  display: inline-block; font-size: 0.8056rem; border-radius: 999px;
+  padding: 1px 12px; margin-bottom: 4px;
+}
+.ann-exp.soon { background: #fff2d8; color: #8a5b00; }
+.ann-exp.done { background: #eef0f2; color: var(--ink-soft); }
+.ann-body { margin-top: 4px; }
+.ann-body p { margin: 3px 0; }
+.ann-more > summary {
+  cursor: pointer; color: var(--sky); font-size: 0.8889rem;
+  padding: 4px 0; list-style-position: inside;
+}
+.ann-actions { margin-top: 10px; }
+.ann-link {
+  display: inline-block; padding: 6px 18px; border-radius: 999px;
+  background: var(--sky); color: #fff; font-size: 0.8889rem;
+}
+.ann-link:hover { text-decoration: none; opacity: .9; }
+/* 從首頁連過來時短暫高亮，讓人知道「就是這一則」 */
+.ann-focus { animation: annFocus 2.4s ease-out; }
+@keyframes annFocus {
+  0%, 45% { box-shadow: 0 0 0 4px var(--yellow); }
+  100% { box-shadow: var(--shadow); }
+}
 
 /* ===== 聯絡簿 ===== */
 .contact-day { border-top-color: var(--orange); }
