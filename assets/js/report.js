@@ -98,18 +98,32 @@
   // 「做過多少好事、扛過多少責任」，不是「現在還剩多少錢」。
   // 刻意只顯示自己的 XP 與下一階，不做全班排序（XP 只增不減，公開排名等於
   // 一張永遠追不上的排行榜，與成績不排名同一個道理）。
+  // 兩條軌分開顯示，孩子才看得出「我是把本分做穩」還是「我還多做了什麼」：
+  //   責任 XP＝幹部週薪＋打掃＋午餐＋班級常規獎勵（做好本分就會穩定累積）
+  //   貢獻 XP＝正向行為＋亮點＋進步獎（額外的努力與付出）
   const xpBlock = fin => {
     if (!fin || fin.xp == null) return "";
     const t = fin.xpTitle;
+    const duty = fin.xpDuty ?? 0, merit = fin.xpMerit ?? 0;
+    const total = Math.max(1, duty + merit);
     return `
       <div class="fin-xp">
         <div class="xp-head">
           <span class="xp-title">${App.esc(t ? `${t.emoji} ${t.name}` : "🌱 新芽")}</span>
           <span class="xp-num">累積 XP <strong>${fin.xp}</strong></span>
         </div>
+        ${(duty || merit) ? `
+        <div class="xp-bar" role="img" aria-label="責任 XP ${duty}、貢獻 XP ${merit}">
+          <span class="xp-seg duty" style="width:${(duty / total * 100).toFixed(1)}%"></span>
+          <span class="xp-seg merit" style="width:${(merit / total * 100).toFixed(1)}%"></span>
+        </div>
+        <div class="xp-split">
+          <span><i class="dot duty"></i>責任 ${duty}<small>本分做好</small></span>
+          <span><i class="dot merit"></i>貢獻 ${merit}<small>額外付出</small></span>
+        </div>` : ""}
         ${t && t.next ? `<div class="xp-next">再 ${t.toNext} XP 就是 ${App.esc(t.next)}</div>`
                       : '<div class="xp-next">已經是最高稱號，繼續帶著大家一起前進 ✨</div>'}
-        <div class="xp-hint">XP＝薪水＋獎勵金的累積，<b>花錢不會減少</b>，它記錄你做過的每一件好事。</div>
+        <div class="xp-hint">XP＝薪水＋獎勵金的累積，<b>花錢、被扣點都不會減少</b>；它記錄你做過的每一件事。</div>
       </div>`;
   };
 
