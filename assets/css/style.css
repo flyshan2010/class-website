@@ -1047,6 +1047,60 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .rule-notes { margin: 14px 0 0; padding-left: 20px; font-size: 0.8056rem; line-height: 1.75; color: var(--ink-soft); }
 .rule-notes b { color: var(--ink); }
 
+/* ===== 品格量尺（2026-08-14）=====
+   +3～−3 的同一把尺，讓學生看得出「這件事有多重」與「下一步往哪走」。
+   級數由點數推導（見 sync-notion.mjs 的 scaleLevel），量尺與實際點數不會說不一樣的話。 */
+.cscale { margin-top: 12px; }
+.cscale-zone {
+  text-align: center; font-size: 0.8056rem; font-weight: bold; letter-spacing: 4px;
+  color: var(--ink-soft); padding: 4px 0;
+}
+.cscale-duty {
+  display: flex; align-items: center; gap: 10px;
+  margin: 8px 0; color: #2f6f63; font-weight: bold; font-size: 0.8333rem; letter-spacing: 3px;
+}
+.cscale-duty::before, .cscale-duty::after {
+  content: ""; flex: 1; height: 3px; border-radius: 3px;
+  background: repeating-linear-gradient(90deg, #2f6f63 0 10px, transparent 10px 18px);
+}
+.cscale-row {
+  display: grid; grid-template-columns: 46px 34px minmax(0, 1fr) 62px;
+  align-items: center; gap: 8px;
+  padding: 8px 12px; margin: 5px 0; border-radius: 14px;
+  background: var(--cs-bg, #f6f7f9);
+}
+.cscale-row.lvp3 { --cs-bg: #fff3c4; }
+.cscale-row.lvp2 { --cs-bg: #ffe6cc; }
+.cscale-row.lvp1 { --cs-bg: #ffe0d6; }
+.cscale-row.lvn1 { --cs-bg: #fbdada; }
+.cscale-row.lvn2 { --cs-bg: #f4c2c2; }
+.cscale-row.lvn3 { --cs-bg: #e6a3a3; }
+.cs-num { font-size: 1.2222rem; font-weight: 900; text-align: center; color: #5a4b3c; }
+.cs-emoji { font-size: 1.4444rem; text-align: center; line-height: 1; }
+.cs-label { display: block; font-weight: bold; line-height: 1.45; }
+.cs-next { display: block; font-size: 0.7778rem; color: #6b5b4b; line-height: 1.5; margin-top: 2px; }
+.cs-coin { text-align: right; font-weight: 900; white-space: nowrap; font-size: 0.8056rem; color: #5a4b3c; }
+.cscale-foot { text-align: center; color: var(--ink-soft); font-size: 0.8333rem; margin-top: 12px; line-height: 1.8; }
+@media (max-width: 640px) {
+  .cscale-row { grid-template-columns: 34px 26px minmax(0, 1fr); row-gap: 2px; padding: 8px; }
+  .cs-coin { grid-column: 3; text-align: left; }
+  .cs-emoji { font-size: 1.2222rem; }
+}
+
+/* 班規列上的量尺徽章 */
+.rr-lv {
+  display: inline-block; min-width: 2.1em; text-align: center;
+  border-radius: 999px; padding: 0 7px; margin-right: 6px;
+  font-size: 0.7222rem; font-weight: 900; color: #4a3a2a; vertical-align: 1px;
+}
+.rr-lv.p1 { background: #ffe0d6; }
+.rr-lv.p2 { background: #ffe6cc; }
+.rr-lv.p3 { background: #fff3c4; }
+.rr-lv.n1 { background: #fbdada; }
+.rr-lv.n2 { background: #f4c2c2; }
+.rr-lv.n3 { background: #e6a3a3; }
+.rr-lv.red { background: #c0392b; color: #fff; letter-spacing: 1px; }
+
 /* 一日作息與常規（執行層 routine）
    2026-08-09 改版：比照班級公約海報做成一段一張卡（色系沿用 rules-c0～c4），
    整體字級放大、S.O.P. 拆成編號步驟卡，學生一眼看得到流程順序。 */
