@@ -29,7 +29,7 @@ const App = {
     this.config = await this.fetchJSON("data/site-config.json");
     const c = this.config;
     document.title = `${c.siteTitle}｜${document.body.dataset.pageTitle || ""}`.replace(/｜$/, "");
-    // 讓 CSS 能針對單一頁面調整（例：首頁有 SPAR 海報，頁首的 motto 就不重複出現）
+    // 讓 CSS 能針對單一頁面調整（例：首頁有 S.T.A.R. 海報，頁首的 motto 就不重複出現）
     if (activeId) document.body.classList.add(`page-${activeId}`);
 
     document.getElementById("site-header").innerHTML = `
@@ -97,8 +97,11 @@ const App = {
     return c;
   },
 
-  // 班級口號「SPAR 閃耀亮點」海報：放大字首 S-P-A-R ＋ 小星星／火花。
+  // 班級口號「🌟 S.T.A.R. 閃耀之星」海報：放大字首 S-T-A-R ＋ 小星星／火花。
   // 資料在 data/site-config.json 的 spar 欄（repo 管理，Notion 同步不會覆蓋）。
+  // 2026-08-14 由 SPAR（Safety／Proactivity／Accountability／Respect）改版為
+  // S.T.A.R.（Secure 注意安全／Thank 尊重感恩／Action 主動積極／Responsible 認真負責）。
+  // 內部 class 名 .spar-* 沿用不改——純內部命名，改了要動五個檔卻沒有可見效益。
   // compact＝首頁用的橫幅版（只有字母＋中文）；完整版用於「關於我們」。
   sparPoster(spar, compact = false) {
     if (!spar?.items?.length) return "";
@@ -106,7 +109,7 @@ const App = {
       <div class="spar-poster ${compact ? "compact" : ""}">
         <div class="spar-head">
           <span class="spar-spark">✨</span>
-          <span class="spar-title">${this.esc(spar.title || "SPAR")}</span>
+          <span class="spar-title">${this.esc(spar.title || "S.T.A.R.")}</span>
           <span class="spar-spark">✨</span>
           ${spar.subtitle && !compact ? `<div class="spar-sub">${this.esc(spar.subtitle)}</div>` : ""}
         </div>
@@ -124,7 +127,7 @@ const App = {
       </div>`;
   },
 
-  // 每日小叮嚀：用班級口號 SPAR 四則輪播，依日期決定（同一天全班看到同一則）。
+  // 每日小叮嚀：用班級口號 S.T.A.R. 四則輪播，依日期決定（同一天全班看到同一則）。
   dailyTip(spar, iso) {
     const items = spar?.items ?? [];
     if (!items.length) return null;
