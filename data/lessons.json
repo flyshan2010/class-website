@@ -1,5 +1,65 @@
 [
   {
+    "title": "國L6-1 又遠又近的月亮 第一節 字詞語詞及大意",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "生字：館、億、隕、撞、坑、狀、射、距、萬、里、均、騎、餅、揭、擊（15 字）",
+      "部首線索：手部（撞、揭、擊）是手的動作；足部（距）跟走路有關",
+      "辨字：臣（直豎，管、館）／呂（撇，鋁、營）；音同義不同：拒（手）／距（足）",
+      "語詞成語：隕石、大氣、傳說、趣聞、揭開；招搖撞騙、無懈可擊、包羅萬象、鵬程萬里、勢均力敵、騎虎難下、畫餅充飢",
+      "課文大意：尋找資料 → 相關知識 → 探尋結果（四段三部分）"
+    ],
+    "date": "",
+    "note": "翰林四上國語第六課「又遠又近的月亮」（山鷹，記敘文兼說明筆法），第參單元第二課、與第五課「月光下」為連續性文本。依國語顆粒度鐵則拆 4 節，本節為第 1 節。4 節共用同一份原教材 PDF（依國語慣例仍存於 教學簡報/教材資料/4上翰林CL06.pdf）。\n\n2026-08-16 產出五份網頁並上線（套教學 Design System chinese 主題）：前測 5 題＋提問框、教學頁 17 頁、練習頁 10 頁（封面選難度）、複習頁 8 頁（含翻牌速記）、線上模擬評量選擇 10＋填答 6。實測（視窗先固定 1600×900，clone 到畫面外展開後量測）：teach 最高 810、practice 880（p2 原 1270、c3 原 901 已修）、review 740，逐頁無溢出；揭露序列實測 0→1→2→3→4 一次一個、出完才換頁，揭露前後 offsetTop/offsetHeight 完全相同（無位移）；「整頁攟開」不洩答（HIDDEN-OK）、作答後答案帶才現（SHOWN-OK）；480px 無橫向捲動且最小字 24px、外部資源 0、noindex 齊備、console 無錯誤；五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100）。已程式驗證：紙本與網頁 4.exam.html、3.review.html、2.practice.html 最長共同片段皆少於 10 字（平行題本 PASS；首次拉出 4 題句式雷同已換題重產）；答案分布 C A D B A C B D C B、配分加總＝100、雙向細目表題數合計＝15 題。\n\n生字部首與筆畫已逐字核對課本第 64 頁字卡（含萬＝禸部 8/13、騎＝馬 8/18、距＝足 5/12）；辨字用語依課本標示寫作「臣（ㄧˊ）」，非臣ㄣˊ。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-1-字詞語詞及大意/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-1-字詞語詞及大意/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-1-字詞語詞及大意/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-1-字詞語詞及大意/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-1-字詞語詞及大意/3.review.html"
+    }
+  },
+  {
+    "title": "國L6-2 又遠又近的月亮 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "課文結構：尋找資料（第1段）→ 相關知識（第2、3段）→ 探尋結果（第4段）",
+      "讀新聞抳四件事：誰、做什麼、什麼時候、為什麼（阿提米絲二號登月計畫）",
+      "月球知識：45 億歲、無大氣保護故隕石撞出坑洞、平均 38 萬公里（騎單車三年）",
+      "閱讀策略：提取訊息（課文找得到）vs 推論訊息（順線索再想一步）",
+      "延伸知識：登月時間軸 1969 → 1972 → 中斷五十多年 → 2027 阿提米絲二號"
+    ],
+    "date": "",
+    "note": "翰林四上國語第六課「又遠又近的月亮」第 2 節。4 節共用同一份原教材 PDF。\n\n2026-08-16 產出五份網頁並上線：前測 5 題＋提問框、教學頁 15 頁、練習頁 10 頁、複習頁 8 頁、線上模擬評量選擇 10＋填答 6。老師裁示已落實：阿提米絲計畫現況獨立一頁，以 inline SVG 橫向時間軸呈現（1969 首次登月 → 1972 最後一次載人 → 虛線段表示中斷五十多年 → 2027 阿提米絲二號），未用 AI 生圖（老師裁定：資訊單純、學生容易理解）。\n\n實測：1600×900 逐頁無溢出（teach 最高 892、practice 894（p2 原 1324 已改 2×2 排列）、review 847）；揭露序列 0→1→2→3→4→5 一次一個、出完才換頁且無位移；「整頁攟開」不洩答、作答後答案帶才現；480px 無橫向捲動、最小字 24px；五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100）。已程式驗證：紙本與 4.exam／3.review／2.practice／0.pretest 四份網頁最長共同片段皆 <10 字（首次拉出 1 題句式雷同已換題）；答案分布 C A D B A C B D C B、配分加總＝100、雙向細目表題數合計＝15 題。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/3.review.html"
+    }
+  },
+  {
     "title": "數R1 期中總複習｜學習加油讚（一）",
     "subject": "數學",
     "grade": "四上",
@@ -1242,6 +1302,44 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
+    }
+  },
+  {
+    "title": "國L6-3 又遠又近的月亮 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第六課「又遠又近的月亮」第 3 節。4 節共用同一份原教材 PDF。",
+    "links": {
+      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L6-4 又遠又近的月亮 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第六課「又遠又近的月亮」第 4 節（本課最後一節）。4 節共用同一份原教材 PDF。",
+    "links": {
+      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
     }
   }
 ]
