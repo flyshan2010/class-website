@@ -1989,151 +1989,359 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
+   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
    ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
+#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
+.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
+.slide.is-active { opacity: 1; visibility: visible; }
+.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 0 var(--safe-x);
+  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
 }
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
+.hud .spacer { flex: 1; }
+.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
+.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
+.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
+.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
 .map-svg { display:block; width:100%; height:auto; }
-/* 填充題的題幹不在 .quiz 內，補上 DS 題幹樣式（否則掉回 16px 預設） */
-.q-block > .q-stem { font-size: var(--t4); line-height: var(--lh-normal); font-weight: var(--fw-bold); color: var(--ink); }
-.sec-title { font-size: var(--t2); font-weight: var(--fw-bold); color: var(--accent); border-bottom: var(--line-bold) solid var(--accent); padding-bottom: var(--s2); }
 .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s3); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
+/* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
+.split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
+@media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
+</head>
 <body>
-<main class="page" aria-label="傳統住屋與生活觀念複習">
-  <header class="page-head">
-    <span class="label">第二單元 家鄉的傳統住屋與器物 · 2-1</span>
-    <h1 class="title">觀念複習</h1>
-  </header>
-  <p class="lede">考試前先把五個重點看過一遍。這一頁<strong>只複習觀念、不出考題</strong>——想練題目請到「線上模擬評量」。</p>
+<main class="deck" aria-label="傳統住屋與生活觀念複習">
+  <div class="stage" id="stage" tabindex="-1">
+<style>
+/* 本課專用：三合院互動平面圖（DS 未涵蓋的資訊關係，依 DS 色票自繪） */
+.plan-wrap { display:grid; grid-template-columns: 940px 1fr; gap:24px; align-items:start; }
+.plan-svg { width:940px; height:auto; }
+.plan-hit { cursor:pointer; }
+.plan-hit .zone-shape { transition: fill 220ms ease-out, stroke-width 220ms ease-out; }
+.plan-hit:hover .zone-shape, .plan-hit:focus-visible .zone-shape { stroke-width:6; }
+.plan-hit.is-picked .zone-shape { stroke-width:7; }
+.plan-note { border:3px solid var(--line); border-radius:16px; padding:24px; background:var(--surface); min-height:430px; }
+.plan-note .n-head { font-size:var(--t3); font-weight:800; color:var(--accent); margin-bottom:12px; }
+.plan-note .n-body { font-size:var(--t4); line-height:1.6; }
+.plan-note .n-hint { font-size:var(--t5); color:var(--muted); }
+.plan-note .n-count { font-size:var(--t5); color:var(--muted); margin-top:16px; }
+@media (max-width:1024px){ .plan-wrap{ grid-template-columns:1fr; } .plan-svg{ width:100%; } }
+</style>
 
-  <!-- 一 -->
-  <h2 class="sec-title">一、就地取材：本課最重要的一句話</h2>
-  <div class="misconception">
-    <div class="wrong-side">
-      <div class="mark">✗ 常見錯誤</div>
-      <div class="text">「早期的人隨便撿東西蓋房子，因為他們沒有錢。」</div>
+    <!-- 1 封面 -->
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第二單元 家鄉的傳統住屋與器物 · 2-1</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">觀念複習</div>
+        <div class="sub">考試前先把五個重點看過一遍。這一頁只複習觀念、不出考題——想練題目請到「線上模擬評量」。</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="s1" aria-labelledby="s1-t" hidden>
+      <div class="page-head"><span class="label">複習 1</span><h2 id="s1-t" class="title">一、就地取材：本課最重要的一句話</h2></div>
+      <div class="misconception" data-reveal="">
+<div class="wrong-side">
+<div class="mark">✗ 常見錯誤</div>
+<div class="text">「早期的人隨便撿東西蓋房子，因為他們沒有錢。」</div>
+</div>
+<div class="becomes">→</div>
+<div class="right-side">
+<div class="mark">✓ 正確理解</div>
+<div class="text">用<strong>住家附近有的材料</strong>，蓋出最能適應當地環境的房子——這是<strong>智慧</strong>，不是將就。</div>
+</div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+<span class="text">環境 → 材料 → 住屋形式。看到「為什麼這樣蓋」，就從當地環境找答案。</span>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s2" aria-labelledby="s2-t" hidden>
+      <div class="page-head"><span class="label">複習 2</span><h2 id="s2-t" class="title">二、原住民族的傳統住屋</h2></div>
+      <div class="card-grid">
+<div class="concept-card" data-reveal=""><div class="head">石板屋</div><div class="body">排灣族、魯凱族。石板交錯堆疊，<strong>冬暖夏涼</strong>，煙從縫隙飄出，被稱為「會呼吸的房子」。屏東霧臺鄉的石板屋聚落已列入世界建築文物守護計畫。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">地下屋</div><div class="body">蘭嶼雅美族（達悟族）。建在挖低的地穴裡，<strong>低矮才躲得過強風</strong>。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">泰雅族傳統住屋</div><div class="body">以木頭、竹子建造，有半穴木屋與平地竹屋兩種。</div></div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+<span class="text">建材四樣要記得：<strong>石板、木頭、竹子、茅草</strong>。</span>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s3" aria-labelledby="s3-t" hidden>
+      <div class="page-head"><span class="label">複習 3</span><h2 id="s3-t" class="title">三、漢人的傳統住屋</h2></div>
+      <p data-reveal="" style="font-size:var(--t4);color:var(--muted);">先自己想答案，再點卡片翻開對照。</p>
+    </section>
+
+    <section class="slide" data-slide-id="s4" aria-labelledby="s4-t" hidden>
+      <div class="page-head"><span class="label">複習 4</span><h2 id="s4-t" class="title">三、漢人的傳統住屋（續 2）</h2></div>
+      <div class="card-grid">
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">竹管仔厝怎麼蓋？</span><span class="face back">竹子當骨架，牆用竹條編網再塗泥抹平</span></span>
+</button>
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">土埆厝怎麼蓋？</span><span class="face back">泥土混稻殼、稻稈做成土磚，曬乾後砌牆</span></span>
+</button>
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">哪一種要人工燒製？</span><span class="face back">磚瓦。黏土燒成紅磚，隔熱又耐磨</span></span>
+</button>
+
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s5" aria-labelledby="s5-t" hidden>
+      <div class="page-head"><span class="label">複習 5</span><h2 id="s5-t" class="title">三、漢人的傳統住屋（續 3）</h2></div>
+      <div class="card-grid">
+
+
+
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">形式為什麼會變？</span><span class="face back">家中人口增加、經濟條件改善</span></span>
+</button>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s6" aria-labelledby="s6-t" hidden>
+      <div class="page-head"><span class="label">複習 6</span><h2 id="s6-t" class="title">三、漢人的傳統住屋（續 4）</h2></div>
+      <div class="flow-steps">
+<div class="step" data-reveal=""><div class="badge">1</div><div class="head">一條龍</div><div class="body">只有正身</div></div>
+<div class="arrow">→</div>
+<div class="step" data-reveal=""><div class="badge">2</div><div class="head">單伸手</div><div class="body">加一邊護龍，像「L」</div></div>
+<div class="arrow">→</div>
+<div class="step" data-reveal=""><div class="badge">3</div><div class="head">三合院</div><div class="body">加兩邊護龍，像「ㄇ」</div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s7" aria-labelledby="s7-t" hidden>
+      <div class="page-head"><span class="label">複習 7</span><h2 id="s7-t" class="title">四、三合院的空間與周遭環境</h2></div>
+      <div class="card-grid">
+<div class="concept-card" data-reveal=""><div class="head">正廳</div><div class="body">供奉神明與祖先牌位，也是祭拜、接待客人的地方。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">護龍</div><div class="body">正身左右延伸的房子，住人用。<strong>以左為尊</strong>，左大右小。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">稻埕</div><div class="body">曬稻穀、曬衣服，也是孩子遊戲、大人聚會的多用途場所。</div></div>
+
+
+
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s8" aria-labelledby="s8-t" hidden>
+      <div class="page-head"><span class="label">複習 8</span><h2 id="s8-t" class="title">四、三合院的空間與周遭環境（續 2）</h2></div>
+      <div class="card-grid">
+
+
+
+<div class="concept-card" data-reveal=""><div class="head">水池</div><div class="body">洗東西、養魚，發生火災時可以滅火。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">竹林、果樹</div><div class="body">提供水果與編織材料，還能防風、防盜。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">牛棚、堆肥場</div><div class="body">牛與農具是耕種的幫手；糞尿與枯枝做成肥料，讓土地變肥沃。</div></div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
+<span class="text">判斷左右的口訣：<strong>站在正廳前，面朝外</strong>，左手邊才是三合院的左邊。</span>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s9" aria-labelledby="s9-t" hidden>
+      <div class="page-head"><span class="label">複習 9</span><h2 id="s9-t" class="title">五、傳統住屋的改變與保存</h2></div>
+      <div class="compare-pair">
+<div class="side" data-reveal="">
+<div class="head">為什麼會改變</div>
+<div class="item">工商業發展、生活方式轉變</div>
+<div class="item">建材革新，出現<strong>鋼筋混凝土</strong></div>
+<div class="item">許多傳統住屋被拆除、改建成樓房</div>
+</div>
+<div class="vs">vs</div>
+<div class="side is-focus" data-reveal="">
+<div class="head">怎麼保存下來</div>
+<div class="item">列為<strong>古蹟</strong>，依法保護</div>
+<div class="item">規畫為<strong>聚落保存區</strong>（澎湖二崁村）</div>
+<div class="item">結合當地特色成為觀光景點、改建餐廳</div>
+</div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+<span class="text">保存傳統住屋，是為了讓老建築找到<strong>新生命</strong>，也讓更多人認識先民的智慧。</span>
+</div>
+    </section>
+
+<script>
+/* 三合院互動平面圖：點選空間 → 右側說明更新（本課專用，非 DS 元件） */
+(() => {
+  const NOTES = {
+    hall:  ['正廳', '三合院正身中間的房間，供奉<strong>神明和祖先的牌位</strong>，也是祭拜、接待客人的地方。'],
+    wingL: ['左護龍', '正身左右延伸出去的房子叫<strong>護龍</strong>。人站正廳前朝外，左手邊是左護龍，傳統上<strong>以左為尊</strong>，位置比右邊高。'],
+    wingR: ['右護龍', '右邊的護龍。房間依「<strong>左大右小</strong>」的原則分配，護龍的屋頂也比正廳矮一點。'],
+    yard:  ['稻埕', '曬稻穀、花生的地方，也可以曬衣服、棉被。是孩子遊戲、大人乘涼聊天，還有辦喜事、請客的<strong>多用途場所</strong>。'],
+    pond:  ['水池', '通常在稻埕前方，呈半圓形。可以<strong>洗東西、養魚</strong>，萬一發生火災還能用來滅火。'],
+    grove: ['竹林、果樹', '果樹提供水果，竹子可以編織生活器物、修理房屋。竹林還有<strong>防風、防盜</strong>的功能。'],
+    farm:  ['牛棚、農具間、堆肥場', '牛隻和農具是耕種的幫手，位置放得近才方便工作。堆肥場把枯枝落葉和糞尿做成<strong>肥料</strong>，讓土地變肥沃。']
+  };
+  const wrap = document.querySelector('[data-plan]');
+  if (!wrap) return;
+  const head = wrap.querySelector('[data-plan-head]');
+  const body = wrap.querySelector('[data-plan-body]');
+  const count = wrap.querySelector('[data-plan-count]');
+  const seen = new Set();
+  const total = Object.keys(NOTES).length;
+  const pick = (g) => {
+    const key = g.dataset.zone;
+    if (!NOTES[key]) return;
+    wrap.querySelectorAll('.plan-hit').forEach((n) => n.classList.toggle('is-picked', n === g));
+    head.innerHTML = NOTES[key][0];
+    body.innerHTML = NOTES[key][1];
+    seen.add(key);
+    count.textContent = `已看過 ${seen.size} / ${total}`;
+  };
+  wrap.querySelectorAll('.plan-hit').forEach((g) => {
+    g.addEventListener('click', () => pick(g));
+    g.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(g); }
+    });
+  });
+})();
+</script>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="becomes">→</div>
-    <div class="right-side">
-      <div class="mark">✓ 正確理解</div>
-      <div class="text">用<strong>住家附近有的材料</strong>，蓋出最能適應當地環境的房子——這是<strong>智慧</strong>，不是將就。</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">環境 → 材料 → 住屋形式。看到「為什麼這樣蓋」，就從當地環境找答案。</span>
-  </div>
-
-  <!-- 二 -->
-  <h2 class="sec-title">二、原住民族的傳統住屋</h2>
-  <div class="card-grid">
-    <div class="concept-card"><div class="head">石板屋</div><div class="body">排灣族、魯凱族。石板交錯堆疊，<strong>冬暖夏涼</strong>，煙從縫隙飄出，被稱為「會呼吸的房子」。屏東霧臺鄉的石板屋聚落已列入世界建築文物守護計畫。</div></div>
-    <div class="concept-card"><div class="head">地下屋</div><div class="body">蘭嶼雅美族（達悟族）。建在挖低的地穴裡，<strong>低矮才躲得過強風</strong>。</div></div>
-    <div class="concept-card"><div class="head">泰雅族傳統住屋</div><div class="body">以木頭、竹子建造，有半穴木屋與平地竹屋兩種。</div></div>
-  </div>
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-    <span class="text">建材四樣要記得：<strong>石板、木頭、竹子、茅草</strong>。</span>
-  </div>
-
-  <!-- 三 -->
-  <h2 class="sec-title">三、漢人的傳統住屋</h2>
-  <p style="font-size:var(--t4);color:var(--muted);">先自己想答案，再點卡片翻開對照。</p>
-  <div class="card-grid">
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">竹管仔厝怎麼蓋？</span><span class="face back">竹子當骨架，牆用竹條編網再塗泥抹平</span></span>
-    </button>
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">土埆厝怎麼蓋？</span><span class="face back">泥土混稻殼、稻稈做成土磚，曬乾後砌牆</span></span>
-    </button>
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">哪一種要人工燒製？</span><span class="face back">磚瓦。黏土燒成紅磚，隔熱又耐磨</span></span>
-    </button>
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">形式為什麼會變？</span><span class="face back">家中人口增加、經濟條件改善</span></span>
-    </button>
-  </div>
-  <div class="flow-steps">
-    <div class="step"><div class="badge">1</div><div class="head">一條龍</div><div class="body">只有正身</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">2</div><div class="head">單伸手</div><div class="body">加一邊護龍，像「L」</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">3</div><div class="head">三合院</div><div class="body">加兩邊護龍，像「ㄇ」</div></div>
-  </div>
-
-  <!-- 四 -->
-  <h2 class="sec-title">四、三合院的空間與周遭環境</h2>
-  <div class="card-grid">
-    <div class="concept-card"><div class="head">正廳</div><div class="body">供奉神明與祖先牌位，也是祭拜、接待客人的地方。</div></div>
-    <div class="concept-card"><div class="head">護龍</div><div class="body">正身左右延伸的房子，住人用。<strong>以左為尊</strong>，左大右小。</div></div>
-    <div class="concept-card"><div class="head">稻埕</div><div class="body">曬稻穀、曬衣服，也是孩子遊戲、大人聚會的多用途場所。</div></div>
-    <div class="concept-card"><div class="head">水池</div><div class="body">洗東西、養魚，發生火災時可以滅火。</div></div>
-    <div class="concept-card"><div class="head">竹林、果樹</div><div class="body">提供水果與編織材料，還能防風、防盜。</div></div>
-    <div class="concept-card"><div class="head">牛棚、堆肥場</div><div class="body">牛與農具是耕種的幫手；糞尿與枯枝做成肥料，讓土地變肥沃。</div></div>
-  </div>
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
-    <span class="text">判斷左右的口訣：<strong>站在正廳前，面朝外</strong>，左手邊才是三合院的左邊。</span>
-  </div>
-
-  <!-- 五 -->
-  <h2 class="sec-title">五、傳統住屋的改變與保存</h2>
-  <div class="compare-pair">
-    <div class="side">
-      <div class="head">為什麼會改變</div>
-      <div class="item">工商業發展、生活方式轉變</div>
-      <div class="item">建材革新，出現<strong>鋼筋混凝土</strong></div>
-      <div class="item">許多傳統住屋被拆除、改建成樓房</div>
-    </div>
-    <div class="vs">vs</div>
-    <div class="side is-focus">
-      <div class="head">怎麼保存下來</div>
-      <div class="item">列為<strong>古蹟</strong>，依法保護</div>
-      <div class="item">規畫為<strong>聚落保存區</strong>（澎湖二崁村）</div>
-      <div class="item">結合當地特色成為觀光景點、改建餐廳</div>
-    </div>
-  </div>
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-    <span class="text">保存傳統住屋，是為了讓老建築找到<strong>新生命</strong>，也讓更多人認識先民的智慧。</span>
-  </div>
-
 </main>
 
 <script>
 (() => {
-  document.querySelectorAll('.q-block').forEach((block) => {
-    block.addEventListener('tds:answered', () => {
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
     });
-  });
-  /* 填充題：按鈕自行揭曉參考答案（無法自動批改，改為自評） */
-  document.querySelectorAll('[data-show-answer]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const block = btn.closest('.q-block');
-      if (!block) return;
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
-      btn.disabled = true;
-      btn.textContent = '參考答案已顯示';
+  };
+  const updateMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+  };
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
     });
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const advance = () => {
+    if (revealNext(slides[index])) { updateMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateMeta(); return; }
+    render(index - 1, true, true);
+  };
+
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
   });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target.closest('.slide');
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1, true, true); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
 })();
 </script>
 </body>

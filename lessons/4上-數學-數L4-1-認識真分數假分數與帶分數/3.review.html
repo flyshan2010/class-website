@@ -1994,26 +1994,25 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
+   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
    ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
+#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
+.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
+.slide.is-active { opacity: 1; visibility: visible; }
+.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 0 var(--safe-x);
+  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
 }
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
+.hud .spacer { flex: 1; }
+.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
+.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
+.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
+.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 <style>
 
@@ -2040,79 +2039,221 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
 </style>
 </head>
 <body>
-<main class="page" aria-label="認識真分數假分數與帶分數整合複習">
+<main class="deck" aria-label="認識真分數假分數與帶分數整合複習">
+  <div class="stage" id="stage" tabindex="-1">
 
 
-  <header class="page-head">
-    <span class="label">第四單元 假分數與帶分數 · 4-1</span>
-    <h1 class="title">複習速記</h1>
-  </header>
-  <p class="lede">三個名詞、一條分界線。看完可以自己講一遍給家人聽。</p>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第四單元 假分數與帶分數 · 4-1</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">複習速記</div>
+        <div class="sub">三個名詞、一條分界線。看完可以自己講一遍給家人聽。</div>
+      </div>
+    </section>
 
-  <div class="compare-pair">
-    <div class="side">
-      <div class="head">真分數（&lt; 1）</div>
-      <div class="item">分子比分母<b>小</b></div>
-      <div class="item">例：<span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">3</span><span class="den">8</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">2</span></span></div>
-      <div class="item">意思：不夠合成一整個</div>
+    <section class="slide" data-slide-id="s1" aria-labelledby="s1-t" hidden>
+      <div class="page-head"><span class="label">複習 1</span><h2 id="s1-t" class="title">真分數（&lt; 1） vs 假分數（≥ 1）</h2></div>
+      <div class="compare-pair">
+<div class="side" data-reveal="">
+<div class="head">真分數（&lt; 1）</div>
+<div class="item">分子比分母<b>小</b></div>
+<div class="item">例：<span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">3</span><span class="den">8</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">2</span></span></div>
+<div class="item">意思：不夠合成一整個</div>
+</div>
+<div class="vs">vs</div>
+<div class="side is-focus" data-reveal="">
+<div class="head">假分數（≥ 1）</div>
+<div class="item">分子<b>等於</b>或<b>大於</b>分母</div>
+<div class="item">例：<span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">5</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">9</span><span class="den">6</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">11</span><span class="den">8</span></span></div>
+<div class="item">意思：剛好合成 1，或超過 1</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s2" aria-labelledby="s2-t" hidden>
+      <div class="page-head"><span class="label">複習 2</span><h2 id="s2-t" class="title">帶分數：整數 ＋ 真分數</h2></div>
+      <div class="concept-card" data-reveal="">
+<div class="head">帶分數：整數 ＋ 真分數</div>
+<div class="body">像 <span class="mixed" style="font-size:1.0em"><span class="whole">1</span><span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">5</span></span></span>、<span class="mixed" style="font-size:1.0em"><span class="whole">2</span><span class="frac" style="font-size:1.0em"><span class="num">3</span><span class="den">4</span></span></span> 這樣，由整數和真分數合起來的分數叫帶分數，讀作「幾又幾分之幾」。中間的「又」是「和」的意思，不是小數點，也不是乘號。</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s3" aria-labelledby="s3-t" hidden>
+      <div class="page-head"><span class="label">複習 3</span><h2 id="s3-t" class="title">在數線上看得最清楚25在 1 的左邊（真分數）；55剛好落在 1；75在 1 的右邊（假分數），也可以寫成125。</h2></div>
+      <div class="figure-block" data-reveal="">
+<div class="figure"><svg aria-label="0到2的數線，每1平分成5格" role="img" style="width:100%;max-width:900px;height:auto" viewbox="0 0 900 170"><line stroke="var(--ink)" stroke-width="3" x1="60" x2="868" y1="115" y2="115"></line><polygon fill="var(--ink)" points="868,115 854,108 854,122"></polygon><line stroke="var(--ink)" stroke-width="3" x1="60.0" x2="60.0" y1="99" y2="131"></line><text fill="var(--ink)" font-size="26" text-anchor="middle" x="60.0" y="161">0</text><line stroke="var(--ink)" stroke-width="2" x1="138.0" x2="138.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="2" x1="216.0" x2="216.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="2" x1="294.0" x2="294.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="2" x1="372.0" x2="372.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="3" x1="450.0" x2="450.0" y1="99" y2="131"></line><text fill="var(--ink)" font-size="26" text-anchor="middle" x="450.0" y="161">1</text><line stroke="var(--ink)" stroke-width="2" x1="528.0" x2="528.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="2" x1="606.0" x2="606.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="2" x1="684.0" x2="684.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="2" x1="762.0" x2="762.0" y1="106" y2="124"></line><line stroke="var(--ink)" stroke-width="3" x1="840.0" x2="840.0" y1="99" y2="131"></line><text fill="var(--ink)" font-size="26" text-anchor="middle" x="840.0" y="161">2</text><text fill="var(--accent)" font-size="26" font-weight="700" text-anchor="middle" x="216.0" y="85"><span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span></text><text fill="var(--accent)" font-size="26" font-weight="700" text-anchor="middle" x="450.0" y="85"><span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">5</span></span></text><text fill="var(--accent)" font-size="26" font-weight="700" text-anchor="middle" x="606.0" y="85"><span class="frac" style="font-size:1.0em"><span class="num">7</span><span class="den">5</span></span></text><circle cx="216.0" cy="115" fill="var(--accent-2)" r="8"></circle><circle cx="450.0" cy="115" fill="var(--accent-2)" r="8"></circle><circle cx="606.0" cy="115" fill="var(--accent-2)" r="8"></circle></svg></div>
+<div class="caption">
+<div class="head">在數線上看得最清楚</div>
+<div class="body"><span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span> 在 1 的左邊（真分數）；<span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">5</span></span> 剛好落在 1；<span class="frac" style="font-size:1.0em"><span class="num">7</span><span class="den">5</span></span> 在 1 的右邊（假分數），也可以寫成 <span class="mixed" style="font-size:1.0em"><span class="whole">1</span><span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span></span>。</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s4" aria-labelledby="s4-t" hidden>
+      <div class="page-head"><span class="label">複習 4</span><h2 id="s4-t" class="title">容易搞混的地方</h2></div>
+      <div class="misconception" data-reveal="">
+<div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">分子和分母一樣大（例如 <span class="frac" style="font-size:1.0em"><span class="num">6</span><span class="den">6</span></span>）不算假分數。</div></div>
+<div class="becomes">→</div>
+<div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">分子＝分母也是假分數，它剛好等於 1。分界線在 1，而 1 本身歸在假分數這一邊。</div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s5" aria-labelledby="s5-t" hidden>
+      <div class="page-head"><span class="label">複習 5</span><h2 id="s5-t" class="title">容易搞混的地方（續 2）</h2></div>
+      <div class="misconception" data-reveal="">
+<div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">兩個圓各塗 3 份和 2 份（都分成 3 等分），合起來寫成 <span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">6</span></span>。</div></div>
+<div class="becomes">→</div>
+<div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">單位沒有變，還是 <span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">3</span></span>，只是變成 5 個，所以是 <span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">3</span></span>。<b>分母不會相加。</b></div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s6" aria-labelledby="s6-t" hidden>
+      <div class="page-head"><span class="label">複習 6</span><h2 id="s6-t" class="title">重點</h2></div>
+      <div class="action-list">
+<div class="item" data-reveal=""><b>判斷三步驟</b>：① 看分母（合成 1 需要幾個）② 看分子（現在有幾個）③ 比一比 → 不夠＝真分數，剛好或超過＝假分數</div>
+<div class="item" data-reveal=""><b>換句話說</b>：超過 1 的量，可以用假分數說，也可以用帶分數說，兩種都對</div>
+<div class="item" data-reveal=""><b>檢查帶分數</b>：分數部分一定要是真分數，否則還要再併進整數部分</div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+<span class="text">下一節 4-2 要學：<span class="frac" style="font-size:1.0em"><span class="num">9</span><span class="den">4</span></span> 和 <span class="mixed" style="font-size:1.0em"><span class="whole">2</span><span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">4</span></span></span> 怎麼互相換算？</span>
+</div>
+    </section>
+
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>17</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="vs">vs</div>
-    <div class="side is-focus">
-      <div class="head">假分數（≥ 1）</div>
-      <div class="item">分子<b>等於</b>或<b>大於</b>分母</div>
-      <div class="item">例：<span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">5</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">9</span><span class="den">6</span></span>、<span class="frac" style="font-size:1.0em"><span class="num">11</span><span class="den">8</span></span></div>
-      <div class="item">意思：剛好合成 1，或超過 1</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-  <div class="concept-card">
-    <div class="head">帶分數：整數 ＋ 真分數</div>
-    <div class="body">像 <span class="mixed" style="font-size:1.0em"><span class="whole">1</span><span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">5</span></span></span>、<span class="mixed" style="font-size:1.0em"><span class="whole">2</span><span class="frac" style="font-size:1.0em"><span class="num">3</span><span class="den">4</span></span></span> 這樣，由整數和真分數合起來的分數叫帶分數，讀作「幾又幾分之幾」。中間的「又」是「和」的意思，不是小數點，也不是乘號。</div>
-  </div>
-
-  <div class="figure-block">
-    <div class="figure"><svg viewBox="0 0 900 170" role="img" aria-label="0到2的數線，每1平分成5格" style="width:100%;max-width:900px;height:auto"><line x1="60" y1="115" x2="868" y2="115" stroke="var(--ink)" stroke-width="3"/><polygon points="868,115 854,108 854,122" fill="var(--ink)"/><line x1="60.0" y1="99" x2="60.0" y2="131" stroke="var(--ink)" stroke-width="3"/><text x="60.0" y="161" font-size="26" fill="var(--ink)" text-anchor="middle">0</text><line x1="138.0" y1="106" x2="138.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="216.0" y1="106" x2="216.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="294.0" y1="106" x2="294.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="372.0" y1="106" x2="372.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="450.0" y1="99" x2="450.0" y2="131" stroke="var(--ink)" stroke-width="3"/><text x="450.0" y="161" font-size="26" fill="var(--ink)" text-anchor="middle">1</text><line x1="528.0" y1="106" x2="528.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="606.0" y1="106" x2="606.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="684.0" y1="106" x2="684.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="762.0" y1="106" x2="762.0" y2="124" stroke="var(--ink)" stroke-width="2"/><line x1="840.0" y1="99" x2="840.0" y2="131" stroke="var(--ink)" stroke-width="3"/><text x="840.0" y="161" font-size="26" fill="var(--ink)" text-anchor="middle">2</text><text x="216.0" y="85" font-size="26" fill="var(--accent)" text-anchor="middle" font-weight="700"><span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span></text><text x="450.0" y="85" font-size="26" fill="var(--accent)" text-anchor="middle" font-weight="700"><span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">5</span></span></text><text x="606.0" y="85" font-size="26" fill="var(--accent)" text-anchor="middle" font-weight="700"><span class="frac" style="font-size:1.0em"><span class="num">7</span><span class="den">5</span></span></text><circle cx="216.0" cy="115" r="8" fill="var(--accent-2)"/><circle cx="450.0" cy="115" r="8" fill="var(--accent-2)"/><circle cx="606.0" cy="115" r="8" fill="var(--accent-2)"/></svg></div>
-    <div class="caption">
-      <div class="head">在數線上看得最清楚</div>
-      <div class="body"><span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span> 在 1 的左邊（真分數）；<span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">5</span></span> 剛好落在 1；<span class="frac" style="font-size:1.0em"><span class="num">7</span><span class="den">5</span></span> 在 1 的右邊（假分數），也可以寫成 <span class="mixed" style="font-size:1.0em"><span class="whole">1</span><span class="frac" style="font-size:1.0em"><span class="num">2</span><span class="den">5</span></span></span>。</div>
-    </div>
-  </div>
-
-  <div class="misconception">
-    <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">分子和分母一樣大（例如 <span class="frac" style="font-size:1.0em"><span class="num">6</span><span class="den">6</span></span>）不算假分數。</div></div>
-    <div class="becomes">→</div>
-    <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">分子＝分母也是假分數，它剛好等於 1。分界線在 1，而 1 本身歸在假分數這一邊。</div></div>
-  </div>
-
-  <div class="misconception">
-    <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">兩個圓各塗 3 份和 2 份（都分成 3 等分），合起來寫成 <span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">6</span></span>。</div></div>
-    <div class="becomes">→</div>
-    <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">單位沒有變，還是 <span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">3</span></span>，只是變成 5 個，所以是 <span class="frac" style="font-size:1.0em"><span class="num">5</span><span class="den">3</span></span>。<b>分母不會相加。</b></div></div>
-  </div>
-
-  <div class="action-list">
-    <div class="item"><b>判斷三步驟</b>：① 看分母（合成 1 需要幾個）② 看分子（現在有幾個）③ 比一比 → 不夠＝真分數，剛好或超過＝假分數</div>
-    <div class="item"><b>換句話說</b>：超過 1 的量，可以用假分數說，也可以用帶分數說，兩種都對</div>
-    <div class="item"><b>檢查帶分數</b>：分數部分一定要是真分數，否則還要再併進整數部分</div>
-  </div>
-
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">下一節 4-2 要學：<span class="frac" style="font-size:1.0em"><span class="num">9</span><span class="den">4</span></span> 和 <span class="mixed" style="font-size:1.0em"><span class="whole">2</span><span class="frac" style="font-size:1.0em"><span class="num">1</span><span class="den">4</span></span></span> 怎麼互相換算？</span>
-  </div>
-
-  <footer class="page-foot">四上數學 · 第四單元 假分數與帶分數 · 4-1 認識真分數、假分數與帶分數 · 複習速記</footer>
-
-
 </main>
 
 <script>
 (() => {
-  document.querySelectorAll('.q-block').forEach((block) => {
-    block.addEventListener('tds:answered', () => {
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
     });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
   });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
 })();
 </script>
 </body>

@@ -1989,169 +1989,343 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
+   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
    ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
+#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
+.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
+.slide.is-active { opacity: 1; visibility: visible; }
+.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 0 var(--safe-x);
+  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
 }
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
+.hud .spacer { flex: 1; }
+.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
+.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
+.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
+.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
 .map-svg { display:block; width:100%; height:auto; }
-/* 填充題的題幹不在 .quiz 內，補上 DS 題幹樣式（否則掉回 16px 預設） */
-.q-block > .q-stem { font-size: var(--t4); line-height: var(--lh-normal); font-weight: var(--fw-bold); color: var(--ink); }
-.sec-title { font-size: var(--t2); font-weight: var(--fw-bold); color: var(--accent); border-bottom: var(--line-bold) solid var(--accent); padding-bottom: var(--s2); }
 .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s3); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
+/* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
+.split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
+@media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
+</head>
 <body>
-<main class="page" aria-label="氣候水資源與生活觀念複習">
-  <header class="page-head">
-    <span class="label">第一單元 家鄉的自然環境 · 1-3</span>
-    <h1 class="title">觀念複習</h1>
-  </header>
-  <p class="lede">考試前先把五個重點看過一遍。這一頁<strong>只複習觀念、不出考題</strong>——想練題目請到「線上模擬評量」。</p>
+<main class="deck" aria-label="氣候水資源與生活觀念複習">
+  <div class="stage" id="stage" tabindex="-1">
 
-  <!-- 一 -->
-  <h2 class="sec-title">一、天氣不等於氣候（本課最重要）</h2>
-  <div class="misconception">
-    <div class="wrong-side">
-      <div class="mark">✗ 常見錯誤</div>
-      <div class="text">「今天好熱喔，我們這裡的氣候很熱。」把一天的狀況當成氣候。</div>
+    <!-- 1 封面 -->
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第一單元 家鄉的自然環境 · 1-3</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">觀念複習</div>
+        <div class="sub">考試前先把五個重點看過一遍。這一頁只複習觀念、不出考題——想練題目請到「線上模擬評量」。</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="s1" aria-labelledby="s1-t" hidden>
+      <div class="page-head"><span class="label">複習 1</span><h2 id="s1-t" class="title">一、天氣不等於氣候（本課最重要）</h2></div>
+      <div class="misconception" data-reveal="">
+<div class="wrong-side">
+<div class="mark">✗ 常見錯誤</div>
+<div class="text">「今天好熱喔，我們這裡的氣候很熱。」把一天的狀況當成氣候。</div>
+</div>
+<div class="becomes">→</div>
+<div class="right-side">
+<div class="mark">✓ 正確理解</div>
+<div class="text">氣候是<strong>長時間</strong>的天氣平均狀況；一天、一週的冷熱晴雨叫做<strong>天氣</strong>。</div>
+</div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-clock"></use></svg></span>
+<span class="text">看到「一年四季」「平均」「長期」，講的就是氣候；看到「今天」「明天」，講的是天氣。</span>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s2" aria-labelledby="s2-t" hidden>
+      <div class="page-head"><span class="label">複習 2</span><h2 id="s2-t" class="title">二、怎麼讀氣溫圖和雨量圖</h2></div>
+      <div class="flow-steps">
+<div class="step" data-reveal=""><div class="badge">1</div><div class="head">看標題</div><div class="body">這張圖在講哪個地方</div></div>
+<div class="arrow">→</div>
+<div class="step" data-reveal=""><div class="badge">2</div><div class="head">看橫軸</div><div class="body">橫軸是 1～12 月的月分</div></div>
+<div class="arrow">→</div>
+<div class="step" data-reveal=""><div class="badge">3</div><div class="head">看縱軸</div><div class="body">℃ 是氣溫，毫米是雨量</div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s3" aria-labelledby="s3-t" hidden>
+      <div class="page-head"><span class="label">複習 3</span><h2 id="s3-t" class="title">二、怎麼讀氣溫圖和雨量圖（續 2）</h2></div>
+      <div class="card-grid">
+<div class="concept-card" data-reveal=""><div class="head">夏熱冬冷</div><div class="body">最熱和最冷的月分<strong>差很多</strong>，例如宜蘭（7 月 28.9℃／1 月 16.6℃）。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">四季高溫</div><div class="body">冬天也不太冷，例如恆春（7 月 28.7℃／1 月 21.1℃）。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">四季多雨</div><div class="body">每個月都有不少雨，例如基隆（年雨量約 3589.6 毫米）。</div></div>
+
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s4" aria-labelledby="s4-t" hidden>
+      <div class="page-head"><span class="label">複習 4</span><h2 id="s4-t" class="title">二、怎麼讀氣溫圖和雨量圖（續 3）</h2></div>
+      <div class="card-grid">
+
+
+
+<div class="concept-card" data-reveal=""><div class="head">夏雨冬乾</div><div class="body">雨集中在夏天，例如高雄（8 月 512.4／2 月 17.7 毫米）。</div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s5" aria-labelledby="s5-t" hidden>
+      <div class="page-head"><span class="label">複習 5</span><h2 id="s5-t" class="title">三、氣候怎麼影響生活</h2></div>
+      <p data-reveal="" style="font-size:var(--t4);color:var(--muted);">先自己想答案，再點卡片翻開對照。</p>
+    </section>
+
+    <section class="slide" data-slide-id="s6" aria-labelledby="s6-t" hidden>
+      <div class="page-head"><span class="label">複習 6</span><h2 id="s6-t" class="title">三、氣候怎麼影響生活（續 2）</h2></div>
+      <div class="card-grid">
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">多雨的地方，房子怎麼蓋？</span><span class="face back">用油毛氈防雨、屋頂做成傾斜式，讓雨水流下去</span></span>
+</button>
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">少雨的地方，種什麼？</span><span class="face back">耐旱的作物，例如澎湖七美種花生</span></span>
+</button>
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">天氣熱，居民怎麼消暑？</span><span class="face back">到海邊戲水、堆沙堡，或是吃冰</span></span>
+</button>
+
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s7" aria-labelledby="s7-t" hidden>
+      <div class="page-head"><span class="label">複習 7</span><h2 id="s7-t" class="title">三、氣候怎麼影響生活（續 3）</h2></div>
+      <div class="card-grid">
+
+
+
+<button class="flip-card" data-flip="" data-reveal="">
+<span class="inner"><span class="face front">大家的感受都一樣嗎？</span><span class="face back">不一樣。喜歡的活動也不同，要互相尊重</span></span>
+</button>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s8" aria-labelledby="s8-t" hidden>
+      <div class="page-head"><span class="label">複習 8</span><h2 id="s8-t" class="title">四、家鄉的水資源</h2></div>
+      <div class="card-grid">
+<div class="concept-card" data-reveal=""><div class="head">四種水</div><div class="body">河川、湖泊、地下水、海洋。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">河水去哪裡</div><div class="body">多半流入海洋，或滲入地下變成地下水。</div></div>
+<div class="concept-card" data-reveal=""><div class="head">河川會變</div><div class="body">水量隨季節降雨改變；濁水溪冬季河床會裸露，全長約 186.6 公里。</div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s9" aria-labelledby="s9-t" hidden>
+      <div class="page-head"><span class="label">複習 9</span><h2 id="s9-t" class="title">四、家鄉的水資源（續 2）</h2></div>
+      <div class="compare-pair">
+<div class="side" data-reveal="">
+<div class="head">早期居民的做法</div>
+<div class="item">用<strong>埤塘</strong>把水儲存起來</div>
+<div class="item">開<strong>水圳</strong>把水引到農田灌溉</div>
+</div>
+<div class="vs">vs</div>
+<div class="side is-focus" data-reveal="">
+<div class="head">現在政府的做法</div>
+<div class="item">在河川<strong>中上游</strong>興建水庫</div>
+<div class="item">五種用途：民生與工業用水、灌溉、水力發電、防洪、觀光</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s10" aria-labelledby="s10-t" hidden>
+      <div class="page-head"><span class="label">複習 10</span><h2 id="s10-t" class="title">五、為什麼要珍惜水資源</h2></div>
+      <div class="data-focus" data-reveal="">
+<div class="figure-num"><span class="num">1/6</span><span class="unit">不到世界平均的六分之一</span></div>
+<div class="readout">
+<div class="claim">臺灣雨很多，能用的水卻很少</div>
+<div class="note">年雨量約是世界平均的 2.5 倍，但山勢陡、河川短又急，水很快流入海洋；加上人口密集，每人每年分配到的水就變得很少。</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s11" aria-labelledby="s11-t" hidden>
+      <div class="page-head"><span class="label">複習 11</span><h2 id="s11-t" class="title">五、為什麼要珍惜水資源（續 2）</h2></div>
+      <div class="flow-steps">
+<div class="step" data-reveal=""><div class="badge">1</div><div class="head">生活汙水</div><div class="body">洗澡、洗碗的水</div></div>
+<div class="arrow">→</div>
+<div class="step" data-reveal=""><div class="badge">2</div><div class="head">事業廢水</div><div class="body">工廠排出的水</div></div>
+<div class="arrow">→</div>
+<div class="step" data-reveal=""><div class="badge">3</div><div class="head">畜牧廢水</div><div class="body">養殖場排出的水</div></div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
+<span class="text">三種廢水未經處理就排入河川都會造成汙染——<strong>保護水資源是大家的責任</strong>。</span>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s12" aria-labelledby="s12-t" hidden>
+      <div class="page-head"><span class="label">複習 12</span><h2 id="s12-t" class="title">考前自我檢核</h2></div>
+      <div class="action-list">
+<div class="head">下面五件事，你都做得到嗎？</div>
+<div class="item" data-reveal="">我能用自己的話說出天氣和氣候的差別，並各舉一個例子</div>
+<div class="item" data-reveal="">給我一張氣溫圖或雨量圖，我能說出標題、橫軸、縱軸各代表什麼</div>
+<div class="item" data-reveal="">我能各舉一個例子，說明氣候影響建材、作物和休閒活動</div>
+<div class="item" data-reveal="">我能說出家鄉的四種水資源，以及水庫的五種用途</div>
+
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s13" aria-labelledby="s13-t" hidden>
+      <div class="page-head"><span class="label">複習 13</span><h2 id="s13-t" class="title">考前自我檢核（續 2）</h2></div>
+      <div class="action-list">
+<div class="head">下面五件事，你都做得到嗎？</div>
+
+
+
+
+<div class="item" data-reveal="">我能說出臺灣雨多卻可能缺水的原因，並說出一個保護水資源的做法</div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-arrow-right"></use></svg></span>
+<span class="text">五項都打勾了，就去「線上模擬評量」實際考一次。</span>
+</div>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="becomes">→</div>
-    <div class="right-side">
-      <div class="mark">✓ 正確理解</div>
-      <div class="text">氣候是<strong>長時間</strong>的天氣平均狀況；一天、一週的冷熱晴雨叫做<strong>天氣</strong>。</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-clock"></use></svg></span>
-    <span class="text">看到「一年四季」「平均」「長期」，講的就是氣候；看到「今天」「明天」，講的是天氣。</span>
-  </div>
-
-  <!-- 二 -->
-  <h2 class="sec-title">二、怎麼讀氣溫圖和雨量圖</h2>
-  <div class="flow-steps">
-    <div class="step"><div class="badge">1</div><div class="head">看標題</div><div class="body">這張圖在講哪個地方</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">2</div><div class="head">看橫軸</div><div class="body">橫軸是 1～12 月的月分</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">3</div><div class="head">看縱軸</div><div class="body">℃ 是氣溫，毫米是雨量</div></div>
-  </div>
-  <div class="card-grid">
-    <div class="concept-card"><div class="head">夏熱冬冷</div><div class="body">最熱和最冷的月分<strong>差很多</strong>，例如宜蘭（7 月 28.9℃／1 月 16.6℃）。</div></div>
-    <div class="concept-card"><div class="head">四季高溫</div><div class="body">冬天也不太冷，例如恆春（7 月 28.7℃／1 月 21.1℃）。</div></div>
-    <div class="concept-card"><div class="head">四季多雨</div><div class="body">每個月都有不少雨，例如基隆（年雨量約 3589.6 毫米）。</div></div>
-    <div class="concept-card"><div class="head">夏雨冬乾</div><div class="body">雨集中在夏天，例如高雄（8 月 512.4／2 月 17.7 毫米）。</div></div>
-  </div>
-
-  <!-- 三 -->
-  <h2 class="sec-title">三、氣候怎麼影響生活</h2>
-  <p style="font-size:var(--t4);color:var(--muted);">先自己想答案，再點卡片翻開對照。</p>
-  <div class="card-grid">
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">多雨的地方，房子怎麼蓋？</span><span class="face back">用油毛氈防雨、屋頂做成傾斜式，讓雨水流下去</span></span>
-    </button>
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">少雨的地方，種什麼？</span><span class="face back">耐旱的作物，例如澎湖七美種花生</span></span>
-    </button>
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">天氣熱，居民怎麼消暑？</span><span class="face back">到海邊戲水、堆沙堡，或是吃冰</span></span>
-    </button>
-    <button class="flip-card" data-flip>
-      <span class="inner"><span class="face front">大家的感受都一樣嗎？</span><span class="face back">不一樣。喜歡的活動也不同，要互相尊重</span></span>
-    </button>
-  </div>
-
-  <!-- 四 -->
-  <h2 class="sec-title">四、家鄉的水資源</h2>
-  <div class="card-grid">
-    <div class="concept-card"><div class="head">四種水</div><div class="body">河川、湖泊、地下水、海洋。</div></div>
-    <div class="concept-card"><div class="head">河水去哪裡</div><div class="body">多半流入海洋，或滲入地下變成地下水。</div></div>
-    <div class="concept-card"><div class="head">河川會變</div><div class="body">水量隨季節降雨改變；濁水溪冬季河床會裸露，全長約 186.6 公里。</div></div>
-  </div>
-  <div class="compare-pair">
-    <div class="side">
-      <div class="head">早期居民的做法</div>
-      <div class="item">用<strong>埤塘</strong>把水儲存起來</div>
-      <div class="item">開<strong>水圳</strong>把水引到農田灌溉</div>
-    </div>
-    <div class="vs">vs</div>
-    <div class="side is-focus">
-      <div class="head">現在政府的做法</div>
-      <div class="item">在河川<strong>中上游</strong>興建水庫</div>
-      <div class="item">五種用途：民生與工業用水、灌溉、水力發電、防洪、觀光</div>
-    </div>
-  </div>
-
-  <!-- 五 -->
-  <h2 class="sec-title">五、為什麼要珍惜水資源</h2>
-  <div class="data-focus">
-    <div class="figure-num"><span class="num">1/6</span><span class="unit">不到世界平均的六分之一</span></div>
-    <div class="readout">
-      <div class="claim">臺灣雨很多，能用的水卻很少</div>
-      <div class="note">年雨量約是世界平均的 2.5 倍，但山勢陡、河川短又急，水很快流入海洋；加上人口密集，每人每年分配到的水就變得很少。</div>
-    </div>
-  </div>
-  <div class="flow-steps">
-    <div class="step"><div class="badge">1</div><div class="head">生活汙水</div><div class="body">洗澡、洗碗的水</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">2</div><div class="head">事業廢水</div><div class="body">工廠排出的水</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">3</div><div class="head">畜牧廢水</div><div class="body">養殖場排出的水</div></div>
-  </div>
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
-    <span class="text">三種廢水未經處理就排入河川都會造成汙染——<strong>保護水資源是大家的責任</strong>。</span>
-  </div>
-
-  <!-- 自我檢核 -->
-  <h2 class="sec-title">考前自我檢核</h2>
-  <div class="action-list">
-    <div class="head">下面五件事，你都做得到嗎？</div>
-    <div class="item">我能用自己的話說出天氣和氣候的差別，並各舉一個例子</div>
-    <div class="item">給我一張氣溫圖或雨量圖，我能說出標題、橫軸、縱軸各代表什麼</div>
-    <div class="item">我能各舉一個例子，說明氣候影響建材、作物和休閒活動</div>
-    <div class="item">我能說出家鄉的四種水資源，以及水庫的五種用途</div>
-    <div class="item">我能說出臺灣雨多卻可能缺水的原因，並說出一個保護水資源的做法</div>
-  </div>
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-arrow-right"></use></svg></span>
-    <span class="text">五項都打勾了，就去「線上模擬評量」實際考一次。</span>
-  </div>
-
-  <footer class="page-foot">四上社會 · 第一單元 家鄉的自然環境 · 1-3 氣候、水資源與生活 · 觀念複習</footer>
 </main>
 
 <script>
 (() => {
-  document.querySelectorAll('.q-block').forEach((block) => {
-    block.addEventListener('tds:answered', () => {
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
     });
-  });
-  /* 填充題：按鈕自行揭曉參考答案（無法自動批改，改為自評） */
-  document.querySelectorAll('[data-show-answer]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const block = btn.closest('.q-block');
-      if (!block) return;
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
-      btn.disabled = true;
-      btn.textContent = '參考答案已顯示';
+  };
+  const updateMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+  };
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
     });
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const advance = () => {
+    if (revealNext(slides[index])) { updateMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateMeta(); return; }
+    render(index - 1, true, true);
+  };
+
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
   });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target.closest('.slide');
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1, true, true); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
 })();
 </script>
 </body>
