@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>分組練習｜差異化指導 · 四上國語 國L5-2</title>
+<title>複習速記｜整合複習 · 四上國語 國L5-3</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -1994,239 +1994,122 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .hud .pagemeta { font-size: var(--t5); color: var(--muted); }
 .progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
 .progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
-
-.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); flex: 1; min-height: 0; }
-.tier-card {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s2);
-  background: var(--surface); border: var(--line-bold) solid var(--line); border-radius: var(--r-lg);
-  padding: var(--s5); text-decoration: none; color: var(--ink);
-  transition: border-color 140ms ease, transform 140ms ease;
-}
-.tier-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-.tier-card .ico { width: 64px; height: 64px; color: var(--accent); }
-.tier-card .name { font-size: var(--t2); font-weight: var(--fw-bold); }
-.tier-card .hint { font-size: var(--t5); color: var(--muted); text-align: center; }
-
-.paper-note {
-  display: flex; align-items: flex-start; gap: var(--s3);
-  background: var(--accent-soft); border: var(--line-mid) dashed var(--accent);
-  border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
-}
-.paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
+.vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
 /* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
 [data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
-<main class="deck" aria-label="月光下 內容理解分組練習">
+<main class="deck" aria-label="月光下 形式深究整合複習">
   <div class="stage" id="stage" tabindex="-1">
 
-    <section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
-      <div class="page-head"><span class="label">國L5-2 內容理解</span><h2 id="cover-t" class="title">分組練習</h2></div>
-      <div class="tier-grid">
-        <a class="tier-card" href="#b1" data-reveal>
-          <svg class="ico"><use href="#ico-book"></use></svg>
-          <div class="name">基礎題</div><div class="hint">需要鷹架</div>
-        </a>
-        <a class="tier-card" href="#p1" data-reveal>
-          <svg class="ico"><use href="#ico-target"></use></svg>
-          <div class="name">進階題</div><div class="hint">基礎穩固</div>
-        </a>
-        <a class="tier-card" href="#c1" data-reveal>
-          <svg class="ico"><use href="#ico-star"></use></svg>
-          <div class="name">挑戰題</div><div class="hint">精熟應用</div>
-        </a>
-      </div>
-      <div class="paper-note" data-reveal>
-        <svg class="ico"><use href="#ico-pencil"></use></svg>
-        <span>✎ 三個難度都有配套的紙本學習單（2a 基礎／2b 進階／2c 挑戰），需要動手寫的題目寫在紙本上。</span>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第五課 月光下 · 第三節整合複習</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">複習速記</div>
+        <div class="sub">四種修辭、兩種句型，五分鐘全部複習一次</div>
       </div>
     </section>
 
-    <!-- 基礎題 1 -->
-    <section class="slide" data-slide-id="b1" aria-labelledby="b1-t" hidden>
-      <div class="page-head"><span class="label">基礎題 · 1</span><h2 id="b1-t" class="title">課文寫了哪個場景？</h2></div>
-      <div class="paper-note" data-reveal>
-        <svg class="ico"><use href="#ico-bulb"></use></svg>
-        <span>小提示：答案在課文第一段的第一句。</span>
+    <section class="slide" data-slide-id="four" aria-labelledby="four-t" hidden>
+      <div class="page-head"><span class="label">複習 1 · 四種修辭</span><h2 id="four-t" class="title">一句話記住它們</h2></div>
+      <div class="concept-grid">
+        <div class="concept-card" data-reveal><div class="head">譬喻</div><div class="body">拿別的東西來比：月亮像白玉盤。</div></div>
+        <div class="concept-card" data-reveal><div class="head">引用</div><div class="body">搬名家的話進來：李白說「小時不識月」。</div></div>
+        <div class="concept-card" data-reveal><div class="head">設問</div><div class="body">用問句勾起好奇：月球到底何時出現？</div></div>
+        <div class="concept-card" data-reveal><div class="head">摹寫</div><div class="body">寫感官感受：皎潔的光芒、天地無聲。</div></div>
       </div>
+    </section>
+
+    <section class="slide" data-slide-id="metaphor" aria-labelledby="metaphor-t" hidden>
+      <div class="page-head"><span class="label">複習 2 · 譬喻三零件</span><h2 id="metaphor-t" class="title">本體＋喻詞＋喻體</h2></div>
+      <div class="flow-steps">
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">本體</div><div class="body">月亮</div></div>
+        <div class="arrow" data-reveal>＋</div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">喻詞</div><div class="body">像是、又像是、疑</div></div>
+        <div class="arrow" data-reveal>＋</div>
+        <div class="step" data-reveal><div class="badge">3</div><div class="head">喻體</div><div class="body">白玉盤、瑤臺鏡</div></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">喻體要和本體真的有相像的地方，才是好譬喻</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="libai" aria-labelledby="libai-t" hidden>
+      <div class="page-head"><span class="label">複習 3 · 李白的詩</span><h2 id="libai-t" class="title">兩首詩，還記得嗎？</h2></div>
+      <div class="compare-pair">
+        <div class="side" data-reveal>
+          <div class="head">〈靜夜思〉</div>
+          <div class="item">床前明月光</div>
+          <div class="item">看月光而思念故鄉</div>
+        </div>
+        <div class="vs">＋</div>
+        <div class="side is-focus" data-reveal>
+          <div class="head">〈古朗月行〉</div>
+          <div class="item">小時不識月，呼作白玉盤</div>
+          <div class="item">又疑瑤臺鏡，飛在青雲端</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="sentence" aria-labelledby="sentence-t" hidden>
+      <div class="page-head"><span class="label">複習 4 · 兩種句型</span><h2 id="sentence-t" class="title">遞進 vs 並列</h2></div>
+      <div class="compare-pair">
+        <div class="side is-focus" data-reveal>
+          <div class="head">不只……而且……（遞進）</div>
+          <div class="item">後句比前句更進一層</div>
+          <div class="item">可換：不但…還…／除了…還…</div>
+        </div>
+        <div class="vs">vs</div>
+        <div class="side" data-reveal>
+          <div class="head">像是……又像是……（並列）</div>
+          <div class="item">兩件事地位相等，同時呈現</div>
+          <div class="item">月亮像白玉盤，又像妝鏡</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="phrase" aria-labelledby="phrase-t" hidden>
+      <div class="page-head"><span class="label">複習 5 · 短語</span><h2 id="phrase-t" class="title">兩組短語結構</h2></div>
+      <div class="concept-grid">
+        <div class="concept-card" data-reveal><div class="head">動詞＋著＋形容詞＋的＋名詞</div><div class="body">散發著皎潔的光芒／飄落著寒冷的白雪</div></div>
+        <div class="concept-card" data-reveal><div class="head">疊字副詞＋的在＋名詞＋動詞</div><div class="body">靜靜的在書中發亮／深深的在心裡期盼</div></div>
+        <div class="concept-card" data-reveal><div class="head">怎麼用</div><div class="body">寫景時套上去，句子立刻變得有畫面。</div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="quiz" aria-labelledby="quiz-t" hidden>
+      <div class="page-head"><span class="label">複習 6 · 檢查看看</span><h2 id="quiz-t" class="title">最後一題</h2></div>
       <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">作者一家人是在哪裡散步賞月？</p>
+        <p class="q-stem">「月亮像是白玉做的盤子，又像是仙人手中的妝鏡。」這句話同時用了哪兩種寫法？</p>
         <div class="q-options">
-          <button class="q-opt" data-correct>河邊</button>
-          <button class="q-opt">學校操場</button>
-          <button class="q-opt">山頂</button>
-          <button class="q-opt">海邊</button>
+          <button class="q-opt" data-correct>譬喻＋並列句型</button>
+          <button class="q-opt">引用＋設問</button>
+          <button class="q-opt">設問＋遞進句型</button>
+          <button class="q-opt">摹寫＋引用</button>
         </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
         <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">兩個譬喻並排出現，就是「像是……又像是……」的並列句型</span>
       </div>
     </section>
 
-    <!-- 基礎題 2 -->
-    <section class="slide" data-slide-id="b2" aria-labelledby="b2-t" hidden>
-      <div class="page-head"><span class="label">基礎題 · 2</span><h2 id="b2-t" class="title">爸爸怎麼回答？</h2></div>
-      <div class="paper-note" data-reveal>
-        <svg class="ico"><use href="#ico-bulb"></use></svg>
-        <span>小提示：爸爸講的是「事實」，直接回答問題。</span>
+    <section class="slide" data-slide-id="selfcheck" aria-labelledby="selfcheck-t" hidden>
+      <div class="page-head"><span class="label">複習 7 · 自我檢核</span><h2 id="selfcheck-t" class="title">這些你都會了嗎？</h2></div>
+      <div class="action-list">
+        <div class="head">打勾確認</div>
+        <div class="item is-done" data-reveal>認得譬喻、引用、設問、摹寫四種修辭</div>
+        <div class="item is-done" data-reveal>會用「不只…而且…」和「像是…又像是…」造句</div>
+        <div class="item is-done" data-reveal>背得出李白詩句，也說得出它用了什麼修辭</div>
       </div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">爸爸告訴作者，不同時代、不同地點的人看到的月亮是？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>都是同一個月亮</button>
-          <button class="q-opt">每個地方都不一樣</button>
-          <button class="q-opt">古人看到的比較亮</button>
-          <button class="q-opt">課文沒有說</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <!-- 基礎題 3 -->
-    <section class="slide" data-slide-id="b3" aria-labelledby="b3-t" hidden>
-      <div class="page-head"><span class="label">基礎題 · 3</span><h2 id="b3-t" class="title">最後他決定做什麼？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">聽完爸媽的話以後，作者決定怎麼做？<br><span style="color:var(--muted)">小提示：答案在課文最後一段。</span></p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>早點睡覺，明天再去尋找答案</button>
-          <button class="q-opt">馬上打電話問老師</button>
-          <button class="q-opt">再也不想這個問題</button>
-          <button class="q-opt">寫一首詩送給媽媽</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <!-- 進階題 1 -->
-    <section class="slide" data-slide-id="p1" aria-labelledby="p1-t" hidden>
-      <div class="page-head"><span class="label">進階題 · 1</span><h2 id="p1-t" class="title">這是誰的回答？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">「那些美好的作品，彷彿吸收了月光，靜靜的在書中發亮。」這句話最能看出說話的人？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>用文學的角度欣賞月亮的美</button>
-          <button class="q-opt">用科學的方法測量月亮</button>
-          <button class="q-opt">覺得月亮沒什麼特別</button>
-          <button class="q-opt">想去月球上住一晚</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <!-- 進階題 2 -->
-    <section class="slide" data-slide-id="p2" aria-labelledby="p2-t" hidden>
-      <div class="page-head"><span class="label">進階題 · 2</span><h2 id="p2-t" class="title">為什麼會停下腳步？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">作者為什麼「凝視著河水裡的柔和月光，忍不住停下腳步」？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>他看到天上和水裡各有一個月亮，心裡產生疑問</button>
-          <button class="q-opt">他走累了想休息一下</button>
-          <button class="q-opt">他在等爸爸媽媽跟上來</button>
-          <button class="q-opt">河水太急，他不敢往前走</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <!-- 進階題 3 -->
-    <section class="slide" data-slide-id="p3" aria-labelledby="p3-t" hidden>
-      <div class="page-head"><span class="label">進階題 · 3</span><h2 id="p3-t" class="title">中秋節的線索</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">課文提到作者「回想前陣子中秋節時，大家團圓賞月」，這段回想的作用是什麼？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>由眼前的月亮聯想到人與人的團聚，讓思考更深入</button>
-          <button class="q-opt">說明中秋節放假幾天</button>
-          <button class="q-opt">介紹月餅有哪些口味</button>
-          <button class="q-opt">提醒讀者不要忘記寫作業</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-    </section>
-
-    <!-- 挑戰題 1 -->
-    <section class="slide" data-slide-id="c1" aria-labelledby="c1-t" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 1</span><h2 id="c1-t" class="title">哪一句不是課文說的？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">下列哪一個敘述，<u>不是</u>課文中提到的內容？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>作者用望遠鏡觀察月球表面的坑洞</button>
-          <button class="q-opt">月亮像掛在黑色布幕上，散發皎潔的光芒</button>
-          <button class="q-opt">媽媽引用李白的詩句說明月亮的美</button>
-          <button class="q-opt">現代的太空人曾經登上月球</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="paper-note" data-reveal data-after-answer>
-        <svg class="ico"><use href="#ico-check"></use></svg>
-        <span>課文只說作者好奇科學家眼中的月球，並沒有寫他自己用望遠鏡觀察。</span>
-      </div>
-    </section>
-
-    <!-- 挑戰題 2 -->
-    <section class="slide" data-slide-id="c2" aria-labelledby="c2-t" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 2</span><h2 id="c2-t" class="title">推論作者的個性</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">從全課看來，下列哪一項最能說明作者的特質？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>對周遭事物好奇，願意主動追問並尋找答案</button>
-          <button class="q-opt">喜歡背誦唐詩，記憶力很好</button>
-          <button class="q-opt">個性內向，不敢向大人提問</button>
-          <button class="q-opt">只相信科學，不欣賞文學</button>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-quiz-check>對答案</button>
-          <button class="ds-btn" data-quiz-reset>重做</button>
-        </div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="paper-note" data-reveal data-after-answer>
-        <svg class="ico"><use href="#ico-check"></use></svg>
-        <span>他向爸媽提問、聽完仍不滿足，還決定自己去找答案——這就是好奇又主動。</span>
-      </div>
-    </section>
-
-    <!-- 挑戰題 3 -->
-    <section class="slide" data-slide-id="c3" aria-labelledby="c3-t" hidden>
-      <div class="page-head"><span class="label">挑戰題 · 3</span><h2 id="c3-t" class="title">把事情排回原本的順序</h2></div>
-      <div class="order-q" data-order>
-        <div class="q-stem">用▲▼把下面四件事，排成課文發生的順序。</div>
-        <ol class="order-list">
-          <li class="order-item" data-seq="2">爸爸說：都是同一個月亮</li>
-          <li class="order-item" data-seq="1">看見水中也有一個月亮</li>
-          <li class="order-item" data-seq="4">明天再去尋找答案</li>
-          <li class="order-item" data-seq="3">媽媽引用李白的詩</li>
-        </ol>
-        <div class="ans-feedback"></div>
-        <div class="row">
-          <button class="ds-btn primary" data-order-check>對答案</button>
-          <button class="ds-btn" data-order-reset>重來</button>
-        </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">還不熟的部分，回去看「1.teach」對應的那幾頁再走一次</span>
       </div>
     </section>
 <div class="hud">

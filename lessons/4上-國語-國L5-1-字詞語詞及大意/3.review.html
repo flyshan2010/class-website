@@ -2050,25 +2050,23 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
       </div>
     </section>
 
-    <!-- 5 部首分類拖曳 -->
+    <!-- 5 部首快問 -->
     <section class="slide" data-slide-id="sort" aria-labelledby="sort-t" hidden>
-      <div class="page-head"><span class="label">複習 3 · 動手分類</span><h2 id="sort-t" class="title">把字拖到正確的部首</h2></div>
-      <div class="drag-match" data-drag-match>
-        <div class="pool">
-          <span class="chip" draggable="true" data-answer="chi">循</span>
-          <span class="chip" draggable="true" data-answer="cun">尋</span>
-          <span class="chip" draggable="true" data-answer="chi">徘</span>
-          <span class="chip" draggable="true" data-answer="mu">案</span>
+      <div class="page-head"><span class="label">複習 3 · 部首快問</span><h2 id="sort-t" class="title">哪一個字不是彳部？</h2></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">下列四個字，哪一個的部首<u>不是</u>「彳」？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>尋</button>
+          <button class="q-opt">徘</button>
+          <button class="q-opt">徊</button>
+          <button class="q-opt">循</button>
         </div>
-        <div class="zones">
-          <div class="zone" data-zone="chi"><div class="zone-head">彳部</div><div class="drop"></div></div>
-          <div class="zone" data-zone="cun"><div class="zone-head">寸部</div><div class="drop"></div></div>
-          <div class="zone" data-zone="mu"><div class="zone-head">木部</div><div class="drop"></div></div>
-        </div>
-        <div class="row">
-          <button class="ds-btn primary" data-match-check>對答案</button>
-          <button class="ds-btn" data-match-reset>重來</button>
-        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">「尋」是寸部（動手去找）；徘、徊、循都是彳部（走路）</span>
       </div>
     </section>
 
