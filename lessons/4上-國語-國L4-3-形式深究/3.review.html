@@ -1978,87 +1978,234 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
+   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
    ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
+#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
+.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
+.slide.is-active { opacity: 1; visibility: visible; }
+.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 0 var(--safe-x);
+  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
 }
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
+.hud .spacer { flex: 1; }
+.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
+.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
+.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
+.vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
-<main class="page" aria-label="飛行夢 形式深究整合複習">
+<main class="deck" aria-label="飛行夢 形式深究整合複習">
+  <div class="stage" id="stage" tabindex="-1">
 
-  <header class="page-head">
-    <span class="label">第四課 飛行夢 · 第三節整合複習</span>
-    <h1 class="title">複習速記</h1>
-  </header>
-  <p class="lede">「形式深究」告一段落——五分鐘複習譬喻、設問、句型與短語，還有作者的三個寫作手法。</p>
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第四課 飛行夢 · 第三節整合複習</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">複習速記</div>
+        <div class="sub">譬喻、設問、句型與短語，還有作者的三個寫作手法</div>
+      </div>
+    </section>
 
-  <div class="flow-steps">
-    <div class="step"><div class="badge">1</div><div class="head">譬喻</div><div class="body">像老鷹一樣飛行（明喻，喻詞「像」）</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">2</div><div class="head">設問</div><div class="body">明知故問，提高注意力</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">3</div><div class="head">句型</div><div class="body">無論／不管……都……</div></div>
-    <div class="arrow">→</div>
-    <div class="step"><div class="badge">4</div><div class="head">短語</div><div class="body">讓＋誰＋能夠＋動作；動詞＋了一次又一次的＋名詞</div></div>
-  </div>
+    <section class="slide" data-slide-id="map" aria-labelledby="map-t" hidden>
+      <div class="page-head"><span class="label">複習 1 · 本節地圖</span><h2 id="map-t" class="title">四個重點</h2></div>
+      <div class="flow-steps">
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">譬喻</div><div class="body">像老鷹一樣飛行（明喻，喻詞「像」）</div></div>
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">設問</div><div class="body">明知故問，提高注意力</div></div>
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal><div class="badge">3</div><div class="head">句型</div><div class="body">無論／不管……都……</div></div>
+        <div class="arrow" data-reveal>→</div>
+        <div class="step" data-reveal><div class="badge">4</div><div class="head">短語</div><div class="body">讓＋誰＋能夠＋動作</div></div>
+      </div>
+    </section>
 
-  <div class="compare-pair">
-    <div class="side">
-      <div class="head">直述句</div>
-      <div class="item">如果失去生命，飛翔就沒有意義。</div>
-      <div class="item">語氣平淡</div>
+    <section class="slide" data-slide-id="ask" aria-labelledby="ask-t" hidden>
+      <div class="page-head"><span class="label">複習 2 · 設問的力量</span><h2 id="ask-t" class="title">直述句 vs 設問句</h2></div>
+      <div class="compare-pair">
+        <div class="side" data-reveal>
+          <div class="head">直述句</div>
+          <div class="item">如果失去生命，飛翔就沒有意義。</div>
+          <div class="item">語氣平淡</div>
+        </div>
+        <div class="vs">vs</div>
+        <div class="side is-focus" data-reveal>
+          <div class="head">設問句</div>
+          <div class="item">如果失去生命，飛翔還有什麼意義？</div>
+          <div class="item">語氣加強，讀者會停下來想</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="myth" aria-labelledby="myth-t" hidden>
+      <div class="page-head"><span class="label">複習 3 · 常見迷思</span><h2 id="myth-t" class="title">有「像」不一定是譬喻</h2></div>
+      <div class="misconception" data-reveal>
+        <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">看到「像」就說是譬喻；或以為設問句是作者真的不知道答案在發問。</div></div>
+        <div class="becomes">→</div>
+        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">譬喻要「兩種不同的東西互比」（人比老鷹）；設問是明知故問，用問句把重點推到讀者眼前。</div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="craft" aria-labelledby="craft-t" hidden>
+      <div class="page-head"><span class="label">複習 4 · 寫作手法</span><h2 id="craft-t" class="title">作者的三個手法</h2></div>
+      <div class="concept-grid">
+        <div class="concept-card" data-reveal><div class="head">設問開頭</div><div class="body">用問句吸引注意，讓讀者想追下去</div></div>
+        <div class="concept-card" data-reveal><div class="head">引用說的話</div><div class="body">「一定要飛上藍天！」讓人物自己說話</div></div>
+        <div class="concept-card" data-reveal><div class="head">內心獨白</div><div class="body">寫出想法，性格自然浮現</div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="homework" aria-labelledby="homework-t" hidden>
+      <div class="page-head"><span class="label">複習 5 · 回家練習</span><h2 id="homework-t" class="title">回家可以做的三件事</h2></div>
+      <div class="action-list">
+        <div class="head">做完就打勾</div>
+        <div class="item" data-reveal>找一個生活情境，寫一句譬喻</div>
+        <div class="item" data-reveal>把一句肯定句改成問句，比較語氣差別</div>
+        <div class="item" data-reveal>用「無論……都……」說一件自己堅持的事</div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">下一節：統整全課，並用事例寫出「我最敬佩的人」</span>
+      </div>
+    </section>
+<div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>10</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="vs">vs</div>
-    <div class="side is-focus">
-      <div class="head">設問句</div>
-      <div class="item">如果失去生命，飛翔還有什麼意義？</div>
-      <div class="item">語氣加強，讀者會停下來想</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-  <div class="misconception">
-    <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">看到「像」就說是譬喻；或以為設問句是作者真的不知道答案在發問。</div></div>
-    <div class="becomes">→</div>
-    <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">譬喻要「兩種不同的東西互比」（人比老鷹）；設問是明知故問，用問句把重點推到讀者眼前。</div></div>
-  </div>
-
-  <div class="concept-card">
-    <div class="head">作者的三個寫作手法</div>
-    <div class="body">①設問開頭吸引注意　②引用人物說的話（「一定要飛上藍天！」）　③內心獨白寫出想法，讓性格自然浮現。</div>
-  </div>
-
-  <div class="action-list">
-    <div class="head">回家可以做的三件事</div>
-    <div class="item">找一個生活情境，寫一句譬喻</div>
-    <div class="item">把一句肯定句改成問句，比較語氣差別</div>
-    <div class="item">用「無論……都……」說一件自己堅持的事</div>
-  </div>
-
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">下一節：統整全課，並用事例寫出「我最敬佩的人」</span>
-  </div>
-
-  <footer class="page-foot">四上國語 · 第四課 飛行夢 · 第三節 形式深究 · 複習速記</footer>
-
 </main>
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
 
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
 </body>
 </html>
