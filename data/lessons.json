@@ -1,5 +1,125 @@
 [
   {
+    "title": "數R1 期中總複習｜學習加油讚（一）",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "公里換公尺的大數應用（國際航線、直線距離）",
+      "大數讀寫與比較：四位一組、讀法記法互轉",
+      "角度應用：磅秤指針旋轉方向與度數",
+      "乘法直式與分數大小比較綜合題",
+      "×99 規律探索：先算 100 倍再減一個數"
+    ],
+    "date": "",
+    "note": "學習加油讚（一）pp.78-83，為L1～L5 統整複習（綜合與應用 0.5 節、探索中學數學 1 節、看繪本學數學 0.5 節）；教材附於 ML05 PDF 末",
+    "links": {
+      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/3.review.html"
+    }
+  },
+  {
+    "title": "數L5-3 公里｜長度的計算",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "複名數直式：公里對公里、公尺對公尺，兩欄分開寫",
+      "加法進位：公尺滿 1000 進 1 到公里欄",
+      "減法退位：公尺不夠減，向公里借 1 換成 1000 公尺",
+      "整公里減複名數：先想成幾公里 0 公尺再退位",
+      "素養應用：路線圖、里程表的加減與目標達成判斷"
+    ],
+    "date": "",
+    "note": "課本 5-3（建議 1.5 節）＋練習園地(五) 0.5 節；教材 pp.74-77",
+    "links": {
+      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-3-長度的計算/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-3-長度的計算/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-3-長度的計算/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-3-長度的計算/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-3-長度的計算/3.review.html"
+    }
+  },
+  {
+    "title": "數L5-1 公里｜認識公里",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "認識公里是描述長距離的長度單位，記作 km",
+      "1 公里＝1000 公尺（1 公尺量 1000 次、100 公尺跑 10 趟）",
+      "建立 1 公里的量感：校園繞圈、步數估測、里程標誌",
+      "判斷適當長度單位：毫米、公分、公尺、公里怎麼選",
+      "以公里為單位的整數加、減計算（鐵路里程圖）"
+    ],
+    "date": "",
+    "note": "課本 5-1（建議 1.5 節）；教材 pp.68-70。量感教學改用已知長度換算（操場一圈200公尺→5圈＝1公里），不做實地走測。ECC活動卡：主①（編號11・製作旅遊地圖，改編）「我家到學校有幾公里」用地圖量路線里程記成複名數；補②（編號6・尋找各種材質，改編）「公里獵人」拍生活中的公里標誌當回家作業",
+    "links": {
+      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/3.review.html"
+    }
+  },
+  {
+    "title": "數L5-2 公里｜長度的換算與比較",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "複名數報讀：2 公里 45 公尺（也可說成 2045 公尺）",
+      "公里換公尺：幾公里就是幾個 1000 公尺，再加零頭",
+      "公尺換公里：看有幾個 1000 公尺，剩下的記成公尺",
+      "長度比較三策略：找基準量、換單名數、換複名數",
+      "比較先看公里數，公里數相同再比公尺數"
+    ],
+    "date": "",
+    "note": "課本 5-2（建議 1.5 節）；教材 pp.71-73",
+    "links": {
+      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/3.review.html"
+    }
+  },
+  {
     "title": "數L4-3 假分數與帶分數｜分數的大小比較",
     "subject": "數學",
     "grade": "四上",
@@ -1122,106 +1242,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
-    }
-  },
-  {
-    "title": "數R1 期中總複習｜學習加油讚（一）",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "公里換公尺的大數應用（國際航線、直線距離）",
-      "大數讀寫與比較：四位一組、讀法記法互轉",
-      "角度應用：磅秤指針旋轉方向與度數",
-      "乘法直式與分數大小比較綜合題",
-      "×99 規律探索：先算 100 倍再減一個數"
-    ],
-    "date": "",
-    "note": "學習加油讚（一）pp.78-83，為L1～L5 統整複習（綜合與應用 0.5 節、探索中學數學 1 節、看繪本學數學 0.5 節）；教材附於 ML05 PDF 末",
-    "links": {
-      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "數L5-3 公里｜長度的計算",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "複名數直式：公里對公里、公尺對公尺，兩欄分開寫",
-      "加法進位：公尺滿 1000 進 1 到公里欄",
-      "減法退位：公尺不夠減，向公里借 1 換成 1000 公尺",
-      "整公里減複名數：先想成幾公里 0 公尺再退位",
-      "素養應用：路線圖、里程表的加減與目標達成判斷"
-    ],
-    "date": "",
-    "note": "課本 5-3（建議 1.5 節）＋練習園地(五) 0.5 節；教材 pp.74-77",
-    "links": {
-      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "數L5-1 公里｜認識公里",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "認識公里是描述長距離的長度單位，記作 km",
-      "1 公里＝1000 公尺（1 公尺量 1000 次、100 公尺跑 10 趟）",
-      "建立 1 公里的量感：校園繞圈、步數估測、里程標誌",
-      "判斷適當長度單位：毫米、公分、公尺、公里怎麼選",
-      "以公里為單位的整數加、減計算（鐵路里程圖）"
-    ],
-    "date": "",
-    "note": "課本 5-1（建議 1.5 節）；教材 pp.68-70",
-    "links": {
-      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "數L5-2 公里｜長度的換算與比較",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [
-      "複名數報讀：2 公里 45 公尺（也可說成 2045 公尺）",
-      "公里換公尺：幾公里就是幾個 1000 公尺，再加零頭",
-      "公尺換公里：看有幾個 1000 公尺，剩下的記成公尺",
-      "長度比較三策略：找基準量、換單名數、換複名數",
-      "比較先看公里數，公里數相同再比公尺數"
-    ],
-    "date": "",
-    "note": "課本 5-2（建議 1.5 節）；教材 pp.71-73",
-    "links": {
-      "material": "https://drive.google.com/file/d/1QXvkqb9w37ll1jCTNV9hqpPyZnsHrr7Y/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
