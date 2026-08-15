@@ -1160,20 +1160,24 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
        stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 </style>
 <style>
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
+/* ─────────────────────────────────────────────
+   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
+   ───────────────────────────────────────────── */
+#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
+.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
+.slide.is-active { opacity: 1; visibility: visible; }
+.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 0 var(--safe-x);
+  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
 }
-.lede { font-size: var(--t4); color: var(--muted); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
+.hud .spacer { flex: 1; }
+.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
+.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
+.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
+.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
 .tri-col { display: flex; gap: var(--s4); }
 .tri-col > .card {
   flex: 1;
@@ -1188,13 +1192,12 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
   text-align: center;
 }
 .tri-col > .card.is-focus { border-color: var(--accent); background: var(--accent-soft); }
+.tri-col > .card .fig { width: 100%; }
 .tri-col > .card .fig svg { width: 100%; height: auto; }
 .tri-col > .card .name { font-size: var(--t3); font-weight: var(--fw-bold); }
 .tri-col > .card .rule { font-size: var(--t5); color: var(--muted); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-  .tri-col { flex-direction: column; }
-}
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2018,98 +2021,246 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
   window.TDS = TDS;
 })();
 </script>
+<main class="deck" aria-label="測量與畫角複習速記卡">
+  <div class="stage" id="stage" tabindex="-1">
 
-<main class="page" aria-label="測量與畫角複習速記卡">
+    <!-- 1 封面 -->
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">3-2 測量與畫角</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">複習速記卡</div>
+        <div class="sub">上課前忘記了嗎？花 2 分鐘看完這一頁，把重點找回來。</div>
+      </div>
+    </section>
 
-  <header class="page-head">
-    <span class="label">3-2 測量與畫角</span>
-    <h1 class="title">複習速記卡</h1>
-  </header>
-  <p class="lede">上課前忘記了嗎？花 2 分鐘看完這一頁，把重點找回來。</p>
+    <section class="slide" data-slide-id="s1" aria-labelledby="s1-t" hidden>
+      <div class="page-head"><span class="label">複習 1</span><h2 id="s1-t" class="title">重點流程</h2></div>
+      <div class="flow-steps">
+<div class="step" data-reveal="">
+<div class="badge">1</div>
+<div class="head">中心點對頂點</div>
+<div class="body">量角器中心對齊角的頂點</div>
+</div>
+<div class="arrow">→</div>
+<div class="step" data-reveal="">
+<div class="badge">2</div>
+<div class="head">0 度線對邊</div>
+<div class="body">對齊角的其中一邊</div>
+</div>
+<div class="arrow">→</div>
+<div class="step" data-reveal="">
+<div class="badge">3</div>
+<div class="head">看對圈數到底</div>
+<div class="body">對齊哪一圈的 0，就看哪一圈</div>
+</div>
+</div>
+    </section>
 
-  <div class="flow-steps">
-    <div class="step">
-      <div class="badge">1</div>
-      <div class="head">中心點對頂點</div>
-      <div class="body">量角器中心對齊角的頂點</div>
+    <section class="slide" data-slide-id="s2" aria-labelledby="s2-t" hidden>
+      <div class="page-head"><span class="label">複習 2</span><h2 id="s2-t" class="title">容易搞混的地方</h2></div>
+      <div class="misconception" data-reveal="">
+<div class="wrong-side"><div class="mark">✗ 容易搞混</div><div class="text">角的一邊對齊<b>內圈 0</b>，卻看了<b>外圈</b>的數字，量出錯誤的度數</div></div>
+<div class="becomes">→</div>
+<div class="right-side"><div class="mark">✓ 記住這招</div><div class="text">對齊的是哪一圈的 0，報讀時就沿著<b>同一圈</b>數到底，別中途換圈</div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s3" aria-labelledby="s3-t" hidden>
+      <div class="page-head"><span class="label">複習 3</span><h2 id="s3-t" class="title">邊太短量不到刻度？</h2></div>
+      <div class="concept-card" data-reveal="">
+<div class="head">邊太短量不到刻度？</div>
+<div class="body">用<b>直尺把邊延長</b>就能對到刻度。邊延長不會改變角的大小，延長後量出來的度數還是原本那個角的度數。</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s4" aria-labelledby="s4-t" hidden>
+      <div class="page-head"><span class="label">複習 4</span><h2 id="s4-t" class="title">重點</h2></div>
+      <div class="tri-col">
+<div class="card" data-reveal="">
+<div class="fig"><svg aria-label="50度角" role="img" viewbox="0 0 160 110"><line stroke="var(--ink)" stroke-width="4" x1="20" x2="130.0" y1="95" y2="95.0"></line><line stroke="var(--accent)" stroke-width="4" x1="20" x2="90.7" y1="95" y2="10.7"></line><path d="M 50.0 95.0 A 30 30 0 0 0 39.3 72.0" fill="none" stroke="var(--accent)" stroke-width="2.5"></path></svg></div>
+<div class="name">銳角</div>
+<div class="rule">小於 90 度</div>
+</div>
+<div class="card is-focus" data-reveal="">
+<div class="fig"><svg aria-label="90度角" role="img" viewbox="0 0 160 110"><line stroke="var(--ink)" stroke-width="4" x1="20" x2="100.0" y1="95" y2="95.0"></line><line stroke="var(--correct)" stroke-width="4" x1="20" x2="20.0" y1="95" y2="15.0"></line><path d="M 46.0 95.0 A 26 26 0 0 0 20.0 69.0" fill="none" stroke="var(--correct)" stroke-width="2.5"></path></svg></div>
+<div class="name">直角</div>
+<div class="rule">剛好 90 度</div>
+</div>
+<div class="card" data-reveal="">
+<div class="fig"><svg aria-label="130度角" role="img" viewbox="0 0 200 110"><line stroke="var(--ink)" stroke-width="4" x1="100" x2="180.0" y1="95" y2="95.0"></line><line stroke="var(--accent-2)" stroke-width="4" x1="100" x2="48.6" y1="95" y2="33.7"></line><path d="M 130.0 95.0 A 30 30 0 0 0 80.7 72.0" fill="none" stroke="var(--accent-2)" stroke-width="2.5"></path></svg></div>
+<div class="name">鈍角</div>
+<div class="rule">大於 90 度</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s5" aria-labelledby="s5-t" hidden>
+      <div class="page-head"><span class="label">複習 5</span><h2 id="s5-t" class="title">重點流程（續 2）</h2></div>
+      <div class="flow-steps">
+<div class="step" data-reveal="">
+<div class="badge">1</div>
+<div class="head">畫一條線</div>
+<div class="body">選一端當頂點</div>
+</div>
+<div class="arrow">→</div>
+<div class="step" data-reveal="">
+<div class="badge">2</div>
+<div class="head">對齊</div>
+<div class="body">中心點對頂點、0 度線對邊</div>
+</div>
+<div class="arrow">→</div>
+<div class="step" data-reveal="">
+<div class="badge">3</div>
+<div class="head">找刻度做記號</div>
+<div class="body">沿同一圈數到目標度數</div>
+</div>
+<div class="arrow">→</div>
+<div class="step" data-reveal="">
+<div class="badge">4</div>
+<div class="head">連成線</div>
+<div class="body">移開量角器，頂點與記號連直線</div>
+</div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+<span class="text">下一節 3-3：認識旋轉角，學會順時針、逆時針方向的意義</span>
+</div>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>9</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="arrow">→</div>
-    <div class="step">
-      <div class="badge">2</div>
-      <div class="head">0 度線對邊</div>
-      <div class="body">對齊角的其中一邊</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="step">
-      <div class="badge">3</div>
-      <div class="head">看對圈數到底</div>
-      <div class="body">對齊哪一圈的 0，就看哪一圈</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-  <div class="misconception">
-    <div class="wrong-side"><div class="mark">✗ 容易搞混</div><div class="text">角的一邊對齊<b>內圈 0</b>，卻看了<b>外圈</b>的數字，量出錯誤的度數</div></div>
-    <div class="becomes">→</div>
-    <div class="right-side"><div class="mark">✓ 記住這招</div><div class="text">對齊的是哪一圈的 0，報讀時就沿著<b>同一圈</b>數到底，別中途換圈</div></div>
-  </div>
-
-  <div class="concept-card">
-    <div class="head">邊太短量不到刻度？</div>
-    <div class="body">用<b>直尺把邊延長</b>就能對到刻度。邊延長不會改變角的大小，延長後量出來的度數還是原本那個角的度數。</div>
-  </div>
-
-  <div class="tri-col">
-    <div class="card">
-      <div class="fig"><svg viewBox="0 0 160 110" role="img" aria-label="50度角"><line x1="20" y1="95" x2="130.0" y2="95.0" stroke="var(--ink)" stroke-width="4"></line><line x1="20" y1="95" x2="90.7" y2="10.7" stroke="var(--accent)" stroke-width="4"></line><path d="M 50.0 95.0 A 30 30 0 0 0 39.3 72.0" fill="none" stroke="var(--accent)" stroke-width="2.5"></path></svg></div>
-      <div class="name">銳角</div>
-      <div class="rule">小於 90 度</div>
-    </div>
-    <div class="card is-focus">
-      <div class="fig"><svg viewBox="0 0 160 110" role="img" aria-label="90度角"><line x1="20" y1="95" x2="100.0" y2="95.0" stroke="var(--ink)" stroke-width="4"></line><line x1="20" y1="95" x2="20.0" y2="15.0" stroke="var(--correct)" stroke-width="4"></line><path d="M 46.0 95.0 A 26 26 0 0 0 20.0 69.0" fill="none" stroke="var(--correct)" stroke-width="2.5"></path></svg></div>
-      <div class="name">直角</div>
-      <div class="rule">剛好 90 度</div>
-    </div>
-    <div class="card">
-      <div class="fig"><svg viewBox="0 0 200 110" role="img" aria-label="130度角"><line x1="100" y1="95" x2="180.0" y2="95.0" stroke="var(--ink)" stroke-width="4"></line><line x1="100" y1="95" x2="48.6" y2="33.7" stroke="var(--accent-2)" stroke-width="4"></line><path d="M 130.0 95.0 A 30 30 0 0 0 80.7 72.0" fill="none" stroke="var(--accent-2)" stroke-width="2.5"></path></svg></div>
-      <div class="name">鈍角</div>
-      <div class="rule">大於 90 度</div>
-    </div>
-  </div>
-
-  <div class="flow-steps">
-    <div class="step">
-      <div class="badge">1</div>
-      <div class="head">畫一條線</div>
-      <div class="body">選一端當頂點</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="step">
-      <div class="badge">2</div>
-      <div class="head">對齊</div>
-      <div class="body">中心點對頂點、0 度線對邊</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="step">
-      <div class="badge">3</div>
-      <div class="head">找刻度做記號</div>
-      <div class="body">沿同一圈數到目標度數</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="step">
-      <div class="badge">4</div>
-      <div class="head">連成線</div>
-      <div class="body">移開量角器，頂點與記號連直線</div>
-    </div>
-  </div>
-
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">下一節 3-3：認識旋轉角，學會順時針、逆時針方向的意義</span>
-  </div>
-
-  <footer class="page-foot">四上數學 · 第三單元 角度 · 3-2 測量與畫角 · 複習</footer>
-
 </main>
 
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
 </body>
 </html>

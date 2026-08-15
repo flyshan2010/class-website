@@ -1994,98 +1994,265 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
+   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
    ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
+#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
+.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
+.slide.is-active { opacity: 1; visibility: visible; }
+.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 0 var(--safe-x);
+  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
+}
+.hud .spacer { flex: 1; }
+.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
+.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
+.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
+.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
+.tri-col { display: flex; gap: var(--s4); }
+.tri-col > .card {
+  flex: 1;
+  background: var(--surface);
+  border: var(--line-mid) solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s4);
   display: flex;
   flex-direction: column;
-  gap: var(--s5);
+  align-items: center;
+  gap: var(--s2);
+  text-align: center;
 }
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
+.tri-col > .card.is-focus { border-color: var(--accent); background: var(--accent-soft); }
+.tri-col > .card .fig { width: 100%; }
+.tri-col > .card .fig svg { width: 100%; height: auto; }
+.tri-col > .card .name { font-size: var(--t3); font-weight: var(--fw-bold); }
+.tri-col > .card .rule { font-size: var(--t5); color: var(--muted); }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
 <body>
-<main class="page" aria-label="旋轉角複習速記">
+<main class="deck" aria-label="旋轉角複習速記">
+  <div class="stage" id="stage" tabindex="-1">
 
-  <header class="page-head">
-    <span class="label">第三單元 角度 · 3-3 複習</span>
-    <h1 class="title">複習速記</h1>
-  </header>
-  <p class="lede">今天學了「角是旋轉出來的」——花三分鐘複習一次，確認每個重點都還記得。</p>
+    <!-- 1 封面 -->
+    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第三單元 角度 · 3-3 複習</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">複習速記</div>
+        <div class="sub">今天學了「角是旋轉出來的」——花三分鐘複習一次，確認每個重點都還記得。</div>
+      </div>
+    </section>
 
-  <div class="flow-steps">
-    <div class="step">
-      <div class="badge">1</div>
-      <div class="head">頂點固定</div>
-      <div class="body">一邊不動，當作基準</div>
+    <section class="slide" data-slide-id="s1" aria-labelledby="s1-t" hidden>
+      <div class="page-head"><span class="label">複習 1</span><h2 id="s1-t" class="title">重點流程</h2></div>
+      <div class="flow-steps">
+<div class="step" data-reveal="">
+<div class="badge">1</div>
+<div class="head">頂點固定</div>
+<div class="body">一邊不動，當作基準</div>
+</div>
+<div class="arrow">→</div>
+<div class="step" data-reveal="">
+<div class="badge">2</div>
+<div class="head">另一邊旋轉</div>
+<div class="body">繞著頂點轉動</div>
+</div>
+<div class="arrow">→</div>
+<div class="step" data-reveal="">
+<div class="badge">3</div>
+<div class="head">轉的量＝角度</div>
+<div class="body">轉多少，角就有多大</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s2" aria-labelledby="s2-t" hidden>
+      <div class="page-head"><span class="label">複習 2</span><h2 id="s2-t" class="title">逆時針 vs 順時針</h2></div>
+      <div class="compare-pair">
+<div class="side" data-reveal="">
+<div class="head">逆時針</div>
+<div class="item">跟時鐘指針方向相反</div>
+</div>
+<div class="vs">vs</div>
+<div class="side is-focus" data-reveal="">
+<div class="head">順時針</div>
+<div class="item">跟時鐘指針方向一樣</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s3" aria-labelledby="s3-t" hidden>
+      <div class="page-head"><span class="label">複習 3</span><h2 id="s3-t" class="title">容易搞混的地方</h2></div>
+      <div class="misconception" data-reveal="">
+<div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">以為方向不同，角度大小就不一樣。</div></div>
+<div class="becomes">→</div>
+<div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">方向只決定轉去哪裡，旋轉量相同角度就相同。</div></div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s4" aria-labelledby="s4-t" hidden>
+      <div class="page-head"><span class="label">複習 4</span><h2 id="s4-t" class="title">90°直角・180°平角・360°周角轉滿一整圈是 360°，回到起點看起來沒動，但實際轉了 360°，不是 0°。</h2></div>
+      <div class="figure-block" data-reveal="">
+<div class="figure">
+<svg aria-label="從0度依序旋轉經過90度180度270度回到360度周角" role="img" viewbox="0 0 560 560"><line stroke="var(--ink-soft)" stroke-dasharray="6 6" stroke-linecap="round" stroke-width="3" x1="240" x2="420" y1="250" y2="250"></line><line stroke="var(--accent)" stroke-linecap="round" stroke-width="5" x1="240" x2="240" y1="250" y2="85"></line><line stroke="var(--accent-2)" stroke-linecap="round" stroke-width="5" x1="240" x2="75" y1="250" y2="250"></line><line stroke="var(--accent)" stroke-linecap="round" stroke-width="5" x1="240" x2="240" y1="250" y2="415"></line><path d="M 374.49 238.23 A 135 135 0 1 0 374.49 261.77" fill="none" stroke="var(--correct)" stroke-width="5"></path>
+<polygon fill="var(--correct)" points="374.49,261.77 360.54,260.55 375.16,254.1"></polygon><circle cx="240" cy="250" fill="var(--ink)" r="8"></circle><text fill="var(--ink-soft)" font-size="22" text-anchor="start" x="430" y="256">0°</text><text dominant-baseline="middle" fill="var(--accent)" font-size="24" font-weight="700" text-anchor="middle" x="240" y="45">90°</text><text dominant-baseline="middle" fill="var(--accent-2)" font-size="24" font-weight="700" text-anchor="middle" x="35" y="250">180°</text><text dominant-baseline="middle" fill="var(--accent)" font-size="24" font-weight="700" text-anchor="middle" x="240" y="455">270°</text><text dominant-baseline="middle" fill="var(--correct)" font-size="24" font-weight="700" text-anchor="middle" x="409.71" y="419.71">360°</text></svg>
+</div>
+<div class="caption">
+<div class="head">90°直角・180°平角・360°周角</div>
+<div class="body">轉滿一整圈是 360°，回到起點看起來沒動，但實際轉了 360°，不是 0°。</div>
+</div>
+</div>
+    </section>
+
+    <section class="slide" data-slide-id="s5" aria-labelledby="s5-t" hidden>
+      <div class="page-head"><span class="label">複習 5</span><h2 id="s5-t" class="title">時鐘指針夾角公式</h2></div>
+      <div class="concept-card" data-reveal="">
+<div class="head">時鐘指針夾角公式</div>
+<div class="body">時鐘一圈 360° ÷ 12 大格 ＝ 每大格 30°。數兩指針中間隔了幾大格，再乘以 30°；超過 6 大格時，改數比較近的那一邊。</div>
+</div>
+      <div class="takeaway-band" data-reveal="">
+<span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+<span class="text">下一節 3-4「角度的合成與分解」：把兩個角加起來、或把一個角拆成兩個角</span>
+</div>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>9</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="arrow">→</div>
-    <div class="step">
-      <div class="badge">2</div>
-      <div class="head">另一邊旋轉</div>
-      <div class="body">繞著頂點轉動</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="step">
-      <div class="badge">3</div>
-      <div class="head">轉的量＝角度</div>
-      <div class="body">轉多少，角就有多大</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-  <div class="compare-pair">
-    <div class="side">
-      <div class="head">逆時針</div>
-      <div class="item">跟時鐘指針方向相反</div>
-    </div>
-    <div class="vs">vs</div>
-    <div class="side is-focus">
-      <div class="head">順時針</div>
-      <div class="item">跟時鐘指針方向一樣</div>
-    </div>
-  </div>
-
-  <div class="misconception">
-    <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">以為方向不同，角度大小就不一樣。</div></div>
-    <div class="becomes">→</div>
-    <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">方向只決定轉去哪裡，旋轉量相同角度就相同。</div></div>
-  </div>
-
-  <div class="figure-block">
-    <div class="figure">
-      <svg viewBox="0 0 560 560" role="img" aria-label="從0度依序旋轉經過90度180度270度回到360度周角"><line x1="240" y1="250" x2="420" y2="250" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/><line x1="240" y1="250" x2="240" y2="85" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><line x1="240" y1="250" x2="75" y2="250" stroke="var(--accent-2)" stroke-width="5" stroke-linecap="round"/><line x1="240" y1="250" x2="240" y2="415" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><path d="M 374.49 238.23 A 135 135 0 1 0 374.49 261.77" fill="none" stroke="var(--correct)" stroke-width="5"/>
-<polygon points="374.49,261.77 360.54,260.55 375.16,254.1" fill="var(--correct)"/><circle cx="240" cy="250" r="8" fill="var(--ink)"/><text x="430" y="256" font-size="22" fill="var(--ink-soft)" text-anchor="start">0°</text><text x="240" y="45" font-size="24" fill="var(--accent)" text-anchor="middle" dominant-baseline="middle" font-weight="700">90°</text><text x="35" y="250" font-size="24" fill="var(--accent-2)" text-anchor="middle" dominant-baseline="middle" font-weight="700">180°</text><text x="240" y="455" font-size="24" fill="var(--accent)" text-anchor="middle" dominant-baseline="middle" font-weight="700">270°</text><text x="409.71" y="419.71" font-size="24" fill="var(--correct)" text-anchor="middle" dominant-baseline="middle" font-weight="700">360°</text></svg>
-    </div>
-    <div class="caption">
-      <div class="head">90°直角・180°平角・360°周角</div>
-      <div class="body">轉滿一整圈是 360°，回到起點看起來沒動，但實際轉了 360°，不是 0°。</div>
-    </div>
-  </div>
-
-  <div class="concept-card">
-    <div class="head">時鐘指針夾角公式</div>
-    <div class="body">時鐘一圈 360° ÷ 12 大格 ＝ 每大格 30°。數兩指針中間隔了幾大格，再乘以 30°；超過 6 大格時，改數比較近的那一邊。</div>
-  </div>
-
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">下一節 3-4「角度的合成與分解」：把兩個角加起來、或把一個角拆成兩個角</span>
-  </div>
-
-  <footer class="page-foot">四上數學 · 第三單元 角度 · 3-3 旋轉角 · 複習</footer>
-
 </main>
+
+<script>
+(() => {
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
+</script>
 </body>
 </html>
