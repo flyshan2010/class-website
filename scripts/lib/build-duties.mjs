@@ -19,13 +19,13 @@ const SEAT_COLUMNS = ["六", "五", "四", "三", "二", "一"];
 const splitList = s => String(s ?? "").split(/[、,，]/).map(x => x.trim()).filter(Boolean);
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
 
-// ISO 版四欄（2026-08-16 起）：職稱／要做的事／可以決定的事／完成標準。
+// ISO 版四欄（2026-08-16 起）：職稱／要做的事／能管的事／做好的標準。
 // 「升級徽章」刻意不帶出來——那是未來升級制度的內部欄位，班網不顯示。
 const isoFields = r => ({
   title: r["職稱"] ?? "",
-  work: r["我要做的事"] ?? "",
-  authority: r["我可以決定的事"] ?? "",
-  standard: r["完成標準"] ?? "",
+  work: r["要做的事"] ?? "",
+  authority: r["能管的事"] ?? "",
+  standard: r["做好的標準"] ?? "",
 });
 
 /**

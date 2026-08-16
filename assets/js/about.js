@@ -32,7 +32,7 @@
       if (!roles.has(key)) roles.set(key, {
         role: key, names: [], desc: c.desc, authority: c.authority, bonus: c.bonus, salary: c.salary,
       });
-      roles.get(key).names.push(c.name);
+      roles.get(key).names.push({ name: c.name, tentative: !!c.tentative });
     }
     return [...byGroup].map(([name, roleMap]) => {
       const roles = [...roleMap.values()];
@@ -55,10 +55,12 @@
               <span class="cadre-role-name">${roleEmoji(r.salary)} ${App.esc(r.role)}</span>
               ${r.salary ? `<span class="cadre-salary-tag">🪙 ${r.salary}</span>` : ""}
             </div>
-            <div class="cadre-people">${r.names.map(n => App.esc(n)).join("、")}</div>
-            ${r.desc ? `<div class="cadre-desc"><b>我要做的事：</b>${App.esc(r.desc)}</div>` : ""}
-            ${r.authority ? `<div class="cadre-desc auth"><b>我可以決定的事：</b>${App.esc(r.authority)}</div>` : ""}
-            ${r.bonus ? `<div class="cadre-desc bonus"><b>額外獎金：</b>${App.esc(r.bonus)}</div>` : ""}
+            <div class="cadre-people">${r.names.map(p =>
+              `<span class="cadre-person${p.tentative ? " tentative" : ""}">${App.esc(p.name)}${
+                p.tentative ? "<small>預排</small>" : ""}</span>`).join("")}</div>
+            ${specBlock("要做的事", r.desc, "work")}
+            ${specBlock("能管的事", r.authority, "auth")}
+            ${specBlock("額外獎金", r.bonus, "bonus")}
           </div>`).join("")}
         </div>
       </div>`).join("")}
@@ -305,12 +307,20 @@
       </p>`;
   };
 
-  // 打掃與午餐共用的 ISO 三段（要做的事／可以決定的事／完成標準）。
-  // 三段都可能是空的——舊資料或老師還沒填時就少印那一行，不要印出空標題。
+  // ISO 規格段：小標一行、內容一行。標題獨立成行比「小標：內容」黏在一起好掃，
+  // 孩子在走廊上瞄一眼就找得到「做好的標準」在哪。
+  // 內容可能是空的——舊資料或老師還沒填時整段不印，不要留一個孤零零的小標。
+  const specBlock = (label, text, cls) => !text ? "" : `
+    <div class="spec spec-${cls}">
+      <div class="spec-label">${label}</div>
+      <div class="spec-body">${App.esc(text)}</div>
+    </div>`;
+
+  // 打掃與午餐共用的 ISO 三段（要做的事／能管的事／做好的標準）
   const dutySpec = g => `
-    ${g.work ? `<div class="duty-work">${App.esc(g.work)}</div>` : ""}
-    ${g.authority ? `<div class="duty-auth"><b>我可以決定的事：</b>${App.esc(g.authority)}</div>` : ""}
-    ${g.standard ? `<div class="duty-standard"><b>做到這樣才算完成：</b>${App.esc(g.standard)}</div>` : ""}`;
+    ${specBlock("要做的事", g.work, "work")}
+    ${specBlock("能管的事", g.authority, "auth")}
+    ${specBlock("做好的標準", g.standard, "std")}`;
 
   // ── 打掃工作表 ──
   const dutySection = d => !d ? "" : `
