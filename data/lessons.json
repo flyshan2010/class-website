@@ -28,6 +28,34 @@
     }
   },
   {
+    "title": "社3-2 家鄉的傳統信仰與老街｜老街與生活",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "課程教學"
+    ],
+    "points": [
+      "老街形成四步：廟宇聚人→小販聚集→市集商店街→老街（接 3-1 廟宇）",
+      "街屋前店後住；騎樓（亦仔腳）供顧客行人遮陽避雨",
+      "老街位置：港口、碼頭、山地與平原交會處、鐵路沿線（交通便利）",
+      "三種轉變：沒落（橋南）、新舊並存（南屯）、規畫保存（鹿港）",
+      "多元風貌：新住民與國際移工帶來不同文化的商店（印尼街、東協廣場）",
+      "在地化：鹽行因鹽商設行而得名、水災後只剩地名；王行路移工商圈為新生的街"
+    ],
+    "date": "",
+    "note": "網頁五份已上線並實測（逐步揭露、答案帶不洩題、480px 無橫向捲動）。待製：前測紙本六合一、差異化三份 docx、評量紙本六合一（與網頁平行題本）。▶ 本節必須排在 3-1 之後（老街形成以 3-1 的廟宇為起點）。",
+    "links": {
+      "material": "https://drive.google.com/file/d/17dG7z5KbN1Kynm1mzpuhco5hmFAtmBOX/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-2-老街與生活/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-2-老街與生活/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-2-老街與生活/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-2-老街與生活/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-2-老街與生活/3.review.html"
+    }
+  },
+  {
     "title": "國R1 期中總複習｜L1～L6",
     "subject": "國語",
     "grade": "四上",
@@ -1447,25 +1475,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
-    }
-  },
-  {
-    "title": "社3-2 家鄉的傳統信仰與老街｜老街與生活",
-    "subject": "社會",
-    "grade": "四上",
-    "version": "康軒",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "",
-    "links": {
-      "material": "https://drive.google.com/file/d/17dG7z5KbN1Kynm1mzpuhco5hmFAtmBOX/view",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
