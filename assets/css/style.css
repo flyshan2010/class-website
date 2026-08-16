@@ -1702,17 +1702,28 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .duty-work { font-size: 0.9333rem; line-height: 1.75; }
 .duty-tools { font-size: 0.8333rem; color: var(--ink-soft); margin-top: 8px; }
 
-/* ISO 版工作規格（2026-08-16）：職稱徽章＋「可以決定的事」「完成標準」兩段。
-   兩段刻意用不同底色與左邊條，讓孩子一眼分得出「我的權力」和「過關的樣子」。 */
+/* ISO 版工作規格（2026-08-16）：小標獨立一行 ＋ 三段各自配色的左邊條。
+   小標不跟內容黏成「能管的事：xxx」，是因為孩子在走廊上瞄一眼要找得到「做好的標準」在哪；
+   標題自成一行才掃得到。三段配色固定：要做的事灰、能管的事藍、做好的標準綠、額外獎金橘。 */
 .duty-title { font-weight: 700; font-size: 0.7778rem; color: #1a5fb4; background: #eaf1fb;
   border-radius: 999px; padding: 2px 10px; }
-.duty-auth, .duty-standard { font-size: 0.8333rem; line-height: 1.7; margin-top: 8px;
-  padding: 8px 10px; border-radius: 8px; border-left: 4px solid; }
-.duty-auth { background: #eef4fd; border-left-color: #1a5fb4; }
-.duty-standard { background: #eefaf3; border-left-color: #0d7a5f; }
-.duty-auth b, .duty-standard b { font-weight: 900; }
-.cadre-role-block .cadre-desc.auth { color: #1a5fb4; }
-.cadre-role-block .cadre-desc.bonus { color: #8b4a00; }
+.spec { margin-top: 8px; padding: 8px 10px; border-radius: 8px; border-left: 4px solid; }
+.spec-label { font-weight: 900; font-size: 0.7778rem; letter-spacing: .04em; margin-bottom: 2px; }
+.spec-body { font-size: 0.8889rem; line-height: 1.75; color: var(--ink); }
+.spec-work { background: #f4f5f7; border-left-color: #7b8794; }
+.spec-work .spec-label { color: #4a5560; }
+.spec-auth { background: #eef4fd; border-left-color: #1a5fb4; }
+.spec-auth .spec-label { color: #1a5fb4; }
+.spec-std { background: #eefaf3; border-left-color: #0d7a5f; }
+.spec-std .spec-label { color: #0d7a5f; }
+.spec-bonus { background: #fdf4e8; border-left-color: #8b4a00; }
+.spec-bonus .spec-label { color: #8b4a00; }
+
+/* 幹部人名：8/27 正式選出前的預排名單要看得出來是預排，否則會被當成定案 */
+.cadre-people { display: flex; flex-wrap: wrap; gap: 6px; }
+.cadre-person { display: inline-flex; align-items: center; gap: 4px; }
+.cadre-person.tentative small { font-size: 0.6667rem; font-weight: 700; color: #b3261e;
+  background: #fdecea; border-radius: 999px; padding: 1px 6px; }
 .duty-todo {
   margin-top: 14px; padding: 12px 16px; border-radius: 12px;
   background: #fdf3d6; color: #7a5c14; font-size: 0.9333rem; font-weight: 700;
