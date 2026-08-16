@@ -38,6 +38,7 @@ const DS = {
   portfolio: "8eb38e48-334b-45b1-ad0a-7d720782d15a", // 🎨 學生作品集（照片＝Drive 外部連結，只進加密報告）
   lessons: "d28efc6b-3f34-4a97-b72b-ddeb5ec51147", // 🚀 教學單元（教學駕駛艙；一列＝一單元，勾「顯示」上站）
   duties: "ccd4b894-5455-49f9-97e7-d56b42b51713", // 🧹 班級工作分配（打掃＋午餐；老師填座號，同步時換成遮罩姓名）
+  cadreRoles: "bc029a06-3035-48c7-9298-379ec4255f69", // 🎖️ 幹部職務定義（一列＝一職務的 ISO 規格；名冊只填職務名來對應）
   classRules: "1aaeec2b-0dc3-49f3-a915-4ac3fc3ed8bd", // 📋 班規與獎懲（一列＝一筆行為；同班規併成一張卡）
   routines: "effc4788-5a86-4349-aa02-60f982a0c10e", // 🕗 作息與常規（一日作息＋上課常規）
 };
@@ -323,17 +324,37 @@ async function syncSettings() {
   // 班級幹部（名冊在學且有職務者；姓名去識別化後才公開，並帶出週薪連動獎懲制度）
   // 遮罩以「全班在學名單」為基準算，不能只拿有職務的人算——同名判斷的母體是全班，
   // 母體縮小會讓某些人拿到與非幹部同學相同的遮罩名。
+  //
+  // 職責內容（要做的事／可以決定的事／額外獎金／分組）一律來自「🎖️ 幹部職務定義」，
+  // **不再存在名冊的「職務說明」欄**（2026-08-16 起停用）。理由：同一職務多人時，
+  // 內容掛在每個學生身上會各存一份，老師改一個漏一個，班網就出現同職務兩種說法。
   const rosterRows = (await queryDataSource(DS.roster)).map(props);
   const maskMap = uniqueMaskNames(rosterRows.filter(r => r["在學"]).map(r => r["姓名"]));
+  const roleDefs = new Map((await queryDataSource(DS.cadreRoles)).map(props)
+    .filter(r => r["顯示"]).map(r => [String(r["職稱"]).trim(), r]));
+  const missingRoles = new Set();
   about.cadres = rosterRows
     .filter(r => r["在學"] && String(r["職務"]).trim())
     .sort((a, b) => (a["座號"] || 0) - (b["座號"] || 0))
-    .map(r => ({
-      role: String(r["職務"]).trim(),
-      name: maskMap.get(String(r["姓名"]).trim()),
-      desc: r["職務說明"],
-      salary: r["週薪"] || 0,
-    }));
+    .map(r => {
+      const role = String(r["職務"]).trim();
+      const d = roleDefs.get(role);
+      if (!d) missingRoles.add(role);
+      return {
+        role,
+        name: maskMap.get(String(r["姓名"]).trim()),
+        group: d?.["組別"] ?? "",
+        order: Number(d?.["排序"]) || 9999,
+        desc: d?.["我要做的事"] ?? "",
+        authority: d?.["我可以決定的事"] ?? "",
+        bonus: d?.["額外獎金"] ?? "",
+        // 薪水以名冊為準（老師可個別調整），定義表的數字只當名冊沒填時的後備
+        salary: r["週薪"] || Number(d?.["每週薪水"]) || 0,
+      };
+    });
+  // 對不上就等於班網會出現一張沒有職責的空卡片——不中止同步（會讓整站停在舊版），但要吵
+  if (missingRoles.size)
+    console.warn(`⚠️ 這些職務在「🎖️ 幹部職務定義」查無（班網只會顯示職稱與人名）：${[...missingRoles].join("、")}`);
   await save("about.json", about);
 }
 

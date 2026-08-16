@@ -1701,6 +1701,18 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .duty-chip small { font-size: 0.7222rem; margin-left: 4px; opacity: .75; }
 .duty-work { font-size: 0.9333rem; line-height: 1.75; }
 .duty-tools { font-size: 0.8333rem; color: var(--ink-soft); margin-top: 8px; }
+
+/* ISO 版工作規格（2026-08-16）：職稱徽章＋「可以決定的事」「完成標準」兩段。
+   兩段刻意用不同底色與左邊條，讓孩子一眼分得出「我的權力」和「過關的樣子」。 */
+.duty-title { font-weight: 700; font-size: 0.7778rem; color: #1a5fb4; background: #eaf1fb;
+  border-radius: 999px; padding: 2px 10px; }
+.duty-auth, .duty-standard { font-size: 0.8333rem; line-height: 1.7; margin-top: 8px;
+  padding: 8px 10px; border-radius: 8px; border-left: 4px solid; }
+.duty-auth { background: #eef4fd; border-left-color: #1a5fb4; }
+.duty-standard { background: #eefaf3; border-left-color: #0d7a5f; }
+.duty-auth b, .duty-standard b { font-weight: 900; }
+.cadre-role-block .cadre-desc.auth { color: #1a5fb4; }
+.cadre-role-block .cadre-desc.bonus { color: #8b4a00; }
 .duty-todo {
   margin-top: 14px; padding: 12px 16px; border-radius: 12px;
   background: #fdf3d6; color: #7a5c14; font-size: 0.9333rem; font-weight: 700;
