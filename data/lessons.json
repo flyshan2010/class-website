@@ -1,5 +1,35 @@
 [
   {
+    "title": "社R1 期中總複習｜第一、二單元",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "1-1 家鄉在哪裡：家鄉可能不只一個、四種地圖各有用途、地圖四要素與比例尺計算（圖上長度×比例尺）",
+      "1-2 家鄉的地形：五種地形特徵，100 公尺分平原台地、1000 公尺分丘陵山地；地形與生活相互影響",
+      "1-3 氣候、水資源與生活：天氣≠氣候、讀氣溫雨量圖三步驟、四種水資源與水庫五種用途",
+      "2-1／2-2：就地取材與三合院空間（正廳、護龍、稻埕）；器物的智慧與 3R 順序（減量→重複使用→回收）",
+      "五個最容易錯的地方＋期中備考建議"
+    ],
+    "date": "",
+    "note": "第一單元 家鄉的自然環境（1-1～1-3）＋第二單元 家鄉的傳統住屋與器物（2-1～2-2）共 5 小節的統整複習；無單獨原教材 PDF，教材沿用各小節課本。紙本：前測與評量各一套六合一、差異化三份（docx＋pdf），存於教學簡報／4上-社會-社R1-期中總複習。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/3.review.html"
+    }
+  },
+  {
     "title": "國L6-1 又遠又近的月亮 第一節 字詞語詞及大意",
     "subject": "國語",
     "grade": "四上",
@@ -60,6 +90,62 @@
     }
   },
   {
+    "title": "國L6-3 又遠又近的月亮 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "本課關鍵：記敘（寫我的想法行動）vs 說明（寫客觀事實與判斷）",
+      "四種修辭：轉化（四十五億歲）、設問懸問（嬃娥怎樣到月亮的呢）、頂真（老師。老師…）、映襬（又遠又近）",
+      "兩種複句：因果「由於…因而…」、假設「就算…也…」",
+      "兩組短語：受到無數的隕石撞擊／科學揭開了月球的真相",
+      "造句：傳說、揭開"
+    ],
+    "date": "",
+    "note": "翰林四上國語第六課「又遠又近的月亮」第 3 節。4 節共用同一份原教材 PDF。\n\n2026-08-16 產出五份網頁並上線：前測 4 題＋提問框、教學頁 16 頁、練習頁 10 頁、複習頁 8 頁（含修辭翻牌）、線上模擬評量選擇 10＋填答 6。依老師 2026-08-16 裁示，「記敘 vs 說明」維持在本節（形式深究），未上移到第二節。\n\n實測：1600×900 逐頁無溢出（teach 877、practice 892（p1 修辭配對頁原 960，已改 2×2 排列＋chip 降字級）、review 794）；揭露序列 0→1→2→3 一次一個、出完才換頁且無位移；「整頁攟開」不洩答（HIDDEN-OK）、作答後答案帶才現（SHOWN-OK）；五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養寫作 1×20＝100）。答案分布 C A D B A C D B C D、雙向細目表題數合計＝15 題。\n\n平行題本檢查（本節特殊）：首次拉出 16 處重疊，逐一檢視後換掉 3 題真重複（相同錯誤選項「就算…因而…」、相同价23短語仿寫題、相同句式的說明定義題）；残餘重疊盡為課文原句（月球已經四十五億歲了、嬃娥是怎樣到月亮的呢）與課本術語（短語結構名、關聯詞）——形式深究必然反覆分析同一批句子，不屬同題。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-3-形式深究/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-3-形式深究/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-3-形式深究/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-3-形式深究/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-3-形式深究/3.review.html"
+    }
+  },
+  {
+    "title": "國L6-4 又遠又近的月亮 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "全課四節統整地圖、課文三段結構與四個科學事實（45億歲／坑洞成因／38萬公里／阿提米絲2027）；第五課〈月光下〉與本課連續性文本對讀（文學的月亮 vs 科學的月球、兩課骨架對照）；主旨「又遠又近」回扣；寫作任務「我的登月計畫書」——審題、計畫書與作文的差別、選材、五段骨架（目標／準備／步驟／困難與辦法／期待）與檢核四要。"
+    ],
+    "date": "",
+    "note": "2026-08-16 完成五段網頁＋紙本。網頁：教學16頁／練習10／複習8／前測4題+討論框／模擬評量10選+6填，五個網址皆 HTTP 200。實測：1600×900 clone 展開量測逐頁無溢出（teach 857／practice 857／review 857），揭露一次一個、整頁攤開不洩答（data-after-answer 僅作答後現）、480px 無橫捲、最小字級 24px、外部資源 0。紙本：2a/2b/2c 差異化各 docx+pdf、評量六合一（學生卷／教師含答案卷／解析尺規／審題檢核表／配分答案卡／雙向細目表，配分 60+20+20=100，15 題）。與線上模擬評量為平行題本，已逐題比對無重複題（素養寫作改為「我的班級圖書角改造計畫書」，避免與挑戰題學習單的登月計畫書同題）。",
+    "links": {
+      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4%E4%B8%8A-%E5%9C%8B%E8%AA%9E-%E5%9C%8BL6-4-%E7%B6%9C%E5%90%88%E6%95%B4%E7%90%86/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4%E4%B8%8A-%E5%9C%8B%E8%AA%9E-%E5%9C%8BL6-4-%E7%B6%9C%E5%90%88%E6%95%B4%E7%90%86/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4%E4%B8%8A-%E5%9C%8B%E8%AA%9E-%E5%9C%8BL6-4-%E7%B6%9C%E5%90%88%E6%95%B4%E7%90%86/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4%E4%B8%8A-%E5%9C%8B%E8%AA%9E-%E5%9C%8BL6-4-%E7%B6%9C%E5%90%88%E6%95%B4%E7%90%86/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4%E4%B8%8A-%E5%9C%8B%E8%AA%9E-%E5%9C%8BL6-4-%E7%B6%9C%E5%90%88%E6%95%B4%E7%90%86/3.review.html"
+    }
+  },
+  {
     "title": "數R1 期中總複習｜學習加油讚（一）",
     "subject": "數學",
     "grade": "四上",
@@ -87,36 +173,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-期中總複習/3.review.html"
-    }
-  },
-  {
-    "title": "社R1 期中總複習｜第一、二單元",
-    "subject": "社會",
-    "grade": "四上",
-    "version": "康軒",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "1-1 家鄉在哪裡：家鄉可能不只一個、四種地圖各有用途、地圖四要素與比例尺計算（圖上長度×比例尺）",
-      "1-2 家鄉的地形：五種地形特徵，100 公尺分平原台地、1000 公尺分丘陵山地；地形與生活相互影響",
-      "1-3 氣候、水資源與生活：天氣≠氣候、讀氣溫雨量圖三步驟、四種水資源與水庫五種用途",
-      "2-1／2-2：就地取材與三合院空間（正廳、護龍、稻埕）；器物的智慧與 3R 順序（減量→重複使用→回收）",
-      "五個最容易錯的地方＋期中備考建議"
-    ],
-    "date": "",
-    "note": "第一單元 家鄉的自然環境（1-1～1-3）＋第二單元 家鄉的傳統住屋與器物（2-1～2-2）共 5 小節的統整複習；無單獨原教材 PDF，教材沿用各小節課本。紙本：前測與評量各一套六合一、差異化三份（docx＋pdf），存於教學簡報／4上-社會-社R1-期中總複習。",
-    "links": {
-      "material": null,
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/3.review.html"
     }
   },
   {
@@ -1332,44 +1388,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
-    }
-  },
-  {
-    "title": "國L6-3 又遠又近的月亮 第三節 形式深究",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "翰林四上國語第六課「又遠又近的月亮」第 3 節。4 節共用同一份原教材 PDF。",
-    "links": {
-      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "國L6-4 又遠又近的月亮 第四節 綜合整理",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "翰林四上國語第六課「又遠又近的月亮」第 4 節（本課最後一節）。4 節共用同一份原教材 PDF。",
-    "links": {
-      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
