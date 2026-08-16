@@ -11,38 +11,35 @@
   // 幹部職級 emoji（依週薪對應制度三級：30 領導職／25 股長職／20 專員職）
   const roleEmoji = salary => salary >= 30 ? "👑" : salary >= 25 ? "⭐" : "🔧";
 
-  // 幹部六大分組（依「班級幹部分組表」；同組職務依此順序；未列入的職務歸「其他幹部」組）
-  const CADRE_GROUPS = [
-    { name: "班級領導組", emoji: "🎖️", roles: ["班長", "副班長", "秩序股長"] },
-    { name: "學術與資訊組", emoji: "📚", roles: ["學藝股長", "作業小組長", "資訊小組長"] },
-    { name: "生活與衛生組", emoji: "🧹", roles: ["衛生股長", "潔牙小組長", "環保小尖兵", "午餐小組長"] },
-    { name: "體育與活動組", emoji: "⚽", roles: ["體育股長", "晨運小組長"] },
-    { name: "總務與文宣組", emoji: "🗂️", roles: ["總務股長", "文宣小組"] },
-    { name: "服務與支援組", emoji: "💗", roles: ["服務股長", "晨讀小組長", "愛心小天使", "集點小幫手"] },
-  ];
+  // 幹部分組只剩「組名→emoji」是寫死的（純視覺）。
+  // 分組成員與順序一律來自 Notion「🎖️ 幹部職務定義」的 組別／排序——
+  // 以前這裡寫死一份職務清單，改名或新增一個職務就得同步改程式，
+  // 漏改的下場是那個孩子在班網被靜默歸到「其他幹部」，沒有人會發現。
+  const GROUP_EMOJI = {
+    "班級領導組": "🎖️", "學術與資訊組": "📚", "生活與衛生組": "🧹",
+    "體育與活動組": "⚽", "總務與環境組": "🗂️", "服務與支援組": "💗",
+  };
 
   // 依組別＋職務彙整幹部（同職務多人合併列名）
   const cadreGroups = cadres => {
-    const used = new Set();
-    const blocks = CADRE_GROUPS.map(g => {
-      const roles = g.roles.map(rn => {
-        const members = cadres.filter(x => String(x.role).trim() === rn);
-        members.forEach(m => used.add(m));
-        if (!members.length) return null;
-        return { role: rn, names: members.map(m => m.name), desc: members[0].desc, salary: members[0].salary };
-      }).filter(Boolean);
-      return { ...g, roles, count: roles.reduce((s, r) => s + r.names.length, 0) };
-    }).filter(b => b.roles.length);
-    // 未歸類職務 → 其他幹部組
-    const rest = cadres.filter(x => !used.has(x));
-    if (rest.length) {
-      const byRole = {};
-      rest.forEach(x => (byRole[String(x.role).trim()] ||= []).push(x));
-      const roles = Object.entries(byRole).map(([role, ms]) =>
-        ({ role, names: ms.map(m => m.name), desc: ms[0].desc, salary: ms[0].salary }));
-      blocks.push({ name: "其他幹部", emoji: "🌟", roles, count: rest.length });
+    const byGroup = new Map();
+    for (const c of [...cadres].sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))) {
+      const gname = String(c.group || "").trim() || "其他幹部";
+      if (!byGroup.has(gname)) byGroup.set(gname, new Map());
+      const roles = byGroup.get(gname);
+      const key = String(c.role).trim();
+      if (!roles.has(key)) roles.set(key, {
+        role: key, names: [], desc: c.desc, authority: c.authority, bonus: c.bonus, salary: c.salary,
+      });
+      roles.get(key).names.push(c.name);
     }
-    return blocks;
+    return [...byGroup].map(([name, roleMap]) => {
+      const roles = [...roleMap.values()];
+      return {
+        name, emoji: GROUP_EMOJI[name] || "🌟", roles,
+        count: roles.reduce((s, r) => s + r.names.length, 0),
+      };
+    });
   };
 
   const cadreSection = cadres => `
@@ -58,7 +55,9 @@
               ${r.salary ? `<span class="cadre-salary-tag">🪙 ${r.salary}</span>` : ""}
             </div>
             <div class="cadre-people">${r.names.map(n => App.esc(n)).join("、")}</div>
-            ${r.desc ? `<div class="cadre-desc">${App.esc(r.desc)}</div>` : ""}
+            ${r.desc ? `<div class="cadre-desc"><b>我要做的事：</b>${App.esc(r.desc)}</div>` : ""}
+            ${r.authority ? `<div class="cadre-desc auth"><b>我可以決定的事：</b>${App.esc(r.authority)}</div>` : ""}
+            ${r.bonus ? `<div class="cadre-desc bonus"><b>額外獎金：</b>${App.esc(r.bonus)}</div>` : ""}
           </div>`).join("")}
         </div>
       </div>`).join("")}
@@ -305,6 +304,13 @@
       </p>`;
   };
 
+  // 打掃與午餐共用的 ISO 三段（要做的事／可以決定的事／完成標準）。
+  // 三段都可能是空的——舊資料或老師還沒填時就少印那一行，不要印出空標題。
+  const dutySpec = g => `
+    ${g.work ? `<div class="duty-work">${App.esc(g.work)}</div>` : ""}
+    ${g.authority ? `<div class="duty-auth"><b>我可以決定的事：</b>${App.esc(g.authority)}</div>` : ""}
+    ${g.standard ? `<div class="duty-standard"><b>做到這樣才算完成：</b>${App.esc(g.standard)}</div>` : ""}`;
+
   // ── 打掃工作表 ──
   const dutySection = d => !d ? "" : `
     <p class="meta">打掃時間：${App.esc(d.時段)}</p>
@@ -314,10 +320,11 @@
       <div class="duty-cards">
         ${z.groups.map(g => `
         <div class="duty-card">
-          <div class="duty-card-head">${App.esc(g.group)}</div>
+          <div class="duty-card-head">${App.esc(g.group)}${
+            g.title ? `<span class="duty-title">${App.esc(g.title)}</span>` : ""}</div>
           <div class="duty-people">${g.members.map(n => `<span class="duty-chip">${App.esc(n)}</span>`).join("")}${
             g.support.length ? g.support.map(n => `<span class="duty-chip sup">${App.esc(n)}<small>支援</small></span>`).join("") : ""}</div>
-          <div class="duty-work">${App.esc(g.work)}</div>
+          ${dutySpec(g)}
           <div class="duty-tools">🧰 ${g.tools.map(t => App.esc(t)).join("、")}</div>
         </div>`).join("")}
       </div>
@@ -340,10 +347,11 @@
       <div class="lunch-fixed">
         ${l.fixed.map(f => `
         <div class="duty-card">
-          <div class="duty-card-head">${App.esc(f.post)}
+          <div class="duty-card-head">${App.esc(f.post)}${
+            f.title ? `<span class="duty-title">${App.esc(f.title)}</span>` : ""}
             ${f.isMock ? '<span class="mock-tag">模擬資料・待確認</span>' : ""}</div>
           <div class="duty-people">${f.members.map(n => `<span class="duty-chip">${App.esc(n)}</span>`).join("")}</div>
-          <div class="duty-work">${App.esc(f.work)}</div>
+          ${dutySpec(f)}
         </div>`).join("")}
       </div>
 
@@ -360,6 +368,16 @@
           ${l.完整輪替週數} 週輪完一圈，每人各輪 ${l.每人每輪次數} 次。
         </p>
       </div>
+
+      ${l.posts?.length ? `
+      <div class="duty-cards">
+        ${l.posts.map(p => `
+        <div class="duty-card">
+          <div class="duty-card-head">${App.esc(p.post)}${
+            p.title ? `<span class="duty-title">${App.esc(p.title)}</span>` : ""}</div>
+          ${dutySpec(p)}
+        </div>`).join("")}
+      </div>` : ""}
 
       <ul class="lunch-rules">${l.規則.map(r => `<li>${App.esc(r)}</li>`).join("")}</ul>
 

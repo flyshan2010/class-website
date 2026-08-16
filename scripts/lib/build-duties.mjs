@@ -19,6 +19,15 @@ const SEAT_COLUMNS = ["六", "五", "四", "三", "二", "一"];
 const splitList = s => String(s ?? "").split(/[、,，]/).map(x => x.trim()).filter(Boolean);
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
 
+// ISO 版四欄（2026-08-16 起）：職稱／要做的事／可以決定的事／完成標準。
+// 「升級徽章」刻意不帶出來——那是未來升級制度的內部欄位，班網不顯示。
+const isoFields = r => ({
+  title: r["職稱"] ?? "",
+  work: r["我要做的事"] ?? "",
+  authority: r["我可以決定的事"] ?? "",
+  standard: r["完成標準"] ?? "",
+});
+
 /**
  * @param {object[]} dutyRows  🧹 班級工作分配（已 props()，未過濾）
  * @param {object[]} rosterRows 👥 學生名冊（已 props()，未過濾）
@@ -51,7 +60,7 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
     const groups = dutyOnly.filter(r => r["區域"] === zoneName).map(r => {
       const seats = parseSeats(r["成員座號"], r["組別"]);
       const support = parseSeats(r["支援座號"], `${r["組別"]}・支援`);
-      return { seats, support, group: r["組別"], work: r["工作內容"] ?? "", tools: splitList(r["配置掃具"]) };
+      return { seats, support, group: r["組別"], tools: splitList(r["配置掃具"]), ...isoFields(r) };
     });
     // 人數＝該區實際涵蓋的人；同一人同時是某組主責、另一組支援時不重複計
     const headcount = new Set(groups.flatMap(g => [...g.seats, ...g.support])).size;
@@ -59,7 +68,7 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
       zone: zoneName, emoji: ZONE_META[zoneName].emoji, headcount,
       groups: groups.map(g => ({
         group: g.group, members: g.seats.map(nameOf), support: g.support.map(nameOf),
-        work: g.work, tools: g.tools,
+        work: g.work, tools: g.tools, title: g.title, authority: g.authority, standard: g.standard,
       })),
     };
   }).filter(z => z.groups.length);
@@ -95,12 +104,12 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
   const lunch = {
     _產生自: "sync-notion.mjs ← Notion「🧹 班級工作分配」（勿手改）",
     規則: String(kv["午餐規則"] ?? "").split(/\n+/).map(s => s.trim()).filter(Boolean),
-    posts: rotRows.map(r => ({ post: r["組別"], headcount: Number(r["人數"]) || 1, work: r["工作內容"] ?? "" })),
+    posts: rotRows.map(r => ({ post: r["組別"], headcount: Number(r["人數"]) || 1, ...isoFields(r) })),
     fixed: fixedRows.map(r => {
       const seats = parseSeats(r["成員座號"], r["組別"]);
       return {
         post: r["組別"], headcount: Number(r["人數"]) || seats.length,
-        members: seats.map(nameOf), isMock: !!r["模擬資料"], work: r["工作內容"] ?? "",
+        members: seats.map(nameOf), isMock: !!r["模擬資料"], ...isoFields(r),
       };
     }),
     rotation: [],
