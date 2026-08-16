@@ -90,6 +90,36 @@
     }
   },
   {
+    "title": "社R1 期中總複習｜第一、二單元",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "1-1 家鄉在哪裡：家鄉可能不只一個、四種地圖各有用途、地圖四要素與比例尺計算（圖上長度×比例尺）",
+      "1-2 家鄉的地形：五種地形特徵，100 公尺分平原台地、1000 公尺分丘陵山地；地形與生活相互影響",
+      "1-3 氣候、水資源與生活：天氣≠氣候、讀氣溫雨量圖三步驟、四種水資源與水庫五種用途",
+      "2-1／2-2：就地取材與三合院空間（正廳、護龍、稻埕）；器物的智慧與 3R 順序（減量→重複使用→回收）",
+      "五個最容易錯的地方＋期中備考建議"
+    ],
+    "date": "",
+    "note": "第一單元 家鄉的自然環境（1-1～1-3）＋第二單元 家鄉的傳統住屋與器物（2-1～2-2）共 5 小節的統整複習；無單獨原教材 PDF，教材沿用各小節課本。紙本：前測與評量各一套六合一、差異化三份（docx＋pdf），存於教學簡報／4上-社會-社R1-期中總複習。",
+    "links": {
+      "material": null,
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-期中總複習/3.review.html"
+    }
+  },
+  {
     "title": "數L5-3 公里｜長度的計算",
     "subject": "數學",
     "grade": "四上",
