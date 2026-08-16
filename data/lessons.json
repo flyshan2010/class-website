@@ -1389,5 +1389,36 @@
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
     }
+  },
+  {
+    "title": "國R1 期中總複習｜第一課～第六課",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "不逐課複習，改以四面向橫切六課（統整一併入字詞／內容／形式，統整二併入寫作）",
+      "字詞：長得像的字靠部首分辨、同字兩種讀法、六課四字語詞各記一個",
+      "內容：六課大意各一句、書信格式與回信、六何法讀懂一篇文章、記敘與說明一句話分辨",
+      "形式：六種修辭各記一句課文；最易混的譬喻／轉化／映襯（先找喻詞為判準）；五種句型看關聯詞（即使…也＝假設、無論…都＝條件）",
+      "寫作：下筆前審題、立意、選材三步驟，六課各練一種寫作，兩個語文應用技巧",
+      "考前提醒：最容易失分的六件事＋回家怎麼準備"
+    ],
+    "date": "",
+    "note": "第一課～第六課＋統整一、統整二的期中統整複習，全單元為一個節次（非逐課拆節）。原教材 PDF 為統整一、統整二兩份，存於教學簡報正本資料夾，未上線班網。紙本 9 份：差異化教材 2a／2b／2c（docx＋pdf）、評量六合一。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/3.review.html"
+    }
   }
 ]
