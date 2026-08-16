@@ -493,9 +493,14 @@
     }
     const l = b.rows[0], code = codeOf(l);
     const name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
-    return code
-      ? `📄 第 ${App.esc(unitNo(code))} 課 <span class="meta">（${App.esc(code)}・${App.esc(name)}）</span>`
-      : `📄 ${App.esc(l.title || "")}`;
+    if (!code) return `📄 ${App.esc(l.title || "")}`;
+    // 複習課（國R1、數R1…）沒有課次概念，標「期中／期末複習」而不是「第 1 課」
+    if (/R\d+$/.test(code)) {
+      const label = /期末/.test(l.title || "") ? "期末複習"
+                  : /期中/.test(l.title || "") ? "期中複習" : "複習";
+      return `📄 ${label} <span class="meta">（${App.esc(code)}・${App.esc(name)}）</span>`;
+    }
+    return `📄 第 ${App.esc(unitNo(code))} 課 <span class="meta">（${App.esc(code)}・${App.esc(name)}）</span>`;
   };
   const unitBlocks = (rows, color) => {
     const blocks = [];
