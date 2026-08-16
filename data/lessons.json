@@ -1,5 +1,33 @@
 [
   {
+    "title": "社3-1 家鄉的傳統信仰與老街｜信仰與生活",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "課程教學"
+    ],
+    "points": [
+      "原住民族信仰：祖靈與自然神靈；播種、收割、狩獵、出生死亡時舉行祭典",
+      "彩虹橋傳說推論：祖先訓誡→族人生活規範（勤練本領、善待弱者）",
+      "神明職務反映居民生活：土地公守農田、媽祖保航海",
+      "廟宇雙重角色：信仰中心＋居民聚會場所（接 3-2 老街形成）",
+      "現代變化：多元信仰並存、環保減香；態度→尊重與包容",
+      "在地化：永康三廟（大灣廣護宮原鄉信仰、二王廟隨時代改變、鹽行禹帝宮水神）"
+    ],
+    "date": "",
+    "note": "網頁五份已上線並實測（逐步揭露、答案帶不洩題、無溢出）。待製：前測紙本六合一、差異化三份 docx、評量紙本六合一（與網頁平行題本）。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1h09lXMNA6KLqC_G_tTghfbY0Q6OXUz6S/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-1-信仰與生活/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-1-信仰與生活/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-1-信仰與生活/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-1-信仰與生活/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社3-1-信仰與生活/3.review.html"
+    }
+  },
+  {
     "title": "國R1 期中總複習｜L1～L6",
     "subject": "國語",
     "grade": "四上",
@@ -1419,6 +1447,25 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
+    }
+  },
+  {
+    "title": "社3-2 家鄉的傳統信仰與老街｜老街與生活",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "https://drive.google.com/file/d/17dG7z5KbN1Kynm1mzpuhco5hmFAtmBOX/view",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
     }
   }
 ]
