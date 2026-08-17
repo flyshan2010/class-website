@@ -28,6 +28,20 @@
     "images": []
   },
   {
+    "id": "s20260817183m7wp",
+    "title": "校園毒品危害防制宣導_「賽拉嗪」",
+    "content": "發布單位：學務處",
+    "date": "2026-08-17",
+    "endDate": "",
+    "expiry": "2026-09-16",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=596&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
     "id": "s202608161m4xejr",
     "title": "轉知臺南市補習教育事業協會辦理「優質補教，愛心助學」115學年度育苗專案計畫，詳如說明。",
     "content": "發布單位：教務處",
@@ -165,20 +179,6 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=570&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s2026080615w5m5l",
-    "title": "115 學年度課後照顧班報名(1 年級新生)",
-    "content": "發布單位：教務處",
-    "date": "2026-08-06",
-    "endDate": "",
-    "expiry": "2026-09-05",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=565&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   }
