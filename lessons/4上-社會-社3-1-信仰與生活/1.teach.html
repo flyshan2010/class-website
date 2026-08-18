@@ -2011,6 +2011,8 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 /* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
 .split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
 @media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
+/* p8 三步流程：卡片高度依內容決定，不與 question-frame 平分剩餘高度而被壓爆（2026-08-18 修） */
+.slide[data-slide-id="rainbow-infer"] > .flow-steps { flex: 0 0 auto; }
 /* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
 [data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
@@ -2207,23 +2209,23 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     <!-- 12 繞境 -->
     <section class="slide" data-slide-id="parade" aria-labelledby="parade-t" hidden>
       <div class="page-head"><span class="label">最盛大的信仰活動</span><h2 id="parade-t" class="title">繞境是在做什麼？</h2></div>
-      <div class="figure-block">
+      <div class="figure-block figure-top">
         <div class="figure">
-          <svg viewBox="0 0 1100 260" width="1100" height="260" role="img" aria-label="繞境隊伍示意圖：由前而後為報馬仔、頭旗、涼傘、媽祖神轎，沿途信眾持香迎接">
-            <line x1="40" y1="200" x2="1060" y2="200" stroke="var(--ink)" stroke-width="4"></line>
+          <svg viewBox="0 0 1400 300" width="1400" height="300" role="img" aria-label="繞境隊伍示意圖：由前而後為報馬仔、頭旗、涼傘、媽祖神轎，沿途信眾持香迎接">
+            <line x1="50" y1="215" x2="1350" y2="215" stroke="var(--ink)" stroke-width="4"></line>
             <g fill="var(--accent)" opacity="0.9">
-              <circle cx="150" cy="160" r="26"></circle><circle cx="400" cy="160" r="26"></circle>
-              <circle cx="650" cy="160" r="26"></circle>
+              <circle cx="190" cy="170" r="30"></circle><circle cx="510" cy="170" r="30"></circle>
+              <circle cx="830" cy="170" r="30"></circle>
             </g>
-            <rect x="850" y="112" width="120" height="76" rx="10" fill="var(--accent-2)" fill-opacity="0.75" stroke="var(--ink)" stroke-width="4"></rect>
-            <text x="150" y="238" font-size="26" text-anchor="middle" fill="var(--ink)">報馬仔</text>
-            <text x="400" y="238" font-size="26" text-anchor="middle" fill="var(--ink)">頭旗</text>
-            <text x="650" y="238" font-size="26" text-anchor="middle" fill="var(--ink)">涼傘</text>
-            <text x="910" y="238" font-size="26" text-anchor="middle" fill="var(--ink)">媽祖神轎</text>
-            <text x="545" y="60" font-size="28" text-anchor="middle" fill="var(--muted)">隊伍前進方向 →</text>
+            <rect x="1080" y="115" width="150" height="90" rx="12" fill="var(--accent-2)" fill-opacity="0.75" stroke="var(--ink)" stroke-width="4"></rect>
+            <text x="190" y="262" font-size="30" text-anchor="middle" fill="var(--ink)">報馬仔</text>
+            <text x="510" y="262" font-size="30" text-anchor="middle" fill="var(--ink)">頭旗</text>
+            <text x="830" y="262" font-size="30" text-anchor="middle" fill="var(--ink)">涼傘</text>
+            <text x="1155" y="262" font-size="30" text-anchor="middle" fill="var(--ink)">媽祖神轎</text>
+            <text x="700" y="70" font-size="30" text-anchor="middle" fill="var(--muted)">隊伍前進方向 →</text>
           </svg>
         </div>
-        <div class="caption" data-reveal>信眾迎請神像巡視境內，祈求淨化驅邪、保佑平安。報馬仔走在最前面查看路況、敲鑼提醒居民準備迎接。</div>
+        <div class="caption" data-reveal><div class="body">信眾迎請神像巡視境內，祈求淨化驅邪、保佑平安。報馬仔走在最前面查看路況、敲鑼提醒居民準備迎接。</div></div>
       </div>
       <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-star"></use></svg></span>

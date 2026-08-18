@@ -410,9 +410,19 @@
   };
 
   /* ── 檢視二：原本的「科目 → 單元」摺疊清單（備課找教材用） ────── */
+  // 排序要跟老師的課程計畫一致：複習課（R#）依「複習範圍的最後一課」插在該課之後，
+  // 不是一律排到科目最末（社R1 複習 L1～L2 → 排在社2 之後、社3 之前；國R1 複習 L1～L6 → 仍在最末）。
+  const pad6 = n => String(n).padStart(6, "0");
   const sortKey = l => {
     const c = codeOf(l) || l.title || "";
-    return c.split(/(\d+)/).map(p => (/^\d+$/.test(p) ? p.padStart(6, "0") : p)).join("");
+    const rev = /R(\d+)$/.exec(c);
+    if (rev) {
+      const range = /(\d+)\s*[～~—–\-至]\s*[A-Za-z]?(\d+)/.exec(l.title || "");
+      const last = range ? Number(range[2]) : 9999;   // 抓不到範圍就當成整學期複習，排最後
+      return pad6(last) + "1" + pad6(Number(rev[1]));
+    }
+    const nums = (c.match(/\d+/g) || []).map(Number);
+    return pad6(nums[0] || 0) + "0" + pad6(nums[1] || 0);
   };
   const UNIT_RE = /^(.*\d)-\d+$/;
   const unitOf = l => (UNIT_RE.exec(codeOf(l)) || [])[1] || "";
