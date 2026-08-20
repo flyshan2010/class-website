@@ -113,12 +113,12 @@
     [
       {
         "subject": "自然",
-        "teacher": "科任老師",
+        "teacher": "李妤婕",
         "room": "自然教室"
       },
       {
         "subject": "視覺藝術",
-        "teacher": "科任老師",
+        "teacher": "石育恩",
         "room": "美勞教室"
       },
       {
@@ -128,29 +128,29 @@
       },
       {
         "subject": "自然",
-        "teacher": "科任老師",
+        "teacher": "李妤婕",
         "room": "自然教室"
       },
       {
         "subject": "英語(彈性)",
-        "teacher": "科任老師",
+        "teacher": "王函葦 ",
         "room": "英語教室"
       }
     ],
     [
       {
         "subject": "自然",
-        "teacher": "科任老師",
+        "teacher": "李妤婕",
         "room": "自然教室"
       },
       {
         "subject": "視覺藝術",
-        "teacher": "科任老師",
+        "teacher": "石育恩",
         "room": "美勞教室"
       },
       {
         "subject": "玩美(彈性)",
-        "teacher": "科任老師",
+        "teacher": "陳鵬翎",
         "room": "美勞教室"
       },
       {
@@ -160,7 +160,7 @@
       },
       {
         "subject": "音樂",
-        "teacher": "科任老師",
+        "teacher": "蔡文婷 ",
         "room": "音樂教室"
       }
     ],
@@ -174,18 +174,18 @@
     [
       {
         "subject": "體育",
-        "teacher": "科任老師",
+        "teacher": "吳宗霖",
         "room": "操場"
       },
       {
         "subject": "英語",
-        "teacher": "科任老師",
+        "teacher": "王函葦",
         "room": "英語教室"
       },
       "",
       {
         "subject": "體育",
-        "teacher": "科任老師",
+        "teacher": "吳宗霖",
         "room": "操場"
       },
       ""
@@ -204,7 +204,7 @@
       "",
       {
         "subject": "資訊(彈性)",
-        "teacher": "科任老師",
+        "teacher": "蔡炎儒",
         "room": "電腦教室"
       },
       ""
@@ -217,7 +217,7 @@
       },
       {
         "subject": "本土語",
-        "teacher": "科任老師",
+        "teacher": "蔡秀容",
         "room": "本班教室"
       },
       "",
