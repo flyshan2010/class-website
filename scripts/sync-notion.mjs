@@ -41,6 +41,7 @@ const DS = {
   cadreRoles: "bc029a06-3035-48c7-9298-379ec4255f69", // 🎖️ 幹部職務定義（一列＝一職務的 ISO 規格；名冊只填職務名來對應）
   classRules: "1aaeec2b-0dc3-49f3-a915-4ac3fc3ed8bd", // 📋 班規與獎懲（一列＝一筆行為；同班規併成一張卡）
   routines: "effc4788-5a86-4349-aa02-60f982a0c10e", // 🕗 作息與常規（一日作息＋上課常規）
+  dailyPlan: "81515593-4d79-4b09-84a5-709628d7b58e", // 📅 每日課程進度（一列＝一個上課日；老師調課改這裡）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -52,7 +53,7 @@ const DS = {
 //        班網維持上一版正常內容，不會被半殘資料覆蓋。
 const YEAR_FIELD = "學年";
 // 需按學年過濾的庫
-const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem"].map(k => DS[k]));
+const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem", "dailyPlan"].map(k => DS[k]));
 // 有「學年」欄但**刻意不過濾**：教材是跨學年資產，過濾掉會讓升學年後既有課程頁全部消失
 const YEAR_EXEMPT = new Set([DS.lessons]);
 const DS_NAME = Object.fromEntries(Object.entries(DS).map(([k, v]) => [v, k]));
@@ -786,6 +787,58 @@ async function syncClassGoal() {
 }
 
 // ── 教學駕駛艙（🚀 教學單元；公開頁，只放連結與進度，無個資）──
+// ── 每日課程進度（Notion「📅 每日課程進度」→ data/daily-plan.json）──────────
+// 2026-08-21 起改由 Notion 產出（原本是 scripts/build-daily-plan.py 讀 xlsx，已封存）。
+// 老師在 Notion 改進度／拖日期／改「◯◯單元」relation，按「立即更新班網」就生效。
+//
+// 輸出結構刻意與舊版 xlsx 產物**完全相同**（days[] ＋ weeks{週}{科}[]），
+// 只多一個 unit 欄＝該格對應的課次代碼（由 relation 指到的單元標題解析）。
+// 節次對齊仍不在這裡做——那是 cockpit.js 依當下日課表即時算的事（換日課表零成本）。
+const PLAN_SUBJECTS = ["國語", "數學", "社會"];
+// 與 cockpit.js 同一條課次代碼正則，改了要兩邊一起改
+const PLAN_CODE_RE = /(?:^|\s)((?:國|數|社|自|英|健康|藝|綜)[A-Za-z]*\d+(?:-\d+)*[A-Za-z]?|SEL\d+(?:-\d+)*)(?=\s|$)/;
+
+async function syncDailyPlan() {
+  // 單元 pageId → 課次代碼（relation 只給 id，代碼要自己從標題解析）
+  const codeById = new Map();
+  for (const u of (await queryDataSource(DS.lessons)).map(props)) {
+    const code = (PLAN_CODE_RE.exec(u["單元"] || "") || [])[1];
+    if (code) codeById.set(u._id, code);
+  }
+
+  const rows = (await queryDataSource(DS.dailyPlan)).map(props)
+    .filter(r => r["上課日"]?.start)
+    .sort((a, b) => a["上課日"].start.localeCompare(b["上課日"].start));
+
+  const days = [];
+  const weeks = {};
+  for (const r of rows) {
+    const date = r["上課日"].start;
+    const week = Number(r["週次"]) || 0;
+    // 星期由日期直接算（週一＝1），不另存欄位，避免調課時忘了改而對不上日課表
+    const dow = ((new Date(`${date}T00:00:00+08:00`).getDay() + 6) % 7) + 1;
+    days.push({ date, week, dow, holiday: !!r["放假"], note: r["重要行事"] || "" });
+    if (r["放假"]) continue;                       // 放假日不排新課，也不進 weeks
+    for (const s of PLAN_SUBJECTS) {
+      const text = String(r[`${s}進度`] || "").trim();
+      if (!text) continue;
+      const unit = codeById.get((r[`${s}單元`] || [])[0]) || "";
+      ((weeks[String(week)] ||= {})[s] ||= []).push({ date, text, unit });
+    }
+  }
+
+  await save("daily-plan.json", {
+    meta: {
+      source: "Notion「📅 每日課程進度」",
+      days: days.length,
+      weeks: Object.keys(weeks).length,
+      note: "由 scripts/sync-notion.mjs 從 Notion 產生，請勿手改。節次對齊由 cockpit.js 依當下的 data/schedule.json 即時計算，所以改日課表不必重跑同步。",
+    },
+    days,
+    weeks,
+  });
+}
+
 async function syncLessons() {
   const STATUS_ORDER = { "進行中": 0, "備課中": 1, "已完成": 2 };
   const rows = (await queryDataSource(DS.lessons)).map(props)
@@ -1071,6 +1124,7 @@ await Promise.all([
   syncBank(),
   syncClassGoal(),
   syncLessons(),
+  syncDailyPlan(),
   syncRecapExtras(),
   syncClassDuties(),
   syncClassRules(),

@@ -84,25 +84,45 @@
           就接著把非正課的條目也填進去（換班級時某科節數較多才會遇到，免得節次空著）。
        ③ 填不下的 → 該週「彈性補充」，列出來讓老師自己決定要不要挪，不靜默丟掉。 */
   const SECTION_RE = /第\s*\d+\s*節\s*[：:]/;
+  const dowOf = iso => ((new Date(`${iso}T00:00:00+08:00`).getDay() + 6) % 7) + 1;
   const alignCache = new Map();
+  /* 對齊規則（2026-08-21 改為「日期優先」）
+     ① 進度寫哪一天，就先掛那天該科的節次——老師在 Notion 拖一下日期，班網就真的跟著調動。
+     ② 那天沒有該科的課（調課、放假、日課表換了）才依序遞補到本週剩下的節次，
+        遞補順序仍是「正課優先」，節次不夠時保住正課、彈性內容才落到本週彈性補充。
+     ③ 全程不看「第幾節」這種節次名，只看當下的日課表 —— 換一份真的日課表不必重排任何進度。 */
   const alignWeek = week => {
     if (alignCache.has(week)) return alignCache.get(week);
     const wk = (planDoc.weeks || {})[String(week)] || {};
     const holidays = new Set(days.filter(d => d.week === week && d.holiday).map(d => d.dow));
-    const plan = new Map();               // "星期|節次名" → {subject, text}
+    const plan = new Map();               // "星期|節次名" → {subject, text, unit}
     const extras = [];
     Object.keys(wk).forEach(subject => {
       const entries = wk[subject] || [];
       if (!entries.length) return;
       const marked = entries.filter(e => SECTION_RE.test(e.text));
       const core = marked.length ? marked : entries;
-      // 正課排前面：節次不夠時優先保住正課，節次有餘時才輪到彈性內容
       const ordered = [...core, ...entries.filter(e => !core.includes(e))];
       const avail = (slots[subject] || []).filter(s => !holidays.has(s.dow));
-      avail.forEach((s, i) => {
-        if (i < ordered.length) plan.set(`${s.dow}|${s.period}`, { subject, text: ordered[i].text });
-      });
-      extras.push(...ordered.slice(avail.length).map(e => ({ subject, text: e.text, date: e.date })));
+      const taken = new Set();            // 已被占用的 avail index
+      const put = (idx, e) => {
+        taken.add(idx);
+        plan.set(`${avail[idx].dow}|${avail[idx].period}`, { subject, text: e.text, unit: e.unit || "" });
+      };
+      // ① 日期優先：同一天有幾節就依序吃掉幾筆（同日多筆進度時按原順序）
+      const rest = [];
+      for (const e of ordered) {
+        const d = e.date ? dowOf(e.date) : 0;
+        const idx = avail.findIndex((s, k) => !taken.has(k) && s.dow === d);
+        if (idx >= 0) put(idx, e); else rest.push(e);
+      }
+      // ② 沒對上日期的，依序遞補剩下的節次
+      let k = 0;
+      for (const e of rest) {
+        while (k < avail.length && taken.has(k)) k++;
+        if (k >= avail.length) { extras.push({ subject, text: e.text, date: e.date, unit: e.unit || "" }); continue; }
+        put(k, e);
+      }
     });
     extras.sort((a, b) => a.date.localeCompare(b.date));
     const seen = new Set();
@@ -168,26 +188,31 @@
   // 週五是「課後評量與驗收」，教材沿用第四節那份（綜合整理內含評量卷）。
   const CHI_DAY_TO_PART = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 4 };
 
-  const matchLesson = (subject, text) => {
+  /* 對應教材：Notion「📅 每日課程進度」的『◯◯單元』relation 是唯一正解（entry.unit），
+     沒填才退回下面的文字正則猜測，並在畫面標「自動推測」——
+     漏填一眼看得出來，而下學期還沒備課的課次（單元列還沒建，relation 填不了）
+     也能靠正則先掛上，等 lesson-flow 一建好單元就自動接上。 */
+  const matchLesson = (subject, text, unit) => {
+    if (unit) return { lesson: lessonByCode.get(unit) || null, code: unit, isExam: false, sure: true };
     const t = text || "";
     if (subject === "國語") {
       const c = /第([一二三四五六七八九十]+)課/.exec(t);
       const d = /週([一二三四五])[：:]/.exec(t);
       if (!c || !d) return null;
       const code = `國L${cnNum(c[1])}-${CHI_DAY_TO_PART[d[1]]}`;
-      return { lesson: lessonByCode.get(code) || null, code, isExam: d[1] === "五" };
+      return { lesson: lessonByCode.get(code) || null, code, isExam: d[1] === "五", sure: false };
     }
     if (subject === "數學") {
       const m = /(?:^|[\s—－-])(\d+)-(\d+)/.exec(t);
       if (!m) return null;
       const code = `數L${Number(m[1])}-${Number(m[2])}`;
-      return { lesson: lessonByCode.get(code) || null, code, isExam: false };
+      return { lesson: lessonByCode.get(code) || null, code, isExam: false, sure: false };
     }
     if (subject === "社會") {
       const m = /^\s*(\d+)-(\d+)/.exec(t);
       if (!m) return null;
       const code = `社${Number(m[1])}-${Number(m[2])}`;
-      return { lesson: lessonByCode.get(code) || null, code, isExam: false };
+      return { lesson: lessonByCode.get(code) || null, code, isExam: false, sure: false };
     }
     return null;
   };
@@ -306,7 +331,7 @@
     if (!entry) {
       return `<div class="cp-slot" style="--accent:${color}">${head}</div>`;
     }
-    const hit = matchLesson(entry.subject, entry.text);
+    const hit = matchLesson(entry.subject, entry.text, entry.unit);
     const l = hit?.lesson;
     return `
       <div class="cp-slot" style="--accent:${color}">
@@ -317,11 +342,12 @@
           <div class="cp-lesson">
             <span class="badge" style="background:${color};color:#fff">${App.esc(hit.code)}</span>
             <strong>${App.esc(l.title)}</strong>
+            ${hit.sure ? "" : '<span class="meta">（自動推測，可到 Notion「📅 每日課程進度」指定）</span>'}
           </div>
           ${(l.points || []).length ? `<ul class="cockpit-points">${l.points.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>` : ""}
           ${lessonLinks(l)}`
           : hit ? `<p class="meta">尚未建立 <b>${App.esc(hit.code)}</b> 的教材——對 AI 說「/lesson-flow 開新單元 ${App.esc(hit.code)}」就會自動掛上。</p>`
-                : ""}
+                : `<p class="meta">這一節還沒指定單元——到 Notion「📅 每日課程進度」填該日的「${App.esc(subject)}單元」，再按「🔄 立即更新班網」。</p>`}
       </div>`;
   };
 
