@@ -132,6 +132,13 @@ h2{margin:0 0 6px;font-size:50px;line-height:1.22}
 @media print { [data-reveal] { opacity: 1 !important; transform: none !important; } }
 /* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
 [data-reveal]:not(.is-shown) { pointer-events: none; }
+/* 紙本提示條（補：本檔用到 .paper-note 卻缺樣式） */
+.paper-note {
+  display: flex; align-items: flex-start; gap: var(--s3);
+  background: var(--accent-soft); border: var(--line-mid) dashed var(--accent);
+  border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
+}
+.paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
 </style>
 </head>
 <body>
