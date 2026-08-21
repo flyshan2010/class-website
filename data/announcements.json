@@ -28,6 +28,20 @@
     "images": []
   },
   {
+    "id": "s20260822csdwr5",
+    "title": "緊急通知！！今日小一新生迎新活動取消辦理！！",
+    "content": "發布單位：輔導室",
+    "date": "2026-08-22",
+    "endDate": "",
+    "expiry": "2026-09-21",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=627&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
     "id": "s2026082111zyesj",
     "title": "單親家庭子女徵文繪畫比賽，鼓勵單親家庭之家長及子女踴躍參加",
     "content": "發布單位：輔導室",
@@ -150,20 +164,6 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=599&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s202608181bhfmii",
-    "title": "社團法人中華身心障運動休閒服務協會辦理2026亞特盃心智障礙運動會 相關事宜。",
-    "content": "發布單位：輔導室",
-    "date": "2026-08-18",
-    "endDate": "",
-    "expiry": "2026-09-17",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=601&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   },

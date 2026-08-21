@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-08-21T17:50:19.954Z",
+  "fetchedAt": "2026-08-21T23:27:32.881Z",
   "items": [
+    {
+      "date": "2026-08-22",
+      "title": "緊急通知！！今日小一新生迎新活動取消辦理！！",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=627&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-08-21",
       "title": "單親家庭子女徵文繪畫比賽，鼓勵單親家庭之家長及子女踴躍參加",
@@ -54,12 +60,6 @@
       "title": "115學年度一年級新生課後照顧班錄取名單公告",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=599&type=news&from_op=school_department_show",
       "dept": "教務處"
-    },
-    {
-      "date": "2026-08-18",
-      "title": "社團法人中華身心障運動休閒服務協會辦理2026亞特盃心智障礙運動會 相關事宜。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=601&type=news&from_op=school_department_show",
-      "dept": "輔導室"
     }
   ]
 }
