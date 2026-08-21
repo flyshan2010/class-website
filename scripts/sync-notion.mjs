@@ -815,8 +815,10 @@ async function syncDailyPlan() {
   for (const r of rows) {
     const date = r["上課日"].start;
     const week = Number(r["週次"]) || 0;
-    // 星期由日期直接算（週一＝1），不另存欄位，避免調課時忘了改而對不上日課表
-    const dow = ((new Date(`${date}T00:00:00+08:00`).getDay() + 6) % 7) + 1;
+    // 星期由日期直接算（週一＝1），不另存欄位，避免調課時忘了改而對不上日課表。
+    // ⚠️ 一律走 UTC（getUTCDay）：本腳本在 GitHub Actions 的 UTC 機器上跑，
+    //    用 getDay() 會把「+08:00 的午夜」讀成前一天，整份進度整體位移一天（2026-08-21 實測踩過）。
+    const dow = ((new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7) + 1;
     days.push({ date, week, dow, holiday: !!r["放假"], note: r["重要行事"] || "" });
     if (r["放假"]) continue;                       // 放假日不排新課，也不進 weeks
     for (const s of PLAN_SUBJECTS) {
