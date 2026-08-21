@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>估商與修正商｜分組練習 · 四上數學 6-2b</title>
+<title>除以三位數｜課程教學 · 四上數學 6-3</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -2156,268 +2156,264 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </style>
 </head>
 <body>
-<main class="deck" aria-label="估商與修正商分組練習">
+<main class="deck" aria-label="除以三位數課程教學">
   <div class="stage" id="stage" tabindex="-1">
     <section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="cover-t" class="title">分組練習</h2></div>
-      <div class="tier-grid">
-        <a class="tier-card" href="#b1" data-reveal>
-          <svg class="ico"><use href="#ico-book"></use></svg>
-          <span class="name">基礎題</span>
-          <span class="hint">把除數看成整十</span>
-        </a>
-        <a class="tier-card" href="#p1" data-reveal>
-          <svg class="ico"><use href="#ico-target"></use></svg>
-          <span class="name">進階題</span>
-          <span class="hint">修正商、四位數</span>
-        </a>
-        <a class="tier-card" href="#c1" data-reveal>
-          <svg class="ico"><use href="#ico-star"></use></svg>
-          <span class="name">挑戰題</span>
-          <span class="hint">找錯、逆推、生活應用</span>
-        </a>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第六單元 除法 · 6-3</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">除以三位數</div>
+        <div class="sub">917 元平分給 300 個人，每人分到幾元？</div>
       </div>
     </section>
-    <section class="slide" data-slide-id="b1" aria-labelledby="b1-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="b1-t" class="title">第一步：除數看成幾？</h2><span class="step">基礎題 · 1</span></div>
-      <div class="drag-match" data-drag-match>
-        <div class="pool">
-          <span class="chip" draggable="true" data-answer="20">18</span>
-          <span class="chip" draggable="true" data-answer="20">21</span>
-          <span class="chip" draggable="true" data-answer="30">29</span>
-          <span class="chip" draggable="true" data-answer="30">31</span>
-          <span class="chip" draggable="true" data-answer="50">48</span>
-          <span class="chip" draggable="true" data-answer="50">52</span>
+    <section class="slide" data-slide-id="why" aria-labelledby="why-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="why-t" class="title">除數再變大，招式一樣</h2></div>
+      <div class="compare-pair">
+        <div class="side" data-reveal>
+          <div class="head">上一節（6-2）</div>
+          <div class="item">除數兩位：看成<b>整十</b>來估商</div>
+          <div class="item">18→20、29→30、48→50</div>
         </div>
-        <div class="zones">
-          <div class="zone" data-zone="20"><div class="zone-head">看成 20</div><div class="drop"></div></div>
-          <div class="zone" data-zone="30"><div class="zone-head">看成 30</div><div class="drop"></div></div>
-          <div class="zone" data-zone="50"><div class="zone-head">看成 50</div><div class="drop"></div></div>
+        <div class="vs">→</div>
+        <div class="side is-focus" data-reveal>
+          <div class="head">這一節（6-3）</div>
+          <div class="item">除數三位：看成<b>整百</b>來估商</div>
+          <div class="item">295→300、519→500、285→300</div>
         </div>
-        <div class="row"><button class="ds-btn primary" data-match-check>對答案</button><button class="ds-btn" data-match-reset>重來</button></div>
-        <div class="ans-feedback"></div>
       </div>
-      <div class="paper-note" data-reveal data-after-answer>
-        <svg class="ico"><use href="#ico-pencil"></use></svg>
-        <span><b>看成最接近的整十</b>就好，不必背規則。接著完成紙本學習單 <b>2a.差異化教材_基礎題需鷹架</b>。</span>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text"><b>整十換成整百，其他一模一樣</b>——今天不是學新招，是把同一招用在更大的數</span>
       </div>
     </section>
-    <section class="slide" data-slide-id="b2" aria-labelledby="b2-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="b2-t" class="title">估一次就對：162 ÷ 41</h2><span class="step">基礎題 · 2</span></div>
+    <section class="slide" data-slide-id="d917" aria-labelledby="d917-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="d917-t" class="title">先從整百開始：917 ÷ 300</h2></div>
       <div class="two-col">
       <div class="center" data-reveal>
 <div class="ld ">
   <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
   <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">3</span></div></div>
-  <div class="ld-row"><span class="ld-dv">41</span><div class="ld-body frame"><span class="ld-cell">1</span><span class="ld-cell">6</span><span class="ld-cell">2</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">1</span><span class="ld-cell">2</span><span class="ld-cell">3</span></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">3</span><span class="ld-cell hi">9</span></div></div>
+  <div class="ld-row"><span class="ld-dv">300</span><div class="ld-body frame"><span class="ld-cell">9</span><span class="ld-cell">1</span><span class="ld-cell">7</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">9</span><span class="ld-cell">0</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">1</span><span class="ld-cell hi">7</span></div></div>
 </div>
       </div>
         <div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">41 ≈ 40，商估多少？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>3</button>
-          <button class="q-opt">4</button>
-          <button class="q-opt">2</button>
-          <button class="q-opt">5</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">40 × 4 ＝ 160 看似剛好，但 41 × 4 ＝ 164 ＞ 162，<b>要退回 3</b></span>
+      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span>9 個百 ÷ 300 不夠分　<b>百位不寫</b></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span>91 個十 ÷ 300 也不夠分　<b>十位不寫</b></span></div>
+        <div class="s" data-reveal><span class="no">3</span><span>917 個一 ÷ 300 ＝ 3，<b>個位記 3</b></span></div>
+        <div class="s" data-reveal><span class="no">4</span><span>300 × 3 ＝ 900，917 － 900 ＝ <b>剩 17 元</b></span></div>
       </div>
         </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">除數是三位數，被除數<b>至少要取三位</b>才可能夠除</span>
       </div>
     </section>
-    <section class="slide" data-slide-id="b3" aria-labelledby="b3-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="b3-t" class="title">算完整題：730 ÷ 29</h2><span class="step">基礎題 · 3</span></div>
-      <div class="two-col">
-      <div class="center" data-reveal>
-<div class="ld ">
-  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">2</span><span class="ld-cell hi">5</span></div></div>
-  <div class="ld-row"><span class="ld-dv">29</span><div class="ld-body frame"><span class="ld-cell">7</span><span class="ld-cell">3</span><span class="ld-cell">0</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">5</span><span class="ld-cell">8</span><i class="ld-cell"></i></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">1</span><span class="ld-cell">5</span><span class="ld-cell">0</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">1</span><span class="ld-cell">4</span><span class="ld-cell">5</span></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">5</span></div></div>
-</div>
-      </div>
-        <div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">730 ÷ 29 ＝（　）…（　）</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>25 …5</button>
-          <button class="q-opt">25 …0</button>
-          <button class="q-opt">2 …150</button>
-          <button class="q-opt">26 …5</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">73 ÷ 29：30×2＝60 → 十位 2；150 ÷ 29 ＝ 5 …5</span>
-      </div>
-        </div>
-      </div>
-    </section>
-    <section class="slide" data-slide-id="p1" aria-labelledby="p1-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="p1-t" class="title">估太大：要往下修</h2><span class="step">進階題 · 1</span></div>
-      <div class="two-col">
-      <div class="center" data-reveal>
-<div class="ld ">
-  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">1</span><span class="ld-cell hi">5</span></div></div>
-  <div class="ld-row"><span class="ld-dv">57</span><div class="ld-body frame"><span class="ld-cell">8</span><span class="ld-cell">6</span><span class="ld-cell">0</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">5</span><span class="ld-cell">7</span><i class="ld-cell"></i></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">2</span><span class="ld-cell">9</span><span class="ld-cell">0</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">2</span><span class="ld-cell">8</span><span class="ld-cell">5</span></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">5</span></div></div>
-</div>
-      </div>
-        <div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">86 ÷ 57，57 ≈ 60，商估 1 還是 2？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>1</button>
-          <button class="q-opt">2</button>
-          <button class="q-opt">3</button>
-          <button class="q-opt">0</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">60 × 1 ＝ 60 ≤ 86；估 2 的話 57 × 2 ＝ 114 ＞ 86，<b>太大</b></span>
-      </div>
-        </div>
-      </div>
-    </section>
-    <section class="slide" data-slide-id="p2" aria-labelledby="p2-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="p2-t" class="title">四位數：3751 ÷ 88</h2><span class="step">進階題 · 2</span></div>
+    <section class="slide" data-slide-id="d4956" aria-labelledby="d4956-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="d4956-t" class="title">4956 ÷ 200：商是兩位數</h2></div>
       <div class="two-col">
       <div class="center" data-reveal>
 <div class="ld ">
   <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">千</span><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">4</span><span class="ld-cell hi">2</span></div></div>
-  <div class="ld-row"><span class="ld-dv">88</span><div class="ld-body frame"><span class="ld-cell">3</span><span class="ld-cell">7</span><span class="ld-cell">5</span><span class="ld-cell">1</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">3</span><span class="ld-cell">5</span><span class="ld-cell">2</span><i class="ld-cell"></i></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">2</span><span class="ld-cell">3</span><span class="ld-cell">1</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">1</span><span class="ld-cell">7</span><span class="ld-cell">6</span></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">5</span><span class="ld-cell hi">5</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">2</span><span class="ld-cell hi">4</span></div></div>
+  <div class="ld-row"><span class="ld-dv">200</span><div class="ld-body frame"><span class="ld-cell">4</span><span class="ld-cell">9</span><span class="ld-cell">5</span><span class="ld-cell">6</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">4</span><span class="ld-cell">0</span><span class="ld-cell">0</span><i class="ld-cell"></i></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">9</span><span class="ld-cell">5</span><span class="ld-cell">6</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">8</span><span class="ld-cell">0</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">1</span><span class="ld-cell hi">5</span><span class="ld-cell hi">6</span></div></div>
 </div>
       </div>
         <div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">3751 ÷ 88 ＝（　）…（　）</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct>42 …55</button>
-          <button class="q-opt">42 …0</button>
-          <button class="q-opt">4 …231</button>
-          <button class="q-opt">43 …55</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">375 ÷ 88：90×4＝360 → 十位 4，88×4＝352；231 ÷ 88 ＝ 2 …55</span>
+      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span>4 個千、49 個百 都不夠除 → 取 <b>495 個十</b></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span>495 ÷ 200 ＝ 2，十位記 2；200 × 2 ＝ 400</span></div>
+        <div class="s" data-reveal><span class="no">3</span><span>剩 95 個十和 6 個一＝956，956 ÷ 200 ＝ 4</span></div>
+        <div class="s" data-reveal><span class="no">4</span><span>答：每人 <b>24 元</b>，剩下 156 元</span></div>
       </div>
         </div>
       </div>
     </section>
-    <section class="slide" data-slide-id="p3" aria-labelledby="p3-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="p3-t" class="title">算完自己驗算</h2><span class="step">進階題 · 3</span></div>
-      <div class="verify" data-verify="3751" data-reveal>
-        <div class="v-head"><svg class="ico"><use href="#ico-cycle"></use></svg>驗算 3751 ÷ 88 ＝ 42 …55：<b>42 × 88 ＋ 55 ＝ ？</b></div>
-        <div class="v-eq">
-          <span>42</span><span class="op">×</span><span>88</span><span class="op">＋</span><span>55</span><span class="op">＝</span>
-          <input class="v-in" inputmode="numeric" autocomplete="off" aria-label="填入驗算結果" placeholder="？">
-        </div>
-        <div class="v-act"><button class="ds-btn primary" data-verify-check>檢查</button></div>
-        <p class="v-fb" data-verify-fb></p>
-      </div>
-      <div class="paper-note" data-reveal data-after-answer>
-        <svg class="ico"><use href="#ico-pencil"></use></svg>
-        <span>接著請完成紙本學習單 <b>2b.差異化教材_進階題基礎穩固</b>：每一題都要寫出「除數看成幾、商估幾」。</span>
+    <section class="slide" data-slide-id="d1" aria-labelledby="d1-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">整百會了</div>
+        <div id="d1-t" class="headline">那 295、519 呢？</div>
+        <div class="sub">把它們看成最接近的整百</div>
       </div>
     </section>
-    <section class="slide" data-slide-id="c1" aria-labelledby="c1-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="c1-t" class="title">找出錯在哪裡</h2><span class="step">挑戰題 · 1</span></div>
-      <div class="two-col" style="grid-template-columns:0.9fr 1.1fr;">
-      <div class="errcase" style="grid-template-columns:1fr 1fr;">
-        <div class="side bad">
-          <div class="tag">✗ 阿凱這樣算</div>
-          <div class="guessbar no" style="font-size:var(--t4);">92 ÷ 31：31 ≈ 30<br>30 × 3 ＝ 90 → 商寫 3<br><b>90 寫在下面，餘數 2</b></div>
-        </div>
-        <div class="side good" data-reveal data-after-answer>
-          <div class="tag">✓ 正確</div>
-      <div class="center">
-<div class="ld sm">
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">2</span></div></div>
-  <div class="ld-row"><span class="ld-dv">31</span><div class="ld-body frame"><span class="ld-cell">9</span><span class="ld-cell">2</span></div></div>
-  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">6</span><span class="ld-cell">2</span></div></div>
-  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell hi">3</span><span class="ld-cell hi">0</span></div></div>
+    <section class="slide" data-slide-id="g1293" aria-labelledby="g1293-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="g1293-t" class="title">1293 ÷ 295：把 295 看成 300</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">千</span><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">4</span></div></div>
+  <div class="ld-row"><span class="ld-dv">295</span><div class="ld-body frame"><span class="ld-cell">1</span><span class="ld-cell">2</span><span class="ld-cell">9</span><span class="ld-cell">3</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">1</span><span class="ld-cell">1</span><span class="ld-cell">8</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">1</span><span class="ld-cell hi">1</span><span class="ld-cell hi">3</span></div></div>
 </div>
       </div>
-          <div class="ld-note">92 ÷ 31 ＝ <b>2</b> …30</div>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>129 個十 ÷ 295 不夠除 → 取 <b>1293</b></div>
+        <div class="guessbar " data-reveal>除數 <span class="op">295</span> ≈ <span class="op">300</span></div>
+        <div class="guessbar " data-reveal>300 × 4 ＝ 1200，接近 1293　<span class="tag">商估 4</span></div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 295 × 4 ＝ 1180 ≤ 1293，餘 113</div>
+      </div>
         </div>
       </div>
-      <div>
+    </section>
+    <section class="slide" data-slide-id="g4552" aria-labelledby="g4552-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="g4552-t" class="title">4552 ÷ 519：估過頭要退回</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">千</span><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">8</span></div></div>
+  <div class="ld-row"><span class="ld-dv">519</span><div class="ld-body frame"><span class="ld-cell">4</span><span class="ld-cell">5</span><span class="ld-cell">5</span><span class="ld-cell">2</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">4</span><span class="ld-cell">1</span><span class="ld-cell">5</span><span class="ld-cell">2</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">4</span><span class="ld-cell hi">0</span><span class="ld-cell hi">0</span></div></div>
+</div>
+      </div>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>除數 <span class="op">519</span> ≈ <span class="op">500</span>；500 × 9 ＝ 4500　<span class="tag">先估 9</span></div>
+        <div class="guessbar no" data-reveal><span class="mark">✗</span> 519 × 9 ＝ 4671 ＞ 4552　<span class="tag">太大</span></div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 改估 8：519 × 8 ＝ 4152，餘 400</div>
+      </div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
+        <span class="text"><b>估商用 500，相減一定要用 519</b>——和上一節同一條規矩</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="g2600" aria-labelledby="g2600-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="g2600-t" class="title">2600 ÷ 285：估小了要加回來</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">千</span><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">9</span></div></div>
+  <div class="ld-row"><span class="ld-dv">285</span><div class="ld-body frame"><span class="ld-cell">2</span><span class="ld-cell">6</span><span class="ld-cell">0</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">2</span><span class="ld-cell">5</span><span class="ld-cell">6</span><span class="ld-cell">5</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">3</span><span class="ld-cell hi">5</span></div></div>
+</div>
+      </div>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>除數 <span class="op">285</span> ≈ <span class="op">300</span>　<span class="tag">先估 8</span></div>
+        <div class="guessbar no" data-reveal><span class="mark">✗</span> 2600 － 285×8 ＝ 320 ＞ 285</div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 改估 9：285 × 9 ＝ 2565，餘 35</div>
+        <div class="guessbar " data-reveal><span class="tag">除數看大了，商就容易估太小——回頭檢查餘數</span></div>
+      </div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="rule" aria-labelledby="rule-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="rule-t" class="title">估商規則（和上一節同一套）</h2></div>
+      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span><b>取位</b>：除數三位 → 被除數至少取三位，不夠除再多取一位</span></div>
+        <div class="s" data-reveal><span class="no">2</span><span><b>看</b>：除數看成最接近的<b>整百</b></span></div>
+        <div class="s" data-reveal><span class="no">3</span><span><b>估</b>：整百的幾倍最接近</span></div>
+        <div class="s" data-reveal><span class="no">4</span><span><b>檢查</b>：乘回真正的除數；超過就減 1，餘數 ≥ 除數就加 1</span></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">兩位數、三位數除法<b>共用同一套流程</b>——只有「看成整十／整百」這一步不同</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="quiz1" aria-labelledby="quiz1-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="quiz1-t" class="title">換你算：3177 ÷ 243</h2></div>
       <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">阿凱錯在哪裡？</p>
+        <p class="q-stem">3177 ÷ 243 ＝（　）…（　）</p>
         <div class="q-options">
-          <button class="q-opt" data-correct>相減用了 30</button>
-          <button class="q-opt">除數看錯</button>
-          <button class="q-opt">被除數抄錯</button>
-          <button class="q-opt">沒有錯</button>
+          <button class="q-opt" data-correct>13 …18</button>
+          <button class="q-opt">13 …0</button>
+          <button class="q-opt">1 …2934</button>
+          <button class="q-opt">14 …18</button>
         </div>
         <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
         <div class="ans-feedback"></div>
       </div>
       <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text"><b>估商用 30，相減要用 31</b>。31×3＝93＞92，商退回 2</span>
-      </div>
-      </div>
+        <span class="text">243 ≈ 200 或 250：317 ÷ 243 ＝ 1 …74；747 ÷ 243 ＝ 3 …18（250×3＝750 略大，243×3＝729 ✓）</span>
       </div>
     </section>
-    <section class="slide" data-slide-id="c2" aria-labelledby="c2-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="c2-t" class="title">逆推：被除數是多少？</h2><span class="step">挑戰題 · 2</span></div>
-      <div class="verify" data-verify="2560" data-reveal>
-        <div class="v-head"><svg class="ico"><use href="#ico-question"></use></svg>某數 ÷ 64 ＝ 40 …0，這個數是多少？</div>
+    <section class="slide" data-slide-id="verify" aria-labelledby="verify-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="verify-t" class="title">算完自己驗算</h2></div>
+      <div class="verify" data-verify="3177" data-reveal>
+        <div class="v-head"><svg class="ico"><use href="#ico-cycle"></use></svg>驗算 3177 ÷ 243 ＝ 13 …18：<b>13 × 243 ＋ 18 ＝ ？</b></div>
         <div class="v-eq">
-          <span>40</span><span class="op">×</span><span>64</span><span class="op">＋</span><span>0</span><span class="op">＝</span>
-          <input class="v-in" inputmode="numeric" autocomplete="off" aria-label="填入被除數" placeholder="？">
+          <span>13</span><span class="op">×</span><span>243</span><span class="op">＋</span><span>18</span><span class="op">＝</span>
+          <input class="v-in" inputmode="numeric" autocomplete="off" aria-label="填入驗算結果" placeholder="？">
         </div>
         <div class="v-act"><button class="ds-btn primary" data-verify-check>檢查</button></div>
         <p class="v-fb" data-verify-fb></p>
       </div>
       <div class="takeaway-band" data-reveal data-after-answer>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">64 × 4 ＝ 256，再補一個 0</span>
+        <span class="text">三位數乘法比較麻煩，<b>但這是唯一能確定答案對的方法</b></span>
       </div>
     </section>
-    <section class="slide" data-slide-id="c3" aria-labelledby="c3-t" hidden>
-      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="c3-t" class="title">課堂任務：估商快手</h2><span class="step">挑戰題 · 3</span></div>
-      <div class="task-card" data-reveal>
-        <div class="mission">兩人一組，用計時器比賽「誰估商又快又準」</div>
-        <div class="facts">
-          <div class="fact"><span class="k">出題</span>互相出「三位數 ÷ 二位數」，除數不可以是整十</div>
-          <div class="fact"><span class="k">限時</span>10 秒內先說出<b>除數看成幾</b>和<b>商估幾</b></div>
-          <div class="fact"><span class="k">計分</span>一次就估對得 2 分，修正一次後對得 1 分</div>
-          <div class="fact"><span class="k">紀錄</span>寫在 <b>2c.差異化教材_挑戰題精熟</b> 最後一頁</div>
+    <section class="slide" data-slide-id="app" aria-labelledby="app-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="app-t" class="title">生活題：綠茶分裝</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">千</span><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">4</span></div></div>
+  <div class="ld-row"><span class="ld-dv">395</span><div class="ld-body frame"><span class="ld-cell">1</span><span class="ld-cell">8</span><span class="ld-cell">0</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">1</span><span class="ld-cell">5</span><span class="ld-cell">8</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">2</span><span class="ld-cell hi">2</span><span class="ld-cell hi">0</span></div></div>
+</div>
+      </div>
+        <div>
+          <div class="task-card" data-reveal>
+            <div class="mission">1800 毫升泡沫紅茶，每 395 毫升裝一瓶，最多裝幾瓶？剩幾毫升？</div>
+            <div class="facts">
+              <div class="fact"><span class="k">估商</span>395 ≈ 400，400 × 4 ＝ 1600</div>
+              <div class="fact"><span class="k">答</span><b>4 瓶，剩 220 毫升</b></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="paper-note" data-reveal>
-        <svg class="ico"><use href="#ico-pencil"></use></svg>
-        <span>估完一定要乘回真正的除數檢查，比賽也不能省這一步。</span>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">剩下的 220 毫升<b>不夠裝滿一瓶</b>，所以是 4 瓶不是 5 瓶</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="quiz2" aria-labelledby="quiz2-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="quiz2-t" class="title">換你算：4600 ÷ 469</h2></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">4600 ÷ 469 ＝（　）…（　）</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>9 …379</button>
+          <button class="q-opt">9 …0</button>
+          <button class="q-opt">10 …379</button>
+          <button class="q-opt">8 …848</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">469 ≈ 500，500 × 9 ＝ 4500 ≤ 4600 → 估 9；469 × 9 ＝ 4221，餘 379 ＜ 469 ✓</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="wrap" aria-labelledby="wrap-t" hidden>
+      <div class="page-head"><span class="label">6-3 除以三位數</span><h2 id="wrap-t" class="title">今天學到什麼</h2></div>
+      <div class="action-list">
+        <div class="item" data-reveal><b>取位</b>：除數三位，被除數至少取三位</div>
+        <div class="item" data-reveal><b>看成整百</b>：295→300、519→500</div>
+        <div class="item" data-reveal><b>相減用真正的除數</b>：整百只用來猜</div>
+        <div class="item" data-reveal><b>檢查</b>：乘出來超過就減 1；餘數 ≥ 除數就加 1</div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">下一節是本單元最後一節——教你一個<b>把大數字變小</b>的省力招式</span>
       </div>
     </section>
     <div class="hud">
