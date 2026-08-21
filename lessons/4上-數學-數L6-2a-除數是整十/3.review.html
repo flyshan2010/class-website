@@ -2125,6 +2125,19 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .deck .quiz .row { margin-top:var(--s2); }
 .deck .two-col { gap:var(--s4); }
 .deck .paper-note { font-size:var(--t4); }
+
+/* 估商條：除數看成整十 → 試商 → 檢查 */
+.guessbar { display:flex; align-items:center; justify-content:center; gap:var(--s3); flex-wrap:wrap;
+  border:var(--line-mid) solid var(--line); border-left:var(--line-bold) solid var(--accent);
+  border-radius:var(--r-md); background:var(--surface); padding:var(--s3) var(--s4); font-size:var(--t3); font-weight:700; }
+.guessbar .op { color:var(--accent); font-weight:400; }
+.guessbar .tag { font-size:var(--t5); font-weight:400; color:var(--muted); }
+.guessbar.ok { border-left-color:#1f7a3d; }
+.guessbar.ok .mark { color:#1f7a3d; }
+.guessbar.no { border-left-color:#c0392b; }
+.guessbar.no .mark { color:#c0392b; }
+.guessbar .mark { font-size:var(--t3); }
+.guess-list { display:flex; flex-direction:column; gap:var(--s2); }
 </style>
 </head>
 <body>

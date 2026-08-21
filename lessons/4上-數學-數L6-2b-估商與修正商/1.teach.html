@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>除數是整十｜線上模擬評量 · 四上數學 6-2a</title>
+<title>估商與修正商｜課程教學 · 四上數學 6-2b</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -2015,39 +2015,6 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 [data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 <style>
-/* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
-   ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
-}
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
-/* 填充題（線上評量用） */
-.fillq { display:flex; flex-direction:column; gap:var(--s2); }
-.fillq .fill-row { display:flex; gap:var(--s2); align-items:center; flex-wrap:wrap; }
-.fillq input.fill-in {
-  font-family:inherit; font-size:var(--t4); padding:var(--s2) var(--s3); min-width:220px;
-  border:var(--line-mid) solid var(--line); border-radius:var(--r-sm); background:var(--surface); color:var(--ink);
-}
-.fillq input.fill-in:focus { outline:0; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
-.fillq.is-ok input.fill-in { border-color:var(--correct); background:var(--correct-soft); }
-.fillq.is-no input.fill-in { border-color:var(--wrong); background:var(--wrong-soft); }
-</style>
-<style>
 /* ── 第六單元「除法」專用元件 ───────────────────────────── */
 
 /* 直式除法：每格固定寬，用空白格對齊位值 */
@@ -2174,254 +2141,416 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
 </style>
 </head>
 <body>
-<main class="page" aria-label="除數是整十線上模擬評量">
-
-
-  <header class="page-head">
-    <span class="label">第六單元 除法 · 6-2a 除數是整十</span>
-    <h1 class="title">線上模擬評量</h1>
-  </header>
-  <p class="lede">選擇 6 題＋填充 6 題，<b>可以重複作答</b>。題目和紙本考卷<b>不一樣</b>，兩份都會算才代表真的會了。</p>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 1 題　756 ÷ 30 ＝（　）…（　）</p>
-      <div class="q-options"><button class="q-opt" data-correct>25 …6</button><button class="q-opt">25 …0</button><button class="q-opt">2 …156</button><button class="q-opt">250 …6</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 25 …6</div>
-      <div class="body">7 個百不夠除 → 75 個十 ÷ 30 ＝ 2 …15；156 ÷ 30 ＝ 5 …6。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 2 題　5203 ÷ 50 的商，十位是多少？</p>
-      <div class="q-options"><button class="q-opt" data-correct>0</button><button class="q-opt">4</button><button class="q-opt">1</button><button class="q-opt">5</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 十位是 0</div>
-      <div class="body">5203 ÷ 50 ＝ 104 …3。0 個十 ÷ 50 不夠除，<b>十位記 0</b>。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 3 題　下面哪一題的商是<b>三位數</b>？</p>
-      <div class="q-options"><button class="q-opt" data-correct>9020 ÷ 20</button><button class="q-opt">1840 ÷ 40</button><button class="q-opt">3690 ÷ 90</button><button class="q-opt">6480 ÷ 80</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 9020 ÷ 20</div>
-      <div class="body">90 個百 ÷ 20 就夠除，只用掉兩位 → 商是三位數（451）。其他三題都要取三位才夠除。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 4 題　算出「2745 ÷ 60 ＝ 44 …105」，錯在哪裡？</p>
-      <div class="q-options"><button class="q-opt" data-correct>餘數比除數大，商估小了</button><button class="q-opt">被除數抄錯</button><button class="q-opt">除數抄錯</button><button class="q-opt">沒有錯</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 餘數比除數大</div>
-      <div class="body">105 ＞ 60，還可以再分一份 → 正確是 <b>45 …45</b>。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 5 題　某數 ÷ 40 ＝ 46 …0，這個數是多少？</p>
-      <div class="q-options"><button class="q-opt" data-correct>1840</button><button class="q-opt">86</button><button class="q-opt">1846</button><button class="q-opt">1804</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 1840</div>
-      <div class="body">46 × 40 ＋ 0 ＝ 1840（46 × 4 ＝ 184，再補一個 0）。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 6 題　把 4137 顆金桔，每 70 顆裝一袋，最多裝幾袋？剩幾顆？</p>
-      <div class="q-options"><button class="q-opt" data-correct>59 袋，剩 7 顆</button><button class="q-opt">60 袋，剩 7 顆</button><button class="q-opt">59 袋，剩 0 顆</button><button class="q-opt">5 袋，剩 97 顆</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 59 袋，剩 7 顆</div>
-      <div class="body">4137 ÷ 70 ＝ 59 …7。<b>剩下 7 顆不夠裝一袋</b>，不能進位。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="fillq" data-answer="208…32|208...32">
-      <p class="q-stem">第 7 題　8352 ÷ 40 ＝（　）…（　）　（請寫成「208…32」的樣子）</p>
-      <div class="fill-row">
-        <input class="fill-in" inputmode="text" autocomplete="off" aria-label="第 7 題作答" placeholder="例：208…32">
-        <button class="ds-btn primary" data-fill-check>對答案</button>
-        <button class="ds-btn" data-fill-reset>重填</button>
+<main class="deck" aria-label="估商與修正商課程教學">
+  <div class="stage" id="stage" tabindex="-1">
+    <section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第六單元 除法 · 6-2</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">估商與修正商</div>
+        <div class="sub">除數是 18、31、29……不是整十的時候怎麼辦？</div>
       </div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 208 …32</div>
-      <div class="body">83 個百 ÷ 40 ＝ 2 …3；35 個十 ÷ 40 不夠除記 0；352 ÷ 40 ＝ 8 …32。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="fillq" data-answer="30">
-      <p class="q-stem">第 8 題　1500 ÷ 50 的商是（　）。</p>
-      <div class="fill-row">
-        <input class="fill-in" inputmode="text" autocomplete="off" aria-label="第 8 題作答" placeholder="填商">
-        <button class="ds-btn primary" data-fill-check>對答案</button>
-        <button class="ds-btn" data-fill-reset>重填</button>
+    </section>
+    <section class="slide" data-slide-id="why" aria-labelledby="why-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="why-t" class="title">整十好算，那 18 呢？</h2></div>
+      <div class="compare-pair">
+        <div class="side" data-reveal>
+          <div class="head">上一節：除數是整十</div>
+          <div class="item">80 ÷ 20 → 20 的幾倍接近 80？</div>
+          <div class="item">整十乘法背得出來，<b>一次就對</b></div>
+        </div>
+        <div class="vs">→</div>
+        <div class="side is-focus" data-reveal>
+          <div class="head">這一節：除數不是整十</div>
+          <div class="item">81 ÷ 18 → 18 的幾倍接近 81？</div>
+          <div class="item">背不出來，只能<b>先猜再修</b></div>
+        </div>
       </div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 30</div>
-      <div class="body">150 個十 ÷ 50 ＝ 3 個十；0 個一 ÷ 50 不夠除，<b>個位記 0</b>。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="fillq" data-answer="81…0|81...0">
-      <p class="q-stem">第 9 題　6480 ÷ 80 ＝（　）…（　）</p>
-      <div class="fill-row">
-        <input class="fill-in" inputmode="text" autocomplete="off" aria-label="第 9 題作答" placeholder="例：81…0">
-        <button class="ds-btn primary" data-fill-check>對答案</button>
-        <button class="ds-btn" data-fill-reset>重填</button>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text"><b>猜不是亂猜</b>——把 18 看成最接近的整十 20，就有方向了</span>
       </div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 81 …0</div>
-      <div class="body">648 個十 ÷ 80 ＝ 8 …8；80 ÷ 80 ＝ 1，剛好分完。整除也要寫「…0」。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="fillq" data-answer="1">
-      <p class="q-stem">第 10 題　3690 ÷ 90 的商，個位是（　）。</p>
-      <div class="fill-row">
-        <input class="fill-in" inputmode="text" autocomplete="off" aria-label="第 10 題作答" placeholder="填一個數字">
-        <button class="ds-btn primary" data-fill-check>對答案</button>
-        <button class="ds-btn" data-fill-reset>重填</button>
+    </section>
+    <section class="slide" data-slide-id="g81" aria-labelledby="g81-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="g81-t" class="title">81 ÷ 18：把 18 看成 20</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">4</span></div></div>
+  <div class="ld-row"><span class="ld-dv">18</span><div class="ld-body frame"><span class="ld-cell">8</span><span class="ld-cell">1</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">7</span><span class="ld-cell">2</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">9</span></div></div>
+</div>
       </div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 個位是 1</div>
-      <div class="body">3690 ÷ 90 ＝ 41。4 在十位、1 在個位。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="fillq" data-answer="9020">
-      <p class="q-stem">第 11 題　某數 ÷ 20 ＝ 451 …0，這個數是（　）。</p>
-      <div class="fill-row">
-        <input class="fill-in" inputmode="text" autocomplete="off" aria-label="第 11 題作答" placeholder="填被除數">
-        <button class="ds-btn primary" data-fill-check>對答案</button>
-        <button class="ds-btn" data-fill-reset>重填</button>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>除數 <span class="op">18</span> ≈ <span class="op">20</span>　<span class="tag">看成最接近的整十</span></div>
+        <div class="guessbar " data-reveal>20 × 4 ＝ 80，很接近 81　<span class="tag">所以商估 4</span></div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 18 × 4 ＝ 72 ≤ 81　<span class="tag">沒超過，商就是 4</span></div>
+        <div class="guessbar " data-reveal>81 － 72 ＝ 9　<span class="tag">餘數 9 ＜ 18 ✓</span></div>
       </div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 9020</div>
-      <div class="body">451 × 20 ＝ 9020。<b>商 × 除數 ＋ 餘數 ＝ 被除數</b>。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="fillq" data-answer="45">
-      <p class="q-stem">第 12 題　2745 ÷ 60 的餘數是（　）。</p>
-      <div class="fill-row">
-        <input class="fill-in" inputmode="text" autocomplete="off" aria-label="第 12 題作答" placeholder="填餘數">
-        <button class="ds-btn primary" data-fill-check>對答案</button>
-        <button class="ds-btn" data-fill-reset>重填</button>
+        </div>
       </div>
-      <div class="ans-feedback"></div>
+    </section>
+    <section class="slide" data-slide-id="g92" aria-labelledby="g92-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="g92-t" class="title">92 ÷ 31：估過頭了怎麼辦</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">2</span></div></div>
+  <div class="ld-row"><span class="ld-dv">31</span><div class="ld-body frame"><span class="ld-cell">9</span><span class="ld-cell">2</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">6</span><span class="ld-cell">2</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell hi">3</span><span class="ld-cell hi">0</span></div></div>
+</div>
+      </div>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>除數 <span class="op">31</span> ≈ <span class="op">30</span></div>
+        <div class="guessbar " data-reveal>30 × 3 ＝ 90，接近 92　<span class="tag">先估商 3</span></div>
+        <div class="guessbar no" data-reveal><span class="mark">✗</span> 31 × 3 ＝ 93 ＞ 92　<span class="tag">太大了，減不動</span></div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 商改成 2：31 × 2 ＝ 62 ≤ 92</div>
+      </div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text"><b>估太大就把商減 1 再試</b>——估錯不是失敗，是除法本來的做法</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="rule" aria-labelledby="rule-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="rule-t" class="title">估商三步驟</h2></div>
+      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span><b>看</b>：把除數看成最接近的整十（18→20、29→30、48→50）</span></div>
+        <div class="s" data-reveal><span class="no">2</span><span><b>估</b>：想「整十的幾倍最接近」，得到一個試商</span></div>
+        <div class="s" data-reveal><span class="no">3</span><span><b>檢查</b>：用<b>真正的除數</b>乘試商——超過就減 1，減完還能再分就加 1</span></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
+        <span class="text">估商用近似值，<b>但相減一定要用真正的除數</b>——這裡搞混就整題錯</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="g790" aria-labelledby="g790-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="g790-t" class="title">790 ÷ 29：被除數要取幾位</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">2</span><span class="ld-cell hi">7</span></div></div>
+  <div class="ld-row"><span class="ld-dv">29</span><div class="ld-body frame"><span class="ld-cell">7</span><span class="ld-cell">9</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">5</span><span class="ld-cell">8</span><i class="ld-cell"></i></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">2</span><span class="ld-cell">1</span><span class="ld-cell">0</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">2</span><span class="ld-cell">0</span><span class="ld-cell">3</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">7</span></div></div>
+</div>
+      </div>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>7 個百 ÷ 29 不夠除　<span class="tag">取一位不夠</span></div>
+        <div class="guessbar " data-reveal>改取兩位：<b>79 個十</b> ÷ 29</div>
+        <div class="guessbar " data-reveal>29 ≈ 30，30 × 2 ＝ 60　<span class="tag">十位商估 2</span></div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 剩 21 個十和 0 個一＝210，210 ÷ 29 ＝ 7 …7</div>
+      </div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="g293" aria-labelledby="g293-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="g293-t" class="title">293 ÷ 48：估小了要加回來</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">6</span></div></div>
+  <div class="ld-row"><span class="ld-dv">48</span><div class="ld-body frame"><span class="ld-cell">2</span><span class="ld-cell">9</span><span class="ld-cell">3</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">2</span><span class="ld-cell">8</span><span class="ld-cell">8</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">5</span></div></div>
+</div>
+      </div>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>29 個十 ÷ 48 不夠除 → 改用 <b>293</b></div>
+        <div class="guessbar " data-reveal>48 ≈ 50，50 × 5 ＝ 250　<span class="tag">先估商 5</span></div>
+        <div class="guessbar no" data-reveal><span class="mark">✗</span> 293 － 48×5 ＝ 53，<b>53 ＞ 48 還能再分</b></div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 商改成 6：48 × 6 ＝ 288，餘 5</div>
+      </div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
+        <span class="text">餘數<b>大於等於除數</b>＝商估小了，把商加 1</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="d1" aria-labelledby="d1-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">兩位數會了</div>
+        <div id="d1-t" class="headline">被除數變四位也一樣</div>
+        <div class="sub">每一位都重複「看→估→檢查」</div>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="g5746" aria-labelledby="g5746-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="g5746-t" class="title">5746 ÷ 72</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">千</span><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">7</span><span class="ld-cell hi">9</span></div></div>
+  <div class="ld-row"><span class="ld-dv">72</span><div class="ld-body frame"><span class="ld-cell">5</span><span class="ld-cell">7</span><span class="ld-cell">4</span><span class="ld-cell">6</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">5</span><span class="ld-cell">0</span><span class="ld-cell">4</span><i class="ld-cell"></i></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">7</span><span class="ld-cell">0</span><span class="ld-cell">6</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">6</span><span class="ld-cell">4</span><span class="ld-cell">8</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">5</span><span class="ld-cell hi">8</span></div></div>
+</div>
+      </div>
+        <div>
+      <div class="guess-list">
+        <div class="guessbar " data-reveal>57 個百 ÷ 72 不夠除 → 取 <b>574 個十</b></div>
+        <div class="guessbar " data-reveal>72 ≈ 70，70 × 8 ＝ 560　<span class="tag">十位先估 8</span></div>
+        <div class="guessbar no" data-reveal><span class="mark">✗</span> 72 × 8 ＝ 576 ＞ 574　<span class="tag">太大</span></div>
+        <div class="guessbar ok" data-reveal><span class="mark">✓</span> 改估 7：72 × 7 ＝ 504；個位估 9</div>
+      </div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="quiz1" aria-labelledby="quiz1-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="quiz1-t" class="title">換你估：1086 ÷ 19</h2></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">1086 ÷ 19 ＝（　）…（　）</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>57 …3</button>
+          <button class="q-opt">57 …0</button>
+          <button class="q-opt">5 …136</button>
+          <button class="q-opt">58 …3</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">19 ≈ 20。108 ÷ 19：20×5＝100 → 十位估 5，19×5＝95；136 ÷ 19：20×7＝140 略大，19×7＝133 ✓</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="verify" aria-labelledby="verify-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="verify-t" class="title">算完自己驗算</h2></div>
+      <div class="verify" data-verify="1086" data-reveal>
+        <div class="v-head"><svg class="ico"><use href="#ico-cycle"></use></svg>驗算 1086 ÷ 19 ＝ 57 …3：<b>57 × 19 ＋ 3 ＝ ？</b></div>
+        <div class="v-eq">
+          <span>57</span><span class="op">×</span><span>19</span><span class="op">＋</span><span>3</span><span class="op">＝</span>
+          <input class="v-in" inputmode="numeric" autocomplete="off" aria-label="填入驗算結果" placeholder="？">
+        </div>
+        <div class="v-act"><button class="ds-btn primary" data-verify-check>檢查</button></div>
+        <p class="v-fb" data-verify-fb></p>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">估商最怕「估對了卻乘錯」——<b>驗算一次就抓得到</b></span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="app" aria-labelledby="app-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="app-t" class="title">生活題：柚子茶包分裝</h2></div>
+      <div class="two-col">
+      <div class="center" data-reveal>
+<div class="ld ">
+  <div class="ld-head"><i class="ld-pad"></i><span class="ld-cell">百</span><span class="ld-cell">十</span><span class="ld-cell">個</span></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell hi">3</span><span class="ld-cell hi">1</span></div></div>
+  <div class="ld-row"><span class="ld-dv">24</span><div class="ld-body frame"><span class="ld-cell">7</span><span class="ld-cell">4</span><span class="ld-cell">5</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><span class="ld-cell">7</span><span class="ld-cell">2</span><i class="ld-cell"></i></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">2</span><span class="ld-cell">5</span></div></div>
+  <div class="ld-row ld-under"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><span class="ld-cell">2</span><span class="ld-cell">4</span></div></div>
+  <div class="ld-row"><i class="ld-pad"></i><div class="ld-body"><i class="ld-cell"></i><i class="ld-cell"></i><span class="ld-cell hi">1</span></div></div>
+</div>
+      </div>
+        <div>
+          <div class="task-card" data-reveal>
+            <div class="mission">745 包柚子茶，每 24 包裝一盒，最多裝幾盒？剩幾包？</div>
+            <div class="facts">
+              <div class="fact"><span class="k">估商</span>24 ≈ 20，74 ÷ 20 → 十位估 3</div>
+              <div class="fact"><span class="k">答</span><b>31 盒，剩 1 包</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text"><b>剩下的 1 包不夠裝一盒</b>——包含除的餘數不可以無條件進位</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="quiz2" aria-labelledby="quiz2-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="quiz2-t" class="title">換你算：4320 ÷ 72</h2></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">4320 ÷ 72 ＝（　）…（　）</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>60 …0</button>
+          <button class="q-opt">6 …0</button>
+          <button class="q-opt">60 …20</button>
+          <button class="q-opt">600 …0</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">432 個十 ÷ 72 ＝ 6，剛好；0 個一 ÷ 72 不夠除，<b>個位記 0</b>，餘數 0</span>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="task" aria-labelledby="task-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="task-t" class="title">課堂任務：估商快手（ECC）</h2></div>
+      <div class="task-card" data-reveal>
+        <div class="mission">兩人一組，用計時器比賽「誰估商又快又準」</div>
+        <div class="facts">
+          <div class="fact"><span class="k">出題</span>互相出「三位數 ÷ 二位數」，除數不可以是整十</div>
+          <div class="fact"><span class="k">限時</span>10 秒內先說出<b>除數看成幾</b>和<b>商估幾</b></div>
+          <div class="fact"><span class="k">計分</span>一次就估對得 2 分，修正一次後對得 1 分</div>
+          <div class="fact"><span class="k">紀錄</span>寫在 <b>2c.差異化教材_挑戰題精熟</b> 最後一頁</div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="wrap" aria-labelledby="wrap-t" hidden>
+      <div class="page-head"><span class="label">6-2b 估商與修正商</span><h2 id="wrap-t" class="title">今天學到什麼</h2></div>
+      <div class="action-list">
+        <div class="item" data-reveal><b>看</b>：除數看成最接近的整十</div>
+        <div class="item" data-reveal><b>估</b>：想整十的幾倍最接近</div>
+        <div class="item" data-reveal><b>檢查</b>：乘回<b>真正的除數</b>——超過就減 1</div>
+        <div class="item" data-reveal><b>餘數</b>：餘數 ≥ 除數就是商估小了，加 1</div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">下一節除數會變成<b>三位數</b>——做法一模一樣，只是整十換成<b>整百</b></span>
+      </div>
+    </section>
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>17</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 餘數是 45</div>
-      <div class="body">2745 ÷ 60 ＝ 45 …45。檢查：45 ＜ 60 ✓。</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">十二題都對？去挑戰紙本考卷吧。<b>只錯在「0」和「餘數大小」的人，回去看 3.review 的三個檢查</b>。</span>
-  </div>
-
-  <footer class="page-foot">四上數學 · 第六單元 除法 · 6-2a 除數是整十 · 線上模擬評量</footer>
-
-
 </main>
 
 <script>
 (() => {
-  document.querySelectorAll('.q-block').forEach((block) => {
-    block.addEventListener('tds:answered', () => {
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
-    });
-  });
-})();
-</script>
-<script>
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
 
-(() => {
-  const norm = (s) => (s || '')
-    .replace(/[\uFF10-\uFF19]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
-    .replace(/[\uFF0F\u2044\u2215]/g, '/')
-    .replace(/\s|，|,|個|張|條|盒|公升|份|顆|的/g, '')
-    .replace(/又|又/g, '又')
-    .toLowerCase();
-  document.querySelectorAll('.fillq').forEach((el) => {
-    const input = el.querySelector('.fill-in');
-    const fb = el.querySelector('.ans-feedback');
-    const ans = (el.dataset.answer || '').split('|').map(norm);
-    const reveal = () => el.closest('.q-block')?.querySelectorAll('[data-reveal]')
-      .forEach((n) => n.classList.add('is-shown'));
-    const check = () => {
-      const v = norm(input.value);
-      if (!v) { if (fb) { fb.textContent = '請先作答'; fb.className = 'ans-feedback is-show'; } return; }
-      const ok = ans.includes(v);
-      el.classList.toggle('is-ok', ok);
-      el.classList.toggle('is-no', !ok);
-      if (fb) { fb.textContent = ok ? '答對了！' : '再想想，看看下面的解說'; fb.className = 'ans-feedback is-show ' + (ok ? 'is-correct' : 'is-wrong'); }
-      reveal();
-    };
-    el.querySelector('[data-fill-check]')?.addEventListener('click', check);
-    el.querySelector('[data-fill-reset]')?.addEventListener('click', () => {
-      input.value = ''; el.classList.remove('is-ok', 'is-no');
-      if (fb) { fb.textContent = ''; fb.className = 'ans-feedback'; }
-    });
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
-  });
-})();
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip], [data-verify-check], [data-ld-step]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
 </script>
 <script>
 /* ── 乘除互逆驗算自檢按鈕 ─────────────────────────────
