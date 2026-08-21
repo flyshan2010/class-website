@@ -1,5 +1,155 @@
 [
   {
+    "title": "數L6-2b 除法｜估商與修正商",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "估商：把除數看成最接近的整十（18→20、29→30、48→50）",
+      "修正商：估太大就調小（31×3＝93＞92 改估 2）",
+      "估太小不必擦掉，可多次疊商",
+      "被除數取二位不夠除時改取三位（293÷48）",
+      "三、四位數除以二位數的情境問題與乘除互逆驗算"
+    ],
+    "date": "",
+    "note": "課本 6-2 後半（建議 1.5 節，課本第3~4節）；教材 pp.90-92。本節為全單元最大難關。ECC 活動卡：編號8『時間到』改編為「估商快手」——兩人一組計時互出三位數÷二位數，10 秒內說出「除數看成幾」與「商估幾」。紙本教材尚未產出。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1k_MmdMQgc49aULb7ev_ykJEx0KpbuF7m/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/3.review.html"
+    }
+  },
+  {
+    "title": "數L6-4 除法｜多個 0 的除法問題",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "換單位簡化：420÷60 想成 42 個十÷6 個十",
+      "被除數與除數同時去掉末尾的 0，商不變",
+      "2700÷300＝27÷3、7200÷120＝720÷12",
+      "餘數的單位會跟著改變（剩 0 個十＝0 公克）",
+      "判斷哪些算式的商相同（9100÷700 與 91÷7）"
+    ],
+    "date": "",
+    "note": "課本 6-4（建議 1 節）＋練習園地(六) 0.5 節；教材 pp.95-97。複習頁含全單元統整。ECC 活動卡：編號18『用程式碼作畫』改編為「去 0 實驗室」——自造算式試去 0，記錄「改了什麼→商怎麼變」。紙本教材尚未產出。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1k_MmdMQgc49aULb7ev_ykJEx0KpbuF7m/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/3.review.html"
+    }
+  },
+  {
+    "title": "數L6-2a 除法｜除數是整十",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "除數是整十的直式計算（48÷20、245÷20）",
+      "先備能力：整十乘以一位數（20×2＝40）",
+      "被除數從左邊取幾位才夠除（4 個十不夠除 20）",
+      "四位數除以整十，商是三位數（4561÷30＝152…1）",
+      "商含 0 的情形（5002÷50＝100…2）"
+    ],
+    "date": "",
+    "note": "課本 6-2 前半（建議 1 節，課本第2節）；教材 pp.88-89。紙本教材尚未產出。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1k_MmdMQgc49aULb7ev_ykJEx0KpbuF7m/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2a-除數是整十/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2a-除數是整十/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2a-除數是整十/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2a-除數是整十/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2a-除數是整十/3.review.html"
+    }
+  },
+  {
+    "title": "數L6-3 除法｜除以三位數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "除數是整百的直式計算（917÷300、4956÷200）",
+      "估商：把三位數除數看成最接近的整百（295→300、519→500）",
+      "商估太大時的修正（519×9 太大改估 8）",
+      "被除數取三位不夠除時改取四位",
+      "四位數除以三位數的生活情境問題（分裝容量）"
+    ],
+    "date": "",
+    "note": "課本 6-3（建議 1 節，含課本第5節）；教材 pp.93-94。紙本教材尚未產出。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1k_MmdMQgc49aULb7ev_ykJEx0KpbuF7m/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-3-除以三位數/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-3-除以三位數/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-3-除以三位數/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-3-除以三位數/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-3-除以三位數/3.review.html"
+    }
+  },
+  {
+    "title": "數L6-1 除法｜除以一位數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "四位數除以一位數直式：先分千、再分百、再分十、最後分一",
+      "每一步的位值意義（2張千元和9張百元＝29張百元）",
+      "商是四位數（8972÷6＝1495…2）",
+      "商是三位數：千位不夠分不寫數字（1845÷9＝205）",
+      "商中間或末尾有 0 的處理（2725÷8＝340…5）"
+    ],
+    "date": "",
+    "note": "課本 6-1（建議 1 節）；教材 pp.86-87。ECC 活動卡：編號6『尋找各種材質』改編為「分裝獵人」——找生活中「幾個裝一盒」的包裝，回推四位數÷一位數的除法算式並驗算。紙本教材尚未產出。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1k_MmdMQgc49aULb7ev_ykJEx0KpbuF7m/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-1-除以一位數/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-1-除以一位數/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-1-除以一位數/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-1-除以一位數/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-1-除以一位數/3.review.html"
+    }
+  },
+  {
     "title": "國L7-2 松鼠先生的麵包 第二節 內容理解",
     "subject": "國語",
     "grade": "四上",
