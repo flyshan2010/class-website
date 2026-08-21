@@ -1,5 +1,35 @@
 [
   {
+    "title": "國L7-1 松鼠先生的麵包 第一節 字詞語詞及大意",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "生字：麵、揉、焦、爐、批、徵、啟、沾、禁、依、滋、必、度（13 字）",
+      "部首線索：火部（焦、爐）跟火有關；手部（揉、批）是手的動作；水部（沾、滋）",
+      "辨字：爐／蘆／顱、必／祕／泌、滋／慈、度／底／庭；多音字「禁」ㄥㄧㄣ（忍不住）／ㄥㄧㄣˋ（不准）",
+      "語詞成語：麵團、火候、啟事、滋味、鹹度、禁不住；沾沾自喜、情不自禁、焦頭爛額、依依不捨、必恭必敬、度日如年",
+      "課文大意：內心願望（第1段）→ 嘗試經過（第2～9段）→ 成功感想（第10、11段）"
+    ],
+    "date": "",
+    "note": "翰林四上國語第七課「松鼠先生的麵包」（林哲璋，記敘文），第參單元「品德小故事」第一課。依國語顆粒度鐵則拆 4 節，本節為第 1 節。4 節共用同一份原教材 PDF（教學簡報/教材資料/4上翰林CL07.pdf）。\n\n2026-08-21 產出五份網頁並上線（套教學 Design System chinese 主題，以 國L6-1 為外殼抽 head/tail）：前測 5 題＋討論框、教學頁 18 頁、練習頁 10 頁（封面選難度）、複習頁 8 頁（含語詞翻牌）、線上模擬評量選擇 10＋填答 6。\n\n實測（1600×900，就地將 slide 改 position:relative、inset:auto、height:auto 後讀 offsetHeight，量完還原）：teach 最高 815（guess 頁）、practice 最高 868、review 最高 812，逐頁無溢出（初次 practice c1/c2 達 900 臨界，已縮短題幹降至 857）。揭露序列實測 cover→0 → dayi 1~6 → words-1，一次一個、出完才換頁；「整頁攚開」不洩答（HIDDEN-OK）、作答後答案帶才現（SHOWN-OK）；揭露前後 quiz offsetTop/offsetHeight 完全相同（148/559 → 148/559，無位移）；480px 無橫向捲動且最小字 24px、外部資源 0、noindex 齊備、console 無錯誤；五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100，15 題）。答案分布 A B C B A D A C B D（A3 B3 C2 D2）。已程式驗證平行題本：紙本四份×網頁五份逐對比對，殘餘共同片段盡為頁首標題、4 字生字表、六個成語清單（非題目）；首次拉出 2 題真重複（2b 選詞填空與網頁 b3 同一課文句、2c 短文改錯與網頁 c2 同一句）已換題重產。\n\n生字部首筆畫依課本第 82～85 頁字卡：麵（麦/20）揉（手/12）焦（火/12）爐（火/20）批（手/7）徵（彳/15）啟（攬/11）沾（水/8）禁（示/13）依（人/8）滋（水/12）必（心/5）度（广/9），共 13 字（老師 2026-08-21 人工確認字數）。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/3.review.html"
+    }
+  },
+  {
     "title": "社3-1 家鄉的傳統信仰與老街｜信仰與生活",
     "subject": "社會",
     "grade": "四上",
@@ -1481,6 +1511,63 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
+    }
+  },
+  {
+    "title": "國L7-2 松鼠先生的麵包 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第七課「松鼠先生的麵包」第 2 節。4 節共用同一份原教材 PDF。2026-08-21 建列，五段產出待跑。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L7-4 松鼠先生的麵包 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第七課「松鼠先生的麵包」第 4 節（含統整活動與寫作「失敗的滋味」）。4 節共用同一份原教材 PDF。2026-08-21 建列，五段產出待跑。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L7-3 松鼠先生的麵包 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "翰林四上國語第七課「松鼠先生的麵包」第 3 節。4 節共用同一份原教材 PDF。2026-08-21 建列，五段產出待跑。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
     }
   }
 ]
