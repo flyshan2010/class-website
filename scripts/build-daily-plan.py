@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""每日課程進度表（xlsx）→ data/daily-plan.json
+"""⛔ 已封存（2026-08-21）——請勿再執行
+
+課程進度的正本已改為 Notion「📅 每日課程進度」，由 scripts/sync-notion.mjs 的
+syncDailyPlan() 產生 data/daily-plan.json。老師在 Notion 改完按「立即更新班網」即生效。
+本腳本若重跑，會把 Notion 上的最新進度用封存的 xlsx 蓋掉。
+
+保留原因：換學年時可用來把新的進度表 xlsx 轉成一次性匯入的素材
+（流程：本腳本 → data/daily-plan.json → scripts/classos/f20-import-daily-plan.mjs 匯入 Notion）。
+要這樣用時，請先確認 Notion 那份已無需保留的手改內容。
+
+────────────────────────────────────────────────────────
+每日課程進度表（xlsx）→ data/daily-plan.json
 
 用法（在 class-website/ 底下執行）：
     python3 scripts/build-daily-plan.py
