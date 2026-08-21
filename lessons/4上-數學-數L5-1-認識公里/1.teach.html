@@ -2046,6 +2046,13 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .keybox > .head { font-size:var(--t2); }
 .keybox > .body { font-size:var(--t3); }
 .deck .q-options { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s2); }
+/* 紙本提示條（補：本檔用到 .paper-note 卻缺樣式） */
+.paper-note {
+  display: flex; align-items: flex-start; gap: var(--s3);
+  background: var(--accent-soft); border: var(--line-mid) dashed var(--accent);
+  border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
+}
+.paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
 </style>
 </head>
 <body>

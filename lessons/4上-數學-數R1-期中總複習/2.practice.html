@@ -2046,6 +2046,25 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .keybox > .head { font-size:var(--t2); }
 .keybox > .body { font-size:var(--t3); }
 .deck .q-options { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s2); }
+/* 分組入口卡（補：本檔用到 .tier-card 卻缺樣式） */
+.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); flex: 1; min-height: 0; }
+.tier-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s2);
+  background: var(--surface); border: var(--line-bold) solid var(--line); border-radius: var(--r-lg);
+  padding: var(--s5); text-decoration: none; color: var(--ink);
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+.tier-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+.tier-card .ico { width: 64px; height: 64px; color: var(--accent); }
+.tier-card .name { font-size: var(--t2); font-weight: var(--fw-bold); }
+.tier-card .hint { font-size: var(--t5); color: var(--muted); text-align: center; }
+/* 紙本提示條（補：本檔用到 .paper-note 卻缺樣式） */
+.paper-note {
+  display: flex; align-items: flex-start; gap: var(--s3);
+  background: var(--accent-soft); border: var(--line-mid) dashed var(--accent);
+  border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
+}
+.paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
 </style>
 </head>
 <body>

@@ -2044,6 +2044,18 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .cmp-line { display:flex; align-items:center; justify-content:center; gap:var(--s4); font-size:var(--t2); }
 .cmp-line .sign { font-size:var(--t1); color:var(--accent); font-weight:700; }
 
+/* 分組入口卡（補：本檔用到 .tier-card 卻缺樣式） */
+.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); flex: 1; min-height: 0; }
+.tier-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s2);
+  background: var(--surface); border: var(--line-bold) solid var(--line); border-radius: var(--r-lg);
+  padding: var(--s5); text-decoration: none; color: var(--ink);
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+.tier-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+.tier-card .ico { width: 64px; height: 64px; color: var(--accent); }
+.tier-card .name { font-size: var(--t2); font-weight: var(--fw-bold); }
+.tier-card .hint { font-size: var(--t5); color: var(--muted); text-align: center; }
 </style>
 </head>
 <body>
