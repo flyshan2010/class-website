@@ -2171,6 +2171,21 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
 .guessbar.no .mark { color:#c0392b; }
 .guessbar .mark { font-size:var(--t3); }
 .guess-list { display:flex; flex-direction:column; gap:var(--s2); }
+
+/* 換單位簡化：把末尾的 0 劃掉 */
+.zerocut { display:flex; align-items:center; justify-content:center; gap:var(--s4); flex-wrap:wrap;
+  font-size:var(--t1); font-weight:700; letter-spacing:.02em; }
+.zerocut .cut { position:relative; color:#c0392b; }
+.zerocut .cut::after { content:""; position:absolute; left:-4%; right:-4%; top:52%; height:6px;
+  background:#c0392b; transform:rotate(-14deg); border-radius:3px; }
+.zerocut .op { color:var(--accent); font-weight:400; }
+.zerocut .arrow { color:var(--muted); font-size:var(--t2); }
+.samequot { display:flex; flex-direction:column; gap:var(--s2); align-items:stretch; }
+.samequot .row2 { display:flex; align-items:center; justify-content:center; gap:var(--s4);
+  border:var(--line-mid) solid var(--line); border-radius:var(--r-md); background:var(--surface);
+  padding:var(--s2) var(--s4); font-size:var(--t3); font-weight:700; }
+.samequot .row2 .eq { color:var(--accent); }
+.samequot .row2 .tag { font-size:var(--t5); font-weight:400; color:var(--muted); }
 </style>
 </head>
 <body>
