@@ -1,5 +1,65 @@
 [
   {
+    "title": "國L7-2 松鼠先生的麵包 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "情節四階段：想做麵包 → 一再失敗 → 烤好卻太甜 → 依照眼淚鹹度找到原因",
+      "心情五步：期待 → 低落（信心滿滿→灰心不已）→ 興奮（滿樹爬上爬下、淚如雨下）→ 驚訝 → 歡悦",
+      "成功三條件：不斷的嘗試、他人的協助（貓小姐教揉麵團、狗先生教控火候、試吃員說真話）、正確的判斷",
+      "閱讀策略：提取訊息（圏得出來）vs 推論訊息（順線索再想一步）",
+      "中心句與雙關：「第一口最美好」兼含味道與意義兩層；SEL 延伸：失敗時我可以怎麼做"
+    ],
+    "date": "",
+    "note": "翰林四上國語第七課「松鼠先生的麵包」第 2 節。4 節共用同一份原教材 PDF。\n\n2026-08-21 產出五份網頁並上線（以 國L7-1 為外殼抽 head/tail）：前測 5 題＋討論框、教學頁 17 頁（含 SEL 延伸活動頁，依老師 2026-08-21 裁示併入本節）、練習頁 10 頁、複習頁 8 頁（含翻牌）、線上模擬評量選擇 10＋填答 6。\n\n實測（1600×900，乾淨分頁量測）：teach 最高 857（q-extract／q-infer／q-role）、practice 868、review 812，逐頁無溢出。揭露序列 cover→0 → goal 1~4 → plot，一次一個、出完才換頁；「整頁攚開」不洩答（HIDDEN-OK）、作答後答案帶才現（SHOWN-OK）；揭露前後 quiz offsetTop/offsetHeight 相同（148/559）；480px 無橫向捲動、最小字 24px、noindex 齊備；五個網址皆 HTTP 200。\n\n⚙️ 量測踩雷記錄：同一分頁重新 navigate 不會清掉先前點擊留下的 is-locked／ans-feedback，導致 q-extract 誤量到 977（實為 857）——量高度一律開全新分頁。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100，15 題）。答案分布 C A D B A C B C A D（A3 B2 C3 D2）。平行題本已程式驗證：計分卷與五份網頁最長共同片段只剩頁首標題；2c 與 practice 重疊的是手寫任務的起步範例（同一份任務，設計如此）。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-2-內容理解/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-2-內容理解/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-2-內容理解/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-2-內容理解/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-2-內容理解/3.review.html"
+    }
+  },
+  {
+    "title": "國L7-4 松鼠先生的麵包 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "全課四節統整地圖（字詞→內容→形式→綜合）",
+      "語文百寶箱五項：我會寫字（啟，攬部 11 畫）、我會辨字（四組）、讀起來不一樣（禁・好・重）、「如」的四字語詞、語詞運用讀出心情變化",
+      "統整活動：認識啟事（四要素：標題／內容／聯絡方式／具名日期；啟事≠啟示）",
+      "寫作〈失敗的滋味〉：審題（題眼在「滋味」）、選材、五段骨架（開頭／經過／低潮／轉折／體會）、名言收尾與四項自檢",
+      "延伸閱讀：《慶祝失敗派對》《烏鴉麵包店》《晨讀十分鐘：人物故事集》（均取自課本延伸書單）"
+    ],
+    "date": "",
+    "note": "翰林四上國語第七課「松鼠先生的麵包」第 4 節（含統整活動與寫作）。4 節共用同一份原教材 PDF。\n\n老師 2026-08-21 裁示：第參單元統整活動三項中，只把「認識啟事」放進本節（課文正好有徵人啟事）；「寫作步驟—組織」與「讀懂劇本演好戲」留到第九課後另開「國R 統整三」單元。\n\n2026-08-21 產出五份網頁並上線：前測 4 題＋討論框、教學頁 19 頁、練習頁 10 頁、複習頁 7 頁（含「如」語詞翻牌）、線上模擬評量選擇 10＋填答 6。\n\n實測（1600×900，乾淨分頁）：teach 最高 857、practice 868、review 812（checklist 初版 6 項達 918 溢出，已合併為 5 項降到 812）；揭露序列 cover→0 → map 1~6，一次一個、出完才換頁；「整頁攚開」不洩答（HIDDEN-OK）、作答後才現（SHOWN-OK）；揭露前後 quiz offsetTop/offsetHeight 相同（148/559）；480px 無橫捲、最小字 24px；五個網址皆 HTTP 200。\n\n紙本：差異化 2a／2b／2c（docx＋pdf，2c 含啟事寫作＋作文〈失敗的滋味〉300 字＋自檢與互評）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養應用文 1×20＝100，15 題）。答案分布 B C A D B A C B C D（A2 B3 C3 D2）。平行題本已程式驗證：計分卷與五份網頁最長共同片段只剩頁首標題與任務名稱（五段骨架），無重複題目。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-4-綜合整理/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-4-綜合整理/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-4-綜合整理/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-4-綜合整理/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-4-綜合整理/3.review.html"
+    }
+  },
+  {
     "title": "國L7-1 松鼠先生的麵包 第一節 字詞語詞及大意",
     "subject": "國語",
     "grade": "四上",
@@ -27,6 +87,35 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-1-字詞語詞及大意/3.review.html"
+    }
+  },
+  {
+    "title": "國L7-3 松鼠先生的麵包 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "三種修辭：譬喻（淚如雨下、堆得像小山一樣高）、映襯（信心滿滿↔灰心不已；成功↔失敗）、誇張（高興得滿樹爬上爬下）",
+      "兩式短語：教＋誰＋動作＋物品（教他甩尾巴控制火候）；動作＋得＋四字語詞（感動得淚如雨下、痛得心如刀割、氣得暴跳如雷）",
+      "轉折複句：（什麼情況），其實（另一種情況）——前後意思必須相對",
+      "寫作手法四步：第1段先自助而後人助、2～4段用動作寫興奮、5～9段用對話寫試吃、10、11段成敗對比收尾"
+    ],
+    "date": "",
+    "note": "翰林四上國語第七課「松鼠先生的麵包」第 3 節。4 節共用同一份原教材 PDF。\n\n2026-08-21 產出五份網頁並上線：前測 4 題＋討論框、教學頁 18 頁、練習頁 10 頁、複習頁 7 頁（含修辭翻牌）、線上模擬評量選擇 10＋填答 6。\n\n實測（1600×900，乾淨分頁）：teach 最高 857（四個 quiz 頁）、practice 868、review 812，逐頁無溢出。揭露序列 cover→0 → goal 1~4 → metaphor，一次一個、出完才換頁；「整頁攚開」不洩答（HIDDEN-OK）、作答後才現（SHOWN-OK）；揭露前後 quiz offsetTop/offsetHeight 相同（148/559）；480px 無橫捲、最小字 24px；五個網址皆 HTTP 200。\n\n紙本：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養寫作 1×20＝100，15 題）。答案分布 A C D B A C B D A C（A3 B2 C3 D2）。平行題本已程式驗證：計分卷與五份網頁最長共同片段只剩頁首標題與課文原句（形式深究必然反覆分析同一批句子，不屬同題）。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-3-形式深究/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-3-形式深究/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-3-形式深究/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-3-形式深究/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L7-3-形式深究/3.review.html"
     }
   },
   {
@@ -1511,63 +1600,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
-    }
-  },
-  {
-    "title": "國L7-2 松鼠先生的麵包 第二節 內容理解",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "翰林四上國語第七課「松鼠先生的麵包」第 2 節。4 節共用同一份原教材 PDF。2026-08-21 建列，五段產出待跑。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "國L7-4 松鼠先生的麵包 第四節 綜合整理",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "翰林四上國語第七課「松鼠先生的麵包」第 4 節（含統整活動與寫作「失敗的滋味」）。4 節共用同一份原教材 PDF。2026-08-21 建列，五段產出待跑。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "國L7-3 松鼠先生的麵包 第三節 形式深究",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "翰林四上國語第七課「松鼠先生的麵包」第 3 節。4 節共用同一份原教材 PDF。2026-08-21 建列，五段產出待跑。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1GfNCguTNqeouXianGpVuoZUpnYN7gzCl/view?usp=drivesdk",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
