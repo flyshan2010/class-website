@@ -150,7 +150,8 @@
   /* ── 教材對應 ─────────────────────────────────────────────
      把進度表的一句話（「第三課 鏡頭下的家鄉 — 週三：文本形式深究」）換算成
      lessons.json 的課次代碼（國L3-3），才能把五段連結掛到對的節次上。 */
-  const CODE_RE = /(?:^|\s)((?:國|數|社|自|英|健康|藝|綜)[A-Za-z]*\d+(?:-\d+)*|SEL\d+(?:-\d+)*)(?=\s|$)/;
+  // 節次代碼末尾可帶一個字母（數L6-2a／2b＝同一小節拆成兩節），不然這兩列會整個抓不到代碼
+  const CODE_RE = /(?:^|\s)((?:國|數|社|自|英|健康|藝|綜)[A-Za-z]*\d+(?:-\d+)*[A-Za-z]?|SEL\d+(?:-\d+)*)(?=\s|$)/;
   const codeOf = l => (CODE_RE.exec(l.title || "") || [])[1] || "";
   const lessonByCode = new Map();
   lessons.forEach(l => { const c = codeOf(l); if (c && !lessonByCode.has(c)) lessonByCode.set(c, l); });
@@ -422,9 +423,10 @@
       return pad6(last) + "1" + pad6(Number(rev[1]));
     }
     const nums = (c.match(/\d+/g) || []).map(Number);
-    return pad6(nums[0] || 0) + "0" + pad6(nums[1] || 0);
+    const suffix = ((/\d([A-Za-z])$/.exec(c) || [])[1] || "").toLowerCase();  // 2a 要排在 2b 前面
+    return pad6(nums[0] || 0) + "0" + pad6(nums[1] || 0) + suffix;
   };
-  const UNIT_RE = /^(.*\d)-\d+$/;
+  const UNIT_RE = /^(.*\d)-\d+[A-Za-z]?$/;
   const unitOf = l => (UNIT_RE.exec(codeOf(l)) || [])[1] || "";
   const unitNo = u => (/(\d+)$/.exec(u) || [])[1] || "";
   const NODE_NAME_RE = /^(.*?)\s*第[一二三四五六七八九十0-9]+節/;
