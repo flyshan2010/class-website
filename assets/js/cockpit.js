@@ -84,7 +84,8 @@
           就接著把非正課的條目也填進去（換班級時某科節數較多才會遇到，免得節次空著）。
        ③ 填不下的 → 該週「彈性補充」，列出來讓老師自己決定要不要挪，不靜默丟掉。 */
   const SECTION_RE = /第\s*\d+\s*節\s*[：:]/;
-  const dowOf = iso => ((new Date(`${iso}T00:00:00+08:00`).getDay() + 6) % 7) + 1;
+  // UTC 計算，避免看網頁的裝置時區不同就把星期算歪（同 sync-notion.mjs 的理由）
+  const dowOf = iso => ((new Date(`${iso}T00:00:00Z`).getUTCDay() + 6) % 7) + 1;
   const alignCache = new Map();
   /* 對齊規則（2026-08-21 改為「日期優先」）
      ① 進度寫哪一天，就先掛那天該科的節次——老師在 Notion 拖一下日期，班網就真的跟著調動。
