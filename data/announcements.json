@@ -28,6 +28,20 @@
     "images": []
   },
   {
+    "id": "s20260822xwn5q7",
+    "title": "0823幼兒園迎新活動取消辦理!!",
+    "content": "發布單位：崑山附設幼兒園",
+    "date": "2026-08-22",
+    "endDate": "",
+    "expiry": "2026-09-21",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=8&zone_id=0&page_id=78&content_id=628&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
     "id": "s20260822csdwr5",
     "title": "緊急通知！！今日小一新生迎新活動取消辦理！！",
     "content": "發布單位：輔導室",
@@ -136,20 +150,6 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=603&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s20260819dcj7vq",
-    "title": "轉知「2026 PVGSA我的綠能未來藍圖」繪圖比賽",
-    "content": "發布單位：學務處",
-    "date": "2026-08-19",
-    "endDate": "",
-    "expiry": "2026-09-18",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=602&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   },
