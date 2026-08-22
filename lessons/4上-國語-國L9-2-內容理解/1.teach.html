@@ -2003,11 +2003,12 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .prince-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s4); align-items:start; }
 .prince-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
   padding:var(--s3); display:flex; flex-direction:column; gap:var(--s2); }
-.prince-card .portrait { width:100%; aspect-ratio:36/46; object-fit:cover; object-position:top center;
+.prince-card .portrait { width:100%; height:400px; object-fit:cover; object-position:top center;
   border-radius:var(--radius-md); display:block; }
 .prince-card .head { font-weight:700; font-size:var(--t5); color:var(--accent); }
 .prince-card .body { font-size:var(--t6); line-height:1.5; }
-@media (max-width:900px){ .prince-grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:900px){ .prince-grid { grid-template-columns:repeat(2,1fr); }
+  .prince-card .portrait { height:260px; } }
 </style>
 </head>
 <body>
