@@ -1,5 +1,124 @@
 [
   {
+    "title": "國L9-3 王子折箭 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "劇本體例：幕、地點人物、旁白、臺詞、括號兩種用法",
+      "修辭四式：類疊（重複的字）、排比（相似結構）、映襯（相反並列）、譬喻（像一盤散沙）",
+      "節奏：三字句＋七字句押韻，臺詞用唱的",
+      "句型：並列複句（不是…而是）、條件複句（不論…都）",
+      "短語三式：王子多煩惱多／門外傳來…聲／…真讓人…"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-3-形式深究/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-3-形式深究/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-3-形式深究/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-3-形式深究/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-3-形式深究/3.review.html"
+    }
+  },
+  {
+    "title": "國L9-1 王子折箭 第一節 字詞語詞及大意",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "生字：8 字逐字寫（善爭祈復惱博欺懶），9 字用字組認",
+      "字組家族：心部（惱惡懶）、复（復複腹覆）、尃（博傅搏薄）、其與示部",
+      "語詞：勾心鬥角、一盤散沙、博學多識、各有所長、異口同聲、以大欺小",
+      "課文結構：劇本三幕——國王煩惱 → 王子爭吵 → 折箭領悟"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-1-字詞語詞及大意/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-1-字詞語詞及大意/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-1-字詞語詞及大意/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-1-字詞語詞及大意/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-1-字詞語詞及大意/3.review.html"
+    }
+  },
+  {
+    "title": "國L9-4 王子折箭 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "語文百寶箱：辨字四組（惱腦、復複腹覆、博傅搏薄、欺期棋旗）",
+      "多音字：惡（ㄧˋ／ㄨˋ）、散（ㄅㄢˇ／ㄅㄢˋ）",
+      "語詞：猜測語詞（恐怕、大概）、「不分」四字語詞、三個成語",
+      "統整活動三：讀懂劇本演好戲——對白／表情提示／動作提示",
+      "分組演出：七角色分工、練習三步驟、演出檢核；核心練習：故事接寫〈王子的考驗〉"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-4-綜合整理/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-4-綜合整理/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-4-綜合整理/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-4-綜合整理/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-4-綜合整理/3.review.html"
+    }
+  },
+  {
+    "title": "國L9-2 王子折箭 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "三幕情節：國王的煩惱 → 門外的爭吵 → 折箭的一堂課",
+      "人物分析：可強、可忠、可仁、可智各自的長處與短處",
+      "關鍵對比：一枝箭容易折斷、一把箭折不斷",
+      "首尾呼應：王子多，煩惱多 → 王子多，福氣多",
+      "閱讀理解：提取／推論／詮釋三層提問"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-2-內容理解/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-2-內容理解/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-2-內容理解/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-2-內容理解/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L9-2-內容理解/3.review.html"
+    }
+  },
+  {
     "title": "數L7-3 三角形與全等｜認識全等",
     "subject": "數學",
     "grade": "四上",
