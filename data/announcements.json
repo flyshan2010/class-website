@@ -42,20 +42,6 @@
     "auto": "school"
   },
   {
-    "id": "s20260822csdwr5",
-    "title": "緊急通知！！今日小一新生迎新活動取消辦理！！",
-    "content": "發布單位：輔導室",
-    "date": "2026-08-22",
-    "endDate": "",
-    "expiry": "2026-09-21",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=627&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
     "id": "s20260822gu9d0w",
     "title": "有關本市115年度科學教育「和你一起玩科學」親子營計畫，請各校踴躍報名參加。",
     "content": "發布單位：教務處",
@@ -66,6 +52,20 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=630&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
+    "id": "s20260822csdwr5",
+    "title": "緊急通知！！今日小一新生迎新活動取消辦理！！",
+    "content": "發布單位：輔導室",
+    "date": "2026-08-22",
+    "endDate": "",
+    "expiry": "2026-09-21",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=627&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   },
