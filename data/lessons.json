@@ -1,5 +1,95 @@
 [
   {
+    "title": "數L7-3 三角形與全等｜認識全等",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "全等：移過去、轉過來、翻過來後可完全疊合",
+      "非全等反例：形狀同但大小不同（角一樣也不算）",
+      "對應點：疊合時碰在一起的頂點（不是看名稱順序）",
+      "對應邊一樣長、對應角一樣大，可直接推得未知邊角",
+      "迷思：翻轉後對應順序常顆倒，要實際疊過才算"
+    ],
+    "date": "",
+    "note": "課本 7-3（建議 2 節）；教材 pp.108-112。同一根源圖形描繪 → 移／轉／翻疊合 → 全等意義；對應邊、對應角、對應點相等並應用解題。\n\n教材設計方向：觀察多組圖形 → 實際操作旋轉翻轉疊合 → 比較邊角 → 歸納「全等圖形對應邊等長、對應角等大」。網頁用可拖曳旋轉翻轉的互動疊合元件承接操作經驗。\n⚠️「平移／旋轉／翻轉」是教師溝通用語，教學中不出現；學生說「移過去、轉過來、翻過來」即可。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1lYScEzlUcTrDr6-BIYdP3DXyU-kHtks8/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-3-認識全等/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-3-認識全等/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-3-認識全等/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-3-認識全等/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-3-認識全等/3.review.html"
+    }
+  },
+  {
+    "title": "數L7-1 三角形與全等｜三角形的分類",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "以角分類：銳角／直角／鈍角三角形，看最大角判別",
+      "以邊分類：等腰三角形（腰・底邊・頂角・底角）、正三角形",
+      "等腰三角形兩底角一樣大、正三角形三個角都 60 度",
+      "二次分類：等腰直角三角形，兩底角量出來都是 45 度",
+      "直觀辨識→特徵辨識：看起來像不算數，要用直尺與三角板檢驗"
+    ],
+    "date": "",
+    "note": "課本 7-1（建議 2.5 節）；教材 pp.100-105。含以角分類（銳角/直角/鈍角三角形）、以邊分類（等腰/正三角形、腰底邊頂角底角）、二次分類認識等腰直角三角形（底角 45 度由量測得出）。\n\n教材設計方向（老師 2026-08-22 裁示）：全單元以「大量圖形的觀察 → 操作 → 比較 → 歸納原理原則」為主軸，先給圖形讓學生分類，再命名，最後用工具檢驗，不先給定義。\n⚠️ 命題硬限：學生尚未學過三角形內角和 180 度，不得用 180 減法求角度；亦不得以「有一個直角」定義直角三角形，一律用「最大角」判別。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1lYScEzlUcTrDr6-BIYdP3DXyU-kHtks8/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-1-三角形的分類/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-1-三角形的分類/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-1-三角形的分類/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-1-三角形的分類/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-1-三角形的分類/3.review.html"
+    }
+  },
+  {
+    "title": "數L7-2 三角形與全等｜畫三角形",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "百點卡（釘板）：一直一橫交出直角，數格子就能做出等長邊",
+      "作圖三步驟：先固定角 → 再固定邊 → 最後連接",
+      "三種題型：頂角＋兩腰、直角＋兩腰、指定角度＋兩邊長",
+      "線段記法 AB（上加一橫），AB 與 BA 是同一條",
+      "工具對齊：量角器中心點對頂點、0 度線對邊；直尺從 0 刻度量"
+    ],
+    "date": "",
+    "note": "課本 7-2（建議 1 節）；教材 pp.106-107。百點卡（釘板）作直角三角形與等腰直角三角形；用直尺、三角板、量角器作指定腰長的等腰三角形、等腰直角三角形、指定角度與邊長的鈍角三角形。線段記法 AB 上加橫線。\n\n教材設計方向：觀察範例作圖三步驟 → 操作模仿 → 比較不同畫法 → 歸納「先固定角，再固定邊」的通則。作圖題法非唯一，網頁呈現多元畫法。實體工具操作無法被網頁取代，網頁明寫「✎ 拿出直尺／三角板／量角器實作」，紙本留作圖紀錄欄。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1lYScEzlUcTrDr6-BIYdP3DXyU-kHtks8/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-2-畫三角形/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-2-畫三角形/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-2-畫三角形/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-2-畫三角形/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L7-2-畫三角形/3.review.html"
+    }
+  },
+  {
     "title": "國L8-3 平凡的大俠 第三節 形式深究",
     "subject": "國語",
     "grade": "四上",
