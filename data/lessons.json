@@ -1,5 +1,35 @@
 [
   {
+    "title": "國L10-2 海中的熱帶雨林 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "六段段落大意：總說 → 分說（是什麼・好處・危機）→ 結語",
+      "兩個迷思：珊瑚是動物不是植物；白化是「漸漸」死去、尚未死",
+      "兩條因果鏈：縫隙＋食物→育幼好地方；海水過熱→失去海藻→白化→死亡",
+      "互利共生：珊瑚蟲與體內海藻（顆色即健康指標）",
+      "互動地圖：臺灣珊瑚礁四大密集區（墊丁・小琉球・綠島・蘭巼）及其共同點"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-2-內容理解/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-2-內容理解/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-2-內容理解/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-2-內容理解/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-2-內容理解/3.review.html"
+    }
+  },
+  {
     "title": "國L10-1 海中的熱帶雨林 第一節 字詞語詞及大意",
     "subject": "國語",
     "grade": "四上",
@@ -2234,25 +2264,6 @@
   },
   {
     "title": "國L10-3 海中的熱帶雨林 第三節 形式深究",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "",
-    "links": {
-      "material": "",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "國L10-2 海中的熱帶雨林 第二節 內容理解",
     "subject": "國語",
     "grade": "四上",
     "version": "翰林",
