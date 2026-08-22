@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>加與減的併式｜分組練習 · 四上數學 8-1</title>
+<title>乘除與加減的併式｜課程教學 · 四上數學 8-2</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -2073,7 +2073,6 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
   padding:var(--s3) var(--s4); box-shadow:var(--shadow-1); }
 .calc-card .cap { display:block; font-size:var(--t5); color:var(--muted); margin-bottom:var(--s1); }
 .merge-arrow { text-align:center; font-size:var(--t3); color:var(--accent); font-weight:var(--fw-bold); }
-.slide .order-q { flex:none; }
 .stepline { display:flex; flex-direction:column; gap:var(--s2); }
 .stepline .s { display:flex; gap:var(--s3); align-items:flex-start; font-size:var(--t4); }
 .stepline .s .no { flex:none; width:38px; height:38px; border-radius:50%; background:var(--accent);
@@ -2083,133 +2082,134 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
 </head>
 <body>
-<main class="deck" aria-label="8-1 加與減 分組練習">
+<main class="deck" aria-label="8-2 乘除與加減 課程教學">
   <div class="stage" id="stage" tabindex="-1">
     <section class="slide is-active" data-slide-id="cover">
       <div class="section-divider" style="height:100%;justify-content:center;">
-        <div class="kicker">第八單元 · 8-1 加與減　分組練習</div>
-        <div class="headline" style="font-size:var(--t1);">選一個難度開始</div>
-        <div class="sub">基礎題（1–4 頁）→ 進階題（5–8 頁）→ 挑戰題（9–11 頁）　·　手寫的部分寫在紙本學習單上</div>
+        <div class="kicker">第八單元 兩步驟問題與併式 · 8-2</div>
+        <div class="headline" style="font-size:var(--t1);">乘除與加減：括號讓順序說得清楚</div>
+        <div class="sub">一枝鉛筆 12 元、一個橡皮擦 8 元，你會怎麼算？</div>
       </div>
     </section>
-    <section class="slide" data-slide-id="b1" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">括號裡的先算</h2><span class="step">基礎題 · 1</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">（86＋14）－50＝？<br>這個算式要<b>先算</b>哪一個部分？</p>
-        <div class="q-options"><button class="q-opt" data-correct>86＋14</button><button class="q-opt">14－50</button><button class="q-opt">86－50</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
+    <section class="slide" data-slide-id="mul-add" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先乘再加：買 6 枝鉛筆和 1 個橡皮擦</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">鉛筆 1 枝 <b>12</b> 元，橡皮擦 1 個 <b>8</b> 元。美美買 <b>6 枝鉛筆</b>和 <b>1 個橡皮擦</b>，共要多少元？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">12×6＝<span class="res">72</span><span class="lbl">鉛筆的價錢</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc"><span class="br">72</span>＋8＝<span class="res">80</span><span class="lbl">再加上橡皮擦</span></span></div>
+        <div class="s" data-reveal><span class="no">3</span><span class="calc"><span class="br">（12×6）</span>＋8＝80<span class="lbl">併式</span></span></div>
       </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">括號框住 86＋14，就是叫我們先算它：86＋14＝100，再算 100－50＝<b>50</b>。</span></div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">再算的 72 是先算出來的，就用 <b>（12×6）</b> 取代它。</span></div>
     </section>
-    <section class="slide" data-slide-id="b2" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">先算什麼？</h2><span class="step">基礎題 · 2</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">盤子裡原有 40 顆糖果，弟弟吃掉 12 顆，媽媽又放進 20 顆，現在有幾顆？<br>照事情發生的順序，要<b>先算</b>什麼？</p>
-        <div class="q-options"><button class="q-opt" data-correct>先算弟弟吃掉後剩下幾顆</button><button class="q-opt">先算 12＋20</button><button class="q-opt">先算 40＋20</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
+    <section class="slide" data-slide-id="add-mul" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先加再乘：一組一個，買 5 組</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">老闆把 <b>1 枝鉛筆和 1 個橡皮擦</b>包成 1 組。皮皮買 <b>5 組</b>，共要多少元？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">12＋8＝<span class="res">20</span><span class="lbl">1 組的價錢</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc"><span class="br">20</span>×5＝<span class="res">100</span><span class="lbl">5 組的價錢</span></span></div>
+        <div class="s" data-reveal><span class="no">3</span><span class="calc"><span class="br">（12＋8）</span>×5＝100<span class="lbl">併式</span></span></div>
       </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">先算 40－12＝28，再算 28＋20＝<b>48</b> 顆。</span></div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">同樣是 12、8、5、6 這些數，<b>括號放的位置不同，算的東西就不同</b>。</span></div>
     </section>
-    <section class="slide" data-slide-id="b3" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">括號加在哪裡？</h2><span class="step">基礎題 · 3</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">先算 40－12＝28，再算 28＋20＝48。<br>合併成一個算式是——</p>
-        <div class="q-options"><button class="q-opt" data-correct>（40－12）＋20＝48</button><button class="q-opt">40－（12＋20）＝48</button><button class="q-opt">（40＋20）－12＝48</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">先算的是 40－12，括號就加在<b>它</b>身上。</span></div>
-    </section>
-    <section class="slide" data-slide-id="b4" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">先算的跑到後面</h2><span class="step">基礎題 · 4</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">哥哥有 200 元，一枝筆原價 85 元、便宜了 15 元，買一枝後還剩幾元？<br>先算 85－15＝70，再算 200－70＝130。併式是——</p>
-        <div class="q-options"><button class="q-opt" data-correct>200－（85－15）＝130</button><button class="q-opt">（200－85）－15＝100</button><button class="q-opt">200－85－15＝100</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span><span class="text">先算的部分在<b>後面</b>時，括號一定要加，不加就變成從左邊一路減下去。</span></div>
-    </section>
-    <section class="slide" data-slide-id="p1" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">自己併式看看</h2><span class="step">進階題 · 1</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">果汁店原有 156 杯，賣掉 78 杯，又做了 40 杯，現在有幾杯？<br>正確的併式是——</p>
-        <div class="q-options"><button class="q-opt" data-correct>（156－78）＋40＝118</button><button class="q-opt">156－（78＋40）＝38</button><button class="q-opt">（156＋40）－78＝118</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">事情順序是「先賣掉、再做新的」，所以先算 156－78。第三個算出來也是 118，但<b>記錄的順序</b>跟題目不合。</span></div>
-    </section>
-    <section class="slide" data-slide-id="p2" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">哪一個括號是對的？</h2><span class="step">進階題 · 2</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">姐姐買一件外套原價 1580 元，打折後便宜 180 元，她付了 1500 元，找回多少元？<br>選出正確的併式</p>
-        <div class="q-options"><button class="q-opt" data-correct>1500－（1580－180）＝100</button><button class="q-opt">（1500－1580）－180</button><button class="q-opt">1500－1580－180</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">先算外套打折後的價錢 1580－180＝1400，再算 1500－1400＝<b>100</b> 元。</span></div>
-    </section>
-    <section class="slide" data-slide-id="p3" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">兩種做法都對</h2><span class="step">進階題 · 3</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">一箱雞蛋 60 顆，早上用掉 18 顆，中午用掉 12 顆，還剩幾顆？<br>下面哪<b>兩個</b>算式都對？（先想好再選你認為最完整的說法）</p>
-        <div class="q-options"><button class="q-opt" data-correct>（60－18）－12 和 60－（18＋12） 都對</button><button class="q-opt">只有（60－18）－12 對</button><button class="q-opt">只有 60－（18＋12） 對</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">一個是「先算早上用完剩下的」，一個是「先算兩次共用掉的」，答案都是 <b>30</b> 顆。</span></div>
-    </section>
-    <section class="slide" data-slide-id="p4" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">把步驟排回去</h2><span class="step">進階題 · 4</span></div>
-      <div class="order-q" data-order>
-        <div class="q-stem">併式的做法有順序，把下面四個步驟排好：</div>
-        <ol class="order-list">
-          <li class="order-item" data-seq="3">把先算的部分加上括號</li>
-          <li class="order-item" data-seq="1">先用兩個算式寫出先算、再算</li>
-          <li class="order-item" data-seq="4">回頭說說看括號裡表示什麼</li>
-          <li class="order-item" data-seq="2">把再算算式裡「先算的結果」換成先算的算式</li>
-        </ol>
-        <div class="ans-feedback"></div>
-        <div class="row"><button class="ds-btn primary" data-order-check>對答案</button><button class="ds-btn" data-order-reset>重來</button></div>
-      </div>
-    </section>
-    <section class="slide" data-slide-id="c1" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">幫皮皮找出錯在哪</h2><span class="step">挑戰題 · 1</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">題目：媽媽有 500 元，買菜花了 260 元，爸爸又給她 150 元，現在有幾元？<br>皮皮寫成：<span class="calc">500－（260＋150）＝90</span><br>皮皮錯在哪裡？</p>
-        <div class="q-options"><button class="q-opt" data-correct>他把「又給的 150」也算成花掉的錢</button><button class="q-opt">他不該用括號</button><button class="q-opt">他的計算算錯了</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span><span class="text">150 是<b>拿到</b>的錢，不能跟花掉的 260 加在一起。正確：（500－260）＋150＝<b>390</b> 元。</span></div>
-    </section>
-    <section class="slide" data-slide-id="c2" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">倒過來想：這個算式在說什麼故事？</h2><span class="step">挑戰題 · 2</span></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem"><span class="calc">2000－（1200－300）＝1100</span><br>下面哪一個故事，可以用上面這個算式記錄？</p>
-        <div class="q-options"><button class="q-opt" data-correct>一台電風扇原價 1200 元、便宜 300 元，付 2000 元找回多少？</button><button class="q-opt">有 2000 元，先花 1200 元，再花 300 元，剩多少？</button><button class="q-opt">有 1200 元，用掉 300 元後，又拿到 2000 元，共多少？</button></div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">括號裡的 1200－300 是<b>打折後的價錢</b>，所以是「付 2000 元找回多少」的故事。</span></div>
-    </section>
-    <section class="slide" data-slide-id="c3" hidden>
-<div class="page-head"><span class="label">8-1 加與減</span><h2 class="title">換你出題（寫在紙本學習單）</h2><span class="step">挑戰題 · 3</span></div>
-      <div class="task-card">
-        <div class="mission">自己編一題兩步驟問題，並用<b>括號在後面</b>的併式記錄它</div>
-        <div class="facts">
-          <div class="fact"><span class="k">要有</span>題目、先算、再算、併式、答案</div>
-          <div class="fact"><span class="k">限制</span>括號一定要出現在算式<b>後半</b></div>
-          <div class="fact"><span class="k">起步範例</span>「◯◯原價 ⬜ 元，便宜了 ⬜ 元，我付了 ⬜ 元……」</div>
+    <section class="slide" data-slide-id="compare" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">兩題只差一個括號</h2></div>
+      <div class="compare-pair">
+        <div class="side" data-reveal><div class="head">（12×6）＋8＝80</div>
+          <div class="item">先算 <b>6 枝鉛筆</b>多少錢</div>
+          <div class="item">再加上 1 個橡皮擦</div>
+        </div>
+        <div class="vs">比一比</div>
+        <div class="side is-focus" data-reveal><div class="head">（12＋8）×5＝100</div>
+          <div class="item">先算 <b>1 組</b>多少錢</div>
+          <div class="item">再算 5 組多少錢</div>
         </div>
       </div>
-      <div class="paper-note" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        ✎ 這一題請寫在紙本學習單上（<b>2c.差異化教材_挑戰題精熟</b>），寫完和同學交換算算看。
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span><span class="text">看到算式要先問：<b>括號裡在算題目裡的什麼東西？</b></span></div>
+    </section>
+    <section class="slide" data-slide-id="fruit" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先乘再加：水果行</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">蘋果 1 顆 <b>35</b> 元、楊桃 1 顆 <b>25</b> 元。熊媽買 <b>5 顆蘋果和 1 顆楊桃</b>，要付多少元？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">35×5＝<span class="res">175</span><span class="lbl">5 顆蘋果的錢</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc"><span class="br">（35×5）</span>＋25＝<span class="res">200</span><span class="lbl">再加楊桃</span></span></div>
       </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">併式裡的 <b>（35×5）</b> 就是「5 顆蘋果的錢」。</span></div>
+    </section>
+    <section class="slide" data-slide-id="guava" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先減再乘：減價的芭樂</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">芭樂原價 <b>32</b> 元，今日<b>減價 5 元</b>。熊媽買 <b>4 個</b>，要付多少元？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">32－5＝<span class="res">27</span><span class="lbl">今天 1 個芭樂的錢</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc"><span class="br">（32－5）</span>×4＝<span class="res">108</span><span class="lbl">4 個的錢</span></span></div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">「每個都減價」要<b>先算 1 個現在多少錢</b>，再乘數量。</span></div>
+    </section>
+    <section class="slide" data-slide-id="orange" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先乘再減：找回多少錢？</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">橘子 1 顆 <b>22</b> 元。熊媽買 <b>18 顆</b>，付了 <b>1000</b> 元，找回多少元？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">22×18＝<span class="res">396</span><span class="lbl">橘子共多少錢</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc">1000－<span class="br">（22×18）</span>＝<span class="res">604</span><span class="lbl">找回的錢</span></span></div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span><span class="text">先算的部分跑到<b>後面</b>了，括號一定要加。</span></div>
+    </section>
+    <section class="slide" data-slide-id="divider-div" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第二部分</div>
+        <div class="headline">除法也一樣：先算的加括號</div>
+        <div class="sub">球的重量、番茄的箱數、冰棒的單價</div>
+      </div>
+    </section>
+    <section class="slide" data-slide-id="ball" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先除再加：再放一顆球</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">秤上有 3 顆一樣重的球，共 <b>90</b> 公克。再放 <b>1 顆</b>相同的球上去，秤面會顯示多少公克？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">90÷3＝<span class="res">30</span><span class="lbl">1 顆球的重量</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc">90＋<span class="br">（90÷3）</span>＝<span class="res">120</span><span class="lbl">再放 1 顆後的重量</span></span></div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">要「再放一顆」，就得先知道<b>一顆有多重</b>。</span></div>
+    </section>
+    <section class="slide" data-slide-id="tomato" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先除再減：番茄剩幾箱？</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">農場採收 <b>432</b> 公斤番茄，每 <b>6</b> 公斤裝一箱，賣掉 <b>56</b> 箱後還剩幾箱？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">432÷6＝<span class="res">72</span><span class="lbl">共裝成幾箱</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc"><span class="br">（432÷6）</span>－56＝<span class="res">16</span><span class="lbl">賣掉後剩下的箱數</span></span></div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">單位要先換過去（公斤 → 箱），才減得下去。</span></div>
+    </section>
+    <section class="slide" data-slide-id="ice" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">先加再除：一枝冰棒多少錢？</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">美美有 <b>77</b> 元，想買 <b>4 枝</b>一樣的冰棒，<b>還差 3 元</b>。1 枝冰棒多少元？</div></div>      <div class="stepline">
+        <div class="s" data-reveal><span class="no">1</span><span class="calc">77＋3＝<span class="res">80</span><span class="lbl">買 4 枝冰棒的錢</span></span></div>
+        <div class="s" data-reveal><span class="no">2</span><span class="calc"><span class="br">（77＋3）</span>÷4＝<span class="res">20</span><span class="lbl">1 枝冰棒的錢</span></span></div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">「還差 3 元」表示 4 枝要 80 元，<b>先把總價湊出來</b>再除。</span></div>
+    </section>
+    <section class="slide" data-slide-id="quiz1" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">括號加在哪裡？</h2><span class="step">小測驗</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">一包糖果 45 元，一瓶飲料 30 元。買 3 包糖果和 1 瓶飲料，共要多少元？<br>正確的併式是——</p>
+        <div class="q-options"><button class="q-opt" data-correct>（45×3）＋30＝165</button><button class="q-opt">45×（3＋30）＝1485</button><button class="q-opt">（45＋30）×3＝225</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">先算 3 包糖果的錢 45×3＝135，再加飲料 30 元。</span></div>
+    </section>
+    <section class="slide" data-slide-id="quiz2" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">這題要先算什麼？</h2><span class="step">小測驗</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">240 公克的餅乾平分成 4 包，拿走 1 包後還剩幾公克？<br>下面哪一個併式是對的？</p>
+        <div class="q-options"><button class="q-opt" data-correct>240－（240÷4）＝180</button><button class="q-opt">（240÷4）－240</button><button class="q-opt">240÷（4－1）＝80</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">先算 1 包多重（240÷4＝60），再從 240 減掉它。</span></div>
+    </section>
+    <section class="slide" data-slide-id="thinkcap" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">思考帽：盒子有多重？</h2></div>      <div class="calc-card"><span class="cap">題目</span><div style="font-size:var(--t4);">一顆球 <b>25</b> 公克。盒子裡裝 <b>8 顆球</b>，連盒子一起秤是 <b>245</b> 公克。<br>皮皮用 <span class="calc">245－<span class="br">（25×8）</span>＝45</span> 算出盒子重 45 公克。</div></div>
+      <div class="question-frame" style="margin-top:var(--s3);">
+        <div class="q tier-1" data-reveal><span class="tier">看見</span><span class="text">括號裡先算的 25×8＝200，是<b>8 顆球的重量</b>。</span></div>
+        <div class="q tier-2" data-reveal><span class="tier">想想</span><span class="text">再算的 245－200，是把球的重量<b>扣掉</b>。</span></div>
+        <div class="q tier-3" data-reveal><span class="tier">用用</span><span class="text">剩下來的 45 公克，就是<b>盒子</b>的重量。</span></div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">會算還不夠，要能說出<b>括號裡那一段在算什麼</b>。</span></div>
+    </section>
+    <section class="slide" data-slide-id="summary" hidden>
+<div class="page-head"><span class="label">8-2 乘除與加減</span><h2 class="title">今天的三個重點</h2></div>
+      <div class="flow-steps">
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">先算的加括號</div><div class="body">乘、除也一樣，括號框住先算的那一段。</div></div>
+        <div class="arrow">→</div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">先問「一個多少」</div><div class="body">遇到「每個」「一組」「一箱」，多半要先算單位量。</div></div>
+        <div class="arrow">→</div>
+        <div class="step" data-reveal><div class="badge">3</div><div class="head">括號在後面別漏</div><div class="body">1000－（22×18）這種最容易漏括號。</div></div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">括號的位置＝解題的順序，寫錯順序就等於算錯題。</span></div>
     </section>
     <div class="hud">
       <p class="pagemeta"><span data-current>1</span> / <span data-total>17</span> <span data-reveal-meta></span></p>
