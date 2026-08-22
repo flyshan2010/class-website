@@ -1,5 +1,155 @@
 [
   {
+    "title": "國L10-1 海中的熱帶雨林 第一節 字詞語詞及大意",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "文體：本冊第一篇說明文，讀法由「找情節」改為「找說明對象」",
+      "生字：16 字四組家族（珊瑚礁積存稱株縫隙繽紛捕撈汙染藻）",
+      "字組：玉部與石部、責（積績蹟）與爯（稱秤）、糸部與賓、手部與水部",
+      "語詞：息息相關、成千上萬、色彩繽紛、生生不息、過度捕撈、珊瑚白化",
+      "課文結構：六段三部分——總說 → 分說（4 段）→ 結語"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/3.review.html"
+    }
+  },
+  {
+    "title": "數L8-3a 連乘與乘除混合",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "連乘兩種併式：（45×6）×5 與 45×（6×5），括號意思不同",
+      "三種單位：盒→個→元，要換兩次單位",
+      "先乘再除：（12×6）÷9，題目給「每段」先乘出總量",
+      "先除再乘：（120÷5）×3，題目給「總共」先除出一段",
+      "常見迷思：把「每盒幾個」與「幾盒」相加"
+    ],
+    "date": "",
+    "note": "第八單元 兩步驟問題與併式（課本124-125）；8-3 前半，建議1節",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/3.review.html"
+    }
+  },
+  {
+    "title": "數L8-3b 連除與綜合練習",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "先除再除：84÷（28÷4），括號＝題目沒說的組數",
+      "同一題兩種併式：（224÷2）÷8 與 224÷（8×2）",
+      "先乘再除：（600×4）÷6，平分前先算總量",
+      "練習園地：判斷四式的先算部分（括號在前在後都有）",
+      "單元統整：四種題型一個規則——先算的那一段加括號"
+    ],
+    "date": "",
+    "note": "第八單元 兩步驟問題與併式（課本126-127）；8-3 後半＋綜合練習，建議1.5節",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/3.review.html"
+    }
+  },
+  {
+    "title": "數L8-2 乘除與加減",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "先乘再加：（12×6）＋8，括號＝鐵筆的價錢",
+      "先加再乘：（12＋8）×5，括號＝1 組的價錢",
+      "乘與加減：（32－5）×4、1000－（22×18）找錢",
+      "除與加減：90＋（90÷3）、（432÷6）－56、（77＋3）÷4",
+      "思考帽：245－（25×8），說出括號在算什麼"
+    ],
+    "date": "",
+    "note": "第八單元 兩步驟問題與併式（課本120-123）；建議2節",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-2-乘除與加減/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-2-乘除與加減/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-2-乘除與加減/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-2-乘除與加減/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-2-乘除與加減/3.review.html"
+    }
+  },
+  {
+    "title": "數L8-1 加與減",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "括號的意義：括號框住的是「先算」的部分",
+      "先加後減／先減後加：（128－24）＋15 這類併式",
+      "先算的在後面：1500－（1250－125），括號不可省",
+      "一題兩解：（48－12）－8 與 48－（12＋8）都對",
+      "併式檢查四步：先算再算→替換→加括號→說出括號的意思"
+    ],
+    "date": "",
+    "note": "第八單元 兩步驟問題與併式（課本118-119）；建議1節",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-1-加與減/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-1-加與減/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-1-加與減/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-1-加與減/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-1-加與減/3.review.html"
+    }
+  },
+  {
     "title": "國L9-3 王子折箭 第三節 形式深究",
     "subject": "國語",
     "grade": "四上",
@@ -2080,6 +2230,63 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
+    }
+  },
+  {
+    "title": "國L10-3 海中的熱帶雨林 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L10-2 海中的熱帶雨林 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國L10-4 海中的熱帶雨林 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
     }
   }
 ]
