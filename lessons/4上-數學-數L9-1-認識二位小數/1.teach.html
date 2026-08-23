@@ -2155,6 +2155,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .drag-match.z4 .zone > .drop { min-height:40px; }
 .quiz.row-opts .q-options { display:flex; gap:var(--s3); flex-wrap:wrap; }
 .quiz.row-opts .q-opt { flex:1 1 0; text-align:center; }
+.order-q.compact .order-item { min-height:46px; padding:var(--s1) var(--s3); }
 </style>
 
 </head>
@@ -2383,7 +2384,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 (() => {
   const fmt = (cents) => {
     const s = (cents / 100).toFixed(2);
-    return s.replace(/0$/, '').replace(/\.$/, '');
+    return s.replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
   };
 
   /* ── 1. 可點選塗色的百格板 ───────────────────────────── */
@@ -2470,6 +2471,9 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
     const cols = 1 + intLen + 1 + 2;             // 運算符欄 ＋ 整數欄 ＋ 小數點欄 ＋ 兩位小數
     const dotCol = 1 + intLen;
     const colOf = (idx) => (idx < 2 ? cols - 1 - idx : cols - 1 - idx - 1);
+    const sig = (v) => 2 + String(Math.floor(Math.abs(v) / 100)).length;   // 有效位數（含兩位小數）
+    const sigA = sig(A), sigB = sig(B), sigR = sig(RES);
+    const show = (d, idx, lim) => (idx >= lim ? '' : String(d));
 
     const board = document.createElement('div');
     board.className = 'vc-board';
@@ -2503,14 +2507,14 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
         if (c === dotCol) { board.appendChild(cell('.', 'dot' + (step === 0 ? ' dotlit' : ''))); continue; }
         const idx = [...Array(nd).keys()].find((i) => colOf(i) === c);
         const cls = (idx === lit ? ' lit' : '') + (struck[idx] ? ' strike' : '');
-        board.appendChild(cell(String(a[idx]), cls.trim()));
+        board.appendChild(cell(show(a[idx], idx, sigA), cls.trim()));
       }
       // 運算符＋加數／減數
       board.appendChild(cell(op === '+' ? '＋' : '－', 'op'));
       for (let c = 1; c < cols; c++) {
         if (c === dotCol) { board.appendChild(cell('.', 'dot' + (step === 0 ? ' dotlit' : ''))); continue; }
         const idx = [...Array(nd).keys()].find((i) => colOf(i) === c);
-        board.appendChild(cell(String(b[idx]), idx === lit ? 'lit' : ''));
+        board.appendChild(cell(show(b[idx], idx, sigB), idx === lit ? 'lit' : ''));
       }
       const rule = document.createElement('div');
       rule.className = 'rule';
@@ -2524,7 +2528,7 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
           continue;
         }
         const idx = [...Array(nd).keys()].find((i) => colOf(i) === c);
-        board.appendChild(cell(ans[idx] == null ? '' : String(ans[idx]), 'ans' + (idx === lit ? ' lit' : '')));
+        board.appendChild(cell(ans[idx] == null ? '' : show(ans[idx], idx, sigR), 'ans' + (idx === lit ? ' lit' : '')));
       }
     };
 
