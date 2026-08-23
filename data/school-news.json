@@ -1,17 +1,17 @@
 {
-  "fetchedAt": "2026-08-23T03:54:21.731Z",
+  "fetchedAt": "2026-08-23T08:23:48.434Z",
   "items": [
-    {
-      "date": "2026-08-22",
-      "title": "0823幼兒園迎新活動取消辦理!!",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=8&zone_id=0&page_id=78&content_id=628&type=news&from_op=school_department_show",
-      "dept": "崑山附設幼兒園"
-    },
     {
       "date": "2026-08-22",
       "title": "有關本市115年度科學教育「和你一起玩科學」親子營計畫，請各校踴躍報名參加。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=630&type=news&from_op=school_department_show",
       "dept": "教務處"
+    },
+    {
+      "date": "2026-08-22",
+      "title": "0823幼兒園迎新活動取消辦理!!",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=8&zone_id=0&page_id=78&content_id=628&type=news&from_op=school_department_show",
+      "dept": "崑山附設幼兒園"
     },
     {
       "date": "2026-08-22",
@@ -56,10 +56,10 @@
       "dept": "學務處"
     },
     {
-      "date": "2026-08-18",
-      "title": "115學年度一年級新生課後照顧班錄取名單公告",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=599&type=news&from_op=school_department_show",
-      "dept": "教務處"
+      "date": "2026-08-19",
+      "title": "【延長】教育部辦理「115年度數位/網路性別暴力防治短影音暨海報繪畫比賽」延長至115年9月7日止（郵戳為憑）",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=603&type=news&from_op=school_department_show",
+      "dept": "學務處"
     }
   ]
 }
