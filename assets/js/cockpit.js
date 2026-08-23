@@ -176,6 +176,30 @@
   const codeOf = l => (CODE_RE.exec(l.title || "") || [])[1] || "";
   const lessonByCode = new Map();
   lessons.forEach(l => { const c = codeOf(l); if (c && !lessonByCode.has(c)) lessonByCode.set(c, l); });
+  /* 拆節變體索引：數L8-3 → [數L8-3a, 數L8-3b]。
+     課本一個小節備課時拆成兩節（8-3a／8-3b）是常態，但進度表寫的還是「8-3」，
+     沒有這張表就會出現「教材明明做好了卻說尚未建立」。有了它，lesson-flow 一建好
+     變體課次，駕駛艙下次同步就自動掛上，不必再回頭去 Notion 補 relation。 */
+  const variantsByBase = new Map();
+  lessons.forEach(l => {
+    const c = codeOf(l);
+    const m = /^(.*\d)[A-Za-z]$/.exec(c);
+    if (!m) return;
+    if (!variantsByBase.has(m[1])) variantsByBase.set(m[1], []);
+    variantsByBase.get(m[1]).push(l);
+  });
+  variantsByBase.forEach(arr => arr.sort((a, b) => codeOf(a).localeCompare(codeOf(b))));
+  // 先找完全相同的代碼，找不到才退回拆節變體（可能一次回傳 a、b 兩節）
+  const resolveLessons = code => {
+    const exact = lessonByCode.get(code);
+    if (exact) return [exact];
+    const split = variantsByBase.get(code);
+    if (split && split.length) return split.slice();
+    // 反向：進度表指到 8-3a，但教材後來合併回一份 8-3——去掉尾碼再找一次
+    const m = /^(.*\d)[A-Za-z]$/.exec(code);
+    const merged = m && lessonByCode.get(m[1]);
+    return merged ? [merged] : [];
+  };
 
   const CN_NUM = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
   const cnNum = s => {                               // 「十二」→12、「三」→3
@@ -194,26 +218,26 @@
      漏填一眼看得出來，而下學期還沒備課的課次（單元列還沒建，relation 填不了）
      也能靠正則先掛上，等 lesson-flow 一建好單元就自動接上。 */
   const matchLesson = (subject, text, unit) => {
-    if (unit) return { lesson: lessonByCode.get(unit) || null, code: unit, isExam: false, sure: true };
+    if (unit) return { lessons: resolveLessons(unit), code: unit, isExam: false, sure: true };
     const t = text || "";
     if (subject === "國語") {
       const c = /第([一二三四五六七八九十]+)課/.exec(t);
       const d = /週([一二三四五])[：:]/.exec(t);
       if (!c || !d) return null;
       const code = `國L${cnNum(c[1])}-${CHI_DAY_TO_PART[d[1]]}`;
-      return { lesson: lessonByCode.get(code) || null, code, isExam: d[1] === "五", sure: false };
+      return { lessons: resolveLessons(code), code, isExam: d[1] === "五", sure: false };
     }
     if (subject === "數學") {
       const m = /(?:^|[\s—－-])(\d+)-(\d+)/.exec(t);
       if (!m) return null;
       const code = `數L${Number(m[1])}-${Number(m[2])}`;
-      return { lesson: lessonByCode.get(code) || null, code, isExam: false, sure: false };
+      return { lessons: resolveLessons(code), code, isExam: false, sure: false };
     }
     if (subject === "社會") {
       const m = /^\s*(\d+)-(\d+)/.exec(t);
       if (!m) return null;
       const code = `社${Number(m[1])}-${Number(m[2])}`;
-      return { lesson: lessonByCode.get(code) || null, code, isExam: false, sure: false };
+      return { lessons: resolveLessons(code), code, isExam: false, sure: false };
     }
     return null;
   };
@@ -333,20 +357,25 @@
       return `<div class="cp-slot" style="--accent:${color}">${head}</div>`;
     }
     const hit = matchLesson(entry.subject, entry.text, entry.unit);
-    const l = hit?.lesson;
+    const hits = hit?.lessons || [];
+    // 一節可能對到多份教材（同一小節拆成 a／b 兩節），逐份列出，別只掛第一份
+    const lessonBlock = l => {
+      const c = codeOf(l) || hit.code;
+      return `
+        <div class="cp-lesson">
+          <span class="badge" style="background:${color};color:#fff">${App.esc(c)}</span>
+          <strong>${App.esc(l.title)}</strong>
+          ${hit.sure && c === hit.code ? "" : '<span class="meta">（自動對應，可到 Notion「📅 每日課程進度」指定）</span>'}
+        </div>
+        ${(l.points || []).length ? `<ul class="cockpit-points">${l.points.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>` : ""}
+        ${lessonLinks(l)}`;
+    };
     return `
       <div class="cp-slot" style="--accent:${color}">
         ${head}
         <p class="cp-progress">${App.esc(entry.text)}</p>
         ${hit?.isExam ? '<p class="meta">📝 本節為課後評量與驗收，教材沿用該課「綜合整理」那份。</p>' : ""}
-        ${l ? `
-          <div class="cp-lesson">
-            <span class="badge" style="background:${color};color:#fff">${App.esc(hit.code)}</span>
-            <strong>${App.esc(l.title)}</strong>
-            ${hit.sure ? "" : '<span class="meta">（自動推測，可到 Notion「📅 每日課程進度」指定）</span>'}
-          </div>
-          ${(l.points || []).length ? `<ul class="cockpit-points">${l.points.map(p => `<li>${App.esc(p)}</li>`).join("")}</ul>` : ""}
-          ${lessonLinks(l)}`
+        ${hits.length ? hits.map(lessonBlock).join("")
           : hit ? `<p class="meta">尚未建立 <b>${App.esc(hit.code)}</b> 的教材——對 AI 說「/lesson-flow 開新單元 ${App.esc(hit.code)}」就會自動掛上。</p>`
                 : `<p class="meta">這一節還沒指定單元——到 Notion「📅 每日課程進度」填該日的「${App.esc(subject)}單元」，再按「🔄 立即更新班網」。</p>`}
       </div>`;
