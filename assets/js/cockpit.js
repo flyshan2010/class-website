@@ -188,7 +188,23 @@
     if (!variantsByBase.has(m[1])) variantsByBase.set(m[1], []);
     variantsByBase.get(m[1]).push(l);
   });
-  variantsByBase.forEach(arr => arr.sort((a, b) => codeOf(a).localeCompare(codeOf(b))));
+  /* 複習卷分輪索引：國R2 → [國R2-1, 國R2-2, …]。複習週一科十幾節，教材一定分輪做，
+     但進度表那句話只還原得出 `國R2`。只收 R 卷（`<科目>R<1|2>-<輪>`），不動正課的
+     `數L8-1` 那種小節編號——正課的單元層對應走 mathUnitCode，兩者不可混在同一張表。 */
+  const R_PART_RE = /^((?:國|數|社|自|英|健康)R\d)-(\d+)[A-Za-z]?$/;
+  lessons.forEach(l => {
+    const m = R_PART_RE.exec(codeOf(l));
+    if (!m) return;
+    if (!variantsByBase.has(m[1])) variantsByBase.set(m[1], []);
+    variantsByBase.get(m[1]).push(l);
+  });
+  // 排序要用數字：`國R2-10` 不能排在 `國R2-2` 前面（字串比對會排錯）
+  const variantKey = l => {
+    const c = codeOf(l);
+    const m = R_PART_RE.exec(c);
+    return m ? String(Number(m[2])).padStart(3, "0") : c;
+  };
+  variantsByBase.forEach(arr => arr.sort((a, b) => variantKey(a).localeCompare(variantKey(b))));
   // 先找完全相同的代碼，找不到才退回拆節變體（可能一次回傳 a、b 兩節）
   const resolveLessons = code => {
     const exact = lessonByCode.get(code);
