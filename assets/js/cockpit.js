@@ -201,6 +201,19 @@
     return merged ? [merged] : [];
   };
 
+  /* 數學「單元內練習」索引：練習園地(七)、單元七全等實作與複習、綜合練習(二) 這類
+     沒有小節編號的節次，掛回該單元**最後一小節**的教材（那份本來就含綜合練習與評量）。
+     只記錄各單元編號最大的小節（含拆節尾碼），單元還沒備課就回傳單元代碼讓畫面顯示「尚未建立」。 */
+  const mathUnitLast = new Map();
+  lessons.forEach(l => {
+    const m = /^數L(\d+)-(\d+)([A-Za-z]?)$/.exec(codeOf(l));
+    if (!m) return;
+    const key = m[1], rank = Number(m[2]) * 100 + (m[3] ? m[3].toLowerCase().charCodeAt(0) - 96 : 0);
+    const prev = mathUnitLast.get(key);
+    if (!prev || rank > prev.rank) mathUnitLast.set(key, { rank, code: `數L${m[1]}-${m[2]}` });
+  });
+  const mathUnitCode = n => (mathUnitLast.get(String(n)) || {}).code || `數L${n}`;
+
   const CN_NUM = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
   const cnNum = s => {                               // 「十二」→12、「三」→3
     if (/^\d+$/.test(s)) return Number(s);
@@ -247,27 +260,80 @@
     return `${abbr}R${term}`;
   };
 
+  /* 兩張由進度表自己長出來的索引（換學年、挪課都不必改程式）：
+     ・chiSeq：`日期|課號` → 該課在同一週已出現幾次，用來補「沒寫週X」的國語節次
+     ・mathUnitByDate：日期 → 當天（含之前）最後上過的數學單元編號，給沒寫單元的綜合練習用 */
+  const chiSeq = new Map();
+  const mathUnitByDate = new Map();
+  (() => {
+    Object.values(planDoc.weeks || {}).forEach(subs => {
+      const seen = new Map();                       // 同一週內：課號 → 已出現次數
+      ((subs || {})["國語"] || []).slice()
+        .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
+        .forEach(e => {
+          const c = /第([一二三四五六七八九十]+)課/.exec(e.text || "");
+          if (!c) return;
+          const n = cnNum(c[1]);
+          chiSeq.set(`${e.date}|${n}`, seen.get(n) || 0);
+          seen.set(n, (seen.get(n) || 0) + 1);
+        });
+    });
+    const math = [];
+    Object.values(planDoc.weeks || {}).forEach(subs => math.push(...((subs || {})["數學"] || [])));
+    math.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+    let last = 0;
+    math.forEach(e => {
+      const t = e.text || "";
+      const m = /(?:^|[\s—－-])(\d+)-\d+/.exec(t);
+      const u = /第([一二三四五六七八九十\d]+)單元|單元([一二三四五六七八九十\d]+)/.exec(t);
+      if (m) last = Number(m[1]);
+      else if (u) last = cnNum(u[1] || u[2]);
+      if (last) mathUnitByDate.set(e.date, last);
+    });
+  })();
+
   const matchLesson = (subject, text, unit, date) => {
     if (unit) return { lessons: resolveLessons(unit), code: unit, isExam: false, sure: true };
     const t = text || "";
     if (subject === "國語") {
+      /* 認不出課次時不要 return null——後面還有複習週的 R 卷規則要跑 */
       const c = /第([一二三四五六七八九十]+)課/.exec(t);
+      if (c) {
       const d = /週([一二三四五])[：:]/.exec(t);
-      if (!c || !d) return null;
-      const code = `國L${cnNum(c[1])}-${CHI_DAY_TO_PART[d[1]]}`;
-      return { lessons: resolveLessons(code), code, isExam: d[1] === "五", sure: false };
+      /* 進度表偶爾整週寫同一句（第十二課那五列沒有「週X：」），
+         就用該課在同一週的出現順序當節次；第五節照樣沿用第四節教材。 */
+      const part = d ? CHI_DAY_TO_PART[d[1]]
+        : Math.min(4, (chiSeq.get(`${date}|${cnNum(c[1])}`) || 0) + 1);
+      if (!part) return null;
+      const code = `國L${cnNum(c[1])}-${part}`;
+      return { lessons: resolveLessons(code), code, isExam: d ? d[1] === "五" : part === 4, sure: false };
+      }
     }
     if (subject === "數學") {
       const m = /(?:^|[\s—－-])(\d+)-(\d+)/.exec(t);
-      if (!m) return null;
-      const code = `數L${Number(m[1])}-${Number(m[2])}`;
-      return { lessons: resolveLessons(code), code, isExam: false, sure: false };
+      if (m) {
+        const code = `數L${Number(m[1])}-${Number(m[2])}`;
+        return { lessons: resolveLessons(code), code, isExam: false, sure: false };
+      }
+      /* 單元內練習（練習園地(七)／單元七全等實作與複習／綜合練習(二)）：
+         寫了單元編號就用那一單元，沒寫就沿用當天之前最後上過的單元，
+         一律掛該單元最後一小節的教材。 */
+      const u = /第([一二三四五六七八九十\d]+)單元|單元([一二三四五六七八九十\d]+)/.exec(t);
+      if (u || /綜合練習|練習園地/.test(t)) {
+        const n = u ? cnNum(u[1] || u[2]) : (mathUnitByDate.get(date) || 0);
+        if (n) {
+          const code = mathUnitCode(n);
+          return { lessons: resolveLessons(code), code, isExam: false, sure: false };
+        }
+      }
     }
     if (subject === "社會") {
+      // 一週三節上一小節，寫法固定「3-2 …」；認不出來就往下走複習週規則
       const m = /^\s*(\d+)-(\d+)/.exec(t);
-      if (!m) return null;
-      const code = `社${Number(m[1])}-${Number(m[2])}`;
-      return { lessons: resolveLessons(code), code, isExam: false, sure: false };
+      if (m) {
+        const code = `社${Number(m[1])}-${Number(m[2])}`;
+        return { lessons: resolveLessons(code), code, isExam: false, sure: false };
+      }
     }
     /* 複習週擺最後：先讓正課的課次規則吃飽（「週五：課後評量與驗收」有「驗收」兩字，
        但它是第八課的第四節，不是期末複習卷），正課認不出來才收斂到 R 卷。 */
