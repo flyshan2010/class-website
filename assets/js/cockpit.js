@@ -108,7 +108,7 @@
       const taken = new Set();            // 已被占用的 avail index
       const put = (idx, e) => {
         taken.add(idx);
-        plan.set(`${avail[idx].dow}|${avail[idx].period}`, { subject, text: e.text, unit: e.unit || "" });
+        plan.set(`${avail[idx].dow}|${avail[idx].period}`, { subject, text: e.text, unit: e.unit || "", date: e.date || "" });
       };
       // ① 日期優先：同一天有幾節就依序吃掉幾筆（同日多筆進度時按原順序）
       const rest = [];
@@ -217,7 +217,37 @@
      沒填才退回下面的文字正則猜測，並在畫面標「自動推測」——
      漏填一眼看得出來，而下學期還沒備課的課次（單元列還沒建，relation 填不了）
      也能靠正則先掛上，等 lesson-flow 一建好單元就自動接上。 */
-  const matchLesson = (subject, text, unit) => {
+  /* 複習課代碼：`<科目>R<1=期中／2=期末>`（國R1「期中總複習｜L1～L6」等已建）。
+     進度表的複習週寫法五花八門（「期末國語總複習」「L6-L10觀念統整複習」「考前觀念澄清」…），
+     一律收斂到同一個 R 代碼，教材一建好就自動掛上，不必逐列去 Notion 指定。 */
+  const REVIEW_RE = /複習|統整|衝刺|模擬測驗|測驗|訂正|強化|驗收|考前|脈絡整理|澄清|疑難解答/;
+  // 「第七單元…單元七全等實作與複習」「練習園地(七)」是單一單元內的複習，屬該單元不屬 R 卷
+  const ONE_UNIT_RE = /第[一二三四五六七八九十\d]+單元|單元[一二三四五六七八九十](?![一二三四五六七八九十])|練習園地/;
+  // 考後的寒假銜接、閱讀分享不是複習課
+  const AFTER_EXAM_RE = /寒假|暑假|閱讀分享|生活應用|課程總結|自主學習/;
+  /* 期中／期末的分界自己從進度表長出來：最後一筆標「期中」的日期之後就是期末，
+     換學年、考程挪動都不必回來改常數。 */
+  const midtermEnd = (() => {
+    let last = "";
+    Object.values(planDoc.weeks || {}).forEach(subs => Object.values(subs || {}).forEach(es => (es || []).forEach(e => {
+      if (/期中/.test(e.text || "") || /R1$/.test(e.unit || "")) last = (e.date || "") > last ? e.date : last;
+    })));
+    return last;
+  })();
+  const SUBJECT_ABBR = { 國語: "國", 數學: "數", 社會: "社", 自然: "自", 英語: "英", 健康: "健康" };
+  const matchReview = (subject, text, date) => {
+    const t = text || "";
+    if (AFTER_EXAM_RE.test(t) || !REVIEW_RE.test(t)) return null;
+    if (ONE_UNIT_RE.test(t) && !/期中|期末|考前/.test(t)) return null;
+    const abbr = SUBJECT_ABBR[subject];
+    if (!abbr) return null;
+    const term = /期末|考前/.test(t) ? 2
+      : /期中/.test(t) ? 1
+      : (midtermEnd && date && date > midtermEnd) ? 2 : 1;
+    return `${abbr}R${term}`;
+  };
+
+  const matchLesson = (subject, text, unit, date) => {
     if (unit) return { lessons: resolveLessons(unit), code: unit, isExam: false, sure: true };
     const t = text || "";
     if (subject === "國語") {
@@ -239,6 +269,10 @@
       const code = `社${Number(m[1])}-${Number(m[2])}`;
       return { lessons: resolveLessons(code), code, isExam: false, sure: false };
     }
+    /* 複習週擺最後：先讓正課的課次規則吃飽（「週五：課後評量與驗收」有「驗收」兩字，
+       但它是第八課的第四節，不是期末複習卷），正課認不出來才收斂到 R 卷。 */
+    const rv = matchReview(subject, t, date);
+    if (rv) return { lessons: resolveLessons(rv), code: rv, isExam: false, sure: false };
     return null;
   };
 
@@ -356,7 +390,7 @@
     if (!entry) {
       return `<div class="cp-slot" style="--accent:${color}">${head}</div>`;
     }
-    const hit = matchLesson(entry.subject, entry.text, entry.unit);
+    const hit = matchLesson(entry.subject, entry.text, entry.unit, entry.date || selected);
     const hits = hit?.lessons || [];
     // 一節可能對到多份教材（同一小節拆成 a／b 兩節），逐份列出，別只掛第一份
     const lessonBlock = l => {
