@@ -1,5 +1,156 @@
 [
   {
+    "title": "數L9-1 認識二位小數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "0.01 的由來：1 張分成 100 等分，1 等分＝1/100＝0.01",
+      "讀法：小數部分一個字一個字唸，0.23 讀「零點二三」",
+      "幾個 0.01 就是零點零幾（0.02、0.07、0.09）",
+      "兩單位合成：2.5 張和 0.04 張合起來是 2.54 張",
+      "占位的 0 不可省：2.05 和 2.5 差 45 個小格"
+    ],
+    "date": "",
+    "note": "第九單元 二位小數 9-1（課本132-133）；建議1節",
+    "links": {
+      "material": "https://drive.google.com/file/d/1hZtVXH9JMe-siiKubUxSWS8HdEIzZ8Aa/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-1-認識二位小數/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-1-認識二位小數/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-1-認識二位小數/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-1-認識二位小數/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-1-認識二位小數/3.review.html"
+    }
+  },
+  {
+    "title": "數L9-2 百分位與小數化聚",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "位值表：個位・十分位・百分位，往右一格變 1/10",
+      "百分位的由來：一格是個位的 1/100，就是 0.01",
+      "一格只能放一個數字（0～9），超過就要換",
+      "化聚：10 個 0.01 換 1 個 0.1；1 個 0.1 拆回 10 個 0.01",
+      "典型遷迷思：12 個 0.01 直接寫成 8.612，正確為 8.72"
+    ],
+    "date": "",
+    "note": "第九單元 二位小數 9-2（課本134-135）；建議1.5節",
+    "links": {
+      "material": "https://drive.google.com/file/d/1x0ZCJ2b_QGzAVjlwU-5KWkJzHcLUoABZ/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/3.review.html"
+    }
+  },
+  {
+    "title": "數L9-4 小數的加法與減法",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "寫直式先對齊小數點（小數點標的是個位的位置）",
+      "由右往左算：先算幾個 0.01→幾個 0.1→幾個 1",
+      "進位退位與整數相同，只是單位換成 0.01、0.1",
+      "整數要先補小數點和 0：19.25－8 要寫成 8.00",
+      "典型遷迷思：對齊右邊（12＋5.67 算成 5.79）",
+      "和為整數的記法：12.00 改記成 12、3.90 改記成 3.9"
+    ],
+    "date": "",
+    "note": "第九單元 二位小數 9-4＋綜合練習（課本139-142）；建議1.5節",
+    "links": {
+      "material": "https://drive.google.com/file/d/1g_26s8NnfuJNHkWt3yzmMoVg0ofFD9ru/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/3.review.html"
+    }
+  },
+  {
+    "title": "數L9-3 長度與小數比較",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "1 公分＝0.01 公尺（1 公尺平分成 100 等分）",
+      "公分要占兩格：1 公尺 8 公分是 1.08 不是 1.8",
+      "反向換算：1.7 公尺＝1.70 公尺＝170 公分",
+      "比大小從最左邊比起，一樣才往右",
+      "典型遷迷思：以為位數多就大（1.09 ＜ 1.2）"
+    ],
+    "date": "",
+    "note": "第九單元 二位小數 9-3（課本136-138）；建議1節",
+    "links": {
+      "material": "https://drive.google.com/file/d/1dbFAkt1RY8DVdpGUcsh1Ui1I4JEIYEc_/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/3.review.html"
+    }
+  },
+  {
+    "title": "國L10-3 海中的熱帶雨林 第三節 形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "篇章結構：總說 → 分說 → 結語（說明文的骨架）",
+      "兩種說明方法：條列說明（一條一條列）、因果說明（原因→結果）",
+      "修辭：映襯（小 vs 多、一株 vs 成千上萬隻）、譬喻（像樹枝／像花朵）、「稱為」「叫做」替現象命名",
+      "三種複句：轉折（卻／但其實）、因果（因為…所以）、遞進（不但…更）",
+      "「卻」與「但其實」的差別：前者相反結果，後者澄清誤解"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-3-形式深究/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-3-形式深究/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-3-形式深究/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-3-形式深究/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-3-形式深究/3.review.html"
+    }
+  },
+  {
     "title": "國L10-2 海中的熱帶雨林 第二節 內容理解",
     "subject": "國語",
     "grade": "四上",
@@ -15,8 +166,8 @@
       "六段段落大意：總說 → 分說（是什麼・好處・危機）→ 結語",
       "兩個迷思：珊瑚是動物不是植物；白化是「漸漸」死去、尚未死",
       "兩條因果鏈：縫隙＋食物→育幼好地方；海水過熱→失去海藻→白化→死亡",
-      "互利共生：珊瑚蟲與體內海藻（顆色即健康指標）",
-      "互動地圖：臺灣珊瑚礁四大密集區（墊丁・小琉球・綠島・蘭巼）及其共同點"
+      "互利共生：珊瑚蟲與體內海藻（顏色即健康指標）",
+      "互動地圖：臺灣珊瑚礁四大密集區（墾丁・小琉球・綠島・蘭嶼）及其共同點"
     ],
     "date": "",
     "note": "",
@@ -57,6 +208,36 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-1-字詞語詞及大意/3.review.html"
+    }
+  },
+  {
+    "title": "國L10-4 海中的熱帶雨林 第四節 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "全課統整：四節回顧（字詞大意・內容理解・形式深究・篇章寫作）",
+      "篇章寫作主軸：運用條列與因果來說明，寫一篇「值得保護的一個地方」說明文",
+      "寫作鷹架五步：選題 → 總說（是什麼＋為何重要）→ 分說用條列 → 分說用因果 → 結語首末照應",
+      "兩大陷阱：條列變流水帳（三條講同一件事）、因果顛倒",
+      "完整範文拆解四零件：總說・因果・條列・結語＋自我檢核表"
+    ],
+    "date": "",
+    "note": "",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-4-綜合整理/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-4-綜合整理/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-4-綜合整理/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-4-綜合整理/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L10-4-綜合整理/3.review.html"
     }
   },
   {
@@ -2260,44 +2441,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-2-家鄉的地形/3.review.html"
-    }
-  },
-  {
-    "title": "國L10-3 海中的熱帶雨林 第三節 形式深究",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "",
-    "links": {
-      "material": "",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "國L10-4 海中的熱帶雨林 第四節 綜合整理",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "",
-    "links": {
-      "material": "",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
