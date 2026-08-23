@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>報讀長條圖｜線上模擬評量 · 四上數學 10-1</title>
+<title>報讀折線圖｜分組練習 · 四上數學 10-3</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -2014,39 +2014,6 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 /* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
 [data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
-<style>
-/* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
-   ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
-}
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
-/* 填充題（線上評量用） */
-.fillq { display:flex; flex-direction:column; gap:var(--s2); }
-.fillq .fill-row { display:flex; gap:var(--s2); align-items:center; flex-wrap:wrap; }
-.fillq input.fill-in {
-  font-family:inherit; font-size:var(--t4); padding:var(--s2) var(--s3); min-width:220px;
-  border:var(--line-mid) solid var(--line); border-radius:var(--r-sm); background:var(--surface); color:var(--ink);
-}
-.fillq input.fill-in:focus { outline:0; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
-.fillq.is-ok input.fill-in { border-color:var(--correct); background:var(--correct-soft); }
-.fillq.is-no input.fill-in { border-color:var(--wrong); background:var(--wrong-soft); }
-</style>
 
 <style>
 /* ── 第七單元「三角形與全等」專用元件 ───────────────────── */
@@ -2234,178 +2201,192 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
 .ck-duo .ck-tick, .ck-duo .ck-cat { font-size:40px; }
 .ck-duo .ck-title { font-size:40px; }
 .ck-duo .ck-val { font-size:42px; }
-.q-lead { font-size:var(--t4); margin:0 0 var(--s2); }
-.q-block .chartbox { margin-bottom:var(--s3); }
-.q-block > .q-stem { font-size:var(--t4); }
-/* 填充題沒有 .quiz 容器，q-stem 會掉回瀏覽器預設 16px（DS 已知踩雷） */
-.fillq > .q-stem { font-size:var(--t4); }
+/* 投影頁：SVG 以「高度」為準（viewBox 等比縮放，寬度自動），避免整頁超過 900 */
+.deck .chartbox { padding:var(--s1) var(--s2); }
+.deck .ck-stage { display:flex; justify-content:center; overflow-x:auto; }
+.deck .ck-svg { height:420px; width:auto; max-width:100%; min-width:0; }
+.deck .ck-say { font-size:var(--t5); margin-top:var(--s1); }
+.deck .ck-tools { margin-top:var(--s1); }
+/* 同頁有題目時用小圖 */
+.deck .chartbox.sm .ck-svg { height:300px; }
+/* 圖左題右：圖看得夠大，整頁又不超過 900 */
+.qsplit { display:grid; grid-template-columns:1.15fr 1fr; gap:var(--s3); align-items:start; }
+.qsplit .chartbox.sm .ck-svg { height:404px; }
+.qsplit .quiz .q-options { display:grid; grid-template-columns:1fr; gap:var(--s2); }
+@media (max-width:768px) { .qsplit { grid-template-columns:1fr; } }
+/* 統計表（畫圖前的原始資料） */
+.datatable { display:flex; justify-content:center; }
+.datatable table { border-collapse:collapse; font-size:var(--t4); }
+.datatable th, .datatable td { border:2px solid var(--line); padding:var(--s2) var(--s3); text-align:center; }
+.datatable th { background:var(--surface); font-weight:700; }
+.deck .chartbox.ctrl .ck-svg { height:342px; }
+.tri-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); }
+@media (max-width:768px) { .tri-grid { grid-template-columns:1fr; } }
 
 </style>
 
 </head>
 <body>
-<main class="page" aria-label="報讀長條圖｜線上模擬評量 · 四上數學 10-1">
-  <header class="page-head">
-    <span class="label">第十單元 統計圖表 · 10-1 報讀長條圖</span>
-    <h1 class="title">線上模擬評量</h1>
-  </header>
-  <p class="lede">選擇 8 題＋填充 6 題，答完馬上知道對不對，可以<b>重複練習</b>。<br>這份是<b>自我練習</b>用的；正式計分的紙本卷題目<b>不一樣</b>，兩份都要會。</p>
+<main class="deck" aria-label="報讀折線圖｜分組練習 · 四上數學 10-3">
+  <div class="stage" id="stage" tabindex="-1">
 
-  <p class="q-lead"><b>第 1～5 題</b>看下面這張圖回答。</p>
-  <figure class="chartbox" data-chart><script type="application/json">
-  {"type":"bar","title":"陽光國小四年級各班圖書借閱冊數長條圖","xLabel":"班級","yLabel":"冊數（冊）","yUnit":"冊",
-   "categories":["一班","二班","三班","四班","五班"],"series":[{"values":[120,180,150,90,160]}],
-   "major":50,"minorPer":5,"max":200,"readout":true}
-  </script></figure>
+    <section class="slide is-active" data-slide-id="cover">
+      <div class="page-head"><span class="label">第十單元 · 10-3 報讀折線圖　分組練習</span><h2 class="title">選一個難度開始</h2></div>
+      <div class="tier-grid">
+        <a class="tier-card" href="#b1"><svg class="ico"><use href="#ico-bulb"></use></svg><div class="name">基礎題</div><div class="hint">讀點、看方向<br>第 2–5 頁</div></a>
+        <a class="tier-card" href="#a1"><svg class="ico"><use href="#ico-check"></use></svg><div class="name">進階題</div><div class="hint">變化最大、中間值推估<br>第 6–9 頁</div></a>
+        <a class="tier-card" href="#c1"><svg class="ico"><use href="#ico-clock"></use></svg><div class="name">挑戰題</div><div class="hint">多條折線、練習園地十<br>第 10–12 頁</div></a>
+      </div>
+      <div class="paper-note"><svg class="ico"><use href="#ico-bulb"></use></svg><div>要寫下來的部分，寫在紙本學習單上：<b>2a／2b／2c 差異化教材</b>。</div></div>
+    </section>
 
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 1 題　這張圖的縱軸記錄的是什麼？</p>
-      <div class="q-options"><button class="q-opt">班級</button><button class="q-opt" data-correct>冊數</button><button class="q-opt">書名</button><button class="q-opt">日期</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
+    <section class="slide" data-slide-id="b1" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">14 時是幾度？</h2><span class="step">基礎題 · 1</span></div>
+      <div class="qsplit">
+      <figure class="chartbox sm" data-chart><script type="application/json">
+      {"type":"line","title":"阿里山 6 月 15 日氣溫折線圖","xLabel":"時刻","yLabel":"氣溫（度）","yUnit":"度",
+       "categories":["8時","10時","12時","14時","16時"],"series":[{"values":[19,21,23,19,18]}],
+       "major":5,"minorPer":5,"max":25,"width":770,"height":420,"readout":true}
+      </script></figure>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">14 時的氣溫是幾度？</p>
+        <div class="q-options"><button class="q-opt">23 度</button><button class="q-opt" data-correct>19 度</button><button class="q-opt">18 度</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="b2" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">折線右斜上表示什麼？</h2><span class="step">基礎題 · 2</span></div>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">兩個相鄰時刻之間，折線右斜上，表示氣溫——</p>
+        <div class="q-options"><button class="q-opt" data-correct>上升</button><button class="q-opt">下降</button><button class="q-opt">沒有變化</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">右斜上＝上升、右斜下＝下降、水平＝不變。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="b3" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">水平的折線</h2><span class="step">基礎題 · 3</span></div>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">10 時到 11 時折線呈水平，表示這段時間氣溫——</p>
+        <div class="q-options"><button class="q-opt">沒有測量</button><button class="q-opt" data-correct>沒有改變</button><button class="q-opt">一直下降</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span><span class="text">水平不是「沒資料」，是<b>兩個時刻的數量一樣</b>。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="b4" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">折線圖上的點代表什麼？</h2><span class="step">基礎題 · 4</span></div>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">折線圖上的一個點，代表——</p>
+        <div class="q-options"><button class="q-opt" data-correct>那個時刻的數量</button><button class="q-opt">全部的總和</button><button class="q-opt">平均</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">往上找到點，再往左讀刻度，就是那一刻的數量。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="a1" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">哪一年長高最多？</h2><span class="step">進階題 · 1</span></div>
+      <div class="qsplit">
+      <figure class="chartbox sm" data-chart><script type="application/json">
+      {"type":"line","title":"妹妹身高變化折線圖","xLabel":"年齡","yLabel":"身高（公分）","yUnit":"公分",
+       "categories":["0歲","1歲","2歲","3歲","4歲"],"series":[{"values":[48,75,90,96,103]}],
+       "major":20,"minorPer":4,"max":120,"breakAt":40,"width":770,"height":420,"readout":true}
+      </script></figure>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">哪一段折線最陡（長最多）？</p>
+        <div class="q-options"><button class="q-opt" data-correct>0 歲到 1 歲</button><button class="q-opt">2 歲到 3 歲</button><button class="q-opt">3 歲到 4 歲</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="a2" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">長高了幾公分？</h2><span class="step">進階題 · 2</span></div>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">出生時 48 公分，4 歲時 103 公分。這四年一共長高——</p>
+        <div class="q-options"><button class="q-opt">48 公分</button><button class="q-opt" data-correct>55 公分</button><button class="q-opt">103 公分</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">103－48＝<b>55 公分</b>。看的是<b>兩個點的差</b>，不是最後那個數字。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="a3" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">2 歲半大約幾公分？</h2><span class="step">進階題 · 3</span></div>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">2 歲 90 公分、3 歲 96 公分。2 歲 6 個月大約是——</p>
+        <div class="q-options"><button class="q-opt">88 公分</button><button class="q-opt" data-correct>93 公分</button><button class="q-opt">99 公分</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">答案要落在 90 和 96 <b>中間</b>——這是折線圖才做得到的推估。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="a4" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">為什麼可以用省略符號？</h2><span class="step">進階題 · 4</span></div>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">身高折線圖把 40 公分以下省略，主要是因為——</p>
+        <div class="q-options"><button class="q-opt" data-correct>所有身高都超過 40 公分，那段用不到</button><button class="q-opt">為了讓身高看起來比較高</button><button class="q-opt">因為 40 以下沒有測</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">省略用不到的刻度，變化才看得清楚——但別忘了長度不能當倍數比。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="c1" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">哪一年兩地數量最接近？</h2><span class="step">挑戰題 · 1</span></div>
+      <figure class="chartbox ctrl" data-chart><script type="application/json">
+      {"type":"line","title":"民國 105 年到 109 年三縣市黑面琵鷺普查數量折線圖","xLabel":"年分","yLabel":"數量（隻）","yUnit":"隻",
+       "categories":["105年","106年","107年","108年","109年"],
+       "series":[{"name":"臺南市","values":[1528,1810,1265,1572,1839]},
+                 {"name":"嘉義縣","values":[305,513,559,488,550]},
+                 {"name":"高雄市","values":[186,247,257,245,241]}],
+       "major":500,"minorPer":5,"max":2000,"height":420,"readout":true}
+      </script></figure>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">嘉義縣和高雄市在 <b>105 年</b>最接近（305 與 186，只差 119 隻）。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="c2" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">臺南市哪兩年之間減少最多？</h2><span class="step">挑戰題 · 2</span></div>
+      <div class="quiz row-opts" data-quiz data-mode="single">
+        <p class="q-stem">臺南市：105 年 1528、106 年 1810、107 年 1265、108 年 1572、109 年 1839 隻。</p>
+        <div class="q-options"><button class="q-opt" data-correct>106 年到 107 年</button><button class="q-opt">107 年到 108 年</button><button class="q-opt">105 年到 106 年</button></div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer><span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span><span class="text">1810－1265＝<b>545 隻</b>，是全圖最陡的一段（右斜下）。</span></div>
+    </section>
+
+    <section class="slide" data-slide-id="c3" hidden>
+      <div class="page-head"><span class="label">10-3 報讀折線圖</span><h2 class="title">練習園地十：選圖與說理</h2><span class="step">挑戰題 · 3</span></div>
+      <div class="task-card">
+        <div class="mission">學校要呈現「一週每天的用電量變化」，你會建議畫長條圖還是折線圖？</div>
+        <div class="facts">
+          <div class="fact"><span class="k">要判斷</span>項目有沒有先後順序</div>
+          <div class="fact"><span class="k">要說明</span>這張圖想讓人看出什麼</div>
+          <div class="fact"><span class="k">寫在</span>紙本學習單 2c</div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal><span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span><span class="text">要看<b>變化</b>就用折線圖；只是比哪一天最多，長條圖也可以。</span></div>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>12</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 冊數</div><div class="body">直式長條圖：橫軸記種類（班級），縱軸記數量（冊數）。</div></div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 2 題　一大格 50 冊，平分成 5 小格。一小格代表幾冊？</p>
-      <div class="q-options"><button class="q-opt">5 冊</button><button class="q-opt" data-correct>10 冊</button><button class="q-opt">25 冊</button><button class="q-opt">50 冊</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 10 冊</div><div class="body">50÷5＝10。這一步沒看清楚，後面每一題都會錯。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 3 題　借閱最多的是哪一班？</p>
-      <div class="q-options"><button class="q-opt">一班</button><button class="q-opt" data-correct>二班</button><button class="q-opt">四班</button><button class="q-opt">五班</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 二班（180 冊）</div><div class="body">長條最高的就是最多，不必每一條都讀出數字。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="fillq" data-answer="90|90冊">
-      <p class="q-stem">第 4 題　四班借了（　　）冊。</p>
-      <div class="fill-row"><input class="fill-in" inputmode="numeric" autocomplete="off" aria-label="第 4 題作答" placeholder="例：90"><button class="ds-btn primary" data-fill-check>對答案</button><button class="ds-btn" data-fill-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 90 冊</div><div class="body">50 再往上 4 小格：50＋40＝90。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="fillq" data-answer="90|90冊">
-      <p class="q-stem">第 5 題　二班比四班多借（　　）冊。</p>
-      <div class="fill-row"><input class="fill-in" inputmode="numeric" autocomplete="off" aria-label="第 5 題作答" placeholder="例：90"><button class="ds-btn primary" data-fill-check>對答案</button><button class="ds-btn" data-fill-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 90 冊</div><div class="body">180－90＝90，也可以數長條差了 9 小格×10。</div></div>
-  </div>
-
-  <p class="q-lead"><b>第 6～9 題</b>看下面這張圖回答。</p>
-  <figure class="chartbox" data-chart><script type="application/json">
-  {"type":"hbar","title":"陽光國小四年級學生上學方式人數長條圖","xLabel":"人數（人）","yLabel":"上學方式","yUnit":"人",
-   "categories":["走路","腳踏車","汽車","公車"],
-   "series":[{"name":"男生","values":[24,18,12,9]},{"name":"女生","values":[21,10,16,14]}],
-   "major":10,"minorPer":10,"max":30,"readout":true}
-  </script></figure>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 6 題　這張圖和上一張最大的不同是——</p>
-      <div class="q-options"><button class="q-opt" data-correct>長條是橫的，兩軸角色互換</button><button class="q-opt">沒有標題</button><button class="q-opt">沒有刻度</button><button class="q-opt">長條越長數量越少</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 橫式長條圖</div><div class="body">縱軸記上學方式、橫軸記人數，讀法完全一樣。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 7 題　哪一種方式的女生比男生多？</p>
-      <div class="q-options"><button class="q-opt">走路</button><button class="q-opt">腳踏車</button><button class="q-opt" data-correct>汽車和公車</button><button class="q-opt">四種都是</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 汽車和公車</div><div class="body">汽車 16＞12、公車 14＞9；走路與腳踏車都是男生多。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 8 題　用不同顏色的長條，最主要是為了——</p>
-      <div class="q-options"><button class="q-opt">好看</button><button class="q-opt" data-correct>方便比較兩種資料</button><button class="q-opt">讓長條變長</button><button class="q-opt">省紙</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 方便比較</div><div class="body">複式長條圖把兩份資料放在同一張圖上比較。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="fillq" data-answer="45|45人">
-      <p class="q-stem">第 9 題　走路上學的男生和女生合起來共（　　）人。</p>
-      <div class="fill-row"><input class="fill-in" inputmode="numeric" autocomplete="off" aria-label="第 9 題作答" placeholder="例：45"><button class="ds-btn primary" data-fill-check>對答案</button><button class="ds-btn" data-fill-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 45 人</div><div class="body">24＋21＝45。這就是把兩段疊起來的意思。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 10 題　堆疊長條圖中，最長的那一條代表——</p>
-      <div class="q-options"><button class="q-opt">男生最多</button><button class="q-opt">女生最多</button><button class="q-opt" data-correct>這一項的總人數最多</button><button class="q-opt">看不出來</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 總人數最多</div><div class="body">要比其中一群，要看那一段的長度，不是整條。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 11 題　小明說：「長條圖沒有寫標題也沒關係。」他的說法——</p>
-      <div class="q-options"><button class="q-opt">正確，看長條就好</button><button class="q-opt" data-correct>不正確，會不知道這張圖在記什麼</button><button class="q-opt">正確，標題只是裝飾</button><button class="q-opt">不一定</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 不正確</div><div class="body">標題、橫軸、縱軸、長條，四個都要有才讀得懂。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="fillq" data-answer="30|30個">
-      <p class="q-stem">第 12 題　某圖一大格代表 15 個、平分成 3 小格，長條在 15 再往上 3 小格，表示（　　）個。</p>
-      <div class="fill-row"><input class="fill-in" inputmode="numeric" autocomplete="off" aria-label="第 12 題作答" placeholder="例：30"><button class="ds-btn primary" data-fill-check>對答案</button><button class="ds-btn" data-fill-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 30 個</div><div class="body">一小格 15÷3＝5；15＋（3×5）＝30。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="fillq" data-answer="8|8格|8小格">
-      <p class="q-stem">第 13 題　一小格代表 5 人。甲比乙多 40 人，表示甲的長條比乙高（　　）小格。</p>
-      <div class="fill-row"><input class="fill-in" inputmode="numeric" autocomplete="off" aria-label="第 13 題作答" placeholder="例：8"><button class="ds-btn primary" data-fill-check>對答案</button><button class="ds-btn" data-fill-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 8 小格</div><div class="body">40÷5＝8。反過來從數量推格數，也要會。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="fillq" data-answer="700|700冊">
-      <p class="q-stem">第 14 題　第 1 題那張圖，五個班一共借了（　　）冊。</p>
-      <div class="fill-row"><input class="fill-in" inputmode="numeric" autocomplete="off" aria-label="第 14 題作答" placeholder="例：700"><button class="ds-btn primary" data-fill-check>對答案</button><button class="ds-btn" data-fill-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">✓ 700 冊</div><div class="body">120＋180＋150＋90＋160＝700。</div></div>
-  </div>
-
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">全部答對之後，再把<b>紙本試卷</b>寫一次——題目不一樣，但用的是同一套讀圖方法。</span>
-  </div>
-  <footer class="page-foot">四上數學 · 第十單元 統計圖表 · 10-1 報讀長條圖 · 線上模擬評量</footer>
-
 </main>
 
 <script>
@@ -2699,46 +2680,126 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
 
 <script>
 (() => {
-  document.querySelectorAll('.q-block').forEach((block) => {
-    block.addEventListener('tds:answered', () => {
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
-    });
-  });
-})();
-</script>
-<script>
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
 
-(() => {
-  const norm = (s) => (s || '')
-    .replace(/[\uFF10-\uFF19]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
-    .replace(/[\uFF0F\u2044\u2215]/g, '/')
-    .replace(/\s|，|,|個|張|條|盒|公升|份|顆|的/g, '')
-    .replace(/又|又/g, '又')
-    .toLowerCase();
-  document.querySelectorAll('.fillq').forEach((el) => {
-    const input = el.querySelector('.fill-in');
-    const fb = el.querySelector('.ans-feedback');
-    const ans = (el.dataset.answer || '').split('|').map(norm);
-    const reveal = () => el.closest('.q-block')?.querySelectorAll('[data-reveal]')
-      .forEach((n) => n.classList.add('is-shown'));
-    const check = () => {
-      const v = norm(input.value);
-      if (!v) { if (fb) { fb.textContent = '請先作答'; fb.className = 'ans-feedback is-show'; } return; }
-      const ok = ans.includes(v);
-      el.classList.toggle('is-ok', ok);
-      el.classList.toggle('is-no', !ok);
-      if (fb) { fb.textContent = ok ? '答對了！' : '再想想，看看下面的解說'; fb.className = 'ans-feedback is-show ' + (ok ? 'is-correct' : 'is-wrong'); }
-      reveal();
-    };
-    el.querySelector('[data-fill-check]')?.addEventListener('click', check);
-    el.querySelector('[data-fill-reset]')?.addEventListener('click', () => {
-      input.value = ''; el.classList.remove('is-ok', 'is-no');
-      if (fb) { fb.textContent = ''; fb.className = 'ans-feedback'; }
-    });
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
-  });
-})();
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip], [data-verify-check], [data-ld-step]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
 </script>
 
 </body>
