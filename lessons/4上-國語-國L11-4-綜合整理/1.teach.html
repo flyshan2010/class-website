@@ -522,10 +522,16 @@ h1, h2, h3, p, ul, ol { margin: 0; }
 }
 .misconception > .wrong-side { background: var(--wrong-soft); border: var(--line-mid) solid var(--wrong); }
 .misconception > .right-side { background: var(--correct-soft); border: var(--line-mid) solid var(--correct); }
-.misconception .mark { font-size: var(--t3); font-weight: var(--fw-bold); }
-.misconception > .wrong-side .mark { color: var(--wrong); }
-.misconception > .right-side .mark { color: var(--correct); }
-.misconception .text { font-size: var(--t4); }
+.misconception .mark,
+.misconception > .wrong-side > .head,
+.misconception > .right-side > .head { font-size: var(--t3); font-weight: var(--fw-bold); }
+.misconception > .wrong-side .mark,
+.misconception > .wrong-side > .head { color: var(--wrong); }
+.misconception > .right-side .mark,
+.misconception > .right-side > .head { color: var(--correct); }
+.misconception .text,
+.misconception > .wrong-side > .body,
+.misconception > .right-side > .body { font-size: var(--t4); }
 .misconception > .becomes {
   align-self: center;
   font-size: var(--t2);
@@ -1997,6 +2003,13 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
 .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s4); flex: 1; align-content: center; }
 /* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+/* 紙本提示條 paper-note（本頁另有紙本學習單） */
+.paper-note {
+  display: flex; align-items: flex-start; gap: var(--s3);
+  background: var(--accent-soft); border: var(--line-mid) dashed var(--accent);
+  border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
+}
+.paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
 [data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 </head>
