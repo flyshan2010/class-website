@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>複習週課程預排表｜四年四班</title>
+<style>
+:root{--bg:#f7f5f0;--card:#fff;--ink:#2b2b2b;--muted:#6b6b6b;--line:#e2ddd2;--accent:#8a6d3b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.75}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 18px 80px}
+h1{font-size:1.7rem;margin:.1em 0 .4em}
+h2{font-size:1.25rem;margin:2em 0 .6em;padding-left:.5em;border-left:6px solid var(--accent)}
+h3{font-size:1.06rem;margin:1.6em 0 .5em;color:var(--accent)}
+blockquote{background:#fffbe9;border:1px solid #ecdca9;border-radius:10px;padding:12px 14px;color:#6a5a2a;font-size:.92rem;margin:14px 0}
+hr{border:0;border-top:2px dashed var(--line);margin:2.4em 0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:520px;background:var(--card);border-radius:10px;overflow:hidden;font-size:.93rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#efe9dd;font-weight:600;white-space:nowrap}
+code{background:#efe9dd;border-radius:5px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,Menlo,monospace}
+ul{margin:.4em 0 .8em;padding-left:1.2em}
+li{margin:.25em 0}
+.round{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;padding:12px 14px;margin:14px 0}
+.round.done{opacity:.55;border-left-color:#8aa88a}
+.chk{display:flex;gap:.5em;align-items:flex-start;cursor:pointer}
+.chk input{margin-top:.5em;width:18px;height:18px;flex:none;accent-color:#8aa88a}
+.chk b{color:var(--accent)}
+.toc{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+.toc a{font-size:.82rem;text-decoration:none;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.toc a:hover{color:var(--ink);border-color:var(--accent)}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.bar button{font:inherit;font-size:.85rem;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.tip{color:var(--muted);font-size:.85rem}
+@media print{.toc,.bar{display:none}.round{break-inside:avoid}body{background:#fff}}
+@media (max-width:600px){h1{font-size:1.35rem}.wrap{padding:14px 12px 60px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>複習週課程預排表（期中／期末・待確認）</h1>
+<div class="toc"><a href="#s1">定案事項（2026-08-23）</a><a href="#s2">分輪原則（依實際進度表校正）</a><a href="#s3">期中複習（範圍：國 L1–L6／數 L1–L5／社 單元一、二）</a><a href="#s7">期末複習（範圍：國 L7–L12／數 L6–L10／社 單元三、四）</a><a href="#s11">共通產出規格（每一輪都照這張表做）</a></div>
+<div class="bar">
+  <button onclick="window.print()">🖨 列印／存 PDF</button>
+  <button onclick="localStorage.removeItem('plan-check');location.reload()">↺ 清除勾選</button>
+  <span class="tip">勾選只存在這台裝置的瀏覽器，方便逐輪確認</span>
+</div>
+<blockquote>配套文件：<code>PLAN_複習週課程設計.md</code>（設計原則與判斷方案）。 <strong>此為預排稿，尚未執行</strong>——等正課全部建完（國 12 課／數 10 單元／社 4 單元）再動工。 日期、節數全部由 <code>class-website/data/daily-plan.json</code> 實算，非估計；進度表若挪動要回來重算。</blockquote>
+<h2 id="s1">定案事項（2026-08-23）</h2>
+<ul><li><strong>方案 A 定案</strong>：<code>數R1</code>→<code>數R1-1</code>、<code>社R1</code>→<code>社R1-1</code> 直接改代碼；<code>國R1</code> 拆成 <code>國R1-1</code>（字詞）／<code>國R1-2</code>（內容與形式）／<code>國R1-3</code>（寫作與模擬），既有 15 份紙本依面向分配、不重做。</li><li><strong>駕駛艙分輪支援已上線</strong>（commit <code>0ca6258</code>）：進度表寫「期末國語總複習」→ 自動掛上 <code>國R2-1</code>、<code>國R2-2</code>… 依輪次數字排序。</li><li><strong>執行時機</strong>：等國 12 課／數 10 單元／社 4 單元全部建完，現在只做確認。</li></ul>
+<h2 id="s2">分輪原則（依實際進度表校正）</h2>
+<p>原稿的「三輪四拍」改成<strong>一輪＝一週</strong>：進度表本來就把複習週寫成「觀念統整 → 分項強化 → 綜合模擬測驗 → 錯題訂正 → 重點衝刺」的一週循環，一週一份教材（4～6 節），代碼 <code>&lt;科目&gt;R&lt;1期中／2期末&gt;-&lt;輪&gt;</code>。駕駛艙已支援分輪自動掛上（commit <code>0ca6258</code>）。</p>
+<hr>
+<h2 id="s3">期中複習（範圍：國 L1–L6／數 L1–L5／社 單元一、二）</h2>
+<h3 id="s4">國語 17 節 → 4 輪</h3>
+<div class="tw"><table><thead><tr><th>代碼</th><th>週次・日期</th><th>節數</th><th>主題</th></tr></thead><tbody><tr><td><code>國R1-1</code></td><td>W7　10/12–10/16</td><td>5</td><td>第1階段：字詞語詞總整理</td></tr><tr><td><code>國R1-2</code></td><td>W8　10/19–10/23</td><td>5</td><td>第2階段：內容理解與形式深究</td></tr><tr><td><code>國R1-3</code></td><td>W9　10/27–10/30</td><td>4</td><td>第3階段：寫作與統整活動＋全範圍模擬</td></tr><tr><td><code>國R1-4</code></td><td>W10　11/02–11/04</td><td>3</td><td>考前總衝刺（11/05–06 第一次定期評量）</td></tr></tbody></table></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R1-1 字詞語詞總整理"><span><b><code>國R1-1</code> 字詞語詞總整理</b></span></label><ul><li>0 起始評估：L1–L6 生字語詞速測 20 題（易錯字、形近字、破音字），<strong>當場統計錯字前 10 名</strong>作為本輪教材主軸</li><li>1 課程教學：部首辨形近字／同字兩讀／四字語詞各課一個／統整一的字詞規則橫切六課</li><li>2 差異化指導：基礎題＝抄寫與辨形配對；進階題＝語詞填空造句；挑戰題＝成語情境選用與改錯</li><li>3 學習評量：字詞小考（選擇 12＋填充 8），對照前測看錯字降幅</li><li>4 成果回流：一句話入紀錄庫，錯字前 10 名進入 <code>國R1-4</code> 衝刺清單</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R1-2 內容理解與形式深究"><span><b><code>國R1-2</code> 內容理解與形式深究</b></span></label><ul><li>0 起始評估：六課大意配對＋六何法讀短文 1 篇（判斷理解落差在「找訊息」還是「推論」）</li><li>1 課程教學：六課大意各一句、書信格式與回信、記敘與說明文一句話分辨、六種修辭與五種句型（看關聯詞判斷）</li><li>2 差異化指導：基礎題＝修辭辨認二選一；進階題＝句型改寫；挑戰題＝短文找修辭並說明效果</li><li>3 學習評量：閱讀理解卷（短文 2 篇＋修辭句型 10 題）</li><li>4 成果回流：譬喻／轉化／映襯的混淆率回寫，決定 <code>國R1-3</code> 要不要重講</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R1-3 寫作與統整活動＋模擬"><span><b><code>國R1-3</code> 寫作與統整活動＋模擬</b></span></label><ul><li>0 起始評估：審題小練習（給題目，只寫「要寫什麼／不能寫什麼」）</li><li>1 課程教學：審題→立意→選材三步驟、六課各一種寫作手法、統整二的語文應用技巧</li><li>2 差異化指導：基礎題＝段落填空成篇；進階題＝三段架構自寫；挑戰題＝換角度重寫同一題材</li><li>3 學習評量：<strong>全範圍模擬卷</strong>（比照定期評量題型與配分，題目與 <code>4.exam</code> 不重複）</li><li>4 成果回流：模擬卷各題型答對率入題庫，低於 60% 的題型進衝刺輪</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R1-4 考前總衝刺"><span><b><code>國R1-4</code> 考前總衝刺</b></span></label><ul><li>0 起始評估：不另做，直接用前三輪的錯題清單</li><li>1 課程教學：最容易失分的六件事、答題順序與時間分配、回家怎麼準備</li><li>2 差異化指導：基礎題＝錯字與語詞回鍋；進階題＝閱讀題幹關鍵字圈畫；挑戰題＝寫作審題快練</li><li>3 學習評量：限時 20 分鐘迷你卷（純錯題回鍋）</li><li>4 成果回流：定期評量後回填實際成績，與模擬卷比對，寫進期中檢討</li></ul></div>
+<h3 id="s5">數學 19 節 → 5 輪</h3>
+<div class="tw"><table><thead><tr><th>代碼</th><th>週次・日期</th><th>節數</th><th>主題</th></tr></thead><tbody><tr><td><code>數R1-1</code></td><td>W6　10/06、10/08</td><td>2</td><td>習作範圍總驗收與訂正</td></tr><tr><td><code>數R1-2</code></td><td>W7　10/12–10/16</td><td>5</td><td>第1輪：L1–L5 觀念複習→強化→模擬→訂正→衝刺</td></tr><tr><td><code>數R1-3</code></td><td>W8　10/19–10/23</td><td>5</td><td>第2輪（同拍，題目不重複）</td></tr><tr><td><code>數R1-4</code></td><td>W9　10/27–10/30</td><td>4</td><td>第3輪（模擬卷比照定期評量）</td></tr><tr><td><code>數R1-5</code></td><td>W10　11/02–11/04</td><td>3</td><td>期中試題疑難解答</td></tr></tbody></table></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="數R1-1 習作範圍總驗收與訂正"><span><b><code>數R1-1</code> 習作範圍總驗收與訂正</b></span></label><ul><li>0 起始評估：習作各單元完成度與錯題清點（不是新測驗，直接盤點既有作答）</li><li>1 課程教學：L1 大數讀寫、L2 乘法直式、L3 角度、L4 假分數帶分數、L5 公里五個單元各一張「一頁重點」</li><li>2 差異化指導：基礎題＝習作未訂正題重做；進階題＝同型變式；挑戰題＝跨單元併用題</li><li>3 學習評量：習作訂正完成度檢核（逐生紀錄，需紙本）</li><li>4 成果回流：未完成／高錯率單元標記，決定 <code>數R1-2</code> 的觀念複習比重</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="數R1-2／數R1-3／數R1-4 三輪循環（每輪同拍、題目不重複）"><span><b><code>數R1-2</code>／<code>數R1-3</code>／<code>數R1-4</code> 三輪循環（每輪同拍、題目不重複）</b></span></label><ul><li>0 起始評估：本輪起手 10 題速測（L1–L5 各 2 題），錯最多的兩個單元當本輪主軸</li><li>1 課程教學：觀念統整（定義、性質、迷思澄清）——大數四位一組、量角器讀數方向、假分數與帶分數互換、公里與公尺換算、乘法直式進位</li><li>2 差異化指導：基礎題＝步驟拆解填空；進階題＝限時計算與數型；挑戰題＝多步驟應用與探索（×99 規律那類）</li><li>3 學習評量：單元 1–5 綜合模擬測驗（第 3 輪比照定期評量配分）</li><li>4 成果回流：逐題答對率回寫題庫，錯題自動編入下一輪的「錯題訂正與個別輔導」節</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="數R1-5 期中試題疑難解答"><span><b><code>數R1-5</code> 期中試題疑難解答</b></span></label><ul><li>0 起始評估：以三輪模擬卷的錯題率排序，取前 8 題型</li><li>1 課程教學：逐題示範解法與常見錯法對照（錯在哪一步，不只給答案）</li><li>2 差異化指導：基礎題＝同題換數字；進階題＝同型不同情境；挑戰題＝自己出一題並解</li><li>3 學習評量：限時 20 分鐘錯題回鍋卷</li><li>4 成果回流：定期評量後回填實際成績，比對模擬預測落差</li></ul></div>
+<h3 id="s6">社會 21 節 → 5 輪</h3>
+<div class="tw"><table><thead><tr><th>代碼</th><th>週次・日期</th><th>節數</th><th>主題</th></tr></thead><tbody><tr><td><code>社R1-1</code></td><td>W6　10/05–10/08</td><td>4</td><td>單元一、二總複習與習作訂正</td></tr><tr><td><code>社R1-2</code></td><td>W7　10/12–10/16</td><td>5</td><td>第1輪：圖表與重點複習→模擬→觀念澄清</td></tr><tr><td><code>社R1-3</code></td><td>W8　10/19–10/23</td><td>5</td><td>第2輪</td></tr><tr><td><code>社R1-4</code></td><td>W9　10/27–10/30</td><td>4</td><td>第3輪</td></tr><tr><td><code>社R1-5</code></td><td>W10　11/02–11/04</td><td>3</td><td>考前觀念澄清</td></tr></tbody></table></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="社R1-1 單元一、二總複習"><span><b><code>社R1-1</code> 單元一、二總複習</b></span></label><ul><li>0 起始評估：5 小節重點速測（地圖四要素、地形分界、天氣≠氣候、三合院空間、3R 順序）</li><li>1 課程教學：概念圖橫切五小節——自然環境（位置→地形→氣候水資源）與生活（住屋→器物）的因果串連</li><li>2 差異化指導：基礎題＝名詞與圖片配對；進階題＝比例尺與氣溫雨量圖判讀；挑戰題＝以家鄉為例做一張概念圖</li><li>3 學習評量：習作訂正檢核＋單元小考（需紙本逐生紀錄）</li><li>4 成果回流：五個最易錯處的班級錯誤率，作為後續三輪的權重</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="社R1-2／社R1-3／社R1-4 三輪循環"><span><b><code>社R1-2</code>／<code>社R1-3</code>／<code>社R1-4</code> 三輪循環</b></span></label><ul><li>0 起始評估：本輪 8 題速測（含 1 張圖表題），定本輪重點</li><li>1 課程教學：重點脈絡整理（時間軸＋概念圖），一輪換一種切法：概念比較／圖表判讀／生活實例</li><li>2 差異化指導：基礎題＝重點填空與關鍵字；進階題＝圖表判讀說明；挑戰題＝申論式短答（為什麼／有何影響）</li><li>3 學習評量：評量試卷模擬測驗（第 3 輪比照定期評量題型）</li><li>4 成果回流：答對率回寫題庫，觀念錯誤（非粗心）者列入下輪觀念澄清</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="社R1-5 考前觀念澄清"><span><b><code>社R1-5</code> 考前觀念澄清</b></span></label><ul><li>0 起始評估：直接取三輪錯題率前 8 個觀念</li><li>1 課程教學：一觀念一張對照卡（正確說法 vs 常見誤解）</li><li>2 差異化指導：基礎題＝對錯判斷；進階題＝改錯句；挑戰題＝舉一個家鄉的例子佐證</li><li>3 學習評量：限時 15 分鐘觀念卷</li><li>4 成果回流：定期評量後回填成績與檢討</li></ul></div>
+<hr>
+<h2 id="s7">期末複習（範圍：國 L7–L12／數 L6–L10／社 單元三、四）</h2>
+<h3 id="s8">國語 14 節 → 4 輪</h3>
+<div class="tw"><table><thead><tr><th>代碼</th><th>週次・日期</th><th>節數</th><th>主題</th></tr></thead><tbody><tr><td><code>國R2-1</code></td><td>W17　12/21–12/24</td><td>4</td><td>第1階段：L7–L12 字詞語詞與成語</td></tr><tr><td><code>國R2-2</code></td><td>W18　12/28–12/31</td><td>4</td><td>第2階段：內容理解與形式深究</td></tr><tr><td><code>國R2-3</code></td><td>W19　01/04–01/08</td><td>5</td><td>第3階段：寫作、統整三四＋全範圍模擬</td></tr><tr><td><code>國R2-4</code></td><td>W20　01/11</td><td>1</td><td>考前總衝刺（01/12–13 第二次定期評量）</td></tr></tbody></table></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R2-1 字詞語詞與成語"><span><b><code>國R2-1</code> 字詞語詞與成語</b>（L7 松鼠先生的麵包／L8 平凡的大俠／L9 王子折箭／L10 海中的熱帶雨林／L11 美食島／L12 寧靜的音樂會）</span></label><ul><li>0 起始評估：六課生字語詞速測 20 題，統計錯字前 10 名</li><li>1 課程教學：形近字與破音字橫切六課、四字語詞與成語情境用法、統整三的字詞規則</li><li>2 差異化指導：基礎題＝辨形配對；進階題＝語詞填空造句；挑戰題＝成語改錯與情境選用</li><li>3 學習評量：字詞小考（選擇 12＋填充 8）</li><li>4 成果回流：錯字清單進 <code>國R2-4</code> 衝刺</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R2-2 內容理解與形式深究"><span><b><code>國R2-2</code> 內容理解與形式深究</b></span></label><ul><li>0 起始評估：六課大意配對＋短文六何法 1 篇</li><li>1 課程教學：三種組織方式（時間式順敘 L7／倒敘 L8、空間式、因果式）、六種修辭、五種句型判準</li><li>2 差異化指導：基礎題＝修辭辨認；進階題＝句型改寫；挑戰題＝分析文章組織方式並說明理由</li><li>3 學習評量：閱讀理解卷（短文 2 篇＋修辭句型 10 題）</li><li>4 成果回流：組織方式判斷正確率回寫，決定第 3 輪比重</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R2-3 寫作與統整＋模擬"><span><b><code>國R2-3</code> 寫作與統整＋模擬</b></span></label><ul><li>0 起始評估：審題小練習＋愛閱讀(二)重點回顧</li><li>1 課程教學：三段架構（先寫事物→再寫回憶→後寫感受那類）、統整三／四的寫作技巧、擴寫三招</li><li>2 差異化指導：基礎題＝段落填空成篇；進階題＝三段自寫；挑戰題＝換組織方式重寫</li><li>3 學習評量：<strong>全範圍模擬卷</strong>（比照定期評量，題目與紙本不重複）</li><li>4 成果回流：模擬卷題型答對率入題庫</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="國R2-4 考前總衝刺（僅 1 節）"><span><b><code>國R2-4</code> 考前總衝刺（僅 1 節）</b></span></label><ul><li>0 起始評估：用前三輪錯題清單，不另測</li><li>1 課程教學：易失分六件事、答題時間分配</li><li>2 差異化指導：只做錯題回鍋，不分三層（節數不足）</li><li>3 學習評量：限時 15 分鐘迷你卷</li><li>4 成果回流：定期評量後回填成績，寫學期檢討</li></ul></div>
+<h3 id="s9">數學 17 節 → 4 輪</h3>
+<div class="tw"><table><thead><tr><th>代碼</th><th>週次・日期</th><th>節數</th><th>主題</th></tr></thead><tbody><tr><td><code>數R2-1</code></td><td>W16　12/15、12/17、12/18</td><td>3</td><td>習作範圍總驗收與訂正＋期末觀念衝刺起手</td></tr><tr><td><code>數R2-2</code></td><td>W17　12/21–12/24</td><td>4</td><td>第1輪：L6–L10 觀念統整→計算幾何強化→綜合模擬→訂正</td></tr><tr><td><code>數R2-3</code></td><td>W18　12/28–12/31</td><td>4</td><td>第2輪（題目不重複）</td></tr><tr><td><code>數R2-4</code></td><td>W19–W20　01/04–01/08、01/11</td><td>6</td><td>第3輪＋單元重點衝刺</td></tr></tbody></table></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="數R2-1 習作總驗收與訂正"><span><b><code>數R2-1</code> 習作總驗收與訂正</b>（L6 除法／L7 三角形與全等／L8 加與減兩步驟併式／L9 二位小數／L10 統計圖表）</span></label><ul><li>0 起始評估：習作完成度與錯題清點</li><li>1 課程教學：五單元各一張「一頁重點」——除法直式與驗算、全等與對應邊角、兩步驟併式的運算順序、二位小數的位值與加減、長條圖折線圖判讀</li><li>2 差異化指導：基礎題＝未訂正題重做；進階題＝同型變式；挑戰題＝跨單元併用</li><li>3 學習評量：習作訂正完成度檢核（紙本逐生紀錄）</li><li>4 成果回流：高錯率單元標記，定第 1 輪比重</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="數R2-2／數R2-3／數R2-4 三輪循環"><span><b><code>數R2-2</code>／<code>數R2-3</code>／<code>數R2-4</code> 三輪循環</b></span></label><ul><li>0 起始評估：10 題速測（L6–L10 各 2 題），定本輪主軸</li><li>1 課程教學：觀念統整與迷思澄清——除法餘數意義、全等對應順序（翻轉後最易錯）、併式先乘除後加減與括號、小數點對齊、圖表刻度與單位</li><li>2 差異化指導：基礎題＝步驟拆解填空；進階題＝計算與圖表限時練；挑戰題＝多步驟應用與資料判讀</li><li>3 學習評量：單元 6–10 綜合模擬測驗（第 3 輪比照定期評量配分）</li><li>4 成果回流：逐題答對率回寫題庫，錯題編入下一輪訂正節；<code>數R2-4</code> 末段以錯題率前三主題做重點衝刺</li></ul></div>
+<h3 id="s10">社會 19 節 → 4 輪</h3>
+<div class="tw"><table><thead><tr><th>代碼</th><th>週次・日期</th><th>節數</th><th>主題</th></tr></thead><tbody><tr><td><code>社R2-1</code></td><td>W16　12/14–12/18</td><td>5</td><td>單元三、四收尾複習與習作訂正</td></tr><tr><td><code>社R2-2</code></td><td>W17　12/21–12/24</td><td>4</td><td>第1輪：重點脈絡整理→模擬→觀念澄清</td></tr><tr><td><code>社R2-3</code></td><td>W18　12/28–12/31</td><td>4</td><td>第2輪</td></tr><tr><td><code>社R2-4</code></td><td>W19–W20　01/04–01/08、01/11</td><td>6</td><td>第3輪＋考前澄清</td></tr></tbody></table></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="社R2-1 單元三、四收尾複習"><span><b><code>社R2-1</code> 單元三、四收尾複習</b>（單元三 傳統信仰與老街／單元四 家鄉的作息、節慶與節日）</span></label><ul><li>0 起始評估：兩單元重點速測（廟宇功能、老街形成四步、街屋與騎樓、節慶由來與作息變遷）</li><li>1 課程教學：概念圖橫切——信仰→聚落→老街的因果串連；歲時作息與節慶節日的對應</li><li>2 差異化指導：基礎題＝名詞圖片配對；進階題＝老街轉變三型比較；挑戰題＝以家鄉節慶做一張時間軸</li><li>3 學習評量：習作訂正檢核＋單元小考（紙本逐生紀錄）</li><li>4 成果回流：易錯處錯誤率，定後三輪權重</li></ul></div>
+<div class="round"><label class="chk"><input type="checkbox" data-k="社R2-2／社R2-3／社R2-4 三輪循環"><span><b><code>社R2-2</code>／<code>社R2-3</code>／<code>社R2-4</code> 三輪循環</b></span></label><ul><li>0 起始評估：8 題速測（含 1 張圖表或時間軸題）</li><li>1 課程教學：一輪換一種切法——概念脈絡／試卷題型拆解／觀念澄清對照卡</li><li>2 差異化指導：基礎題＝重點填空；進階題＝圖表與資料判讀說明；挑戰題＝短答申論（為什麼／有何影響）</li><li>3 學習評量：評量試卷模擬測驗（第 3 輪比照定期評量題型）</li><li>4 成果回流：答對率回寫題庫；<code>社R2-4</code> 末節以錯題率前 8 觀念做考前澄清，定期評量後回填成績</li></ul></div>
+<hr>
+<h2 id="s11">共通產出規格（每一輪都照這張表做）</h2>
+<div class="tw"><table><thead><tr><th>序</th><th>網頁</th><th>紙本</th><th>備註</th></tr></thead><tbody><tr><td>0</td><td><code>0.pretest.html</code></td><td>需逐生紀錄時加做</td><td>速測，決定本輪主軸</td></tr><tr><td>1</td><td><code>1.teach.html</code></td><td>—</td><td>投影用，<code>data-reveal</code> 逐步揭露</td></tr><tr><td>2</td><td><code>2.practice.html</code></td><td><code>2a/2b/2c</code> 差異化三份</td><td><strong>差異化固定網頁＋紙本都做</strong></td></tr><tr><td>3</td><td><code>3.review.html</code></td><td>—</td><td>錯題回鍋</td></tr><tr><td>4</td><td><code>4.exam.html</code></td><td>六合一評量</td><td>與紙本<strong>同範圍不同題</strong></td></tr></tbody></table></div>
+<ul><li>模擬測驗與小考一律走 <code>exam-bank</code> 抽題，考後回寫答對率；下一輪的分組直接吃這份資料，不憑印象分。</li><li>分組用語固定<strong>基礎題／進階題／挑戰題</strong>，順序不變。</li><li>每輪上完一句話回流紀錄庫（<code>class-log</code>），定期評量後回填實際成績做落差比對。</li></ul>
+</div>
+<script>
+(function(){
+  var K='plan-check', st=JSON.parse(localStorage.getItem(K)||'{}');
+  document.querySelectorAll('.round input[type=checkbox]').forEach(function(b){
+    var k=b.dataset.k; b.checked=!!st[k]; b.closest('.round').classList.toggle('done',b.checked);
+    b.addEventListener('change',function(){ st[k]=b.checked; localStorage.setItem(K,JSON.stringify(st));
+      b.closest('.round').classList.toggle('done',b.checked); });
+  });
+})();
+</script>
+</body>
+</html>
