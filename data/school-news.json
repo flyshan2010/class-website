@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-26T08:37:33.691Z",
+  "fetchedAt": "2026-08-26T12:28:06.230Z",
   "items": [
     {
       "date": "2026-08-26",
@@ -11,6 +11,18 @@
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!!",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-08-26",
+      "title": "2026臺南文資月『文資印象派』繪畫徵件比賽，徵件截止日期展延至9月4日（五）",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=637&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-08-26",
+      "title": "115年臺南市「眾神逗陣走 無毒遊府城」活動",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=636&type=news&from_op=school_department_show",
       "dept": "學務處"
     },
     {
@@ -48,18 +60,6 @@
       "title": "緊急通知！！今日小一新生迎新活動取消辦理！！",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=627&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-08-21",
-      "title": "單親家庭子女徵文繪畫比賽，鼓勵單親家庭之家長及子女踴躍參加",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=626&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-08-21",
-      "title": "轉知臺南市115年度品德教育創意圖卡徵選",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=623&type=news&from_op=school_department_show",
-      "dept": "學務處"
     }
   ]
 }
