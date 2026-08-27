@@ -90,6 +90,15 @@
     "notes": ""
   },
   {
+    "title": "性平宣導",
+    "date": "2026-09-04",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "08:40",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "課後才藝班開課",
     "date": "2026-09-07",
     "endDate": "",
@@ -104,15 +113,6 @@
     "endDate": "",
     "startTime": "08:05",
     "endTime": "09:05",
-    "type": "活動",
-    "notes": ""
-  },
-  {
-    "title": "性平宣導",
-    "date": "2026-09-09",
-    "endDate": "",
-    "startTime": "08:00",
-    "endTime": "08:40",
     "type": "活動",
     "notes": ""
   },
@@ -315,15 +315,6 @@
     "notes": ""
   },
   {
-    "title": "戶外教學（暫）",
-    "date": "2026-11-24",
-    "endDate": "",
-    "startTime": "07:40",
-    "endTime": "16:40",
-    "type": "活動",
-    "notes": ""
-  },
-  {
     "title": "線上升旗",
     "date": "2026-11-24",
     "endDate": "",
@@ -342,13 +333,13 @@
     "notes": ""
   },
   {
-    "title": "實體升旗",
+    "title": "戶外教學",
     "date": "2026-12-01",
     "endDate": "",
-    "startTime": "08:00",
-    "endTime": "08:35",
+    "startTime": "07:30",
+    "endTime": "17:30",
     "type": "活動",
-    "notes": ""
+    "notes": "7:30集合，8:00出發，回程時間有可能塞車會17:20才回到學校"
   },
   {
     "title": "成長測驗",
