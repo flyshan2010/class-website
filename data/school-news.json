@@ -1,6 +1,24 @@
 {
-  "fetchedAt": "2026-08-27T04:25:00.555Z",
+  "fetchedAt": "2026-08-27T14:55:54.642Z",
   "items": [
+    {
+      "date": "2026-08-27",
+      "title": "有關台灣發明商品促進協會舉辦「2026第13屆KIDE高雄國際發明暨設計展」，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=645&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-08-27",
+      "title": "115學年度推動國民中小學讀報教育實施計 畫",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=644&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-08-27",
+      "title": "國家太空中心「第七屆國際太空站 KIBO 機器人程式設計挑戰賽」活動報名即日起至2026年09月30日止",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=642&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-08-27",
       "title": "財團法人金車文教基金會第十六屆「愛讓世界轉動 兒少公益行動徵選」活動資訊",
@@ -42,24 +60,6 @@
       "title": "轉知「家鄉之愛—昭旺．玟瑾雕塑創作展暨汪明旭書法首展」",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=635&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-08-26",
-      "title": "115年學生申訴制度",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=634&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-08-25",
-      "title": "崑山國小小一新生迎新活動延期至8/29上午8：00舉辦。敬邀各位小一家長共同參加！",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=631&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-08-22",
-      "title": "有關本市115年度科學教育「和你一起玩科學」親子營計畫，請各校踴躍報名參加。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=630&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
