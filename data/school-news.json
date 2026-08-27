@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-08-26T13:47:22.515Z",
+  "fetchedAt": "2026-08-27T04:25:00.555Z",
   "items": [
+    {
+      "date": "2026-08-27",
+      "title": "財團法人金車文教基金會第十六屆「愛讓世界轉動 兒少公益行動徵選」活動資訊",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=639&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
+    {
+      "date": "2026-08-27",
+      "title": "防制學生藥物濫用",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=638&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
@@ -48,18 +60,6 @@
       "title": "有關本市115年度科學教育「和你一起玩科學」親子營計畫，請各校踴躍報名參加。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=630&type=news&from_op=school_department_show",
       "dept": "教務處"
-    },
-    {
-      "date": "2026-08-22",
-      "title": "0823幼兒園迎新活動取消辦理!!",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=8&zone_id=0&page_id=78&content_id=628&type=news&from_op=school_department_show",
-      "dept": "崑山附設幼兒園"
-    },
-    {
-      "date": "2026-08-22",
-      "title": "緊急通知！！今日小一新生迎新活動取消辦理！！",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=627&type=news&from_op=school_department_show",
-      "dept": "輔導室"
     }
   ]
 }
