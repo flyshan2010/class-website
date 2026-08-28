@@ -60,108 +60,134 @@
       {
         "subject": "數學",
         "teacher": "導師",
-        "room": "404"
-      },
-      {
-        "subject": "視覺藝術/本土語(布)",
-        "teacher": "石育恩/戴艷美",
-        "room": "美勞教室/四樓英語教室4"
-      },
-      {
-        "subject": "數學",
-        "teacher": "導師",
-        "room": "404"
-      },
-      {
-        "subject": "體育",
-        "teacher": "吳宗霖",
-        "room": "操場"
-      },
-      {
-        "subject": "數學",
-        "teacher": "導師",
-        "room": "404"
-      }
-    ],
-    [
-      {
-        "subject": "體育",
-        "teacher": "吳宗霖",
-        "room": "操場"
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "視覺藝術",
         "teacher": "石育恩",
-        "room": "美勞教室"
-      },
-      {
-        "subject": "國語",
-        "teacher": "導師",
-        "room": "404"
-      },
-      {
-        "subject": "英語",
-        "teacher": "王函葦 ",
-        "room": "英語教室"
-      },
-      {
-        "subject": "國語",
-        "teacher": "導師",
-        "room": "404"
-      }
-    ],
-    [
-      {
-        "subject": "國語",
-        "teacher": "導師",
-        "room": "404"
-      },
-      {
-        "subject": "國語",
-        "teacher": "導師",
-        "room": "404"
-      },
-      {
-        "subject": "創意科技(彈)",
-        "teacher": "蔡炎儒",
-        "room": "電腦教室"
+        "room": "美勞教室",
+        "parallel": [
+          {
+            "subject": "本土語(布)",
+            "teacher": "戴艷美",
+            "room": "四樓英語教室4"
+          }
+        ]
       },
       {
         "subject": "數學",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
+      },
+      {
+        "subject": "體育",
+        "teacher": "吳宗霖",
+        "room": "操場",
+        "parallel": []
+      },
+      {
+        "subject": "數學",
+        "teacher": "導師",
+        "room": "404",
+        "parallel": []
+      }
+    ],
+    [
+      {
+        "subject": "體育",
+        "teacher": "吳宗霖",
+        "room": "操場",
+        "parallel": []
+      },
+      {
+        "subject": "視覺藝術",
+        "teacher": "石育恩",
+        "room": "美勞教室",
+        "parallel": []
+      },
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "404",
+        "parallel": []
+      },
+      {
+        "subject": "英語",
+        "teacher": "王函葦",
+        "room": "英語教室",
+        "parallel": []
+      },
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "404",
+        "parallel": []
+      }
+    ],
+    [
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "404",
+        "parallel": []
+      },
+      {
+        "subject": "國語",
+        "teacher": "導師",
+        "room": "404",
+        "parallel": []
+      },
+      {
+        "subject": "創意科技(彈)",
+        "teacher": "蔡炎儒",
+        "room": "電腦教室",
+        "parallel": []
+      },
+      {
+        "subject": "數學",
+        "teacher": "導師",
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "自然",
         "teacher": "李妤婕",
-        "room": "自然教室"
+        "room": "自然教室",
+        "parallel": []
       }
     ],
     [
       {
         "subject": "社會",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "社會",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "社會",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "國語",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "玩美(彈)",
         "teacher": "陳鵬翎",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       }
     ],
     [
@@ -175,18 +201,21 @@
       {
         "subject": "綜合",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "自然",
         "teacher": "李妤婕",
-        "room": "自然教室"
+        "room": "自然教室",
+        "parallel": []
       },
       "",
       {
         "subject": "本土語（閩客手語）",
         "teacher": "蔡秀容/客語老師/黃洸彬",
-        "room": "404/客語教室/四樓教學準備室1"
+        "room": "404/客語教室/四樓教學準備室1",
+        "parallel": []
       },
       ""
     ],
@@ -194,18 +223,21 @@
       {
         "subject": "綜合",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       {
         "subject": "自然",
         "teacher": "李妤婕",
-        "room": "自然教室"
+        "room": "自然教室",
+        "parallel": []
       },
       "",
       {
         "subject": "音樂",
-        "teacher": "蔡文婷 ",
-        "room": "音樂教室"
+        "teacher": "蔡文婷",
+        "room": "音樂教室",
+        "parallel": []
       },
       ""
     ],
@@ -213,18 +245,21 @@
       {
         "subject": "英語（彈）",
         "teacher": "王函葦",
-        "room": "英語教室"
+        "room": "英語教室",
+        "parallel": []
       },
       {
         "subject": "健康",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       "",
       {
         "subject": "崑山活力Go(彈)",
         "teacher": "導師",
-        "room": "404"
+        "room": "404",
+        "parallel": []
       },
       ""
     ]
@@ -242,6 +277,7 @@
     "玩美(彈性)": "#FCE4EC",
     "健康": "#F1F8E9",
     "資訊(彈性)": "#ECEFF1",
+    "創意科技(彈性)": "#ECEFF1",
     "綜合": "#E8EAF6",
     "崑山活力Go(彈性)": "#FFEBEE",
     "本土語": "#FFF9C4",
