@@ -35,7 +35,7 @@
   /* ── 節次對齊（每次開頁依當下的日課表現算） ─────────────────
      日課表裡「導師自己上、且進度表有寫」的科目才會被排進度；科任課只顯示科目與教室。
      科目比對去掉括號註記，所以進度表的「英語」對得上日課表的「英語(彈性)」。 */
-  const SUBJ_BASE = s => String(s || "").replace(/\(.*?\)/g, "").trim();
+  const SUBJ_BASE = s => App.subjBase(s);
   const slots = {};                       // {科目: [{dow, period, order}]}，依星期、節次排好
   sched.periods.forEach((p, i) => {
     (sched.table[i] || []).forEach((cell, d) => {
@@ -52,17 +52,22 @@
      那一科每週就有一節進度默默掉進「彈性補充」，畫面上不會說哪裡不對。
      這裡拿排課的固定節數規則（schedule.json 的 weeklyRules，正本在 scripts/sync-notion.mjs
      的 SCHEDULE_META，repo 管理、Notion 同步不會覆蓋）對一次，對不上就在頁面頂端標出來。
-     英語是「正課 1 節＋彈性 1 節」，所以用完整科目名比對，不像進度對齊那樣去掉括號。
+     英語是「正課 1 節＋彈性 1 節」，所以用 App.subjKey 比對（保留彈性身分、只統一寫法），
+     不像進度對齊那樣連彈性註記都去掉；老師把「(彈性)」改寫成「(彈)」不會再跳假警示。
+     同節並排的第二科（本土語分流那種）不計入節數——那節的主課程只有一個。
      只在駕駛艙顯示——這是教師端的資料檢查，班網日課表頁家長也看得到，不適合出現在那裡。 */
   const scheduleAudit = () => {
     const rules = sched.weeklyRules || {};
     if (!Object.keys(rules).length) return "";
     const cnt = {};
     (sched.table || []).forEach(row => (row || []).forEach(c => {
-      if (c && typeof c === "object" && c.subject) cnt[c.subject] = (cnt[c.subject] || 0) + 1;
+      if (c && typeof c === "object" && c.subject) {
+        const k = App.subjKey(c.subject);
+        cnt[k] = (cnt[k] || 0) + 1;
+      }
     }));
     const bad = Object.entries(rules)
-      .map(([subject, want]) => ({ subject, want, got: cnt[subject] || 0 }))
+      .map(([subject, want]) => ({ subject: App.subjKey(subject), want, got: cnt[App.subjKey(subject)] || 0 }))
       .filter(x => x.got !== x.want);
     if (!bad.length) return "";
     const others = Object.keys(cnt).filter(s => !(s in rules));

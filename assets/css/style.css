@@ -661,6 +661,23 @@ main {
 .schedule-table tbody th { background: #eef5ff; font-weight: normal; font-size: 0.7778rem; }
 .schedule-table td { background: #fafaf5; }
 .schedule-table th, .schedule-table td { overflow-wrap: break-word; }
+/* 同節並排（2026-08-28）：同一節有部分同學被抽去上別的課（本土語分流、藝文分組）。
+   主課程在上、字級照舊；被抽走的那節縮排在下方，加一條左邊界與標籤，
+   一眼就看得出「這不是全班一起上」，而不是誤以為那一節有兩堂課。 */
+.schedule-table td .sched-alt {
+  margin: 6px -2px 0;
+  padding: 5px 4px;
+  border-radius: 8px;
+  border-left: 3px solid rgba(0, 0, 0, 0.18);
+  font-size: 0.9em;
+}
+.schedule-table td .sched-alt-tag {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.7em;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
 .scroll-hint { display: none; }
 @media (max-width: 640px) {
   /* 手機（2026-08-14 修）：節次欄原本 15%＝38px，裝不下 72px 的時間字串。
