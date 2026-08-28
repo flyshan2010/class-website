@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-28T08:34:40.069Z",
+  "fetchedAt": "2026-08-28T09:00:18.351Z",
   "items": [
     {
       "date": "2026-08-28",
@@ -38,12 +38,6 @@
       "dept": "學務處"
     },
     {
-      "date": "2026-08-28",
-      "title": "臺南市政府衛生局謹訂於臺南市歸仁文化中心戶外廣場辦理115年臺南市「Level Up！青春心挑戰」心理健康月活動",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=648&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
@@ -60,6 +54,12 @@
       "title": "崑山國小小一新生迎新活動延期至8/29上午8：00舉辦。敬邀各位小一家長共同參加！",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=631&type=news&from_op=school_department_show",
       "dept": "輔導室"
+    },
+    {
+      "date": "2026-08-19",
+      "title": "115學年度第1學期課後才藝社團報名訊息，請留意報名日期及時間。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=606&type=news&from_op=school_department_show",
+      "dept": "學務處"
     }
   ]
 }

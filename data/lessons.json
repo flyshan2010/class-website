@@ -93,6 +93,68 @@
     }
   },
   {
+    "title": "社4-1 家鄉的作息、節慶與節日｜生活的作息",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "傳統一天：日出而作、日入而息；白天工作、夜晚休息",
+      "一年的作息：漢人種稻兩期（2〜6月、7〜11月）",
+      "雅美族（達悟族）飛魚三祭：招魚祭→收藏祭→終食祭，避免過度捕撈",
+      "作息依據：原住民族口耳相傳、布農族木刻畫曆（一三角形＝一天）",
+      "農曆≠農民曆：農曆是曆法，農民曆是寫有農事與宜忌的工具書",
+      "現代改用陽曆（國曆）＋星期制，週休二日後休閒時間變多"
+    ],
+    "date": "",
+    "note": "康軒版四上第四單元第1課。依顆粒度鐵則，第四單元依課本小節拆為社4-1／社4-2／社4-3 三份教材，各跑完整五段；三節須依序上（4-2 的「農閒舉辦節慶」以 4-1 的季節作息為前提）。\n\n2026-08-28 五份網頁完成並上線：套教學 Design System（society 主題）、教學頁 16 頁、練習頁 14 頁（基礎6／進階4／挑或3）、複習頁 8 頁、前測 5 題（測先備能力：季節與農事、日曆讀法、無時鐘判斷時間、月份與季節、尊重不同做法）、線上模擬評量選擇 8×9分＋填充 4×7分。\n\n實測：1600×900 逐頁無溢出（almanac 頁原 906 已縮 SVG 修正）、逐步揭露一次只出一個元件且出完才換頁、「整頁摊開」與連按下一步皆不洩答案帶、作答後答案帶才出現、揭露前後 offsetTop/offsetHeight 完全相同（零位移）、480／1024 無橫向捲動、字級最小 25px，五個網址皆 HTTP 200。\n\n紙本待製：差異化 2a/2b/2c、前測六合一、評量六合一（與網頁為平行題本）。第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1BOc9NNK-kxGNKEt6iK1n6R7Ei9cOC_ZF/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-1-生活的作息/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-1-生活的作息/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-1-生活的作息/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-1-生活的作息/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-1-生活的作息/3.review.html"
+    }
+  },
+  {
+    "title": "社4-2 家鄉的作息、節慶與節日｜傳統的節慶",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "祭典三種目的：祈求順利（播種祭、招魚祭）、慶祝豐收（豐年祭、感恩祭）、傳承狩獵（大獵祭）",
+      "四族例子：邵族4月、阿美族7〜9月、太魯閣族10月、卑南族12月",
+      "祭典禮俗：豐年祭歌舞未受邀請不可隨意參與；花環代表尊敬與情誵",
+      "漢人七節慶：除夕、春節、元宵、清明、端午、中元、中秋（農閒時間舉辦）",
+      "清明節是二十四節氣之一，看國曆；其餘六個節慶看農曆",
+      "共同意義：感謝天地、敬神祭祖、家人團圓；儀式不同心意一樣"
+    ],
+    "date": "",
+    "note": "康軒版四上第四單元第2課。▶ 本節必須排在 4-1 之後（「農閒時舉辦節慶」以 4-1 的季節作息為前提）。\n\n2026-08-28 五份網頁完成並上線：套教學 Design System（society）、教學頁 16 頁、練習頁 14 頁（基礎6／進階4／挑或3）、複習頁 8 頁、前測 5 題、線上模擬評量選擇 8×9分＋填充 4×7分。\n\n老師裁示已落實：課本自帶的「家鄉的傳統節慶桌遊卡牌」改編成網頁互動（挑戰題一：三張卡牌拖曳配對，對完答揭示完整說明句）；族名沿用「雅美族（達悟族）」雙稱。\n\n實測：1600×900 逐頁無溢出（basic-2／3 區域改 2 欄、basic-4 排列題改 3 項後全數通過）、逐步揭露正常、答案帶不洩題，五個網址皆 HTTP 200。\n\n紙本待製：差異化 2a/2b/2c、前測六合一、評量六合一（平行題本）。第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1U1C7rkbppA7JSOnBv061cH9lwiPcHQRk/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-2-傳統的節慶/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-2-傳統的節慶/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-2-傳統的節慶/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-2-傳統的節慶/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社4-2-傳統的節慶/3.review.html"
+    }
+  },
+  {
     "title": "國L12-2 寧靜的音樂會 第二節 內容理解",
     "subject": "國語",
     "grade": "四上",
@@ -2789,44 +2851,6 @@
     "points": [],
     "date": "",
     "note": "康軒版四上第四單元第3課。依顆粒度鐵則，第四單元依課本小節拆為社4-1／社4-2／社4-3 三份教材，各跑完整五段。教材＝4上康軒SL4-3.pdf（產出時由教材資料搬入單元資料夾）。",
-    "links": {
-      "material": "",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "社4-1 家鄉的作息、節慶與節日｜生活的作息",
-    "subject": "社會",
-    "grade": "四上",
-    "version": "康軒",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "康軒版四上第四單元第1課。依顆粒度鐵則，第四單元依課本小節拆為社4-1／社4-2／社4-3 三份教材，各跑完整五段。教材＝4上康軒SL4-1.pdf（產出時由教材資料搬入單元資料夾）。",
-    "links": {
-      "material": "",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
-    }
-  },
-  {
-    "title": "社4-2 家鄉的作息、節慶與節日｜傳統的節慶",
-    "subject": "社會",
-    "grade": "四上",
-    "version": "康軒",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "",
-    "note": "康軒版四上第四單元第2課。依顆粒度鐵則，第四單元依課本小節拆為社4-1／社4-2／社4-3 三份教材，各跑完整五段。教材＝4上康軒SL4-2.pdf（產出時由教材資料搬入單元資料夾）。",
     "links": {
       "material": "",
       "pretest": "",
