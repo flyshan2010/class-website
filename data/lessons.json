@@ -1452,7 +1452,7 @@
     }
   },
   {
-    "title": "國R1 期中總複習｜L1～L6",
+    "title": "國R1-1 期中總複習總覽｜L1～L6",
     "subject": "國語",
     "grade": "四上",
     "version": "翰林",
@@ -1472,14 +1472,14 @@
       "考前提醒：最容易失分的六件事＋回家怎麼準備"
     ],
     "date": "",
-    "note": "第一課～第六課＋統整一、統整二的期中統整複習，全單元為一個節次（非逐課拆節）。原教材 PDF 為統整一、統整二兩份，存於教學簡報正本資料夾，未上線班網。紙本 15 份（均存於教學簡報／4上-國語-國R1-期中總複習）：前測六合一（10 題／20 分鐘）、差異化教材 2a／2b／2c（docx＋pdf）、評量六合一（18 題：選擇 12×5、填充 5×4、素養寫作 20 分）。紙本前測與評量都與線上同範圍但全部不同題；素養寫作題需另附稿紙。",
+    "note": "第一課～第六課＋統整一、統整二的期中統整複習。2026-08-28 依複習週方案 A 由 國R1 改代碼為 國R1-1，定位為 W7（10/12～10/16，5 節）的「四面向橫切總覽與診斷」，內容未動；W8～W10 的 國R1-2／-3／-4 全部新建且題目不與本輪重複。紙本 15 份（均存於教學簡報／4上-國語-國R1-1-期中總複習總覽）：前測六合一（10 題／20 分鐘）、差異化教材 2a／2b／2c（docx＋pdf）、評量六合一（18 題）。紙本前測與評量都與線上同範圍但全部不同題。⚠️ 2026-08-28 老師定案「國語複習不考作文」：評量卷原「素養寫作 20 分」已改為知識性題型（審題選材判斷、段落排序說理、書信格式改錯），同配分，網頁版與紙本同步。",
     "links": {
       "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-期中總複習/3.review.html"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-1-期中總複習總覽/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-1-期中總複習總覽/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-1-期中總複習總覽/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-1-期中總複習總覽/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-1-期中總複習總覽/3.review.html"
     }
   },
   {
