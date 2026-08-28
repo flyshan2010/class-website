@@ -1,5 +1,35 @@
 [
   {
+    "title": "社R1-2 期中總複習第1輪｜單元一、二",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "六組概念對照：平原／台地、天氣／氣候、圖例／比例尺、盆地／丘陵、石板屋／地下屋、減量／回收",
+      "圖表判讀：氣溫雨量圖三步驟（標題→橫軸→縱軸單位）",
+      "比例尺換算：圖上求實際用乘的",
+      "就地取材與順應環境：住屋形式對應當地自然條件",
+      "自然環境與生活「互相」影響：兩個方向都要答"
+    ],
+    "date": "2026-10-12",
+    "note": "複習週 W7（10/12–10/16）5 節，期中複習第 1 輪。依預排表三輪循環取【概念比較】切法（老師 2026-08-28 裁示；圖表判讀改放進階題）。題目不與 社R1-1 重複；網頁與紙本為平行題本。紙本六合一與差異化三份存於 Drive 正本資料夾，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/3.review.html"
+    }
+  },
+  {
     "title": "數R1-2 期中總複習第1輪｜L1～L5",
     "subject": "數學",
     "grade": "四上",
