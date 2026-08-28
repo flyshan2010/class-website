@@ -84,34 +84,6 @@
     "auto": "school"
   },
   {
-    "id": "s20260828hxbww",
-    "title": "電子煙vs加熱菸認清不觸法",
-    "content": "發布單位：學務處",
-    "date": "2026-08-28",
-    "endDate": "",
-    "expiry": "2026-09-27",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=650&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s202608281fjkqsi",
-    "title": "「2026四鯤鯓紅樹林水上市集」活動",
-    "content": "發布單位：學務處",
-    "date": "2026-08-28",
-    "endDate": "",
-    "expiry": "2026-09-27",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=649&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
     "id": "s202608263mjnpv",
     "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
     "content": "發布單位：學務處",
@@ -168,6 +140,20 @@
     "auto": "school"
   },
   {
+    "id": "s20260818dh2san",
+    "title": "115學年度一年級新生課後照顧班錄取名單公告",
+    "content": "發布單位：教務處",
+    "date": "2026-08-18",
+    "endDate": "",
+    "expiry": "2026-09-17",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=599&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
     "id": "n394b1f9d7e",
     "title": "8/28返校說明",
     "content": "各位 404 班的家長與小朋友們好：\n期待在開學前與大家見面！為了讓返校日順利進行，以下整理了當天重要的時間、必帶物品與班務重點，請家長協助提醒孩子做好準備。\n⏰ 集合時間與地點\n• 返校日期：8 月 28 日（星期五）\n• 到校時間：07:40 前到校\n• 放學時間：11:10 放學\n• 集合地點：404 班教室（請學生直接回教室）\n🎒 返校日必帶物品\n• [ ] 暑假作業（已完成請記得帶來繳交）\n• [ ] 書包與基本文具（鉛筆盒、紅筆、螢光筆）\n• [ ] 水壺（請裝滿水，隨時補充水分）\n📌 當天班務重點\n1. 發放新學期課本（請準備書包裝書）\n2. 抄寫日課表與聯絡簿說明\n3. 班級生活常規與座位認識\n📲 重要任務：加入班級官方 LINE 班群\n請家長掃描圖片下方（或班網側邊）的 404 班官方 LINE 班群 QR Code 加入班群，並傳訊告訴我，您是哪位小朋友的家長，方便我記錄，並傳送小朋友個人查詢碼給您，以及即時掌握班級重要訊息與後續通知！\n升上四年級的你非常棒！期待 8/28 見面時看到大家燦爛的笑容！\n— 404 班導師 關心您 —",
@@ -181,5 +167,19 @@
     "images": [
       "data/uploads/dd4db1cbfee8-0.jpg"
     ]
+  },
+  {
+    "id": "s202608061p207do",
+    "title": "115 學年度第一學期學習扶助課輔班報名",
+    "content": "發布單位：教務處",
+    "date": "2026-08-06",
+    "endDate": "",
+    "expiry": "2026-09-05",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=571&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
   }
 ]

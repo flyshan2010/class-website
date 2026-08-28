@@ -1,5 +1,35 @@
 [
   {
+    "title": "數R1-2 期中總複習第1輪｜L1～L5",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "大數位值合成與連續進位：空位補 0、一排 9 加 1",
+      "乘法先估後算：乘以整十要補 0、乘數有 0 的層不可跳過",
+      "角度先判種類再讀量角器；90/180/360 三基準的分割計算",
+      "分數以 1 為分界：真假分數判別、數線走格、同分母比大小",
+      "公里先換同單位再比較與加減（進位與借位）"
+    ],
+    "date": "2026-10-12",
+    "note": "複習週 W7（10/12–10/16）5 節，期中複習第 1 輪。依 PLAN_複習週預排表.md：觀念複習→強化→模擬→訂正→衝刺。題目全部不與 數R1-1 重複；網頁與紙本為平行題本（同範圍不同題）。紙本六合一（前測／評量）與差異化三份存於 Drive 正本資料夾，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/3.review.html"
+    }
+  },
+  {
     "title": "數L10-2 製作長條圖",
     "subject": "數學",
     "grade": "四上",
