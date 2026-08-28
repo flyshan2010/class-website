@@ -280,5 +280,21 @@ const App = {
   ul(s) {
     const items = this.lines(s);
     return items.length ? `<ul>${items.map(t => `<li>${this.esc(t)}</li>`).join("")}</ul>` : "";
+  },
+
+  /* ── 科目名正規化（日課表／駕駛艙共用）─────────────────────────
+     老師在 Notion 會把「(彈性)」寫成「(彈)」，也可能打成全形括號，
+     一改就讓比對用完整科目名的地方（節數護欄、配色表）整批對不上——
+     2026-08-28 就是這樣讓「英語(彈性)：排了 0 節」的假警示跳出來。
+     所以比對一律先過這裡，不要求老師照某種寫法打字。
+     subjKey：保留彈性課的身分（英語 ≠ 英語(彈性)，兩者各算 1 節），只統一寫法。
+     subjBase：連彈性註記都去掉，給「只想知道是哪一科」的地方用（進度對齊、配色後備）。 */
+  subjKey(s) {
+    const t = String(s ?? "").replace(/（/g, "(").replace(/）/g, ")").trim();
+    return /\(\s*彈(性)?\s*\)/.test(t) ? t.replace(/\(\s*彈(性)?\s*\)/, "(彈性)") : t.replace(/\(.*?\)/g, "").trim();
+  },
+
+  subjBase(s) {
+    return String(s ?? "").replace(/（/g, "(").replace(/）/g, ")").replace(/\(.*?\)/g, "").trim();
   }
 };

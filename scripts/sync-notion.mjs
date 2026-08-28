@@ -386,7 +386,8 @@ const SCHEDULE_META = {
     "國語": "#FFF3E0", "數學": "#E3F2FD", "自然": "#E8F5E9", "社會": "#FFF8E1",
     "英語": "#F3E5F5", "英語(彈性)": "#F3E5F5", "體育": "#FFEBEE", "音樂": "#E0F7FA",
     "視覺藝術": "#FCE4EC", "玩美(彈性)": "#FCE4EC", "健康": "#F1F8E9",
-    "資訊(彈性)": "#ECEFF1", "綜合": "#E8EAF6", "崑山活力Go(彈性)": "#FFEBEE", "本土語": "#FFF9C4",
+    "資訊(彈性)": "#ECEFF1", "創意科技(彈性)": "#ECEFF1", "綜合": "#E8EAF6",
+    "崑山活力Go(彈性)": "#FFEBEE", "本土語": "#FFF9C4",
     "午休": "#F5F5F5", "晨掃": "#F5F5F5", "早自修": "#FAFAF5", "朝會": "#FAFAF5",
   },
   notes: "週三、週五為半天課，中午 12:40 放學\n體育課與崑山活力Go請穿運動服與運動鞋",
@@ -403,6 +404,25 @@ const SCHEDULE_META = {
   },
 };
 
+/* 同節並排（2026-08-28）：一節課裡有部分學生被抽去上別的課（本土語分流、藝文分組），
+   Notion 在同一列用「/」把科目、教師、教室各自並列（例：視覺藝術/本土語(布)）。
+   拆分完全看「科目」切出幾段——只有科目有斜線才拆，
+   所以「本土語（閩客手語）」那種一科三位老師不會被誤判成三科。
+   第一段＝該節主課程（進度對齊與節數護欄只認它），其餘放進 parallel 給前台並排顯示。
+   老師/教室段數比科目多時，多出來的併回最後一科，不靜默丟掉。 */
+function splitCell(subject, teacher, room) {
+  const cut = v => String(v ?? "").split("/").map(t => t.trim());
+  const subs = cut(subject).filter(Boolean);
+  const one = (v, i, n) => {
+    const a = cut(v).filter(Boolean);
+    return i === n - 1 ? a.slice(i).join("/") : (a[i] ?? "");
+  };
+  if (subs.length <= 1)
+    return { subject: subs[0] ?? "", teacher: String(teacher ?? "").trim(), room: String(room ?? "").trim(), parallel: [] };
+  const part = i => ({ subject: subs[i], teacher: one(teacher, i, subs.length), room: one(room, i, subs.length) });
+  return { ...part(0), parallel: subs.slice(1).map((_, i) => part(i + 1)) };
+}
+
 async function syncSchedule() {
   const rows = (await queryDataSource(DS.schedule)).map(props).filter(r => r["顯示"]);
   const dayIdx = { "一": 0, "二": 1, "三": 2, "四": 3, "五": 4 };
@@ -410,7 +430,7 @@ async function syncSchedule() {
   for (const r of rows) {
     const d = dayIdx[r["星期"]];
     if (d === undefined || !r["節次"]) continue;
-    cells[`${r["節次"]}-${d}`] = { subject: r["科目"], teacher: r["教師"], room: r["教室"] };
+    cells[`${r["節次"]}-${d}`] = splitCell(r["科目"], r["教師"], r["教室"]);
   }
   const table = SCHEDULE_META.periods.map(p =>
     SCHEDULE_META.fixedRows[p.name] ||
