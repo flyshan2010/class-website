@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>期中總複習｜起始評估 · 四上數學 學習加油讚（一）</title>
+<title>期中總複習第 1 輪｜分組練習 · 四上數學 學習加油讚（一）</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -2015,39 +2015,6 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 [data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
 <style>
-/* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
-   ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
-}
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
-/* 填充題（線上評量用） */
-.fillq { display:flex; flex-direction:column; gap:var(--s2); }
-.fillq .fill-row { display:flex; gap:var(--s2); align-items:center; flex-wrap:wrap; }
-.fillq input.fill-in {
-  font-family:inherit; font-size:var(--t4); padding:var(--s2) var(--s3); min-width:220px;
-  border:var(--line-mid) solid var(--line); border-radius:var(--r-sm); background:var(--surface); color:var(--ink);
-}
-.fillq input.fill-in:focus { outline:0; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
-.fillq.is-ok input.fill-in { border-color:var(--correct); background:var(--correct-soft); }
-.fillq.is-no input.fill-in { border-color:var(--wrong); background:var(--wrong-soft); }
-</style>
-<style>
 /* ── 本單元專用元件（公里） ───────────────────────────── */
 .signboard { display:inline-flex; flex-direction:column; align-items:center; gap:6px;
   background:#1f7a3d; color:#fff; border:6px solid #fff; outline:3px solid var(--ink);
@@ -2079,141 +2046,360 @@ footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5)
 .keybox > .head { font-size:var(--t2); }
 .keybox > .body { font-size:var(--t3); }
 .deck .q-options { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s2); }
+/* 分組入口卡（補：本檔用到 .tier-card 卻缺樣式） */
+.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); flex: 1; min-height: 0; }
+.tier-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s2);
+  background: var(--surface); border: var(--line-bold) solid var(--line); border-radius: var(--r-lg);
+  padding: var(--s5); text-decoration: none; color: var(--ink);
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+.tier-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+.tier-card .ico { width: 64px; height: 64px; color: var(--accent); }
+.tier-card .name { font-size: var(--t2); font-weight: var(--fw-bold); }
+.tier-card .hint { font-size: var(--t5); color: var(--muted); text-align: center; }
+/* 紙本提示條（補：本檔用到 .paper-note 卻缺樣式） */
+.paper-note {
+  display: flex; align-items: flex-start; gap: var(--s3);
+  background: var(--accent-soft); border: var(--line-mid) dashed var(--accent);
+  border-radius: var(--r-md); padding: var(--s4); font-size: var(--t4); line-height: var(--lh-normal);
+}
+.paper-note .ico { width: 1.4em; height: 1.4em; flex: none; color: var(--accent); }
 </style>
 </head>
 <body>
-<main class="page" aria-label="期中總複習起始評估">
+<main class="deck" aria-label="期中總複習第 1 輪分組練習">
+  <div class="stage" id="stage" tabindex="-1">
 
 
-  <header class="page-head">
-    <span class="label">學習加油讚（一）· 第 1～5 單元 · 上課前</span>
-    <h1 class="title">自我檢核小測驗</h1>
-  </header>
-  <p class="lede">五個單元各一題，看看哪一個單元還不夠熟——答錯沒關係，這是幫你和老師找出要加強的地方，不計分。</p>
+    <section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
+      <div class="page-head"><span class="label">學習加油讚（一）· 期中總複習第 1 輪</span><h2 id="cover-t" class="title">分組練習</h2></div>
+      <div class="tier-grid">
+        <a class="tier-card" href="#b1" data-reveal>
+          <svg class="ico"><use href="#ico-book"></use></svg>
+          <span class="name">基礎題</span>
+          <span class="hint">五個單元的基本題各一題</span>
+        </a>
+        <a class="tier-card" href="#p1" data-reveal>
+          <svg class="ico"><use href="#ico-target"></use></svg>
+          <span class="name">進階題</span>
+          <span class="hint">易錯題與兩步驟計算</span>
+        </a>
+        <a class="tier-card" href="#c1" data-reveal>
+          <svg class="ico"><use href="#ico-star"></use></svg>
+          <span class="name">挑戰題</span>
+          <span class="hint">跨單元整合與找錯說明</span>
+        </a>
+      </div>
+    </section>
 
+    <section class="slide" data-slide-id="b1" aria-labelledby="b1-t" hidden>
+<div class="page-head"><span class="label">總複習 · 大數</span><h2 id="b1-t" class="title">讀讀看這個數</h2><span class="step">基礎題 · 1</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">4070000 讀作什麼？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>四百零七萬</button>
+          <button class="q-opt">四千零七萬</button>
+          <button class="q-opt">四百七十萬</button>
+          <button class="q-opt">四十萬七千</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">分節：407｜0000 → 萬的家族是 407，一的家族全是 0 不讀 → 四百零七萬</span>
+      </div>
+    </section>
 
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 1 題（第一單元 大數）　「三千零五十萬零八十」寫成數字是多少？</p>
-      <div class="q-options"><button class="q-opt" data-correct>30500080</button><button class="q-opt">3050080</button><button class="q-opt">30050080</button><button class="q-opt">305000080</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
+    <section class="slide" data-slide-id="b2" aria-labelledby="b2-t" hidden>
+<div class="page-head"><span class="label">總複習 · 乘法與角度</span><h2 id="b2-t" class="title">算算看</h2><span class="step">基礎題 · 2</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">直角是 90°。兩個直角合起來是幾度？這是什麼角？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>180°，平角</button>
+          <button class="q-opt">180°，鈍角</button>
+          <button class="q-opt">360°，周角</button>
+          <button class="q-opt">90°，直角</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">90 ＋ 90 ＝ 180°，剛好是一條直線，叫做<b>平角</b></span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="b3" aria-labelledby="b3-t" hidden>
+<div class="page-head"><span class="label">總複習 · 分數與公里</span><h2 id="b3-t" class="title">分類：比 1 大還是比 1 小</h2><span class="step">基礎題 · 3</span></div>
+      <div class="drag-match" data-drag-match>
+        <div class="pool">
+          <span class="chip" draggable="true" data-answer="s">5 分之 2</span>
+          <span class="chip" draggable="true" data-answer="b">4 分之 7</span>
+          <span class="chip" draggable="true" data-answer="s">9 分之 8</span>
+          <span class="chip" draggable="true" data-answer="b">6 分之 6</span>
+          <span class="chip" draggable="true" data-answer="s">3 分之 1</span>
+          <span class="chip" draggable="true" data-answer="b">2 分之 5</span>
+        </div>
+        <div class="zones">
+          <div class="zone" data-zone="s"><div class="zone-head">比 1 小（真分數）</div><div class="drop"></div></div>
+          <div class="zone" data-zone="b"><div class="zone-head">等於 1 或比 1 大（假分數）</div><div class="drop"></div></div>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-match-check>對答案</button><button class="ds-btn" data-match-reset>重來</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="paper-note" data-reveal data-after-answer>
+        <svg class="ico"><use href="#ico-pencil"></use></svg>
+        <span>接著請完成紙本學習單 <b>2a.差異化教材_基礎題需鷹架</b>：五個單元各有基本練習題。</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="p1" aria-labelledby="p1-t" hidden>
+<div class="page-head"><span class="label">總複習 · 乘法</span><h2 id="p1-t" class="title">乘數有 0 的直式</h2><span class="step">進階題 · 1</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">125 × 204 ＝ ？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>25500</button>
+          <button class="q-opt">2550</button>
+          <button class="q-opt">25050</button>
+          <button class="q-opt">3750</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">125 × 4 ＝ 500，125 × 200 ＝ 25000，合起來 25500。<b>十位是 0 的那層不能整層跳過</b></span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="p2" aria-labelledby="p2-t" hidden>
+<div class="page-head"><span class="label">總複習 · 角度</span><h2 id="p2-t" class="title">角度的分解</h2><span class="step">進階題 · 2</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">一個周角是 360°。把它分成三個角，其中兩個是 90° 和 130°，第三個是幾度？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>140°</button>
+          <button class="q-opt">40°</button>
+          <button class="q-opt">220°</button>
+          <button class="q-opt">150°</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">360 － 90 － 130 ＝ 140°。<b>先確定基準是 180° 還是 360°</b>，再一個一個減</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="p3" aria-labelledby="p3-t" hidden>
+<div class="page-head"><span class="label">總複習 · 分數</span><h2 id="p3-t" class="title">帶分數比大小</h2><span class="step">進階題 · 3</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">下面哪一個最大？</p>
+        <div class="q-options">
+          <button class="q-opt">2 又 5 分之 1</button>
+          <button class="q-opt">5 分之 12</button>
+          <button class="q-opt" data-correct>2 又 5 分之 3</button>
+          <button class="q-opt">5 分之 9</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="paper-note" data-reveal data-after-answer>
+        <svg class="ico"><use href="#ico-pencil"></use></svg>
+        <span>全換成同分母的假分數：11/5、12/5、<b>13/5</b>、9/5，最大的是 2 又 5 分之 3。接著請完成 <b>2b.差異化教材_進階題基礎穩固</b>。</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="c1" aria-labelledby="c1-t" hidden>
+<div class="page-head"><span class="label">總複習 · 跨單元</span><h2 id="c1-t" class="title">找出算錯的地方</h2><span class="step">挑戰題 · 1</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">下面四個算式，哪一個是<b>對的</b>？</p>
+        <div class="q-options">
+          <button class="q-opt">4 公里 86 公尺 ＝ 486 公尺</button>
+          <button class="q-opt" data-correct>180° － 65° ＝ 115°</button>
+          <button class="q-opt">6 分之 6 是真分數</button>
+          <button class="q-opt">300 × 400 ＝ 12000</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">其他三個分別錯在：應為 4086 公尺、6/6 是假分數、300×400＝120000</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="c2" aria-labelledby="c2-t" hidden>
+<div class="page-head"><span class="label">總複習 · 跨單元</span><h2 id="c2-t" class="title">兩步驟的整合題</h2><span class="step">挑戰題 · 2</span></div>
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">學校辦路跑，每人跑 2 公里 500 公尺。全校 400 人都跑完，總距離是幾公尺？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct>1000000 公尺</button>
+          <button class="q-opt">100000 公尺</button>
+          <button class="q-opt">10000 公尺</button>
+          <button class="q-opt">250400 公尺</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">先換算：2 公里 500 公尺＝2500 公尺；再乘：2500 × 400 ＝ 1000000 公尺（＝1000 公里）</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="c3" aria-labelledby="c3-t" hidden>
+<div class="page-head"><span class="label">總複習 · 跨單元</span><h2 id="c3-t" class="title">紙本任務：做一張自己的複習卡</h2><span class="step">挑戰題 · 3</span></div>
+      <div class="task-card" data-reveal>
+        <div class="mission">從五個單元裡，挑出自己最容易錯的三個地方，做成一張複習卡</div>
+        <div class="facts">
+          <div class="fact"><span class="k">要求</span>每一項要寫「我以前怎麼錯」和「正確做法是什麼」</div>
+          <div class="fact"><span class="k">加分</span>各附一個自己出的例題和答案</div>
+          <div class="fact"><span class="k">紀錄</span>寫在 <b>2c.差異化教材_挑戰題精熟</b> 最後一頁</div>
+        </div>
+      </div>
+      <div class="paper-note" data-reveal>
+        <svg class="ico"><use href="#ico-pencil"></use></svg>
+        <span>這張卡片期中評量前拿出來看一次，比重寫一整本習作還有用。</span>
+      </div>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>17</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 30500080</div>
-      <div class="body">三千零五十萬 → 3050 萬 → 30500000；再加零八十 → 30500080。分成「萬的家族」和「一的家族」兩節來寫最不會錯。</div>
-    </div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 2 題（第二單元 乘法）　206 × 30 ＝ ？</p>
-      <div class="q-options"><button class="q-opt">618</button><button class="q-opt" data-correct>6180</button><button class="q-opt">61800</button><button class="q-opt">660</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 206 × 3 ＝ 618，再補一個 0 → 6180</div>
-      <div class="body">被乘數中間的 0 那一位還是要乘，只是結果是 0。可以先估算：200 × 30 ＝ 6000，答案應該在 6000 附近。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 3 題（第三單元 角度）　一個角是 120°，它是什麼角？</p>
-      <div class="q-options"><button class="q-opt">銳角</button><button class="q-opt">直角</button><button class="q-opt" data-correct>鈍角</button><button class="q-opt">平角</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 比 90° 大、比 180° 小 → 鈍角</div>
-      <div class="body">直角 90°、平角 180°、周角 360° 是三個基準。判斷角的種類就是拿它們來比。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 4 題（第四單元 分數）　下面哪一個是假分數？</p>
-      <div class="q-options"><button class="q-opt">3 分之 2</button><button class="q-opt" data-correct>5 分之 5</button><button class="q-opt">8 分之 3</button><button class="q-opt">9 分之 1</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 分子等於分母，也是假分數</div>
-      <div class="body">分界線在 1：分子小於分母＝真分數；分子等於或大於分母＝假分數。5 分之 5 剛好等於 1，歸在假分數這一邊。</div>
-    </div>
-  </div>
-
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">第 5 題（第五單元 公里）　4 公里 86 公尺 是幾公尺？</p>
-      <div class="q-options"><button class="q-opt">486 公尺</button><button class="q-opt" data-correct>4086 公尺</button><button class="q-opt">4860 公尺</button><button class="q-opt">40086 公尺</button></div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal>
-      <div class="head">✓ 4000 ＋ 86 ＝ 4086 公尺</div>
-      <div class="body">數字不能直接接在一起寫。要先把 4 公里換成 4000 公尺，再加上 86。</div>
-    </div>
-  </div>
-
-
-  <div class="takeaway-band">
-    <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-    <span class="text">哪一題答錯，等一下的分組練習就從那個單元開始加強</span>
-  </div>
-
-  <footer class="page-foot">四上數學 · 學習加油讚（一）· 期中總複習 · 起始評估</footer>
-
-
 </main>
 
 <script>
 (() => {
-  document.querySelectorAll('.q-block').forEach((block) => {
-    block.addEventListener('tds:answered', () => {
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
-    });
-  });
-})();
-</script>
-<script>
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
 
-(() => {
-  const norm = (s) => (s || '')
-    .replace(/[\uFF10-\uFF19]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
-    .replace(/[\uFF0F\u2044\u2215]/g, '/')
-    .replace(/\s|，|,|個|張|條|盒|公升|份|顆|的/g, '')
-    .replace(/又|又/g, '又')
-    .toLowerCase();
-  document.querySelectorAll('.fillq').forEach((el) => {
-    const input = el.querySelector('.fill-in');
-    const fb = el.querySelector('.ans-feedback');
-    const ans = (el.dataset.answer || '').split('|').map(norm);
-    const reveal = () => el.closest('.q-block')?.querySelectorAll('[data-reveal]')
-      .forEach((n) => n.classList.add('is-shown'));
-    const check = () => {
-      const v = norm(input.value);
-      if (!v) { if (fb) { fb.textContent = '請先作答'; fb.className = 'ans-feedback is-show'; } return; }
-      const ok = ans.includes(v);
-      el.classList.toggle('is-ok', ok);
-      el.classList.toggle('is-no', !ok);
-      if (fb) { fb.textContent = ok ? '答對了！' : '再想想，看看下面的解說'; fb.className = 'ans-feedback is-show ' + (ok ? 'is-correct' : 'is-wrong'); }
-      reveal();
-    };
-    el.querySelector('[data-fill-check]')?.addEventListener('click', check);
-    el.querySelector('[data-fill-reset]')?.addEventListener('click', () => {
-      input.value = ''; el.classList.remove('is-ok', 'is-no');
-      if (fb) { fb.textContent = ''; fb.className = 'ans-feedback'; }
-    });
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
-  });
-})();
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
 
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
+    });
+  };
+  const updateRevealMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+  };
+  const advance = () => {
+    if (revealNext(slides[index])) { updateRevealMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateRevealMeta(); return; }
+    render(index - 1, true, true);
+  };
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target && e.target.closest ? e.target.closest('.slide') : null;
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateRevealMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateRevealMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
+})();
 </script>
 </body>
 </html>

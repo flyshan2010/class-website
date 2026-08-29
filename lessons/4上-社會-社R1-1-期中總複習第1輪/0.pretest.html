@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>期中總複習｜課程教學 · 社會四上 第1～2單元</title>
+<title>期中總複習第 1 輪｜起始評估 · 社會四上 第1～2單元</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -1989,452 +1989,161 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
+   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
    ───────────────────────────────────────────── */
-#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
-.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
-.slide.is-active { opacity: 1; visibility: visible; }
-.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
-.hud {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
-  display: flex; align-items: center; gap: var(--s3);
-  padding: 0 var(--safe-x);
-  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
+html, body { overflow: auto; height: auto; background: var(--bg); }
+body { padding: 0; }
+main.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--s6) var(--s4) var(--s7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
 }
-.hud .spacer { flex: 1; }
-.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
-.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
-.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
-.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
+.lede { font-size: var(--t4); color: var(--muted); }
+.q-block { display: flex; flex-direction: column; gap: var(--s3); }
+.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
+footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
 .map-svg { display:block; width:100%; height:auto; }
+/* 填充題的題幹不在 .quiz 內，補上 DS 題幹樣式（否則掉回 16px 預設） */
+.q-block > .q-stem { font-size: var(--t4); line-height: var(--lh-normal); font-weight: var(--fw-bold); color: var(--ink); }
+.sec-title { font-size: var(--t2); font-weight: var(--fw-bold); color: var(--accent); border-bottom: var(--line-bold) solid var(--accent); padding-bottom: var(--s2); }
 .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s3); }
-/* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
-.split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
-@media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
-/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
-[data-reveal]:not(.is-shown) { pointer-events: none; }
+@media (max-width: 480px) {
+  main.page { padding: var(--s5) var(--s3) var(--s6); }
+}
 </style>
-</head>
 <body>
-<main class="deck" aria-label="期中總複習課程教學">
-  <div class="stage" id="stage" tabindex="-1">
-    <!-- 1 封面 -->
-    <section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
-      <div class="section-divider" style="height:100%;justify-content:center;">
-        <div class="kicker">第一、二單元 · 期中總複習</div>
-        <div id="cover-t" class="headline" style="font-size:var(--t1);">把五個小節串成一張圖</div>
-        <div class="sub">家鄉的自然環境（1-1～1-3）＋ 家鄉的傳統住屋與器物（2-1～2-2）</div>
-      </div>
-    </section>
+<main class="page" aria-label="期中總複習第 1 輪起始評估">
+  <header class="page-head">
+    <span class="label">第一、二單元 · 期中總複習第 1 輪 · 上課前</span>
+    <h1 class="title">自我檢核小測驗</h1>
+  </header>
+  <p class="lede">五個小節各出一題，看看哪一節還不夠熟——答錯沒關係，這是幫你和老師找出要加強的地方，<strong>不計分</strong>。</p>
 
-    <!-- 2 總覽 -->
-    <section class="slide" data-slide-id="map" aria-labelledby="map-t" hidden>
-      <div class="page-head"><span class="label">總覽</span><h2 id="map-t" class="title">這學期到現在學了什麼</h2></div>
-      <div class="card-grid">
-        <div class="concept-card" data-reveal><div class="head">1-1 家鄉在哪裡</div><div class="body">家鄉的意思、四種地圖、<strong>地圖四要素</strong>、電子地圖。</div></div>
-        <div class="concept-card" data-reveal><div class="head">1-2 家鄉的地形</div><div class="body">五種地形的樣子、地形與生活<strong>相互</strong>影響。</div></div>
-        <div class="concept-card" data-reveal><div class="head">1-3 氣候、水資源與生活</div><div class="body">天氣≠氣候、讀氣溫雨量圖、四種水資源與水庫。</div></div>
+  <!-- 第1題：1-1 地圖四要素・比例尺 -->
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 1 題（1-1 家鄉在哪裡）　一張地圖的比例尺是「1 公分代表 200 公尺」。學校到公園在圖上量起來是 4 公分，實際距離是多少？</p>
+      <div class="q-options">
+        <button class="q-opt">50 公尺</button>
+        <button class="q-opt">204 公尺</button>
+        <button class="q-opt" data-correct="true">800 公尺</button>
+        <button class="q-opt">4000 公尺</button>
       </div>
-      <div class="card-grid" style="margin-top:var(--s3);">
-        <div class="concept-card" data-reveal><div class="head">2-1 傳統住屋與生活</div><div class="body">就地取材、原住民族與漢人住屋、三合院。</div></div>
-        <div class="concept-card" data-reveal><div class="head">2-2 器物與生活</div><div class="body">器物的材料與智慧、傳統換成現代、3R。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-map"></use></svg></span>
-        <span class="text">前三節在講<strong>自然環境</strong>，後兩節在講<strong>人怎麼適應環境過生活</strong>——兩個單元是同一個故事的上下集。</span>
-      </div>
-    </section>
-
-    <!-- 3 1-1 關鍵 -->
-    <section class="slide" data-slide-id="u1" aria-labelledby="u1-t" hidden>
-      <div class="page-head"><span class="label">1-1</span><h2 id="u1-t" class="title">家鄉在哪裡・三個關鍵</h2></div>
-      <div class="card-grid">
-        <div class="concept-card" data-reveal><div class="head">① 家鄉可能不只一個</div><div class="body">出生、成長、長期生活的地方都算。說位置時先講<strong>縣市</strong>，再講在臺灣的北、中、南、東部。全臺 22 個縣市。</div></div>
-        <div class="concept-card" data-reveal><div class="head">② 四種地圖各有用途</div><div class="body">行政區圖看分區、交通路線圖看怎麼走、地形圖看高低與河川、觀光導覽圖看景點。先問「<strong>我想知道什麼</strong>」再選圖。</div></div>
-        <div class="concept-card" data-reveal><div class="head">③ 地圖四要素</div><div class="body"><strong>圖名</strong>說主題、<strong>方向標</strong>指方位、<strong>比例尺</strong>說縮小多少、<strong>圖例</strong>解釋符號。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-search"></use></svg></span>
-        <span class="text">電子地圖會做三件事：<strong>搜尋、縮放、切換模式</strong>（地圖模式看線條色塊，衛星模式看真實影像）。</span>
-      </div>
-    </section>
-
-    <!-- 4 1-1 試試看 -->
-    <section class="slide" data-slide-id="q1" aria-labelledby="q1-t" hidden>
-      <div class="page-head"><span class="label">試試看</span><h2 id="q1-t" class="title">1-1　選圖與算距離</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">想知道從家裡搭火車到臺南要經過哪些站，應該看哪一種地圖？</p>
-        <div class="q-options">
-          <button class="q-opt">行政區圖</button>
-          <button class="q-opt" data-correct="true">交通路線圖</button>
-          <button class="q-opt">地形圖</button>
-          <button class="q-opt">觀光導覽圖</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">交通路線圖畫的是鐵路、公路、捷運。<strong>比例尺 1 公分＝200 公尺，圖上 4 公分就是 4×200＝800 公尺</strong>——要用乘的。</span>
-      </div>
-    </section>
-
-    <!-- 5 1-2 關鍵 -->
-    <section class="slide" data-slide-id="u2" aria-labelledby="u2-t" hidden>
-      <div class="page-head"><span class="label">1-2</span><h2 id="u2-t" class="title">家鄉的地形・三個關鍵</h2></div>
-      <div class="card-grid">
-        <div class="concept-card" data-reveal><div class="head">① 五種地形</div><div class="body">平原（低而平）、盆地（四周高中間低）、台地（高起、頂平、邊緣陡）、丘陵（100～1000 公尺）、山地（1000 公尺以上）。</div></div>
-        <div class="concept-card" data-reveal><div class="head">② 兩個數字定勝負</div><div class="body"><strong>100 公尺</strong>分平原和台地，<strong>1000 公尺</strong>分丘陵和山地。</div></div>
-        <div class="concept-card" data-reveal><div class="head">③ 地形影響生活</div><div class="body">平原有農田漁塭、盆地聚成都市、台地可種可建、丘陵闢茶園、山地種高山蔬果。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-cycle"></use></svg></span>
-        <span class="text">課本強調的是「<strong>相互</strong>」——地形影響人，人也在改變地表（整坡地成茶園、開路削平山坡），過度開發就有代價。</span>
-      </div>
-    </section>
-
-    <!-- 6 1-2 試試看 -->
-    <section class="slide" data-slide-id="q2" aria-labelledby="q2-t" hidden>
-      <div class="page-head"><span class="label">試試看</span><h2 id="q2-t" class="title">1-2　這是哪一種地形？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">埔里的四周都是高山，中間卻是一片平坦的地方，人們在這裡蓋起市鎮。這是哪一種地形？</p>
-        <div class="q-options">
-          <button class="q-opt">平原</button>
-          <button class="q-opt">台地</button>
-          <button class="q-opt" data-correct="true">盆地</button>
-          <button class="q-opt">丘陵</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">「<strong>四周高、中間低</strong>」是盆地的招牌。中間平坦所以人口聚集，埔里盆地、臺北盆地都是這樣發展起來的。</span>
-      </div>
-    </section>
-
-    <!-- 7 1-3 關鍵 -->
-    <section class="slide" data-slide-id="u3" aria-labelledby="u3-t" hidden>
-      <div class="page-head"><span class="label">1-3</span><h2 id="u3-t" class="title">氣候、水資源與生活・三個關鍵</h2></div>
-      <div class="card-grid">
-        <div class="concept-card" data-reveal><div class="head">① 天氣不等於氣候</div><div class="body">氣候是<strong>長時間</strong>的天氣平均狀況；一天、一週的冷熱晴雨叫天氣。</div></div>
-        <div class="concept-card" data-reveal><div class="head">② 讀圖三步驟</div><div class="body">看<strong>標題</strong>（哪個地方）→ 看<strong>橫軸</strong>（1～12 月）→ 看<strong>縱軸</strong>（℃ 是氣溫、毫米是雨量）。</div></div>
-        <div class="concept-card" data-reveal><div class="head">③ 氣候影響生活</div><div class="body">多雨用油毛氈、屋頂做斜的；少雨種耐旱作物（澎湖七美種花生）；天熱就戲水、吃冰。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-warn"></use></svg></span>
-        <span class="text">水資源四種：<strong>河川、湖泊、地下水、海洋</strong>。水庫蓋在河川<strong>中上游</strong>，有民生工業、灌溉、發電、防洪、觀光五種用途。</span>
-      </div>
-    </section>
-
-    <!-- 8 1-3 試試看 -->
-    <section class="slide" data-slide-id="q3" aria-labelledby="q3-t" hidden>
-      <div class="page-head"><span class="label">試試看</span><h2 id="q3-t" class="title">1-3　臺灣雨很多，為什麼還會缺水？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">臺灣的年雨量約是世界平均的 2.5 倍，但每個人分到的水卻不到世界平均的六分之一。最主要的原因是什麼？</p>
-        <div class="q-options">
-          <button class="q-opt">臺灣沒有河川</button>
-          <button class="q-opt" data-correct="true">山勢陡、河川短又急，水很快流入海洋，加上人口密集</button>
-          <button class="q-opt">雨都下在冬天</button>
-          <button class="q-opt">水庫太多，把水擋住了</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">留不住＋人太多，所以要珍惜。生活汙水、事業廢水、畜牧廢水沒處理就排入河川，最後<strong>還是回到我們身上</strong>。</span>
-      </div>
-    </section>
-
-    <!-- 9 2-1 關鍵 -->
-    <section class="slide" data-slide-id="u4" aria-labelledby="u4-t" hidden>
-      <div class="page-head"><span class="label">2-1</span><h2 id="u4-t" class="title">傳統住屋與生活・三個關鍵</h2></div>
-      <div class="card-grid">
-        <div class="concept-card" data-reveal><div class="head">① 就地取材</div><div class="body">用住家附近有的材料，蓋出最能適應當地環境的房子。順序是<strong>環境 → 材料 → 住屋形式</strong>。</div></div>
-        <div class="concept-card" data-reveal><div class="head">② 各族群的住屋</div><div class="body">石板屋（排灣族、魯凱族，冬暖夏涼）、地下屋（蘭嶼雅美族／達悟族，低矮擋強風）、泰雅族木竹屋；漢人用竹管仔厝、土埆厝、磚瓦厝。</div></div>
-        <div class="concept-card" data-reveal><div class="head">③ 房子會長大</div><div class="body">人口增加、經濟改善 → <strong>一條龍 → 單伸手 → 三合院</strong>。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-book"></use></svg></span>
-        <span class="text">三合院：<strong>正廳</strong>供奉神明祖先、<strong>護龍</strong>住人（以左為尊）、<strong>稻埕</strong>曬穀聚會；後來多改建樓房，靠古蹟與聚落保存區留下來。</span>
-      </div>
-    </section>
-
-    <!-- 10 2-1 試試看 -->
-    <section class="slide" data-slide-id="q4" aria-labelledby="q4-t" hidden>
-      <div class="page-head"><span class="label">試試看</span><h2 id="q4-t" class="title">2-1　為什麼房子要往下挖？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">蘭嶼雅美族（達悟族）的地下屋，建在挖低的地穴裡。最主要的原因是什麼？</p>
-        <div class="q-options">
-          <button class="q-opt">因為沒有錢買材料</button>
-          <button class="q-opt">因為想住得隱密一點</button>
-          <button class="q-opt" data-correct="true">因為蘭嶼風大，低矮才躲得過強風</button>
-          <button class="q-opt">因為地下比較容易種田</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">看到「為什麼這樣蓋」，答案一律<strong>從當地環境找</strong>。這是先民的智慧，不是將就。</span>
-      </div>
-    </section>
-
-    <!-- 11 2-2 關鍵 -->
-    <section class="slide" data-slide-id="u5" aria-labelledby="u5-t" hidden>
-      <div class="page-head"><span class="label">2-2</span><h2 id="u5-t" class="title">器物與生活・三個關鍵</h2></div>
-      <div class="card-grid">
-        <div class="concept-card" data-reveal><div class="head">① 材料來自大自然</div><div class="body">竹子、藤→魚筌；木頭→木杵；月桃葉→包裹食物；泥土→灶；木材→菜櫥、水桶、砧板。</div></div>
-        <div class="concept-card" data-reveal><div class="head">② 器物裡的智慧</div><div class="body">魚筌側邊留空隙讓<strong>小魚游出去長大</strong>；灶的餘溫悶地瓜、灰燼當<strong>肥料</strong>——物盡其用。</div></div>
-        <div class="concept-card" data-reveal><div class="head">③ 功能一樣、材質不同</div><div class="body">菜櫥→冰箱、竹蒸籠→電鍋、瓠瓢→塑膠水杓。換的是材質，功能沒變。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-leaf"></use></svg></span>
-        <span class="text">方便的代價：塑膠<strong>不易分解</strong>，海廢前十名有 91% 是塑膠，撿到最多的是寶特瓶。3R 順序＝<strong>減量 → 重複使用 → 回收</strong>。</span>
-      </div>
-    </section>
-
-    <!-- 12 2-2 試試看 -->
-    <section class="slide" data-slide-id="q5" aria-labelledby="q5-t" hidden>
-      <div class="page-head"><span class="label">試試看</span><h2 id="q5-t" class="title">2-2　哪一個做法最好？</h2></div>
-      <div class="quiz" data-quiz data-mode="single">
-        <p class="q-stem">要減少一次性塑膠垃圾，下面哪一個做法<strong>效果最好</strong>？</p>
-        <div class="q-options">
-          <button class="q-opt" data-correct="true">自己帶水壺，不買瓶裝飲料</button>
-          <button class="q-opt">把寶特瓶洗乾淨丟進回收桶</button>
-          <button class="q-opt">用完的塑膠袋壓扁再丟</button>
-          <button class="q-opt">把垃圾拿去掩埋場</button>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-        <div class="ans-feedback"></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer>
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">回收<strong>仍要耗費能源</strong>處理，是不得已才用的辦法。一開始就不用，才是最好的解決方法。</span>
-      </div>
-    </section>
-
-    <!-- 13 易錯 1 -->
-    <section class="slide" data-slide-id="m1" aria-labelledby="m1-t" hidden>
-      <div class="page-head"><span class="label">最容易錯 1／5</span><h2 id="m1-t" class="title">比例尺：要用乘的，還是用除的？</h2></div>
-      <div class="misconception" data-reveal>
-        <div class="wrong-side"><div class="mark">✗ 常見錯誤</div><div class="text">比例尺「1 公分＝100 公尺」，圖上 6 公分就是 100 公尺。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確算法</div><div class="text">要<strong>乘</strong>：6 公分 × 100 公尺 ＝ 600 公尺。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">圖上長度 → 實際距離用<strong>乘</strong>；已知實際距離要求圖上長度，才用<strong>除</strong>。</span>
-      </div>
-    </section>
-
-    <!-- 14 易錯 2 -->
-    <section class="slide" data-slide-id="m2" aria-labelledby="m2-t" hidden>
-      <div class="page-head"><span class="label">最容易錯 2／5</span><h2 id="m2-t" class="title">頂部平平的，就一定是平原嗎？</h2></div>
-      <div class="misconception" data-reveal>
-        <div class="wrong-side"><div class="mark">✗ 常見錯誤</div><div class="text">看到剖面圖上面是平的，就寫平原。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確分辨</div><div class="text">平原<strong>本身就低</strong>（多在 100 公尺以下）；台地是<strong>整塊高起來</strong>（100 公尺以上），而且<strong>邊緣有陡坡</strong>。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">記兩個數字就好：<strong>100 公尺</strong>分平原和台地，<strong>1000 公尺</strong>分丘陵和山地。</span>
-      </div>
-    </section>
-
-    <!-- 15 易錯 3 -->
-    <section class="slide" data-slide-id="m3" aria-labelledby="m3-t" hidden>
-      <div class="page-head"><span class="label">最容易錯 3／5</span><h2 id="m3-t" class="title">「今天好熱」是在說氣候嗎？</h2></div>
-      <div class="misconception" data-reveal>
-        <div class="wrong-side"><div class="mark">✗ 常見錯誤</div><div class="text">「今天好熱喔，我們這裡的氣候很熱。」把一天的狀況當成氣候。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">氣候是<strong>長時間</strong>的天氣平均狀況；一天、一週的冷熱晴雨叫做<strong>天氣</strong>。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">看到「一年四季」「平均」「長期」＝氣候；看到「今天」「明天」＝天氣。</span>
-      </div>
-    </section>
-
-    <!-- 16 易錯 4 -->
-    <section class="slide" data-slide-id="m4" aria-labelledby="m4-t" hidden>
-      <div class="page-head"><span class="label">最容易錯 4／5</span><h2 id="m4-t" class="title">三合院的「左邊」是哪一邊？</h2></div>
-      <div class="misconception" data-reveal>
-        <div class="wrong-side"><div class="mark">✗ 常見錯誤</div><div class="text">看照片時，我的左手邊就是三合院的左邊。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確判斷</div><div class="text">要<strong>站在正廳前面朝外</strong>，那時的左手邊才是三合院的左邊。護龍<strong>以左為尊</strong>，左大右小。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">同樣要記得：就地取材是<strong>智慧</strong>，不是因為沒錢。</span>
-      </div>
-    </section>
-
-    <!-- 17 易錯 5 -->
-    <section class="slide" data-slide-id="m5" aria-labelledby="m5-t" hidden>
-      <div class="page-head"><span class="label">最容易錯 5／5</span><h2 id="m5-t" class="title">丟進垃圾桶，東西就消失了嗎？</h2></div>
-      <div class="misconception" data-reveal>
-        <div class="wrong-side"><div class="mark">✗ 常見迷思</div><div class="text">丟進垃圾桶就沒事了；有回收就等於環保。</div></div>
-        <div class="becomes">→</div>
-        <div class="right-side"><div class="mark">✓ 正確理解</div><div class="text">塑膠<strong>不易在自然環境中分解</strong>，還可能流進海洋。3R 的順序是<strong>減量 → 重複使用 → 回收</strong>，回收是最後一步。</div></div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">另一個常漏的：地形與生活是「<strong>相互</strong>」影響——只答「地形影響人」會少掉一半分數。</span>
-      </div>
-    </section>
-
-    <!-- 18 備考 -->
-    <section class="slide" data-slide-id="wrap" aria-labelledby="wrap-t" hidden>
-      <div class="page-head"><span class="label">收尾</span><h2 id="wrap-t" class="title">怎麼準備期中評量</h2></div>
-      <div class="action-list">
-        <div class="item" data-reveal>先看「<strong>複習速記</strong>」把五個小節各過一遍，看不懂的回去翻那一節的教學頁。</div>
-        <div class="item" data-reveal>把<strong>五個最容易錯的地方</strong>各念一次給家人聽，講得出來才算會。</div>
-        <div class="item" data-reveal>做一次「<strong>線上模擬評量</strong>」，答錯的題目回頭找是哪一節的觀念。</div>
-        <div class="item" data-reveal>最後再看一次地圖四要素、五種地形、三合院空間——這三組<strong>最常考</strong>。</div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-star"></use></svg></span>
-        <span class="text">複習不是重讀課本，是<strong>把想不起來的地方找出來補</strong>。</span>
-      </div>
-    </section>
-
-    <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span> <span data-reveal-meta></span></p>
-      <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一步</button>
-      <button class="ds-btn" data-action="next">下一步 →</button>
-      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
-      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
     </div>
-    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
+    <div class="concept-card" data-reveal>
+      <div class="head">✓ 4 × 200 ＝ 800 公尺</div>
+      <div class="body">圖上長度求實際距離要<strong>用乘的</strong>；反過來已知實際距離求圖上長度，才用除的。這是 1-1 最常考的一題。</div>
+    </div>
   </div>
+
+  <!-- 第2題：1-2 五種地形 -->
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 2 題（1-2 家鄉的地形）　有一塊地整片高起來超過 100 公尺，<strong>頂部平坦</strong>、<strong>邊緣有陡坡</strong>。這是哪一種地形？</p>
+      <div class="q-options">
+        <button class="q-opt">平原</button>
+        <button class="q-opt" data-correct="true">台地</button>
+        <button class="q-opt">盆地</button>
+        <button class="q-opt">丘陵</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal>
+      <div class="head">✓ 台地：高起來，但頂部是平的</div>
+      <div class="body">只看「平平的」會誤選平原。<strong>平原本身就低</strong>（多在 100 公尺以下），<strong>台地是整塊高起</strong>而且邊緣有陡坡，例如八卦台地。</div>
+    </div>
+  </div>
+
+  <!-- 第3題：1-3 天氣與氣候 -->
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 3 題（1-3 氣候、水資源與生活）　「我們這裡<strong>一年四季</strong>都很溫暖，冬天也不太冷。」這句話在說什麼？</p>
+      <div class="q-options">
+        <button class="q-opt">天氣</button>
+        <button class="q-opt" data-correct="true">氣候</button>
+        <button class="q-opt">氣溫</button>
+        <button class="q-opt">季節</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal>
+      <div class="head">✓ 長時間的平均狀況＝氣候</div>
+      <div class="body">看到「一年四季」「平均」「長期」講的是<strong>氣候</strong>；看到「今天」「明天」講的是<strong>天氣</strong>。</div>
+    </div>
+  </div>
+
+  <!-- 第4題：2-1 三合院空間 -->
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 4 題（2-1 傳統住屋與生活）　三合院裡由正身左右延伸出去、<strong>給家人住</strong>的房子叫做什麼？</p>
+      <div class="q-options">
+        <button class="q-opt">正廳</button>
+        <button class="q-opt" data-correct="true">護龍</button>
+        <button class="q-opt">稻埕</button>
+        <button class="q-opt">牛棚</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal>
+      <div class="head">✓ 護龍住人，正廳供奉神明與祖先</div>
+      <div class="body">稻埕是門前曬穀、聚會的空地。護龍<strong>以左為尊</strong>，左大右小——左右要站在正廳前面朝外來看。</div>
+    </div>
+  </div>
+
+  <!-- 第5題：2-2 3R -->
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">第 5 題（2-2 器物與生活）　面對愈來愈多的塑膠垃圾，3R 裡<strong>最優先</strong>該做的是哪一件？</p>
+      <div class="q-options">
+        <button class="q-opt" data-correct="true">減量：能不用就不用</button>
+        <button class="q-opt">重複使用：洗乾淨再用一次</button>
+        <button class="q-opt">回收：丟進回收桶</button>
+        <button class="q-opt">掩埋：埋起來就好</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal>
+      <div class="head">✓ 順序是 減量 → 重複使用 → 回收</div>
+      <div class="body">回收仍要耗費能源處理，是<strong>不得已</strong>才用的辦法；最好的解決方法是一開始就不要用。</div>
+    </div>
+  </div>
+
+  <div class="takeaway-band">
+    <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
+    <span class="text">哪一題答錯，等一下的複習就從那一小節開始加強。</span>
+  </div>
+
+  <footer class="page-foot">社會四上 · 第一～二單元 · 期中總複習第 1 輪 · 起始評估</footer>
+
 </main>
 
 <script>
 (() => {
-  const STAGE_W = 1600, STAGE_H = 900;
-  const stage = document.querySelector('#stage');
-  const slides = [...document.querySelectorAll('.slide')];
-  const current = document.querySelector('[data-current]');
-  const total = document.querySelector('[data-total]');
-  const progress = document.querySelector('[data-progress]');
-  let index = 0;
-  if (!stage || !slides.length) return;
-
-  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
-
-  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
-     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
-     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
-  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
-  const revealNext = (slide) => {
-    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
-    if (!next) return false;
-    next.classList.add('is-shown');
-    return true;
-  };
-  const revealPrev = (slide) => {
-    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
-    if (!shown.length) return false;
-    shown[shown.length - 1].classList.remove('is-shown');
-    return true;
-  };
-  const setReveal = (slide, all) => {
-    slide.querySelectorAll('[data-reveal]').forEach((el) => {
-      // 答案帶即使回看也不自動亮，維持「答過才看得到」
-      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
-      else el.classList.remove('is-shown');
+  document.querySelectorAll('.q-block').forEach((block) => {
+    block.addEventListener('tds:answered', () => {
+      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
     });
-  };
-  const updateMeta = () => {
-    const slide = slides[index];
-    const all = steps(slide);
-    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
-    if (current) current.textContent = String(index + 1);
-    if (total) total.textContent = String(slides.length);
-    const meta = document.querySelector('[data-reveal-meta]');
-    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
-    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
-  };
-
-  const render = (next, updateHash = true, fromBack = false) => {
-    index = clamp(next);
-    slides.forEach((s, i) => {
-      const active = i === index;
-      s.classList.toggle('is-active', active);
-      s.hidden = !active;
-      s.setAttribute('aria-hidden', String(!active));
+  });
+  /* 填充題：按鈕自行揭曉參考答案（無法自動批改，改為自評） */
+  document.querySelectorAll('[data-show-answer]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const block = btn.closest('.q-block');
+      if (!block) return;
+      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
+      btn.disabled = true;
+      btn.textContent = '參考答案已顯示';
     });
-    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
-    setReveal(slides[index], fromBack);
-    updateMeta();
-    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
-  };
-
-  const advance = () => {
-    if (revealNext(slides[index])) { updateMeta(); return; }
-    render(index + 1);
-  };
-  const back = () => {
-    if (revealPrev(slides[index])) { updateMeta(); return; }
-    render(index - 1, true, true);
-  };
-
-  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
-  document.addEventListener('click', (e) => {
-    const t = e.target && e.target.closest
-      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
-      : null;
-    if (!t) return;
-    const sl = t.closest('.slide');
-    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
   });
-  // 答對／答錯後才放出含答案的判斷帶
-  document.addEventListener('tds:answered', (e) => {
-    const slide = e.target.closest('.slide');
-    if (!slide) return;
-    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
-  });
-
-  const slideFromHash = () => {
-    const id = decodeURIComponent(location.hash.slice(1));
-    const found = slides.findIndex((s) => s.dataset.slideId === id);
-    return found >= 0 ? found : 0;
-  };
-
-  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
-  addEventListener('keydown', (e) => {
-    if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
-    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
-    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
-    else if (e.key === 'Home') { e.preventDefault(); render(0); }
-    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1, true, true); }
-  });
-
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
-  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
-  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
-    setReveal(slides[index], true); updateMeta();
-  });
-  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
-    } catch (err) { console.warn('無法切換全螢幕', err); }
-  });
-
-  const resize = () => {
-    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
-    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
-  };
-  addEventListener('hashchange', () => render(slideFromHash(), false));
-  addEventListener('resize', resize);
-  resize();
-  render(slideFromHash(), false);
 })();
 </script>
 </body>
