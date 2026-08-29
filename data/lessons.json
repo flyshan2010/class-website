@@ -1,5 +1,62 @@
 [
   {
+    "title": "國R1-2 字詞語詞與內容理解深化｜L1～L6",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "只走兩站（字詞語詞・內容理解），修辭句型與讀寫留給 國R1-3",
+      "字詞三個判準：形近字先讀句意再配部首／破音字把整個詞念出來再問意思／四字語詞看「這個人做了什麼」選情境",
+      "內容三個判準：主旨句找有看法且蓋得住整段的那一句（位置不是判準）／記敘與說明看「換一個人寫會不會不一樣」／六何法沒寫到的不能自己補",
+      "六課大意壓成四字：想像寫島・書信介紹・拍照記鄉・試驗成功・生疑求解・查證知月"
+    ],
+    "date": "2026-10-19",
+    "note": "複習週 W8（10/19–10/23）5 節，期中複習第 2 階段。依預排表：國R1-1 為四面向橫切總覽（既有教材整套沿用），本輪只做字詞語詞與內容理解，題目與國R1-1 不重複。網頁與紙本為平行題本（逐字相同 3 處已重寫紙本題，撞題從 22 處降到 5 處，餘下皆同模板不同字不同答案）。1600×900 實測 0 溢出、字級漏接 0。紙本六合一（前測 10 題／評量 10 選＋8 填＋短文閱讀 1 篇）與差異化三份存於 Drive 正本資料夾，未進公開 repo。順帶修補 _工具/assemble_page.py：hud 縮排改用 regex（國語外殼 hud 無縮排，原本寫死 4 空格會失敗）。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-2-字詞語詞與內容理解深化/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-2-字詞語詞與內容理解深化/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-2-字詞語詞與內容理解深化/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-2-字詞語詞與內容理解深化/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-2-字詞語詞與內容理解深化/3.review.html"
+    }
+  },
+  {
+    "title": "數R1-3 期中總複習第2輪｜L1～L5",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "五單元易錯步驟拆解：大數分節（幾個萬後面固定接四位）／乘法中間的 0 要乘也要接住進位／角度先說出整體是 90°、180° 還是 360° 再把已知角加總後相減／假分數換帶分數餘數當分子分母不變／公里公尺滿 1000 進位、公尺佔三位",
+      "每單元三拍：步驟拆解 → 錯在哪一步（給錯誤解法找出第幾步走偏）→ 馬上試試",
+      "五個常錯步驟：補四位、乘中間的 0、加總已知角、餘數當分子、滿 1000 進位"
+    ],
+    "date": "2026-10-19",
+    "note": "複習週 W8（10/19–10/23）5 節，期中複習第 2 輪。依預排表三輪循環取【易錯步驟拆解】切法（第 1 輪為觀念重建）。題目與 數R1-1／數R1-2 皆不重複，網頁與紙本為平行題本（高相似 ≥0.8 者皆同型不同數且答案不同）。1600×900 全頁實測 0 溢出、字級漏接 0。紙本六合一（前測／評量）與差異化三份存於 Drive 正本資料夾，未進公開 repo。順帶修正 DS components.css 漏接 .fillq > .q-stem（填充題幹掉回 16px），數R1-2 評量頁同步修。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/3.review.html"
+    }
+  },
+  {
     "title": "社R1-3 期中總複習第2輪｜單元一、二",
     "subject": "社會",
     "grade": "四上",
