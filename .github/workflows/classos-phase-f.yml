@@ -22,6 +22,7 @@ on:
           - f13-fill-contactbook
           - f14-purge-mock-data
           - f20-import-daily-plan
+          - f21-relink-daily-plan
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
