@@ -690,8 +690,9 @@
     if (b.unit) {
       // 複習卷（國R1-1、國R1-2…）也會被歸成同一個 unit，但它沒有「第 N 單元」的概念
       if (/R\d+$/.test(b.unit)) {
-        const label = /期末/.test(b.rows[0].title || "") ? "期末複習"
-                    : /期中/.test(b.rows[0].title || "") ? "期中複習" : "複習";
+        // 期中／期末只要同組任一份寫了就算（數R1-1「習作範圍總驗收」本身沒寫期中）
+        const titles = b.rows.map(r => r.title || "").join(" ");
+        const label = /期末/.test(titles) ? "期末複習" : /期中/.test(titles) ? "期中複習" : "複習";
         return `📄 ${App.esc(label)}
                 <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 份）</span>`;
       }
