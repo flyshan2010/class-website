@@ -264,7 +264,7 @@
   const midtermEnd = (() => {
     let last = "";
     Object.values(planDoc.weeks || {}).forEach(subs => Object.values(subs || {}).forEach(es => (es || []).forEach(e => {
-      if (/期中/.test(e.text || "") || /R1$/.test(e.unit || "")) last = (e.date || "") > last ? e.date : last;
+      if (/期中/.test(e.text || "") || /R1(-\d+[A-Za-z]?)?$/.test(e.unit || "")) last = (e.date || "") > last ? e.date : last;
     })));
     return last;
   })();
@@ -275,7 +275,9 @@
     if (ONE_UNIT_RE.test(t) && !/期中|期末|考前/.test(t)) return null;
     const abbr = SUBJECT_ABBR[subject];
     if (!abbr) return null;
-    const term = /期末|考前/.test(t) ? 2
+    /* 期中／期末：「考前」兩個字兩邊都會出現（「期中考考前總衝刺」也有），
+       拿它判期末會把期中最後一輪誤判成 R2，所以只認「期中／期末」，其餘看日期。 */
+    const term = /期末/.test(t) ? 2
       : /期中/.test(t) ? 1
       : (midtermEnd && date && date > midtermEnd) ? 2 : 1;
     /* 輪次：複習週一科十幾節，教材一定分輪做（國R1-1、國R1-2…）。認得出第幾輪就掛那一輪，
