@@ -591,13 +591,33 @@
   // 排序要跟老師的課程計畫一致：複習課（R#）依「複習範圍的最後一課」插在該課之後，
   // 不是一律排到科目最末（社R1 複習 L1～L2 → 排在社2 之後、社3 之前；國R1 複習 L1～L6 → 仍在最末）。
   const pad6 = n => String(n).padStart(6, "0");
+  /* 複習卷代碼是「國R1-2」這種兩段式（R1 的第 2 份教材），不是「國R1」。
+     R# 底下每一份的複習範圍都一樣，所以範圍要用整組（同 R 基底）的標題一起推，
+     只有第一份寫了「｜L1～L6」也算數——否則 R1-2 會被當成沒範圍而漏排到科目最末。 */
+  const REV_RE = /R(\d+)(?:-(\d+))?[A-Za-z]?$/;
+  const revLastOf = title => {
+    const t = (title || "").replace(CODE_RE, " ");        // 先去掉課次代碼，免得「R1-2」被當成範圍
+    const range = /(\d+)\s*[～~—–\-至]\s*[A-Za-z]?(\d+)/.exec(t);
+    if (range) return Number(range[2]);
+    const cn = t.match(/[一二三四五六七八九十]/g);          // 社會寫「單元一、二」
+    if (cn) return Math.max(...cn.map(x => CN_NUM[x]));
+    return 0;
+  };
+  const revLastByBase = new Map();                        // 「國R1」→ 複習範圍的最後一課
+  lessons.forEach(l => {
+    const c = codeOf(l);
+    const m = REV_RE.exec(c);
+    if (!m) return;
+    const base = c.replace(/-\d+[A-Za-z]?$/, "");
+    revLastByBase.set(base, Math.max(revLastByBase.get(base) || 0, revLastOf(l.title)));
+  });
   const sortKey = l => {
     const c = codeOf(l) || l.title || "";
-    const rev = /R(\d+)$/.exec(c);
+    const rev = REV_RE.exec(c);
     if (rev) {
-      const range = /(\d+)\s*[～~—–\-至]\s*[A-Za-z]?(\d+)/.exec(l.title || "");
-      const last = range ? Number(range[2]) : 9999;   // 抓不到範圍就當成整學期複習，排最後
-      return pad6(last) + "1" + pad6(Number(rev[1]));
+      const base = c.replace(/-\d+[A-Za-z]?$/, "");
+      const last = revLastByBase.get(base) || 9999;       // 抓不到範圍就當成整學期複習，排最後
+      return pad6(last) + "1" + pad6(Number(rev[1])) + pad6(Number(rev[2] || 0));
     }
     const nums = (c.match(/\d+/g) || []).map(Number);
     const suffix = ((/\d([A-Za-z])$/.exec(c) || [])[1] || "").toLowerCase();  // 2a 要排在 2b 前面
@@ -668,6 +688,13 @@
   };
   const blockHead = b => {
     if (b.unit) {
+      // 複習卷（國R1-1、國R1-2…）也會被歸成同一個 unit，但它沒有「第 N 單元」的概念
+      if (/R\d+$/.test(b.unit)) {
+        const label = /期末/.test(b.rows[0].title || "") ? "期末複習"
+                    : /期中/.test(b.rows[0].title || "") ? "期中複習" : "複習";
+        return `📄 ${App.esc(label)}
+                <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 份）</span>`;
+      }
       const courseName = sameCourseName(b.rows);
       if (courseName) {
         return `📄 第 ${App.esc(unitNo(b.unit))} 課
