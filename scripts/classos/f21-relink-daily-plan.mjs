@@ -8,10 +8,10 @@
  *
  * 與 f20 的差異：f20 建列（跳過已存在），f21 只改既有列的 relation，不動任何進度文字。
  * 解析規則與 cockpit.js／f20 同源，複習卷（R 卷）多了「輪次 → R1-n」的對應：
- *   國語 期中總複習「第N階段」→ 國R1-N
- *   數學 期中「習作範圍總驗收與訂正」→ 數R1-1；「…(N)」第N輪 → 數R1-(N+1)
- *   社會 期中「單元一／二總複習・習作訂正」→ 社R1-1；「…(N)」第N輪 → 社R1-(N+1)
- *   期末（11/09 之後）的複習輪次屬 R2 卷，教材尚未產出 → 一律留空不動。
+ *   國語「（第N階段…）」→ `國R{期中1／期末2}-N`
+ *   數學／社會 句尾「(N)」→ `數R?-N`／`社R?-N`
+ *   進度文字的輪次已與代碼對齊（f22，2026-08-29），**寫幾就是第幾輪，沒有偏移量**。
+ *   期中／期末以第一次定期評量日為界；R2 卷教材尚未產出，會標「教材未建」並清空 relation。
  * 教材未建的課次留空（不清掉舊值，只在報表標「⚠️ 教材未建」讓老師自己判斷）。
  *
  * 用法：GitHub Actions → ClassOS Phase F 工具 → task=f21-relink-daily-plan
@@ -39,7 +39,7 @@ const relIds = (page, name) => (page.properties?.[name]?.relation ?? []).map(r =
 /** 進度文字 → 課次代碼。sure=false 代表靠順序或關鍵字推測，報表會標「❓ 推測」。 */
 function guessCode(subject, t, date, weekTexts, pos, hasCode) {
   if (!t) return { code: "", sure: true };
-  const midterm = date <= MIDTERM_END;
+  const term = date <= MIDTERM_END ? 1 : 2;      // 1＝期中卷、2＝期末卷
 
   if (subject === "國語") {
     const c = /第([一二三四五六七八九十]+)課/.exec(t);
@@ -53,8 +53,8 @@ function guessCode(subject, t, date, weekTexts, pos, hasCode) {
       return { code: `國L${cnNum(c[1])}-${Math.min(n + 1, 4)}`, sure: false };
     }
     const stage = /第(\d)階段/.exec(t);
-    if (stage && midterm) return { code: `國R1-${Number(stage[1])}`, sure: true };
-    return { code: "", sure: true };          // 期末複習（R2）與考前衝刺：教材未產出，不猜
+    if (stage) return { code: `國R${term}-${Number(stage[1])}`, sure: true };
+    return { code: "", sure: true };          // 認不出輪次就不猜
   }
 
   if (subject === "數學") {
@@ -65,10 +65,9 @@ function guessCode(subject, t, date, weekTexts, pos, hasCode) {
       if (hasCode(`${base}a`)) return { code: `${base}a`, sure: false };   // 6-2 拆成 2a／2b
       return { code: base, sure: true };
     }
-    if (!midterm) return { code: "", sure: true };
-    if (/習作範圍總驗收與訂正/.test(t)) return { code: "數R1-1", sure: true };
-    const round = /\((\d)\)\s*$/.exec(t);
-    if (round) return { code: `數R1-${Number(round[1]) + 1}`, sure: true };
+    const round = /[（(](\d)[）)]\s*$/.exec(t);
+    if (round) return { code: `數R${term}-${Number(round[1])}`, sure: true };
+    if (/習作範圍總驗收與訂正/.test(t)) return { code: `數R${term}-1`, sure: true };   // 還沒補 (1) 的舊寫法
     const u = /第([一二三四五六七八九十]+)單元/.exec(t);
     if (u) {                                   // 練習園地／重點複習訂正 → 該單元最後一小節
       const n = cnNum(u[1]);
@@ -81,10 +80,9 @@ function guessCode(subject, t, date, weekTexts, pos, hasCode) {
   if (subject === "社會") {
     const m = /^\s*(\d+)-(\d+)/.exec(t);
     if (m) return { code: `社${Number(m[1])}-${Number(m[2])}`, sure: true };
-    if (!midterm) return { code: "", sure: true };
-    const round = /\((\d)\)\s*$/.exec(t);
-    if (round) return { code: `社R1-${Number(round[1]) + 1}`, sure: true };
-    if (/單元[一二三四]{1,2}.*總複習|期中社會總複習/.test(t)) return { code: "社R1-1", sure: true };
+    const round = /[（(](\d)[）)]\s*$/.exec(t);
+    if (round) return { code: `社R${term}-${Number(round[1])}`, sure: true };
+    if (/單元[一二三四]{1,2}.*總複習|期[中末]社會總複習/.test(t)) return { code: `社R${term}-1`, sure: true };
     return { code: "", sure: true };
   }
   return { code: "", sure: true };
