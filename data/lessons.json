@@ -1,5 +1,65 @@
 [
   {
+    "title": "數R1-4 期中總複習第4輪｜L1–L5",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "五單元各一組「解法步驟 → 錯在哪一步 → 馬上試試」：大數寫法／直式乘法／角度分份／帶分數互換／公里公尺",
+      "三個檢查動作：數位數（四位一組）、看對齊（第二列退一位）、看單位（1 公里＝1000 公尺）",
+      "迷思澄清：幾個萬後面要接四位、平角 180 不是 360、換算時分母不變、借位借 1000",
+      "模擬卷比照定期評量題型與配分；W10 另有 20 分鐘限時錯題回鍋卷",
+      "估算當檢查工具：405×48 ≈ 400×50＝20000，差一個位數馬上看得出來"
+    ],
+    "date": "2026-10-27",
+    "note": "複習週 W9（10/27–10/30）＋W10（11/02–11/04）共 7 節，期中複習第 4 輪（末輪，含原「期中試題疑難解答」）。W9 四節走完一輪並考綜合模擬卷（比照定期評量配分），W10 三節做逐題示範與錯法對照。題目與 數R1-1～數R1-3 不重複，網頁與紙本為平行題本。1600×900 實測最高 807（複習頁翻牌卡原本 993，已以 min-height:168 壓到 777）；四寬度 RWD 無橫向捲動；逐步揭露三項實測通過。紙本：六合一×3（0.前測／4.評量／4b.錯題回鍋卷 20 分鐘限時）＋差異化三份，存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-4-期中總複習第4輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-4-期中總複習第4輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-4-期中總複習第4輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-4-期中總複習第4輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-4-期中總複習第4輪/3.review.html"
+    }
+  },
+  {
+    "title": "社R1-4 期中總複習第4輪｜單元一、二",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "生活實例回扣五個概念：位置說法三種／校外教學路線看地形／出門前那句話是天氣或氣候／老照片看就地取材／一個便當袋看器物與 3R",
+      "六張考前對照卡：方向標定北方、比例尺才能比距離、先讀高度再看起伏、天氣vs氣候、正廳視角定左右、3R 減量優先",
+      "判準取向：每個概念只記一句可用的判斷方法，情境換了判準不換",
+      "模擬卷比照定期評量題型與配分；W10 另有 15 分鐘限時觀念卷",
+      "紙本另附六張 A4 對照卡，剪下帶回家自我檢核"
+    ],
+    "date": "2026-10-27",
+    "note": "複習週 W9（10/27–10/28）＋W10（11/02–11/04）共 5 節，期中複習第 4 輪（末輪，含原「考前觀念澄清」）。切法為【生活實例＋觀念澄清對照卡】，與前三輪（總複習／概念比較／圖表判讀）不重複，題目亦全數不重複；網頁與紙本為平行題本。1600×900 全頁實測最高 862 ≤900；四寬度 RWD 無橫向捲動；逐步揭露三項實測通過（一次一件／攤開不洩答案／作答後才出現）。紙本：六合一×3（0.前測／4.評量／4b.觀念卷 15 分鐘限時）＋差異化三份＋3a.對照卡 A4，存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-4-期中總複習第4輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-4-期中總複習第4輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-4-期中總複習第4輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-4-期中總複習第4輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-4-期中總複習第4輪/3.review.html"
+    }
+  },
+  {
     "title": "國R1-2 字詞語詞與內容理解深化｜L1～L6",
     "subject": "國語",
     "grade": "四上",
