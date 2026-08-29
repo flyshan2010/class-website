@@ -29,7 +29,7 @@
     }
   },
   {
-    "title": "數R1-3 期中總複習第2輪｜L1～L5",
+    "title": "數R1-3 期中總複習第3輪｜L1～L5",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -49,15 +49,15 @@
     "note": "複習週 W8（10/19–10/23）5 節，期中複習第 2 輪。依預排表三輪循環取【易錯步驟拆解】切法（第 1 輪為觀念重建）。題目與 數R1-1／數R1-2 皆不重複，網頁與紙本為平行題本（高相似 ≥0.8 者皆同型不同數且答案不同）。1600×900 全頁實測 0 溢出、字級漏接 0。紙本六合一（前測／評量）與差異化三份存於 Drive 正本資料夾，未進公開 repo。順帶修正 DS components.css 漏接 .fillq > .q-stem（填充題幹掉回 16px），數R1-2 評量頁同步修。",
     "links": {
       "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第2輪/3.review.html"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第3輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第3輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第3輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第3輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-3-期中總複習第3輪/3.review.html"
     }
   },
   {
-    "title": "社R1-3 期中總複習第2輪｜單元一、二",
+    "title": "社R1-3 期中總複習第3輪｜單元一、二",
     "subject": "社會",
     "grade": "四上",
     "version": "康軒",
@@ -79,15 +79,15 @@
     "note": "複習週 W8（10/19–10/23）5 節，期中複習第 2 輪。依預排表三輪循環取【圖表判讀】切法（第 1 輪為概念比較）。題目與 社R1-1／社R1-2 皆不重複，網頁與紙本為平行題本（同輪撞題檢查 0 處）。1600×900 全頁實測內容底 ≤837、字級漏接 0。紙本六合一與差異化三份存於 Drive 正本資料夾，未進公開 repo。",
     "links": {
       "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第2輪/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第2輪/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第2輪/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第2輪/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第2輪/3.review.html"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第3輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第3輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第3輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第3輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-3-期中總複習第3輪/3.review.html"
     }
   },
   {
-    "title": "社R1-2 期中總複習第1輪｜單元一、二",
+    "title": "社R1-2 期中總複習第2輪｜單元一、二",
     "subject": "社會",
     "grade": "四上",
     "version": "康軒",
@@ -109,15 +109,15 @@
     "note": "複習週 W7（10/12–10/16）5 節，期中複習第 1 輪。依預排表三輪循環取【概念比較】切法（老師 2026-08-28 裁示；圖表判讀改放進階題）。題目不與 社R1-1 重複；網頁與紙本為平行題本。紙本六合一與差異化三份存於 Drive 正本資料夾，未進公開 repo。",
     "links": {
       "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第1輪/3.review.html"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第2輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第2輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第2輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第2輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R1-2-期中總複習第2輪/3.review.html"
     }
   },
   {
-    "title": "數R1-2 期中總複習第1輪｜L1～L5",
+    "title": "數R1-2 期中總複習第2輪｜L1～L5",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -139,11 +139,11 @@
     "note": "複習週 W7（10/12–10/16）5 節，期中複習第 1 輪。依 PLAN_複習週預排表.md：觀念複習→強化→模擬→訂正→衝刺。題目全部不與 數R1-1 重複；網頁與紙本為平行題本（同範圍不同題）。紙本六合一（前測／評量）與差異化三份存於 Drive 正本資料夾，未進公開 repo。",
     "links": {
       "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第1輪/3.review.html"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第2輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第2輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第2輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第2輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R1-2-期中總複習第2輪/3.review.html"
     }
   },
   {
