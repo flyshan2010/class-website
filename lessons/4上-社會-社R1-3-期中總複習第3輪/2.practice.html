@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>期中總複習第2輪｜起始評估 · 社會四上 第1～2單元</title>
+<title>期中總複習第3輪｜分組練習 · 社會四上 第1～2單元</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -1989,178 +1989,434 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
+   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
    ───────────────────────────────────────────── */
-html, body { overflow: auto; height: auto; background: var(--bg); }
-body { padding: 0; }
-main.page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s6) var(--s4) var(--s7);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s5);
+#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
+.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
+.slide.is-active { opacity: 1; visibility: visible; }
+.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
+.hud {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 0 var(--safe-x);
+  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
 }
-.lede { font-size: var(--t4); color: var(--muted); }
-.q-block { display: flex; flex-direction: column; gap: var(--s3); }
-.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
-footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
+.hud .spacer { flex: 1; }
+.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
+.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
+.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
+.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
 .map-svg { display:block; width:100%; height:auto; }
-/* 填充題的題幹不在 .quiz 內，補上 DS 題幹樣式（否則掉回 16px 預設） */
-.q-block > .q-stem { font-size: var(--t4); line-height: var(--lh-normal); font-weight: var(--fw-bold); color: var(--ink); }
-.sec-title { font-size: var(--t2); font-weight: var(--fw-bold); color: var(--accent); border-bottom: var(--line-bold) solid var(--accent); padding-bottom: var(--s2); }
 .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s3); }
-@media (max-width: 480px) {
-  main.page { padding: var(--s5) var(--s3) var(--s6); }
-}
+/* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
+.split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
+@media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
+/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
+[data-reveal]:not(.is-shown) { pointer-events: none; }
 </style>
+</head>
 <body>
-<main class="page" aria-label="期中總複習第2輪起始評估">
-  <header class="page-head">
-    <span class="label">第一、二單元 · 期中總複習第 2 輪</span>
-    <h1 class="title">第 2 輪起始評估（讀圖速測）</h1>
-  </header>
-  <p class="lede">8 題，20 分鐘。這一輪練的是「把圖看懂」，所以先測一次你現在會讀哪幾種圖。<strong>答錯不扣分，錯在哪裡才是今天要練的地方。</strong></p>
+<main class="deck" aria-label="期中總複習第3輪｜分組練習 · 社會四上 第1～2單元">
+  <div class="stage" id="stage" tabindex="-1">
 
-  <h2 class="sec-title">一、選擇題</h2>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">1.（1-1）地圖四要素裡，負責「說明圖上每個符號代表什麼」的是哪一個？</p>
-      <div class="q-options">
-          <button class="q-opt" data-correct="true">圖例</button>
-          <button class="q-opt">圖名</button>
-          <button class="q-opt">方向標</button>
-          <button class="q-opt">比例尺</button>
+<section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
+      <div class="page-head"><span class="label">第一、二單元 期中總複習第 3 輪 · 分組練習</span><h2 id="cover-t" class="title">今天練哪一組？</h2></div>
+      <div class="card-grid">
+        <div class="concept-card">
+          <div class="head">基礎題</div>
+          <div class="body">看圖找資訊：圖例、分界數字、長條代表什麼。<br><br>
+            <a class="ds-btn primary" href="#basic-1">從基礎題開始 →</a></div>
+        </div>
+        <div class="concept-card">
+          <div class="head">進階題</div>
+          <div class="body">讀出圖上的數字，再算一次、判斷一次。<br><br>
+            <a class="ds-btn primary" href="#adv-1">從進階題開始 →</a></div>
+        </div>
+        <div class="concept-card">
+          <div class="head">挑戰題</div>
+          <div class="body">用圖上的證據，寫出完整的說明。<br><br>
+            <a class="ds-btn primary" href="#chal-1">從挑戰題開始 →</a></div>
+        </div>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">圖名說主題、方向標指方位、比例尺說縮小程度、圖例解釋符號。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">2.（1-1）某張地圖的比例尺是「1 公分代表 200 公尺」，圖上量得兩地相距 3 公分，實際大約多遠？</p>
-      <div class="q-options">
-          <button class="q-opt" data-correct="true">600 公尺</button>
-          <button class="q-opt">203 公尺</button>
-          <button class="q-opt">66 公尺</button>
-          <button class="q-opt">2000 公尺</button>
+      <div class="takeaway-band">
+        <span class="icon"><svg class="ico"><use href="#ico-pencil"></use></svg></span>
+        <span class="text">要動手寫的在紙本學習單上；網頁先把圖看懂、對完答案再寫。</span>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">3 × 200 ＝ 600 公尺。圖上長度換算實際距離要用乘的。</div></div>
-  </div>
+    </section>
 
-  <div class="q-block">
-    <div class="figure-block" style="display:block"><svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="地形剖面圖，標出甲乙丙丁戊五個位置與 100、1000 公尺分界線" style="width:100%;height:auto"><line x1="160" y1="283" x2="860" y2="283" stroke="#c46a2f" stroke-width="2" stroke-dasharray="6 6"/><text x="152" y="276.6666666666667" text-anchor="end" font-size="18" fill="#c46a2f" font-weight="normal">100 公尺</text><line x1="160" y1="127" x2="860" y2="127" stroke="#c46a2f" stroke-width="2" stroke-dasharray="6 6"/><text x="152" y="120.66666666666669" text-anchor="end" font-size="18" fill="#c46a2f" font-weight="normal">1000 公尺</text><path d="M 160 300 L 250 293 L 310 290 L 350 262 L 410 258 L 455 257 L 520 290 L 600 213 L 660 144 L 720 83 L 800 57 L 860 66" fill="none" stroke="currentColor" stroke-width="4"/><path d="M 160 300 L 250 293 L 310 290 L 350 262 L 410 258 L 455 257 L 520 290 L 600 213 L 660 144 L 720 83 L 800 57 L 860 66 L 860 300 L 160 300 Z" fill="#2f7d6f" fill-opacity="0.12"/><line x1="160" y1="300" x2="860" y2="300" stroke="currentColor" stroke-width="3"/><line x1="210" y1="300" x2="210" y2="312" stroke="currentColor" stroke-width="3"/><text x="210" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">甲</text><line x1="380" y1="300" x2="380" y2="312" stroke="currentColor" stroke-width="3"/><text x="380" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">乙</text><line x1="640" y1="300" x2="640" y2="312" stroke="currentColor" stroke-width="3"/><text x="640" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">丙</text><line x1="810" y1="300" x2="810" y2="312" stroke="currentColor" stroke-width="3"/><text x="810" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">丁</text><text x="40" y="24" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">地形剖面圖（縱軸＝高度）</text></svg><div class="caption"><div class="body">地形剖面圖（縱軸＝高度）</div></div></div>
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">3.（1-2）看上面的剖面圖，甲的高度大約只有 20 公尺，地面整片低平。甲是哪一種地形？</p>
-      <div class="q-options">
-          <button class="q-opt" data-correct="true">平原</button>
-          <button class="q-opt">台地</button>
-          <button class="q-opt">丘陵</button>
-          <button class="q-opt">山地</button>
+    <section class="slide" data-slide-id="basic-1" aria-labelledby="basic-1-t" hidden>
+      <div class="page-head"><span class="label">基礎題 1 / 4</span><h2 id="basic-1-t" class="title">看圖例：粗灰線代表什麼</h2></div>
+      <div style="display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:auto 1fr;gap:var(--s3);align-items:start;">
+      <div class="figure-block" style="display:block;grid-area:1/1">
+        <svg viewBox="0 0 900 345" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="社區周邊圖，含圖名、方向標、比例尺與圖例" style="width:100%;height:auto;max-height:270px"><rect x="40" y="30" width="620" height="300" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/><text x="50" y="22" text-anchor="start" font-size="22" fill="currentColor" font-weight="bold">圖名：崑山社區周邊圖</text><path d="M40 200 L660 170" stroke="currentColor" stroke-opacity="0.5" stroke-width="8" fill="none"/><path d="M300 30 L330 330" stroke="currentColor" stroke-opacity="0.5" stroke-width="8" fill="none"/><circle cx="150" cy="130" r="12" fill="#2f7d6f"/><text x="168" y="137" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">學校</text><circle cx="470" cy="250" r="12" fill="#2f7d6f"/><text x="488" y="257" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">車站</text><circle cx="200" cy="280" r="12" fill="#2f7d6f"/><text x="218" y="287" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">公園</text><circle cx="600" cy="90" r="42" fill="none" stroke="#c46a2f" stroke-width="2"/><line x1="600" y1="90" x2="622" y2="64" stroke="#c46a2f" stroke-width="5"/><polygon points="622,64 613,77 633,73" fill="#c46a2f"/><text x="630" y="56" text-anchor="start" font-size="22" fill="#c46a2f" font-weight="bold">北</text><line x1="430" y1="308" x2="570" y2="308" stroke="currentColor" stroke-width="4"/><line x1="430" y1="300" x2="430" y2="316" stroke="currentColor" stroke-width="4"/><line x1="500" y1="300" x2="500" y2="316" stroke="currentColor" stroke-width="4"/><line x1="570" y1="300" x2="570" y2="316" stroke="currentColor" stroke-width="4"/><text x="430" y="292" text-anchor="start" font-size="18" fill="currentColor" font-weight="normal">0</text><text x="570" y="292" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">400 公尺</text><rect x="680" y="150" width="200" height="150" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/><text x="694" y="178" text-anchor="start" font-size="20" fill="currentColor" font-weight="bold">圖例</text><circle cx="706" cy="210" r="10" fill="#2f7d6f"/><text x="726" y="217" text-anchor="start" font-size="18" fill="currentColor" font-weight="normal">重要地標</text><line x1="694" y1="248" x2="720" y2="248" stroke="currentColor" stroke-opacity="0.5" stroke-width="8"/><text x="730" y="255" text-anchor="start" font-size="18" fill="currentColor" font-weight="normal">道路</text></svg>
+        <div class="caption"><div class="body">崑山社區周邊圖</div></div>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">高度在 100 公尺以下、整片低平，就是平原。</div></div>
-  </div>
+      <div class="quiz" data-quiz data-mode="single" style="grid-area:1/2/3/3">
+        <p class="q-stem">圖上那幾條粗灰色的線，代表什麼？（提示：查右邊的圖例）</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct="true">道路</button>
+          <button class="q-opt">河川</button>
+          <button class="q-opt">縣市界線</button>
+          <button class="q-opt">等高線</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer style="grid-area:2/1;margin-top:0">
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">看不懂符號就查<b>圖例</b>——圖例就是這張地圖的說明書</span>
+      </div>
+      </div>
+    </section>
 
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">4.（1-2）剖面圖上畫的 1000 公尺虛線，是用來分開哪兩種地形？</p>
-      <div class="q-options">
+    <section class="slide" data-slide-id="basic-2" aria-labelledby="basic-2-t" hidden>
+      <div class="page-head"><span class="label">基礎題 2 / 4</span><h2 id="basic-2-t" class="title">兩條分界線在分什麼</h2></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">地形剖面圖上畫了 100 公尺和 1000 公尺兩條虛線。1000 公尺這條線是用來分哪兩種地形？</p>
+        <div class="q-options">
           <button class="q-opt" data-correct="true">丘陵和山地</button>
           <button class="q-opt">平原和台地</button>
+          <button class="q-opt">盆地和平原</button>
           <button class="q-opt">台地和丘陵</button>
-          <button class="q-opt">盆地和山地</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">100 公尺分平原和台地，1000 公尺分丘陵和山地。</div></div>
-  </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">記兩個數字：<b>100</b> 分平原和台地、<b>1000</b> 分丘陵和山地</span>
+      </div>
+      </div>
+    </section>
 
-  <div class="q-block">
-    <div class="figure-block" style="display:block"><svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="甲地氣溫雨量圖，長條為雨量、折線為氣溫" style="width:100%;height:auto"><line x1="90" y1="300" x2="830" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="307.0" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">0</text><line x1="90" y1="217" x2="830" y2="217" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="223.66666666666669" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">150</text><line x1="90" y1="133" x2="830" y2="133" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="140.33333333333334" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">300</text><line x1="90" y1="50" x2="830" y2="50" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="57.0" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">450</text><text x="842" y="307.0" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">10</text><text x="842" y="207.0" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">20</text><text x="842" y="107.0" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">30</text><rect x="102" y="288" width="37" height="12" fill="#2f7d6f" fill-opacity="0.75"/><rect x="164" y="283" width="37" height="17" fill="#2f7d6f" fill-opacity="0.75"/><rect x="226" y="275" width="37" height="25" fill="#2f7d6f" fill-opacity="0.75"/><rect x="287" y="250" width="37" height="50" fill="#2f7d6f" fill-opacity="0.75"/><rect x="349" y="189" width="37" height="111" fill="#2f7d6f" fill-opacity="0.75"/><rect x="411" y="106" width="37" height="194" fill="#2f7d6f" fill-opacity="0.75"/><rect x="472" y="117" width="37" height="183" fill="#2f7d6f" fill-opacity="0.75"/><rect x="534" y="67" width="37" height="233" fill="#2f7d6f" fill-opacity="0.75"/><rect x="596" y="178" width="37" height="122" fill="#2f7d6f" fill-opacity="0.75"/><rect x="657" y="283" width="37" height="17" fill="#2f7d6f" fill-opacity="0.75"/><rect x="719" y="290" width="37" height="10" fill="#2f7d6f" fill-opacity="0.75"/><rect x="781" y="292" width="37" height="8" fill="#2f7d6f" fill-opacity="0.75"/><polyline points="121,220 182,210 244,180 306,150 367,130 429,110 491,100 552,110 614,120 676,150 738,180 799,210" fill="none" stroke="#c46a2f" stroke-width="4"/><circle cx="121" cy="220" r="5" fill="#c46a2f"/><circle cx="182" cy="210" r="5" fill="#c46a2f"/><circle cx="244" cy="180" r="5" fill="#c46a2f"/><circle cx="306" cy="150" r="5" fill="#c46a2f"/><circle cx="367" cy="130" r="5" fill="#c46a2f"/><circle cx="429" cy="110" r="5" fill="#c46a2f"/><circle cx="491" cy="100" r="5" fill="#c46a2f"/><circle cx="552" cy="110" r="5" fill="#c46a2f"/><circle cx="614" cy="120" r="5" fill="#c46a2f"/><circle cx="676" cy="150" r="5" fill="#c46a2f"/><circle cx="738" cy="180" r="5" fill="#c46a2f"/><circle cx="799" cy="210" r="5" fill="#c46a2f"/><line x1="90" y1="300" x2="830" y2="300" stroke="currentColor" stroke-width="3"/><text x="120.83333333333333" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">1</text><text x="182.5" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">2</text><text x="244.16666666666666" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">3</text><text x="305.8333333333333" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">4</text><text x="367.49999999999994" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">5</text><text x="429.16666666666663" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">6</text><text x="490.8333333333333" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">7</text><text x="552.5" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">8</text><text x="614.1666666666666" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">9</text><text x="675.8333333333334" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">10</text><text x="737.5" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">11</text><text x="799.1666666666666" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">12</text><text x="80" y="36" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">雨量（毫米）</text><text x="890" y="36" text-anchor="end" font-size="18" fill="#c46a2f" font-weight="normal">氣溫（℃）</text><text x="90" y="24" text-anchor="start" font-size="20" fill="currentColor" font-weight="bold">甲地氣溫雨量圖</text><text x="90" y="352" text-anchor="start" font-size="18" fill="currentColor" font-weight="normal">月份</text></svg><div class="caption"><div class="body">甲地氣溫雨量圖</div></div></div>
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">5.（1-3）看上面的氣溫雨量圖，甲地雨量最多的是哪一個月？</p>
-      <div class="q-options">
+    <section class="slide" data-slide-id="basic-3" aria-labelledby="basic-3-t" hidden>
+      <div class="page-head"><span class="label">基礎題 3 / 4</span><h2 id="basic-3-t" class="title">左邊那條軸是配給誰的</h2></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">氣溫雨量圖左邊的縱軸標著「毫米」，這一邊的刻度是配給誰看的？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct="true">長條</button>
+          <button class="q-opt">折線</button>
+          <button class="q-opt">橫軸的月份</button>
+          <button class="q-opt">圖的標題</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">毫米是雨量的單位，所以左軸配<b>長條</b>；折線要看右邊的 ℃ 軸</span>
+      </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="basic-4" aria-labelledby="basic-4-t" hidden>
+      <div class="page-head"><span class="label">基礎題 4 / 4</span><h2 id="basic-4-t" class="title">正廳兩側那兩排是什麼</h2></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
+      <div class="quiz" data-quiz data-mode="single">
+        <p class="q-stem">三合院平面圖上，正廳兩側那兩排房子叫什麼？做什麼用？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct="true">護龍，住人的地方</button>
+          <button class="q-opt">正廳，供奉祖先</button>
+          <button class="q-opt">稻埕，曬穀空地</button>
+          <button class="q-opt">圍牆，擋風用</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer>
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">正廳在中軸、<b>護龍在兩側住人</b>、稻埕是中間的空地——平面圖上三個位置一眼分開</span>
+      </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="adv-1" aria-labelledby="adv-1-t" hidden>
+      <div class="page-head"><span class="label">進階題 1 / 4</span><h2 id="adv-1-t" class="title">算算看：換一個長度</h2></div>
+      <div style="display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:auto 1fr;gap:var(--s3);align-items:start;">
+      <div class="figure-block" style="display:block;grid-area:1/1">
+        <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="比例尺尺標與圖上兩點距離示意" style="width:100%;height:auto;max-height:270px"><text x="40" y="40" text-anchor="start" font-size="22" fill="currentColor" font-weight="bold">比例尺尺標</text><line x1="60" y1="80" x2="480" y2="80" stroke="currentColor" stroke-width="6"/><line x1="60" y1="66" x2="60" y2="94" stroke="currentColor" stroke-width="6"/><text x="60" y="122" text-anchor="middle" font-size="20" fill="currentColor" font-weight="normal">0</text><line x1="200" y1="66" x2="200" y2="94" stroke="currentColor" stroke-width="6"/><text x="200" y="122" text-anchor="middle" font-size="20" fill="currentColor" font-weight="normal">300</text><line x1="340" y1="66" x2="340" y2="94" stroke="currentColor" stroke-width="6"/><text x="340" y="122" text-anchor="middle" font-size="20" fill="currentColor" font-weight="normal">600</text><line x1="480" y1="66" x2="480" y2="94" stroke="currentColor" stroke-width="6"/><text x="480" y="122" text-anchor="middle" font-size="20" fill="currentColor" font-weight="normal">900</text><text x="500" y="88" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">公尺</text><text x="60" y="160" text-anchor="start" font-size="18" fill="currentColor" font-weight="normal">（尺標上每 1 段＝圖上 1 公分＝實際 300 公尺）</text><line x1="60" y1="250" x2="620" y2="250" stroke="currentColor" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="8 8"/><circle cx="60" cy="250" r="12" fill="#2f7d6f"/><text x="60" y="292" text-anchor="middle" font-size="20" fill="currentColor" font-weight="normal">學校</text><circle cx="620" cy="250" r="12" fill="#2f7d6f"/><text x="620" y="292" text-anchor="middle" font-size="20" fill="currentColor" font-weight="normal">圖書館</text><text x="340" y="228" text-anchor="middle" font-size="22" fill="#c46a2f" font-weight="bold">圖上量得 4 公分</text></svg>
+        <div class="caption"><div class="body">尺標：圖上 1 公分＝實際 300 公尺</div></div>
+      </div>
+      <div class="quiz" data-quiz data-mode="single" style="grid-area:1/2/3/3">
+        <p class="q-stem">另外兩個地方在同一張圖上量得 6 公分，實際距離是多少？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct="true">1800 公尺</button>
+          <button class="q-opt">50 公尺</button>
+          <button class="q-opt">600 公尺</button>
+          <button class="q-opt">306 公尺</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer style="grid-area:2/1;margin-top:0">
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">6 × 300 ＝ <b>1800 公尺</b>，也就是 1.8 公里</span>
+      </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="adv-2" aria-labelledby="adv-2-t" hidden>
+      <div class="page-head"><span class="label">進階題 2 / 4</span><h2 id="adv-2-t" class="title">看剖面圖：丙是哪一種地形</h2></div>
+      <div style="display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:auto 1fr;gap:var(--s3);align-items:start;">
+      <div class="figure-block" style="display:block;grid-area:1/1">
+        <svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="地形剖面圖，標出甲乙丙丁戊五個位置與 100、1000 公尺分界線" style="width:100%;height:auto;max-height:270px"><line x1="160" y1="283" x2="860" y2="283" stroke="#c46a2f" stroke-width="2" stroke-dasharray="6 6"/><text x="152" y="276.6666666666667" text-anchor="end" font-size="18" fill="#c46a2f" font-weight="normal">100 公尺</text><line x1="160" y1="127" x2="860" y2="127" stroke="#c46a2f" stroke-width="2" stroke-dasharray="6 6"/><text x="152" y="120.66666666666669" text-anchor="end" font-size="18" fill="#c46a2f" font-weight="normal">1000 公尺</text><path d="M 160 300 L 250 293 L 310 290 L 350 262 L 410 258 L 455 257 L 520 290 L 600 213 L 660 144 L 720 83 L 800 57 L 860 66" fill="none" stroke="currentColor" stroke-width="4"/><path d="M 160 300 L 250 293 L 310 290 L 350 262 L 410 258 L 455 257 L 520 290 L 600 213 L 660 144 L 720 83 L 800 57 L 860 66 L 860 300 L 160 300 Z" fill="#2f7d6f" fill-opacity="0.12"/><line x1="160" y1="300" x2="860" y2="300" stroke="currentColor" stroke-width="3"/><line x1="210" y1="300" x2="210" y2="312" stroke="currentColor" stroke-width="3"/><text x="210" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">甲</text><line x1="380" y1="300" x2="380" y2="312" stroke="currentColor" stroke-width="3"/><text x="380" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">乙</text><line x1="640" y1="300" x2="640" y2="312" stroke="currentColor" stroke-width="3"/><text x="640" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">丙</text><line x1="810" y1="300" x2="810" y2="312" stroke="currentColor" stroke-width="3"/><text x="810" y="336" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">丁</text><text x="40" y="24" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">地形剖面圖（縱軸＝高度）</text></svg>
+        <div class="caption"><div class="body">地形剖面圖（縱軸＝高度）</div></div>
+      </div>
+      <div class="quiz" data-quiz data-mode="single" style="grid-area:1/2/3/3">
+        <p class="q-stem">丙的高度大約 800 公尺，坡度平緩、頂部圓圓的。丙是哪一種地形？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct="true">丘陵</button>
+          <button class="q-opt">山地</button>
+          <button class="q-opt">台地</button>
+          <button class="q-opt">平原</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer style="grid-area:2/1;margin-top:0">
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">800 公尺在 100～1000 之間，<b>還沒到山地</b>；頂部圓緩就是丘陵</span>
+      </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="adv-3" aria-labelledby="adv-3-t" hidden>
+      <div class="page-head"><span class="label">進階題 3 / 4</span><h2 id="adv-3-t" class="title">看圖找出雨最多的月份</h2></div>
+      <div style="display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:auto 1fr;gap:var(--s3);align-items:start;">
+      <div class="figure-block" style="display:block;grid-area:1/1">
+        <svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="甲地氣溫雨量圖，長條為雨量、折線為氣溫" style="width:100%;height:auto;max-height:270px"><line x1="90" y1="300" x2="830" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="307.0" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">0</text><line x1="90" y1="217" x2="830" y2="217" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="223.66666666666669" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">150</text><line x1="90" y1="133" x2="830" y2="133" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="140.33333333333334" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">300</text><line x1="90" y1="50" x2="830" y2="50" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="80" y="57.0" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">450</text><text x="842" y="307.0" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">10</text><text x="842" y="207.0" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">20</text><text x="842" y="107.0" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">30</text><rect x="102" y="288" width="37" height="12" fill="#2f7d6f" fill-opacity="0.75"/><rect x="164" y="283" width="37" height="17" fill="#2f7d6f" fill-opacity="0.75"/><rect x="226" y="275" width="37" height="25" fill="#2f7d6f" fill-opacity="0.75"/><rect x="287" y="250" width="37" height="50" fill="#2f7d6f" fill-opacity="0.75"/><rect x="349" y="189" width="37" height="111" fill="#2f7d6f" fill-opacity="0.75"/><rect x="411" y="106" width="37" height="194" fill="#2f7d6f" fill-opacity="0.75"/><rect x="472" y="117" width="37" height="183" fill="#2f7d6f" fill-opacity="0.75"/><rect x="534" y="67" width="37" height="233" fill="#2f7d6f" fill-opacity="0.75"/><rect x="596" y="178" width="37" height="122" fill="#2f7d6f" fill-opacity="0.75"/><rect x="657" y="283" width="37" height="17" fill="#2f7d6f" fill-opacity="0.75"/><rect x="719" y="290" width="37" height="10" fill="#2f7d6f" fill-opacity="0.75"/><rect x="781" y="292" width="37" height="8" fill="#2f7d6f" fill-opacity="0.75"/><polyline points="121,220 182,210 244,180 306,150 367,130 429,110 491,100 552,110 614,120 676,150 738,180 799,210" fill="none" stroke="#c46a2f" stroke-width="4"/><circle cx="121" cy="220" r="5" fill="#c46a2f"/><circle cx="182" cy="210" r="5" fill="#c46a2f"/><circle cx="244" cy="180" r="5" fill="#c46a2f"/><circle cx="306" cy="150" r="5" fill="#c46a2f"/><circle cx="367" cy="130" r="5" fill="#c46a2f"/><circle cx="429" cy="110" r="5" fill="#c46a2f"/><circle cx="491" cy="100" r="5" fill="#c46a2f"/><circle cx="552" cy="110" r="5" fill="#c46a2f"/><circle cx="614" cy="120" r="5" fill="#c46a2f"/><circle cx="676" cy="150" r="5" fill="#c46a2f"/><circle cx="738" cy="180" r="5" fill="#c46a2f"/><circle cx="799" cy="210" r="5" fill="#c46a2f"/><line x1="90" y1="300" x2="830" y2="300" stroke="currentColor" stroke-width="3"/><text x="120.83333333333333" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">1</text><text x="182.5" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">2</text><text x="244.16666666666666" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">3</text><text x="305.8333333333333" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">4</text><text x="367.49999999999994" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">5</text><text x="429.16666666666663" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">6</text><text x="490.8333333333333" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">7</text><text x="552.5" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">8</text><text x="614.1666666666666" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">9</text><text x="675.8333333333334" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">10</text><text x="737.5" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">11</text><text x="799.1666666666666" y="326" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">12</text><text x="80" y="36" text-anchor="end" font-size="18" fill="currentColor" font-weight="normal">雨量（毫米）</text><text x="890" y="36" text-anchor="end" font-size="18" fill="#c46a2f" font-weight="normal">氣溫（℃）</text><text x="90" y="24" text-anchor="start" font-size="20" fill="currentColor" font-weight="bold">甲地氣溫雨量圖</text><text x="90" y="352" text-anchor="start" font-size="18" fill="currentColor" font-weight="normal">月份</text></svg>
+        <div class="caption"><div class="body">甲地氣溫雨量圖</div></div>
+      </div>
+      <div class="quiz" data-quiz data-mode="single" style="grid-area:1/2/3/3">
+        <p class="q-stem">甲地雨量最多的是哪一個月？</p>
+        <div class="q-options">
           <button class="q-opt" data-correct="true">8 月</button>
           <button class="q-opt">6 月</button>
-          <button class="q-opt">1 月</button>
-          <button class="q-opt">11 月</button>
+          <button class="q-opt">7 月</button>
+          <button class="q-opt">12 月</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">雨量看長條、配左邊的縱軸。最高的長條落在 8 月，約 420 毫米。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">6.（1-3）氣溫雨量圖上，一根一根的長條和那條折線，分別在量什麼？</p>
-      <div class="q-options">
-          <button class="q-opt" data-correct="true">長條量雨量、折線量氣溫</button>
-          <button class="q-opt">長條量氣溫、折線量雨量</button>
-          <button class="q-opt">兩個都在量氣溫</button>
-          <button class="q-opt">兩個都在量雨量</button>
+      <div class="takeaway-band" data-reveal data-after-answer style="grid-area:2/1;margin-top:0">
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">看<b>最高的長條</b>：8 月約 420 毫米，比 6、7 月都高</span>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">長條配左軸（毫米，雨量），折線配右軸（℃，氣溫）。認錯軸是最常見的失分。</div></div>
-  </div>
-
-  <div class="q-block">
-    <div class="figure-block" style="display:block"><svg viewBox="0 0 900 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="三合院平面圖，標出正廳、稻埕與甲乙兩側護龍" style="width:100%;height:auto"><rect x="250" y="60" width="400" height="90" fill="#2f7d6f" fill-opacity="0.18" stroke="currentColor" stroke-width="3"/><text x="450" y="112" text-anchor="middle" font-size="24" fill="currentColor" font-weight="bold">正廳</text><rect x="160" y="150" width="90" height="180" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="3"/><text x="205" y="250" text-anchor="middle" font-size="24" fill="currentColor" font-weight="bold">甲</text><rect x="650" y="150" width="90" height="180" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="3"/><text x="695" y="250" text-anchor="middle" font-size="24" fill="currentColor" font-weight="bold">乙</text><rect x="250" y="150" width="400" height="180" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="2" stroke-dasharray="8 8"/><text x="450" y="250" text-anchor="middle" font-size="22" fill="currentColor" font-weight="normal">稻埕</text><polygon points="450,352 438,376 462,376" fill="#c46a2f"/><text x="450" y="398" text-anchor="middle" font-size="18" fill="#c46a2f" font-weight="normal">從正廳往外看的方向</text><text x="160" y="44" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">三合院平面圖（上方為正廳）</text></svg><div class="caption"><div class="body">三合院平面圖（上方為正廳）</div></div></div>
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">7.（2-1）看上面的三合院平面圖，站在正廳前面朝外看，乙是哪一邊的護龍？</p>
-      <div class="q-options">
-          <button class="q-opt" data-correct="true">左護龍</button>
-          <button class="q-opt">右護龍</button>
-          <button class="q-opt">正廳的一部分</button>
-          <button class="q-opt">稻埕的一部分</button>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
-    </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">從正廳往外看，方向轉過來以後，看圖時右邊的乙才是左護龍。左護龍以左為尊，通常給長輩住。</div></div>
-  </div>
+    </section>
 
-  <div class="q-block">
-    <div class="figure-block" style="display:block"><svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="淨灘垃圾種類長條圖，前四項皆為塑膠製品" style="width:100%;height:auto"><line x1="200" y1="50" x2="200" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="200.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">0%</text><line x1="360" y1="50" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="360.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">10%</text><line x1="520" y1="50" x2="520" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="520.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">20%</text><line x1="680" y1="50" x2="680" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="680.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">30%</text><line x1="840" y1="50" x2="840" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="840.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">40%</text><rect x="200" y="58" width="608" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="76.51666666666667" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">寶特瓶</text><text x="818.0" y="76.51666666666667" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">38%</text><rect x="200" y="100" width="352" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="118.18333333333332" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">塑膠袋</text><text x="562.0" y="118.18333333333332" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">22%</text><rect x="200" y="141" width="272" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="159.84999999999997" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">免洗餐具</text><text x="482.0" y="159.84999999999997" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">17%</text><rect x="200" y="183" width="224" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="201.51666666666665" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">吸管</text><text x="434.0" y="201.51666666666665" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">14%</text><rect x="200" y="225" width="80" height="26" fill="currentColor" fill-opacity="0.75"/><text x="188" y="243.1833333333333" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">玻璃瓶</text><text x="290.0" y="243.1833333333333" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">5%</text><rect x="200" y="266" width="64" height="26" fill="currentColor" fill-opacity="0.75"/><text x="188" y="284.85" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">金屬罐</text><text x="274.0" y="284.85" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">4%</text><line x1="200" y1="50" x2="200" y2="300" stroke="currentColor" stroke-width="3"/><text x="60" y="30" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">某次淨灘撿到的垃圾種類（佔全部件數的百分比）</text></svg><div class="caption"><div class="body">某次淨灘撿到的垃圾種類</div></div></div>
-    <div class="quiz" data-quiz data-mode="single">
-      <p class="q-stem">8.（2-2）看上面的長條圖，這次淨灘撿到最多的是哪一種垃圾？</p>
-      <div class="q-options">
-          <button class="q-opt" data-correct="true">寶特瓶</button>
-          <button class="q-opt">塑膠袋</button>
-          <button class="q-opt">玻璃瓶</button>
-          <button class="q-opt">金屬罐</button>
+    <section class="slide" data-slide-id="adv-4" aria-labelledby="adv-4-t" hidden>
+      <div class="page-head"><span class="label">進階題 4 / 4</span><h2 id="adv-4-t" class="title">把前四名加起來</h2></div>
+      <div style="display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:auto 1fr;gap:var(--s3);align-items:start;">
+      <div class="figure-block" style="display:block;grid-area:1/1">
+        <svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="淨灘垃圾種類長條圖，前四項皆為塑膠製品" style="width:100%;height:auto;max-height:270px"><line x1="200" y1="50" x2="200" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="200.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">0%</text><line x1="360" y1="50" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="360.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">10%</text><line x1="520" y1="50" x2="520" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="520.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">20%</text><line x1="680" y1="50" x2="680" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="680.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">30%</text><line x1="840" y1="50" x2="840" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><text x="840.0" y="328" text-anchor="middle" font-size="18" fill="currentColor" font-weight="normal">40%</text><rect x="200" y="58" width="608" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="76.51666666666667" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">寶特瓶</text><text x="818.0" y="76.51666666666667" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">38%</text><rect x="200" y="100" width="352" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="118.18333333333332" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">塑膠袋</text><text x="562.0" y="118.18333333333332" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">22%</text><rect x="200" y="141" width="272" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="159.84999999999997" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">免洗餐具</text><text x="482.0" y="159.84999999999997" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">17%</text><rect x="200" y="183" width="224" height="26" fill="#2f7d6f" fill-opacity="0.75"/><text x="188" y="201.51666666666665" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">吸管</text><text x="434.0" y="201.51666666666665" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">14%</text><rect x="200" y="225" width="80" height="26" fill="currentColor" fill-opacity="0.75"/><text x="188" y="243.1833333333333" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">玻璃瓶</text><text x="290.0" y="243.1833333333333" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">5%</text><rect x="200" y="266" width="64" height="26" fill="currentColor" fill-opacity="0.75"/><text x="188" y="284.85" text-anchor="end" font-size="19" fill="currentColor" font-weight="normal">金屬罐</text><text x="274.0" y="284.85" text-anchor="start" font-size="18" fill="#c46a2f" font-weight="normal">4%</text><line x1="200" y1="50" x2="200" y2="300" stroke="currentColor" stroke-width="3"/><text x="60" y="30" text-anchor="start" font-size="20" fill="currentColor" font-weight="normal">某次淨灘撿到的垃圾種類（佔全部件數的百分比）</text></svg>
+        <div class="caption"><div class="body">某次淨灘撿到的垃圾種類</div></div>
       </div>
-      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-      <div class="ans-feedback"></div>
+      <div class="quiz" data-quiz data-mode="single" style="grid-area:1/2/3/3">
+        <p class="q-stem">把前四名（寶特瓶、塑膠袋、免洗餐具、吸管）加起來，大約佔全部的多少？</p>
+        <div class="q-options">
+          <button class="q-opt" data-correct="true">九成</button>
+          <button class="q-opt">一半</button>
+          <button class="q-opt">三成</button>
+          <button class="q-opt">全部</button>
+        </div>
+        <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+        <div class="ans-feedback"></div>
+      </div>
+      <div class="takeaway-band" data-reveal data-after-answer style="grid-area:2/1;margin-top:0">
+        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+        <span class="text">38＋22＋17＋14 ＝ <b>91%</b>，而且四項全是塑膠製品</span>
+      </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="chal-1" aria-labelledby="chal-1-t" hidden>
+      <div class="page-head"><span class="label">挑戰題 1 / 3</span><h2 id="chal-1-t" class="title">用圖說明甲地的氣候特色</h2></div>
+      <div class="task-card" data-reveal>
+        <div class="mission">看甲地的氣溫雨量圖，寫出這個地方的氣候特色</div>
+        <div class="facts">
+          <div class="fact"><span class="k">要求</span>氣溫和雨量各寫一句，句子裡要出現圖上的月份或數字</div>
+          <div class="fact"><span class="k">加分</span>再寫一句「住在這裡的人生活上要注意什麼」</div>
+          <div class="fact"><span class="k">紀錄</span>寫在 <b>2c.差異化教材_挑戰題精熟</b></div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-pencil"></use></svg></span>
+        <span class="text">說明題要引用圖上的<b>證據</b>——寫出月份和數字，分數才拿得到</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="chal-2" aria-labelledby="chal-2-t" hidden>
+      <div class="page-head"><span class="label">挑戰題 2 / 3</span><h2 id="chal-2-t" class="title">從長條圖推出兩個做法</h2></div>
+      <div class="task-card" data-reveal>
+        <div class="mission">根據淨灘垃圾圖，提出兩個「比回收更有效」的做法並說明理由</div>
+        <div class="facts">
+          <div class="fact"><span class="k">要求</span>每個做法都要說出「為什麼這樣做垃圾會變少」</div>
+          <div class="fact"><span class="k">提示</span>前四名都是一次性的塑膠用品，想想能用什麼取代</div>
+          <div class="fact"><span class="k">紀錄</span>寫在 <b>2c.差異化教材_挑戰題精熟</b></div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-pencil"></use></svg></span>
+        <span class="text">3R 的順序是<b>減量 → 重複使用 → 回收</b>，回收是最後一步</span>
+      </div>
+    </section>
+
+    <section class="slide" data-slide-id="chal-3" aria-labelledby="chal-3-t" hidden>
+      <div class="page-head"><span class="label">挑戰題 3 / 3</span><h2 id="chal-3-t" class="title">紙本任務：畫一張自己的地圖</h2></div>
+      <div class="task-card" data-reveal>
+        <div class="mission">畫一張「從學校到你家」的簡圖，四要素一個都不能少</div>
+        <div class="facts">
+          <div class="fact"><span class="k">要求</span>圖名、方向標、比例尺、圖例四樣齊全，並標出兩個地標</div>
+          <div class="fact"><span class="k">加分</span>用你的比例尺算出學校到你家大約幾公尺</div>
+          <div class="fact"><span class="k">紀錄</span>畫在 <b>2c.差異化教材_挑戰題精熟</b> 最後一頁</div>
+        </div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-pencil"></use></svg></span>
+        <span class="text">畫得出來，代表你真的知道四要素在做什麼</span>
+      </div>
+    </section>
+
+    <div class="hud">
+      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span> <span data-reveal-meta></span></p>
+      <span class="spacer"></span>
+      <button class="ds-btn" data-action="previous">← 上一步</button>
+      <button class="ds-btn" data-action="next">下一步 →</button>
+      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
+      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
     </div>
-    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">最長的那一條是寶特瓶（38%）。橫條圖看「哪一條最長」，再對照下面的百分比刻度。</div></div>
+    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
   </div>
-
-  <footer class="page-foot">社會四上 · 第一～二單元 · 期中總複習第 2 輪 · 起始評估（診斷用，不計分）</footer>
-
 </main>
 
 <script>
 (() => {
-  document.querySelectorAll('.q-block').forEach((block) => {
-    block.addEventListener('tds:answered', () => {
-      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
+  const STAGE_W = 1600, STAGE_H = 900;
+  const stage = document.querySelector('#stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const current = document.querySelector('[data-current]');
+  const total = document.querySelector('[data-total]');
+  const progress = document.querySelector('[data-progress]');
+  let index = 0;
+  if (!stage || !slides.length) return;
+
+  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
+
+  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
+     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
+     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
+  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
+  const revealNext = (slide) => {
+    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
+    if (!next) return false;
+    next.classList.add('is-shown');
+    return true;
+  };
+  const revealPrev = (slide) => {
+    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
+    if (!shown.length) return false;
+    shown[shown.length - 1].classList.remove('is-shown');
+    return true;
+  };
+  const setReveal = (slide, all) => {
+    slide.querySelectorAll('[data-reveal]').forEach((el) => {
+      // 答案帶即使回看也不自動亮，維持「答過才看得到」
+      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
+      else el.classList.remove('is-shown');
     });
+  };
+  const updateMeta = () => {
+    const slide = slides[index];
+    const all = steps(slide);
+    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
+    if (current) current.textContent = String(index + 1);
+    if (total) total.textContent = String(slides.length);
+    const meta = document.querySelector('[data-reveal-meta]');
+    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
+    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+  };
+
+  const render = (next, updateHash = true, fromBack = false) => {
+    index = clamp(next);
+    slides.forEach((s, i) => {
+      const active = i === index;
+      s.classList.toggle('is-active', active);
+      s.hidden = !active;
+      s.setAttribute('aria-hidden', String(!active));
+    });
+    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
+    setReveal(slides[index], fromBack);
+    updateMeta();
+    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
+  };
+
+  const advance = () => {
+    if (revealNext(slides[index])) { updateMeta(); return; }
+    render(index + 1);
+  };
+  const back = () => {
+    if (revealPrev(slides[index])) { updateMeta(); return; }
+    render(index - 1, true, true);
+  };
+
+  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
+  document.addEventListener('click', (e) => {
+    const t = e.target && e.target.closest
+      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
+      : null;
+    if (!t) return;
+    const sl = t.closest('.slide');
+    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
   });
+  // 答對／答錯後才放出含答案的判斷帶
+  document.addEventListener('tds:answered', (e) => {
+    const slide = e.target.closest('.slide');
+    if (!slide) return;
+    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
+  });
+
+  const slideFromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const found = slides.findIndex((s) => s.dataset.slideId === id);
+    return found >= 0 ? found : 0;
+  };
+
+  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
+  addEventListener('keydown', (e) => {
+    if (isInteractive(e.target)) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
+    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
+    else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1, true, true); }
+  });
+
+  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
+  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
+  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
+    setReveal(slides[index], true); updateMeta();
+  });
+  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) { console.warn('無法切換全螢幕', err); }
+  });
+
+  const resize = () => {
+    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  };
+  addEventListener('hashchange', () => render(slideFromHash(), false));
+  addEventListener('resize', resize);
+  resize();
+  render(slideFromHash(), false);
 })();
 </script>
+
 </body>
 </html>
