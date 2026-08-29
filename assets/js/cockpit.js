@@ -278,7 +278,17 @@
     const term = /期末|考前/.test(t) ? 2
       : /期中/.test(t) ? 1
       : (midtermEnd && date && date > midtermEnd) ? 2 : 1;
-    return `${abbr}R${term}`;
+    /* 輪次：複習週一科十幾節，教材一定分輪做（國R1-1、國R1-2…）。認得出第幾輪就掛那一輪，
+       認不出來才回傳基底代碼（會一次列出該 R 的所有輪次）。
+       規則與 scripts/classos/f21-relink-daily-plan.mjs 同源，改了要兩邊一起改：
+       國語寫「第N階段」＝第 N 輪；數／社的第一輪是習作驗收與訂正，之後才寫「…(N)」，所以要 +1。 */
+    const stage = /第(\d)階段/.exec(t);
+    const round = /[（(](\d)[）)]\s*$/.exec(t);
+    const part = stage ? Number(stage[1])
+      : round ? Number(round[1]) + 1
+      : /總驗收|習作訂正|總複習與習作/.test(t) ? 1
+      : 0;
+    return part ? `${abbr}R${term}-${part}` : `${abbr}R${term}`;
   };
 
   /* 兩張由進度表自己長出來的索引（換學年、挪課都不必改程式）：

@@ -141,7 +141,16 @@ days.forEach(d => {
     const now = d.rels[s];
     const nowCode = now.length === 1 ? (idToCode.get(now[0]) ?? "?") : now.length ? `${now.length} 筆` : "";
     if (!code) { stat.none++; if (now.length) report.push(`${d.date}\t${s}\t（無法解析，保留 ${nowCode}）`); continue; }
-    if (!hasCode(code)) { stat.noMaterial++; report.push(`${d.date}\t${s}\t${code} ⚠️ 教材未建（保留 ${nowCode || "空"}）`); continue; }
+    /* 教材還沒產出：把 relation 清掉，讓駕駛艙顯示「尚未建立 <代碼> 的教材」。
+       留著舊值會讓那一節指著別輪的教材（例：第 3 輪指著第 1 輪），畫面上看不出來是錯的。
+       教材一建好，重跑本腳本就會掛上。 */
+    if (!hasCode(code)) {
+      stat.noMaterial++;
+      if (!now.length) { report.push(`${d.date}\t${s}\t${code} ⚠️ 教材未建（本來就空）`); continue; }
+      props[`${s}單元`] = { relation: [] };
+      report.push(`${d.date}\t${s}\t${nowCode} → （清空）${code} ⚠️ 教材未建`);
+      continue;
+    }
     const target = byCode.get(code);
     if (now.length === 1 && now[0] === target) { stat.same++; continue; }
     props[`${s}單元`] = { relation: [{ id: target }] };
