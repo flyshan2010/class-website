@@ -1,5 +1,37 @@
 [
   {
+    "title": "數R2-2 期末總複習第2輪｜第 6～10 單元",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "L6 餘數的意義：餘數比除數小；問「裝得完」進位、問「最多」不進位",
+      "L7 全等看字母順序 A↔D B↔E C↔F；翻面旋轉仍全等",
+      "L8 運算順序三條規則；括號＝這一步先做完",
+      "L9 位值與小數點對齊；比大小從十分位比起",
+      "L10 看圖先看一格代表多少；格數差要乘回去"
+    ],
+    "date": "2026-12-21",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W17（12/21、12/23–12/24）3 節，第 2 輪（觀念統整與迷思澄清）。切法與第 1 輪區隔：第 1 輪練「算得出來」，本輪練「說得出為什麼」，每站都是觀念卡→錯誤示範（misconception）→馬上試試。數學計算與列式題保留（非申論題，屬定期評量必備題型）。實測：1600×900 投影三份最高 886px（teach 886／practice 775／review 702）無溢出；480 RWD 無橫向捲動；逐步揭露三項通過；54 題 quiz 正解判定逐題實測通過。撞題：依 U35 數學判準（同題型不同數字＝合法平行題本）比對數值，真撞 5 處已改紙本（頂角 40→50、餅乾 45 元→巧克力 38 元、8−3.45→9−4.28、一格 20 本→一格 30 本、全等題改情境敘述），現為 0 處。紙本：六合一×2（0.前測 20 分鐘 10 選 5 填 2 計算／4.評量 40 分鐘 15 選 5 填 2 計算）＋差異化三份（基礎 6／進階 6／挑戰 4），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-2-期末總複習第2輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-2-期末總複習第2輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-2-期末總複習第2輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-2-期末總複習第2輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-2-期末總複習第2輪/3.review.html"
+    }
+  },
+  {
     "title": "社R2-2 期末總複習第2輪｜單元三、四",
     "subject": "社會",
     "grade": "四上",
