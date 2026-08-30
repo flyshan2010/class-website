@@ -676,7 +676,13 @@
     const code = codeOf(l);
     let name = code ? (l.title || "").replace(CODE_RE, " ").replace(/\s+/g, " ").trim() : l.title;
     if (stripPrefix && name.startsWith(stripPrefix)) name = name.slice(stripPrefix.length).trim();
-    const meta = [l.grade, l.version, l.date ? `${App.fmtDateShort(l.date)} 開始` : ""]
+    // 上課日期（2026-08-30）：單一天就印一天，跨天印區間；
+    // 來源是 Notion「日期」欄（老師手填）或每日課程進度反推，同步端已決定好，這裡只負責顯示。
+    const dateText = !l.date ? ""
+      : (l.dateEnd && l.dateEnd !== l.date)
+        ? `${App.fmtDateShort(l.date)}–${App.fmtDateShort(l.dateEnd)} 上課`
+        : `${App.fmtDateShort(l.date)} 上課`;
+    const meta = [l.grade, l.version, dateText]
       .filter(Boolean).map(App.esc).join(" ・ ");
     return `
       <div class="card cockpit-card" style="--accent:${color}">

@@ -1,7 +1,11 @@
 (async () => {
   await App.init("announcements");
-  const all = await App.fetchJSON("data/announcements.json").catch(() => []);
+  const raw = await App.fetchJSON("data/announcements.json").catch(() => []);
   const today = App.todayISO();
+  // 預排公告（2026-08-30）：日期.start ＝ 上架日，還沒到就當作不存在。
+  // 同步端已經先過濾一次（未來公告根本不會寫進 JSON），這裡只是雙保險——
+  // 舊快取／手改過的 JSON 也不會讓家長提早看到。
+  const all = raw.filter(a => !a.date || a.date <= today);
 
   // 起迄日（2026-08-14）：expiry＝實際下架日（含當天），由同步端算好
   //   ─ Notion「日期」欄填成區間 → end 就是下架日

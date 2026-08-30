@@ -87,7 +87,13 @@ function applyYearPolicy(dsId, rows) {
   return kept;
 }
 
-async function queryDataSource(dsId) {
+const _dsCache = new Map();   // 同一次執行內同一個 DS 只查一次（教學單元／每日課程進度都被多處用到）
+function queryDataSource(dsId) {
+  if (!_dsCache.has(dsId)) _dsCache.set(dsId, queryDataSourceRaw(dsId));
+  return _dsCache.get(dsId);
+}
+
+async function queryDataSourceRaw(dsId) {
   const results = [];
   let cursor;
   do {
@@ -216,6 +222,10 @@ async function syncAnnouncements() {
     const date = r["日期"].start.slice(0, 10);
     const endDate = (r["日期"].end || "").slice(0, 10);
     const expiry = endDate || addDays(date, ANN_DEFAULT_DAYS);
+    // 預排（2026-08-30）：日期.start ＝ 上架日，**還沒到就整列不輸出**——
+    // announcements.json 是公開檔案，只在前端隱藏等於把未來公告先攤給家長看。
+    // 同步每天跑三次（07:00／16:00／20:00），到日當天早上自動上線。
+    if (date > today) continue;
     if (addDays(expiry, ANN_KEEP_DAYS) < today) continue;   // 過期太久，不再輸出
     rows.push({
       id: `n${String(r._id).replace(/-/g, "").slice(0, 10)}`,  // 首頁標題連結用的錨點
@@ -818,6 +828,35 @@ const PLAN_SUBJECTS = ["國語", "數學", "社會"];
 // 與 cockpit.js 同一條課次代碼正則，改了要兩邊一起改
 const PLAN_CODE_RE = /(?:^|\s)((?:國|數|社|自|英|健康|藝|綜)[A-Za-z]*\d+(?:-\d+)*[A-Za-z]?|SEL\d+(?:-\d+)*)(?=\s|$)/;
 
+// 單元 → 上課日期（2026-08-30）：從「📅 每日課程進度」的「◯◯單元」relation 反推，
+// 取該單元被排到的第一天與最後一天。老師在 Notion 拖進度日期，駕駛艙卡片的日期就跟著動，
+// 不必再手填第二處；真要手動指定就填「🚀 教學單元」的「日期」欄（優先於自動值）。
+let _unitDatesPromise;
+function unitDatesFromPlan() {
+  return (_unitDatesPromise ||= (async () => {
+    const codeById = new Map();
+    for (const u of (await queryDataSource(DS.lessons)).map(props)) {
+      const code = (PLAN_CODE_RE.exec(u["單元"] || "") || [])[1];
+      if (code) codeById.set(u._id, code);
+    }
+    const m = new Map();
+    for (const r of (await queryDataSource(DS.dailyPlan)).map(props)) {
+      const date = r["上課日"]?.start;
+      if (!date || r["放假"]) continue;
+      for (const s of PLAN_SUBJECTS) {
+        if (!String(r[`${s}進度`] || "").trim()) continue;
+        const code = codeById.get((r[`${s}單元`] || [])[0]);
+        if (!code) continue;
+        const cur = m.get(code);
+        if (!cur) m.set(code, { first: date, last: date });
+        else if (date < cur.first) cur.first = date;
+        else if (date > cur.last) cur.last = date;
+      }
+    }
+    return m;
+  })());
+}
+
 async function syncDailyPlan() {
   // 單元 pageId → 課次代碼（relation 只給 id，代碼要自己從標題解析）
   const codeById = new Map();
@@ -863,9 +902,12 @@ async function syncDailyPlan() {
 
 async function syncLessons() {
   const STATUS_ORDER = { "進行中": 0, "備課中": 1, "已完成": 2 };
+  const unitDates = await unitDatesFromPlan();
   const rows = (await queryDataSource(DS.lessons)).map(props)
     .filter(r => r["顯示"] && r["單元"])
-    .map(r => ({
+    .map(r => {
+      const auto = unitDates.get((PLAN_CODE_RE.exec(r["單元"] || "") || [])[1]) || null;
+      return {
       title: r["單元"],
       subject: r["科目"] || "其他",
       grade: r["年段"] || "",
@@ -874,7 +916,10 @@ async function syncLessons() {
       stages: r["已完成階段"] || [],
       // 內容重點在 Notion 是多行文字，一行一個重點；切成陣列給駕駛艙做條列
       points: String(r["內容重點"] || "").split("\n").map(s => s.trim()).filter(Boolean),
-      date: r["日期"]?.start || "",
+      // 上課日期：老師在「日期」欄手填者優先；沒填就用每日課程進度反推的首／末上課日。
+      date: r["日期"]?.start || auto?.first || "",
+      dateEnd: r["日期"]?.end || (auto && auto.last !== auto.first ? auto.last : ""),
+      dateAuto: !r["日期"]?.start && !!auto,
       note: r["備註"],
       links: {
         material: r["教材"],
@@ -884,7 +929,8 @@ async function syncLessons() {
         exam: r["評量"],
         review: r["複習"],
       },
-    }))
+      };
+    })
     .sort((a, b) => (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9) ||
                     String(b.date).localeCompare(String(a.date)));
   await save("lessons.json", rows);
