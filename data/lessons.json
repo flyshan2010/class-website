@@ -1,6 +1,6 @@
 [
   {
-    "title": "國R2-1 期末總複習第1輪｜L7～L12 字詞語詞",
+    "title": "國R2-1 期末總複習第1輪｜L7～L12",
     "subject": "國語",
     "grade": "四上",
     "version": "翰林",
@@ -225,7 +225,7 @@
     }
   },
   {
-    "title": "數R2-1 期末總複習第1輪｜第 6～10 單元",
+    "title": "數R2-1 期末總複習第1輪｜L6～L10",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -740,6 +740,38 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/3.review.html"
+    }
+  },
+  {
+    "title": "數L8-3b 連除與綜合練習",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "先除再除：84÷（28÷4），括號＝題目沒說的組數",
+      "同一題兩種併式：（224÷2）÷8 與 224÷（8×2）",
+      "先乘再除：（600×4）÷6，平分前先算總量",
+      "練習園地：判斷四式的先算部分（括號在前在後都有）",
+      "單元統整：四種題型一個規則——先算的那一段加括號"
+    ],
+    "date": "2026-11-25",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "第八單元 兩步驟問題與併式（課本126-127）；8-3 後半＋綜合練習，建議1.5節",
+    "links": {
+      "material": "https://drive.google.com/file/d/1Iock_pGH6444DphBbH7S1NzMlFYU4pif/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/3.review.html"
     }
   },
   {
@@ -1289,6 +1321,38 @@
     }
   },
   {
+    "title": "數L6-2b 除法｜估商與修正商",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "估商：把除數看成最接近的整十（18→20、29→30、48→50）",
+      "修正商：估太大就調小（31×3＝93＞92 改估 2）",
+      "估太小不必擦掉，可多次疊商",
+      "被除數取二位不夠除時改取三位（293÷48）",
+      "三、四位數除以二位數的情境問題與乘除互逆驗算"
+    ],
+    "date": "2026-11-11",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "課本 6-2 後半（建議 1.5 節，課本第3~4節）；教材 pp.90-92。本節為全單元最大難關。ECC 活動卡：編號8『時間到』改編為「估商快手」——兩人一組計時互出三位數÷二位數，10 秒內說出「除數看成幾」與「商估幾」。\n\n2026-08-21 紙本教材產出完成（18 檔，與網頁同資料夾）：差異化 2a／2b／2c 各 docx＋pdf（每份 5 題、A4 兩頁、標楷體，基礎題每題附鷹架小提示）、前測六合一 6 檔（選擇 6×10＋填充 3×10＋素養問答 1×10＝100，20 分鐘）、評量六合一 6 檔（選擇 7×8＋填充 4×8＋素養問答 1×12＝100，40 分鐘）。平行題本已程式驗證（教學簡報 _工具 內的 check-clash 檢查腳本）：全單元 25 份網頁共 223 個算式、紙本 177 個算式，撞題 0 處。選項分布：前測 ②③②④③②、評量 ②①②④③②③。逐檔 Drive 連結見頁面下方「檔案索引」。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/1k_MmdMQgc49aULb7ev_ykJEx0KpbuF7m/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/3.review.html"
+    }
+  },
+  {
     "title": "國L7-3 松鼠先生的麵包 第三節 形式深究",
     "subject": "國語",
     "grade": "四上",
@@ -1339,7 +1403,7 @@
       "商含 0 的情形（5002÷50＝100…2）"
     ],
     "date": "2026-11-10",
-    "dateEnd": "2026-11-11",
+    "dateEnd": "",
     "dateAuto": true,
     "note": "課本 6-2 前半（建議 1 節，課本第2節）；教材 pp.88-89。\n\n2026-08-21 紙本教材產出完成（18 檔，與網頁同資料夾）：差異化 2a／2b／2c 各 docx＋pdf（每份 5 題、A4 兩頁、標楷體，基礎題每題附鷹架小提示）、前測六合一 6 檔（選擇 6×10＋填充 3×10＋素養問答 1×10＝100，20 分鐘）、評量六合一 6 檔（選擇 7×8＋填充 4×8＋素養問答 1×12＝100，40 分鐘）。平行題本已程式驗證（教學簡報 _工具 內的 check-clash 檢查腳本）：全單元 25 份網頁共 223 個算式、紙本 177 個算式，撞題 0 處。選項分布：前測 ③①③④②②、評量 ③③①④②②④。逐檔 Drive 連結見頁面下方「檔案索引」。\n\n第五段成果回流待實際教學後登記。",
     "links": {
@@ -1514,7 +1578,7 @@
     }
   },
   {
-    "title": "數R1-4 期中總複習第4輪｜L1–L5",
+    "title": "數R1-4 期中總複習第4輪｜L1～L5",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -3351,70 +3415,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/3.review.html"
-    }
-  },
-  {
-    "title": "數L8-3b 連除與綜合練習",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "先除再除：84÷（28÷4），括號＝題目沒說的組數",
-      "同一題兩種併式：（224÷2）÷8 與 224÷（8×2）",
-      "先乘再除：（600×4）÷6，平分前先算總量",
-      "練習園地：判斷四式的先算部分（括號在前在後都有）",
-      "單元統整：四種題型一個規則——先算的那一段加括號"
-    ],
-    "date": "",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "第八單元 兩步驟問題與併式（課本126-127）；8-3 後半＋綜合練習，建議1.5節",
-    "links": {
-      "material": "https://drive.google.com/file/d/1Iock_pGH6444DphBbH7S1NzMlFYU4pif/view",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/3.review.html"
-    }
-  },
-  {
-    "title": "數L6-2b 除法｜估商與修正商",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "估商：把除數看成最接近的整十（18→20、29→30、48→50）",
-      "修正商：估太大就調小（31×3＝93＞92 改估 2）",
-      "估太小不必擦掉，可多次疊商",
-      "被除數取二位不夠除時改取三位（293÷48）",
-      "三、四位數除以二位數的情境問題與乘除互逆驗算"
-    ],
-    "date": "",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "課本 6-2 後半（建議 1.5 節，課本第3~4節）；教材 pp.90-92。本節為全單元最大難關。ECC 活動卡：編號8『時間到』改編為「估商快手」——兩人一組計時互出三位數÷二位數，10 秒內說出「除數看成幾」與「商估幾」。\n\n2026-08-21 紙本教材產出完成（18 檔，與網頁同資料夾）：差異化 2a／2b／2c 各 docx＋pdf（每份 5 題、A4 兩頁、標楷體，基礎題每題附鷹架小提示）、前測六合一 6 檔（選擇 6×10＋填充 3×10＋素養問答 1×10＝100，20 分鐘）、評量六合一 6 檔（選擇 7×8＋填充 4×8＋素養問答 1×12＝100，40 分鐘）。平行題本已程式驗證（教學簡報 _工具 內的 check-clash 檢查腳本）：全單元 25 份網頁共 223 個算式、紙本 177 個算式，撞題 0 處。選項分布：前測 ②③②④③②、評量 ②①②④③②③。逐檔 Drive 連結見頁面下方「檔案索引」。\n\n第五段成果回流待實際教學後登記。",
-    "links": {
-      "material": "https://drive.google.com/file/d/1k_MmdMQgc49aULb7ev_ykJEx0KpbuF7m/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-2b-估商與修正商/3.review.html"
     }
   }
 ]
