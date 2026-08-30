@@ -1,5 +1,35 @@
 [
   {
+    "title": "社R2-1 期末總複習第1輪｜單元三、四",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "因果串連：信仰或渡口聚人潮 → 做生意 → 前店後住 → 加蓋騎樓成街",
+      "街屋剖面：騎樓遮陽避雨、天井採光通風、窄而深的理由",
+      "老街三種結局：保存、改建轉型、整條消失（判準＝人潮還在不在）",
+      "歲時作息↔節慶：兩期稻作與飛魚三祭、農閒才有節慶",
+      "兩軸分類：看曆法（農/國）再看是誰訂的、為什麼訂"
+    ],
+    "date": "2026-12-14",
+    "note": "期末複習 W16（12/14–12/16）3 節，第 1 輪（單元三、四收尾複習與習作訂正）。切法為【因果串連＋習作訂正診斷】；網頁與紙本為平行題本，撞題檢查 0 處。實測：1600×900 全頁最高 850（與社R1-4 已上線值相同）；四寬度 RWD 無橫向捲動；逐步揭露三項通過（一次一件／整頁攤開不洩答案／作答後才出現）；字級全頁 ≥24px。教學頁含 AI 生圖「清代街屋剖面圖」（內嵌 base64，單檔離線可用）。紙本：六合一×2（0.前測 20 分鐘／4.評量 40 分鐘）＋差異化三份（基礎 8／進階 6／挑戰 4）＋3a.習作訂正檢核_逐生（本輪定位就是收資料），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-1-期末總複習第1輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-1-期末總複習第1輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-1-期末總複習第1輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-1-期末總複習第1輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-1-期末總複習第1輪/3.review.html"
+    }
+  },
+  {
     "title": "國R1-3 形式深究與語文應用｜L1～L6",
     "subject": "國語",
     "grade": "四上",
