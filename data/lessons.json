@@ -289,6 +289,39 @@
     }
   },
   {
+    "title": "數L10-3 報讀折線圖",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "折線圖四要素：標題・橫軸時刻（有順序）・縱軸刻度・點",
+      "點＝那一刻的數量；往上找點、往左讀刻度",
+      "方向：右斜上上升・右斜下下降・水平不變（不是沒資料）",
+      "越陡變化越大；要說差多少仍需讀值相減",
+      "中間值推估：3 歲半落在 96–103 之間（約 102）",
+      "長條圖看多少、折線圖看變化；折線圖項目不可調換順序"
+    ],
+    "date": "2026-12-09",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "含練習園地十與第十單元總整理（長條圖 vs 折線圖）。網頁五份已上線（均回 HTTP 200）；紙本差異化 3 份、前測與評量六合一已完成。待上課後做成果回流",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/3.review.html"
+    }
+  },
+  {
     "title": "國L11-3 美食島 第三節 形式深究",
     "subject": "國語",
     "grade": "四上",
@@ -389,6 +422,39 @@
     }
   },
   {
+    "title": "數L10-2 製作長條圖",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "畫圖四步驟：橫軸項目→縱軸刻度→畫長條→寫標題",
+      "刻度要放得下最大值；一小格＝一大格÷小格數",
+      "畫圖是「量→格」：20 個÷一小格5＝4 小格",
+      "橫軸項目沒有規定順序（折線圖才有）",
+      "省略符號 〰：數字大且接近時使用，位置要比最小值小",
+      "典型迷思：有省略符號時長條長度比≠數量比（廣告誤導）"
+    ],
+    "date": "2026-12-07",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "含省略符號與圖表誤導應用；紙本 2a、2b 已附方格底稿（附件33 替代）。網頁五份已上線（均回 HTTP 200）；紙本差異化 3 份、前測與評量六合一已完成。待上課後做成果回流",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/3.review.html"
+    }
+  },
+  {
     "title": "國L11-1 美食島 第一節 字詞語詞及大意",
     "subject": "國語",
     "grade": "四上",
@@ -418,6 +484,39 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L11-1-字詞語詞及大意/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L11-1-字詞語詞及大意/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L11-1-字詞語詞及大意/3.review.html"
+    }
+  },
+  {
+    "title": "數L10-1 報讀長條圖",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "四要素：標題（圖下方）・橫軸記種類・縱軸記數量・長條越高越多",
+      "一小格不一定是 1：一大格÷小格數（100÷10＝10 大卡）",
+      "讀值三步：找最近大格→數小格→大格＋小格數×單位（520）",
+      "差幾小格就是差幾個單位（6小格×10＝60 大卡）",
+      "橫式・複式（並排比較）・堆疊（看總數）三種讀法",
+      "典型迷思：堆疊圖最長≠男生最多（桌球社 37 人但男生 17）"
+    ],
+    "date": "2026-12-04",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "統計圖表單元；大量圖表觀察練習＋圖表應用（看圖做決定）。網頁五份已上線（均回 HTTP 200）；紙本：差異化 3 份、前測六合一、評量六合一已完成。待上課後做成果回流",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/3.review.html"
     }
   },
   {
@@ -711,6 +810,38 @@
     }
   },
   {
+    "title": "數L8-3b 連除與綜合練習",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "先除再除：84÷（28÷4），括號＝題目沒說的組數",
+      "同一題兩種併式：（224÷2）÷8 與 224÷（8×2）",
+      "先乘再除：（600×4）÷6，平分前先算總量",
+      "練習園地：判斷四式的先算部分（括號在前在後都有）",
+      "單元統整：四種題型一個規則——先算的那一段加括號"
+    ],
+    "date": "2026-11-26",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "第八單元 兩步驟問題與併式（課本126-127）；8-3 後半＋綜合練習，建議1.5節",
+    "links": {
+      "material": "https://drive.google.com/file/d/1Iock_pGH6444DphBbH7S1NzMlFYU4pif/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/3.review.html"
+    }
+  },
+  {
     "title": "國L9-4 王子折箭 第四節 綜合整理",
     "subject": "國語",
     "grade": "四上",
@@ -772,38 +903,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3a-連乘與乘除混合/3.review.html"
-    }
-  },
-  {
-    "title": "數L8-3b 連除與綜合練習",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "先除再除：84÷（28÷4），括號＝題目沒說的組數",
-      "同一題兩種併式：（224÷2）÷8 與 224÷（8×2）",
-      "先乘再除：（600×4）÷6，平分前先算總量",
-      "練習園地：判斷四式的先算部分（括號在前在後都有）",
-      "單元統整：四種題型一個規則——先算的那一段加括號"
-    ],
-    "date": "2026-11-25",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "第八單元 兩步驟問題與併式（課本126-127）；8-3 後半＋綜合練習，建議1.5節",
-    "links": {
-      "material": "https://drive.google.com/file/d/1Iock_pGH6444DphBbH7S1NzMlFYU4pif/view",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L8-3b-連除與綜合練習/3.review.html"
     }
   },
   {
@@ -3348,105 +3447,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/3.review.html"
-    }
-  },
-  {
-    "title": "數L10-2 製作長條圖",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "畫圖四步驟：橫軸項目→縱軸刻度→畫長條→寫標題",
-      "刻度要放得下最大值；一小格＝一大格÷小格數",
-      "畫圖是「量→格」：20 個÷一小格5＝4 小格",
-      "橫軸項目沒有規定順序（折線圖才有）",
-      "省略符號 〰：數字大且接近時使用，位置要比最小值小",
-      "典型迷思：有省略符號時長條長度比≠數量比（廣告誤導）"
-    ],
-    "date": "2026-08-24",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "含省略符號與圖表誤導應用；紙本 2a、2b 已附方格底稿（附件33 替代）。網頁五份已上線（均回 HTTP 200）；紙本差異化 3 份、前測與評量六合一已完成。待上課後做成果回流",
-    "links": {
-      "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-2-製作長條圖/3.review.html"
-    }
-  },
-  {
-    "title": "數L10-3 報讀折線圖",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "折線圖四要素：標題・橫軸時刻（有順序）・縱軸刻度・點",
-      "點＝那一刻的數量；往上找點、往左讀刻度",
-      "方向：右斜上上升・右斜下下降・水平不變（不是沒資料）",
-      "越陡變化越大；要說差多少仍需讀值相減",
-      "中間值推估：3 歲半落在 96–103 之間（約 102）",
-      "長條圖看多少、折線圖看變化；折線圖項目不可調換順序"
-    ],
-    "date": "2026-08-24",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "含練習園地十與第十單元總整理（長條圖 vs 折線圖）。網頁五份已上線（均回 HTTP 200）；紙本差異化 3 份、前測與評量六合一已完成。待上課後做成果回流",
-    "links": {
-      "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-3-報讀折線圖/3.review.html"
-    }
-  },
-  {
-    "title": "數L10-1 報讀長條圖",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "四要素：標題（圖下方）・橫軸記種類・縱軸記數量・長條越高越多",
-      "一小格不一定是 1：一大格÷小格數（100÷10＝10 大卡）",
-      "讀值三步：找最近大格→數小格→大格＋小格數×單位（520）",
-      "差幾小格就是差幾個單位（6小格×10＝60 大卡）",
-      "橫式・複式（並排比較）・堆疊（看總數）三種讀法",
-      "典型迷思：堆疊圖最長≠男生最多（桌球社 37 人但男生 17）"
-    ],
-    "date": "2026-08-24",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "統計圖表單元；大量圖表觀察練習＋圖表應用（看圖做決定）。網頁五份已上線（均回 HTTP 200）；紙本：差異化 3 份、前測六合一、評量六合一已完成。待上課後做成果回流",
-    "links": {
-      "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L10-1-報讀長條圖/3.review.html"
     }
   }
 ]
