@@ -1,5 +1,36 @@
 [
   {
+    "title": "國R1-3 形式深究與語文應用｜L1～L6",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "修辭判準六種：譬喻／轉化／映襯／設問／排比／頂真，各記一句可用的判斷方法",
+      "五種句型：因果／轉折／條件／假設／並列，先找連接詞再判關係",
+      "書信格式四部分：稱謂→正文→祝候語→署名，含回信要先回應對方問題",
+      "六何法讀短文：何人何時何地何事，補出文中沒交代的一項",
+      "讀詩與讀報：分行與節奏／標題功能與引號用法，新聞要客觀可查證",
+      "寫作三步驟：審題（圈關鍵詞）→立意（定中心想法）→選材（判斷離題）；本輪只練判斷不寫整篇"
+    ],
+    "date": "2026-10-27",
+    "note": "複習週 W9（10/27–10/28）＋W10（11/02–11/04）共 7 節，期中複習第 3 輪，切法為【形式深究與語文應用】，與第 1 輪（總覽）、第 2 輪（字詞語詞與內容理解）不重複，題目亦全數不重複；網頁與紙本為平行題本。1600×900 全頁實測 ≤900（teach 句型頁原 907 已縮短卡片文字至 818）；四寬度 RWD 無橫向捲動；逐步揭露三項實測通過（一次一件／攤開不洩答案／作答後才出現）。紙本：六合一×3（0.前測／4.評量／4b.迷你卷 20 分鐘限時錯題回鍋）＋差異化三份，存 Drive 正本，未進公開 repo。本輪依 PLAN 不寫整篇作文，只練審題／立意／選材的判斷。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-3-形式深究與語文應用/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-3-形式深究與語文應用/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-3-形式深究與語文應用/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-3-形式深究與語文應用/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R1-3-形式深究與語文應用/3.review.html"
+    }
+  },
+  {
     "title": "數R1-4 期中總複習第4輪｜L1–L5",
     "subject": "數學",
     "grade": "四上",
