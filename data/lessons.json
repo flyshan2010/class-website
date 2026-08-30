@@ -32,7 +32,7 @@
     }
   },
   {
-    "title": "國R2-1 期末總複習第1輪｜L7～L12",
+    "title": "國R2-1 期末總複習第1輪｜L7～L12 生字語詞",
     "subject": "國語",
     "grade": "四上",
     "version": "翰林",
@@ -224,6 +224,38 @@
     }
   },
   {
+    "title": "數R2-1 期末總複習第1輪｜L6～L10",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "除法三關鍵：商從哪一位起、估商要乘回去檢查、去 0 要看除數有幾個",
+      "三角形與全等：依角分三類、依邊分兩類、翻面疊合也算全等",
+      "併式三關鍵：先乘除後加減、括號最優先、同級由左而右",
+      "二位小數：十分位百分位、滿十換位、加減先補 0 再對齊小數點",
+      "統計圖：先看一格代表多少、長條比多少、折線看變化與陡緩"
+    ],
+    "date": "2026-12-10",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W15＋W16（12/09–12/11、12/14–12/18）共 7 節，第 1 輪（習作範圍總驗收與訂正）。老師 2026-08-30 裁示：W15 原排習作檢討，併入第一輪；同日定 R2-2＝W17、R2-3＝W18、R2-4＝W19＋W20。切法為【五單元各三個關鍵＋試試看＋習作訂正診斷】；網頁與紙本為平行題本（數學同題型不同數字，工具高相似度多為句型重複，逐條人工判讀後無同題）。實測：1600×900 全頁最高 850；四寬度 RWD 無橫向捲動；逐步揭露三項通過（一次一件／整頁攤開不洩答案／作答後才出現）；字級全頁 ≥24px（評量頁補上 .q-block > .q-stem 規則，修掉 16px 漏接）。教學頁含三張自製 SVG 步驟圖（估商三步驟直式、去 0 對錯對照、小數點對齊直式）。紙本：六合一×2（0.前測 20 分鐘／4.評量 40 分鐘）＋差異化三份（基礎 10／進階 8／挑戰 5）＋3a.習作訂正檢核_逐生（五單元分欄逐生勾記），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/3.review.html"
+    }
+  },
+  {
     "title": "國L11-4 美食島 第四節 綜合整理",
     "subject": "國語",
     "grade": "四上",
@@ -254,38 +286,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L11-4-綜合整理/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L11-4-綜合整理/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L11-4-綜合整理/3.review.html"
-    }
-  },
-  {
-    "title": "數R2-1 期末總複習第1輪｜L6～L10",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "除法三關鍵：商從哪一位起、估商要乘回去檢查、去 0 要看除數有幾個",
-      "三角形與全等：依角分三類、依邊分兩類、翻面疊合也算全等",
-      "併式三關鍵：先乘除後加減、括號最優先、同級由左而右",
-      "二位小數：十分位百分位、滿十換位、加減先補 0 再對齊小數點",
-      "統計圖：先看一格代表多少、長條比多少、折線看變化與陡緩"
-    ],
-    "date": "2026-12-09",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "期末複習 W15＋W16（12/09–12/11、12/14–12/18）共 7 節，第 1 輪（習作範圍總驗收與訂正）。老師 2026-08-30 裁示：W15 原排習作檢討，併入第一輪；同日定 R2-2＝W17、R2-3＝W18、R2-4＝W19＋W20。切法為【五單元各三個關鍵＋試試看＋習作訂正診斷】；網頁與紙本為平行題本（數學同題型不同數字，工具高相似度多為句型重複，逐條人工判讀後無同題）。實測：1600×900 全頁最高 850；四寬度 RWD 無橫向捲動；逐步揭露三項通過（一次一件／整頁攤開不洩答案／作答後才出現）；字級全頁 ≥24px（評量頁補上 .q-block > .q-stem 規則，修掉 16px 漏接）。教學頁含三張自製 SVG 步驟圖（估商三步驟直式、去 0 對錯對照、小數點對齊直式）。紙本：六合一×2（0.前測 20 分鐘／4.評量 40 分鐘）＋差異化三份（基礎 10／進階 8／挑戰 5）＋3a.習作訂正檢核_逐生（五單元分欄逐生勾記），存 Drive 正本，未進公開 repo。",
-    "links": {
-      "material": "",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-1-期末總複習第1輪/3.review.html"
     }
   },
   {
@@ -421,6 +421,39 @@
     }
   },
   {
+    "title": "數L9-4 小數的加法與減法",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "寫直式先對齊小數點（小數點標的是個位的位置）",
+      "由右往左算：先算幾個 0.01→幾個 0.1→幾個 1",
+      "進位退位與整數相同，只是單位換成 0.01、0.1",
+      "整數要先補小數點和 0：19.25－8 要寫成 8.00",
+      "典型遷迷思：對齊右邊（12＋5.67 算成 5.79）",
+      "和為整數的記法：12.00 改記成 12、3.90 改記成 3.9"
+    ],
+    "date": "2026-12-03",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "第九單元 二位小數 9-4＋綜合練習（課本139-142）；建議1.5節",
+    "links": {
+      "material": "https://drive.google.com/file/d/1g_26s8NnfuJNHkWt3yzmMoVg0ofFD9ru/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/3.review.html"
+    }
+  },
+  {
     "title": "國L10-4 海中的熱帶雨林 第四節 綜合整理",
     "subject": "國語",
     "grade": "四上",
@@ -453,7 +486,7 @@
     }
   },
   {
-    "title": "數L9-4 小數的加法與減法",
+    "title": "數L9-3 長度與小數比較",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -465,24 +498,23 @@
       "學習評量"
     ],
     "points": [
-      "寫直式先對齊小數點（小數點標的是個位的位置）",
-      "由右往左算：先算幾個 0.01→幾個 0.1→幾個 1",
-      "進位退位與整數相同，只是單位換成 0.01、0.1",
-      "整數要先補小數點和 0：19.25－8 要寫成 8.00",
-      "典型遷迷思：對齊右邊（12＋5.67 算成 5.79）",
-      "和為整數的記法：12.00 改記成 12、3.90 改記成 3.9"
+      "1 公分＝0.01 公尺（1 公尺平分成 100 等分）",
+      "公分要占兩格：1 公尺 8 公分是 1.08 不是 1.8",
+      "反向換算：1.7 公尺＝1.70 公尺＝170 公分",
+      "比大小從最左邊比起，一樣才往右",
+      "典型遷迷思：以為位數多就大（1.09 ＜ 1.2）"
     ],
     "date": "2026-12-02",
     "dateEnd": "",
     "dateAuto": true,
-    "note": "第九單元 二位小數 9-4＋綜合練習（課本139-142）；建議1.5節",
+    "note": "第九單元 二位小數 9-3（課本136-138）；建議1節",
     "links": {
-      "material": "https://drive.google.com/file/d/1g_26s8NnfuJNHkWt3yzmMoVg0ofFD9ru/view",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-4-小數的加法與減法/3.review.html"
+      "material": "https://drive.google.com/file/d/1dbFAkt1RY8DVdpGUcsh1Ui1I4JEIYEc_/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/3.review.html"
     }
   },
   {
@@ -583,7 +615,7 @@
     }
   },
   {
-    "title": "數L9-3 長度與小數比較",
+    "title": "數L9-2 百分位與小數化聚",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -595,23 +627,23 @@
       "學習評量"
     ],
     "points": [
-      "1 公分＝0.01 公尺（1 公尺平分成 100 等分）",
-      "公分要占兩格：1 公尺 8 公分是 1.08 不是 1.8",
-      "反向換算：1.7 公尺＝1.70 公尺＝170 公分",
-      "比大小從最左邊比起，一樣才往右",
-      "典型遷迷思：以為位數多就大（1.09 ＜ 1.2）"
+      "位值表：個位・十分位・百分位，往右一格變 1/10",
+      "百分位的由來：一格是個位的 1/100，就是 0.01",
+      "一格只能放一個數字（0～9），超過就要換",
+      "化聚：10 個 0.01 換 1 個 0.1；1 個 0.1 拆回 10 個 0.01",
+      "典型遷迷思：12 個 0.01 直接寫成 8.612，正確為 8.72"
     ],
     "date": "2026-11-30",
     "dateEnd": "",
     "dateAuto": true,
-    "note": "第九單元 二位小數 9-3（課本136-138）；建議1節",
+    "note": "第九單元 二位小數 9-2（課本134-135）；建議1.5節",
     "links": {
-      "material": "https://drive.google.com/file/d/1dbFAkt1RY8DVdpGUcsh1Ui1I4JEIYEc_/view",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-3-長度與小數比較/3.review.html"
+      "material": "https://drive.google.com/file/d/1x0ZCJ2b_QGzAVjlwU-5KWkJzHcLUoABZ/view",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/3.review.html"
     }
   },
   {
@@ -647,38 +679,6 @@
     }
   },
   {
-    "title": "數L9-2 百分位與小數化聚",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "位值表：個位・十分位・百分位，往右一格變 1/10",
-      "百分位的由來：一格是個位的 1/100，就是 0.01",
-      "一格只能放一個數字（0～9），超過就要換",
-      "化聚：10 個 0.01 換 1 個 0.1；1 個 0.1 拆回 10 個 0.01",
-      "典型遷迷思：12 個 0.01 直接寫成 8.612，正確為 8.72"
-    ],
-    "date": "2026-11-27",
-    "dateEnd": "",
-    "dateAuto": true,
-    "note": "第九單元 二位小數 9-2（課本134-135）；建議1.5節",
-    "links": {
-      "material": "https://drive.google.com/file/d/1x0ZCJ2b_QGzAVjlwU-5KWkJzHcLUoABZ/view",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L9-2-百分位與小數化聚/3.review.html"
-    }
-  },
-  {
     "title": "數L9-1 認識二位小數",
     "subject": "數學",
     "grade": "四上",
@@ -697,7 +697,7 @@
       "兩單位合成：2.5 張和 0.04 張合起來是 2.54 張",
       "占位的 0 不可省：2.05 和 2.5 差 45 個小格"
     ],
-    "date": "2026-11-26",
+    "date": "2026-11-27",
     "dateEnd": "",
     "dateAuto": true,
     "note": "第九單元 二位小數 9-1（課本132-133）；建議1節",
