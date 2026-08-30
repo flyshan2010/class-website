@@ -31,7 +31,8 @@
   // 舊資料沒有 id 時就地補一個，與公告頁同一套算法，錨點才對得上
   const annId = a => a.id || `x${a.date.replace(/-/g, "")}${
     [...`${a.title}`].reduce((h, ch) => (h * 31 + ch.codePointAt(0)) >>> 0, 0).toString(36)}`;
-  const topAnn = ann.filter(a => annExpiry(a) >= today)
+  // 未到上架日的預排公告不顯示（同步端已過濾，這裡雙保險）
+  const topAnn = ann.filter(a => (!a.date || a.date <= today) && annExpiry(a) >= today)
     .sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date))
     .slice(0, 5);
 
