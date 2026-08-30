@@ -1,5 +1,35 @@
 [
   {
+    "title": "國R2-1 期末總複習第1輪｜L7～L12 字詞語詞",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "部首推義三步：先想意思 → 對部首 → 代進句子唸一次",
+      "五個字族橫切六課：心部、竹部、弓部、魚部、糸部",
+      "三組形近字：爐／廬、沉／沈／況、纏／塵；賓家族 繽・濱・檳",
+      "兩個破音字：惡（ㄜˋ／ㄨˋ）、縫（ㄈㄥˊ／ㄈㄥˋ）",
+      "九個四字語詞含情境用法；統整三：先猜再查的查字典步驟"
+    ],
+    "date": "2026-12-21",
+    "note": "期末複習 W17（12/21–12/24）4 節，第 1 輪（L7–L12 字詞語詞與成語）。老師 2026-08-30 裁示：納入統整三的字詞規則；前測由 20 題調成 16 題（選擇12＋填答4）。切法為【部首推義＋字族橫切＋破音字＋成語情境】；網頁與紙本為平行題本，撞題檢查 0 處（初版 7 處真撞題已逐題改寫）。實測：1600×900 全頁最高 850（drag-match 頁初版 1025，zones 改二欄後降到 785）；四寬度 RWD 無橫向捲動；逐步揭露三項通過；字級全頁 ≥24px；drag-match 點選作答實測三個 chip 皆判對。紙本：六合一×2（0.前測 20 分鐘 12＋5＋2／4.評量 40 分鐘 15＋5＋2）＋差異化三份（基礎 10／進階 8／挑戰 5）＋3a.錯字清單_逐生（搭配教學頁收尾的「做出自己的錯字清單」，第三輪衝刺會拿出來重考），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-1-期末總複習第1輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-1-期末總複習第1輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-1-期末總複習第1輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-1-期末總複習第1輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-1-期末總複習第1輪/3.review.html"
+    }
+  },
+  {
     "title": "社R2-1 期末總複習第1輪｜單元三、四",
     "subject": "社會",
     "grade": "四上",
