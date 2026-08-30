@@ -1,5 +1,37 @@
 [
   {
+    "title": "社R2-2 期末總複習第2輪｜單元三、四",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "原住民族四例全複習：排灣五年祭、鄒族戰祭、達悟飛魚祭、布農木刻畫曆",
+      "收斂判準：祭典三目的（祈求／感謝／敬畏）＋時間依自然節律",
+      "脈絡一：廟宇四功能 → 廟埕聚人潮 → 前店後住 → 成街 → 三條路",
+      "脈絡二：作息 → 農曆／節氣／農民曆三者分辨 → 農閒辦節慶 → 現代節日五類",
+      "態度面：尊重不同信仰與族群祭典，先了解再遵守"
+    ],
+    "date": "2026-12-21",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W17（12/21–12/23）3 節，第 2 輪（重點脈絡整理）。老師 2026-08-30 裁示：①態度面題保留但一律選擇題／題組，不出申論（中年級）②原住民四細節全複習後再收斂到判準。網頁與紙本平行題本，撞題檢查由 11 處改到 0 處（改紙本 10 題）。實測：1600×900 投影三份最高 862px（teach 850／practice 862／review 780）無溢出；480/768 RWD 無橫向捲動；逐步揭露三項通過（一次一件／整頁攤開不洩答案／作答後才出現）；全頁 52 題 quiz 正解判定逐題實測通過。紙本：六合一×2（0.前測 20 分鐘 8 選 4 填／4.評量 40 分鐘 20 選 5 填，含兩個情境題組）＋差異化三份（基礎 6／進階 6／挑戰 4），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-2-期末總複習第2輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-2-期末總複習第2輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-2-期末總複習第2輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-2-期末總複習第2輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-2-期末總複習第2輪/3.review.html"
+    }
+  },
+  {
     "title": "國R2-1 期末總複習第1輪｜L7～L12",
     "subject": "國語",
     "grade": "四上",
