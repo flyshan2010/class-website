@@ -1,6 +1,38 @@
 [
   {
-    "title": "數R2-2 期末總複習第2輪｜第 6～10 單元",
+    "title": "國R2-2 期末總複習第2輪｜L7～L12 內容理解與形式深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "三種組織方式：順敍（L7）、倒敍（L8）、空間（L11）、總說分說結語（L10）",
+      "六種修辭：譬喻、轉化、映襯、誇張、類疊、排比",
+      "譬喻 vs 轉化判準：先找喻詞，沒喻詞卻會說會笑就是轉化",
+      "五種複句：轉折、並列、承接、因果、條件（延伸遞進）",
+      "文體辨識：劇本（L9）、說明文（L10）、新詩（L12）"
+    ],
+    "date": "2026-12-28",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W18（12/28–12/31）4 節，第 2 輪（內容理解與形式深究）。第 1 輪清字詞，本輪讀懂文章：三張判準表（組織方式・六種修辭・五種複句）。平行題本的分離設計：網頁一律用課文原句，紙本一律用自編新短文與例句（國語科 U35 判準：同一句情境出現兩次即真撞題），撞題檢查 1 處→改紙本後 0 處。實測：1600×900 投影三份最高 850px（teach 784／practice 850／review 780）無溢出；480 RWD 無橫向捲動；逐步揭露三項通過；56 題 quiz 正解判定逐題實測通過。修掉國語 page 版外殼缺少 tds:answered 監聽的問題（否則 4.exam 解說卡永不顯示）。紙本：六合一×2（0.前測 20 分鐘 12 選 5 填 2 短答／4.評量 40 分鐘 15 選（含兩篇自編短文題組）5 填 2 短答）＋差異化三份（基礎 6／進階 6／挑戰 4）。依老師 2026-08-30 裁示不出整篇作文與長篇申論，短答題只求一句話（造句與判斷理由）。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-2-期末總複習第2輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-2-期末總複習第2輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-2-期末總複習第2輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-2-期末總複習第2輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-2-期末總複習第2輪/3.review.html"
+    }
+  },
+  {
+    "title": "數R2-2 期末總複習第2輪｜L6～L10",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -3479,6 +3511,48 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/3.review.html"
+    }
+  },
+  {
+    "title": "國R2-3 期末總複習第3輪｜L7～L12 形式深究與綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "2027-01-04",
+    "dateEnd": "2027-01-11",
+    "dateAuto": false,
+    "note": "2026-08-30 建列（先定名，未動工）。最後一輪：形式深究（修辭、句型、篇章結構）＋綜合整理，依「餘日併入下一輪」規則包含 W19（1/04–1/08）5 節與 W20 的1/11 考前總衝刺，共 6 節。",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
+    }
+  },
+  {
+    "title": "國R2-2 期末總複習第2輪｜L7～L12 內容深究",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "備課中",
+    "stages": [],
+    "points": [],
+    "date": "2026-12-28",
+    "dateEnd": "2026-12-31",
+    "dateAuto": false,
+    "note": "2026-08-30 建列（先定名，未動工）。國語期末複習依主題分輪：R2-1 生字語詞、R2-2 內容深究、R2-3 形式深究與綜合整理（不依單元分）。範圍 W18（12/28–12/31）4 節。",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": ""
     }
   }
 ]
