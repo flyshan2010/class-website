@@ -1,5 +1,69 @@
 [
   {
+    "title": "國R2-3 期末總複習第3輪｜L7～L12 綜合整理",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "統整三・啟事：三種類型（尋物／招領／活動）與五個必寫項目",
+      "統整三・劇本：人物表、場景說明（括號不唄）、旁白、對白各做什麼",
+      "統整四・主旨：看結局→看人物轉變→寫成一句道理；判斷需附依據句",
+      "統整四・說明方式：條列式（第一、另外）與因果式（因為、由於）的分辨",
+      "寫作組織：時間／空間／因果三種排列；段落排序先找總說句，再用時間詞與指示詞"
+    ],
+    "date": "2027-01-04",
+    "dateEnd": "2027-01-11",
+    "dateAuto": false,
+    "note": "期末複習 W19（1/04–1/08）5 節 ＋ W20 的 1/11 考前總衝刺 1 節，共 6 節；第 3 輪（綜合整理與語文應用）。依老師 2026-08-28 定案，本輪不寫整篇作文，寫作能力以「段落排序與說明方式判斷題」呼應。實測：1600×900 投影三份最高 885px（teach 885／practice 862／review 864）無溢出；逐步揭露三項通過；quiz 正解逐題檢查一致；五頁線上 HTTP 200。撞題：同資料夾 0 處，另驗紙本 vs 前兩輪已上線網頁 0 處（依 U35 語文巄準逐題改寫 10 題，含換掉重複的詩句）。紙本：六合一×3（0.前測 20 分鐘／4.評量 40 分鐘 15 選 5 填 2 問答／4b.迷你卷 15 分鐘（1/11 錯題回鍋））＋差異化三份（基礎 6／進階 6／挑戰 5），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-3-期末總複習第3輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-3-期末總複習第3輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-3-期末總複習第3輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-3-期末總複習第3輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國R2-3-期末總複習第3輪/3.review.html"
+    }
+  },
+  {
+    "title": "數R2-3 期末總複習第3輪｜L6～L10",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "錯的三種分類：觀念錯／步驟錯／看錯題目（訂正先分類再補）",
+      "L6 除法：估商太大往下調、餘數≧除數往上調、末尾 0 兩邊刪一樣多",
+      "L7 三角形：內角和 180°、等腰兩底角相等、全等依字母順序找對應",
+      "L8 併式：先乘除後加減、乘除同級由左往右、要先算就加括號",
+      "L9・L10：小數對齊小數點（位數多不等於大）；圖表先算一格代表多少"
+    ],
+    "date": "2026-12-28",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W18（12/28、12/30–12/31）3 節，第 3 輪（綜合模擬與訂正）。本輪不重講觀念，只處理「最常錯的那一步」，並加入跨單元多步驟題。實測：1600×900 投影三份最高 810px（teach 810／practice 807／review 810）無溢出；逐步揭露三項通過；65 題 quiz 正解逐題檢查一致；五頁線上 HTTP 200。撞題：依 U35 數學判準（同題型不同數字不算撞）逐題比數值與答案，真撞題 6 處已改掉 4 題，餘 2 處為無數字題幹的假陽性（選項與答案均不同）。紙本：六合一×2（0.前測 20 分鐘 10 選 4 填／4.評量 40 分鐘 15 選 5 填 2 問答）＋差異化三份（基礎 6／進階 6／挑戰 5），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-3-期末總複習第3輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-3-期末總複習第3輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-3-期末總複習第3輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-3-期末總複習第3輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-3-期末總複習第3輪/3.review.html"
+    }
+  },
+  {
     "title": "社R2-3 期末總複習第3輪｜單元三、四",
     "subject": "社會",
     "grade": "四上",
@@ -3543,27 +3607,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/3.review.html"
-    }
-  },
-  {
-    "title": "國R2-3 期末總複習第3輪｜L7～L12 綜合整理",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "備課中",
-    "stages": [],
-    "points": [],
-    "date": "2027-01-04",
-    "dateEnd": "2027-01-11",
-    "dateAuto": false,
-    "note": "2026-08-30 建列（先定名，未動工）。國語期末依主題分三輪：R2-1 生字語詞、R2-2 內容理解與形式深究（另一個 session 進行中）、R2-3 綜合整理。依「餘日併入下一輪」規則，本輪含 W19（1/04–1/08）5 節與 W20 的 1/11 考前總衝刺，共 6 節。",
-    "links": {
-      "material": "",
-      "pretest": "",
-      "site": "",
-      "differentiated": "",
-      "exam": "",
-      "review": ""
     }
   }
 ]
