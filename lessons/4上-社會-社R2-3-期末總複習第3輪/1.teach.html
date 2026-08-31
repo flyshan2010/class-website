@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>社R2-2 複習｜最容易錯的八句話</title>
+<title>社R2-3 課程教學｜試卷題型拆解 期末總複習第3輪</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -2023,6 +2023,17 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 
 
 /* ===== 本課專用 ===== */
+/* 社R2-1 專用：flow-steps 直排改橫列（RULE §4-2d，3~4 步實測 ≤900） */
+.flow-steps.vertical > .step { flex-direction: row; align-items: center; gap: var(--s3); padding: 14px var(--s3); }
+.flow-steps.vertical > .step > .badge { width: 46px; height: 46px; flex: none; }
+.flow-steps.vertical > .step > .head { flex: 0 0 auto; min-width: 300px; }
+.flow-steps.vertical > .step > .body { flex: 1 1 auto; }
+/* 自製時間軸 */
+.tl-wrap { display:block; }
+.tl-wrap svg { display:block; width:100%; height:auto; max-height:360px; }
+
+
+/* ===== 本課專用 ===== */
 /* drag-match 容量覆寫（RULE §4-2b：min-height 歸零＋二欄＋縮 zone-head） */
 .drag-match .zone { min-height: 0; padding: 12px 16px; }
 .drag-match .zone > .drop { min-height: 40px; }
@@ -2034,210 +2045,301 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 .flow-steps.vertical > .step > .head { flex: 0 0 auto; min-width: 300px; }
 .flow-steps.vertical > .step > .body { flex: 1 1 auto; }
 
+
+/* ===== 本課專用 ===== */
+/* flow-steps 直排改橫列（RULE §4-2d 實測，3～4 步 ≤900） */
+.flow-steps.vertical > .step { flex-direction: row; align-items: center; gap: var(--s3); padding: 14px var(--s3); }
+.flow-steps.vertical > .step > .badge { width: 46px; height: 46px; flex: none; }
+.flow-steps.vertical > .step > .head { flex: 0 0 auto; min-width: 300px; }
+.flow-steps.vertical > .step > .body { flex: 1 1 auto; }
+
 </style>
 </head>
 <body>
-<main class="deck" aria-label="社R2-2 複習｜最容易錯的八句話">
+<main class="deck" aria-label="社R2-3 課程教學｜試卷題型拆解 期末總複習第3輪">
   <div class="stage" id="stage" tabindex="-1">
 
-    <section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
-      <div class="page-head"><span class="label">第三、四單元 期末總複習第 2 輪 · 複習</span><h2 id="cover-t" class="title">最容易錯的八句話</h2></div>
-      <div class="question-frame">
-        <div class="q tier-1" data-reveal><span class="tier">規則</span><span class="text">每一頁都是一句話，先判斷它對不對</span></div>
-        <div class="q tier-2" data-reveal><span class="tier">重點</span><span class="text">答錯不要緊，看清楚「錯在哪一個字」</span></div>
-        <div class="q tier-3" data-reveal><span class="tier">目標</span><span class="text">八句都答對，這一輪的觀念就穩了</span></div>
+<section class="slide" data-slide-id="cover" aria-labelledby="cover-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第三、四單元 · 期末總複習 第 3 輪</div>
+        <div id="cover-t" class="headline" style="font-size:var(--t1);">試卷題型拆解</div>
+        <div class="sub">同樣的內容，題目換個問法，就換一種答法</div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="map" aria-labelledby="map-t" hidden>
+      <div class="page-head"><span class="label">第 3 輪 · 怎麼上</span><h2 id="map-t" class="title">一張卷子，只有六種問法</h2></div>
+      <div class="card-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="concept-card" data-reveal><div class="head">① 直問直答</div><div class="body">考名詞：<b>圈關鍵詞</b>就好</div></div>
+        <div class="concept-card" data-reveal><div class="head">② 最主要的原因</div><div class="body">選那條<b>因果線的起點</b></div></div>
+        <div class="concept-card" data-reveal><div class="head">③ 圖表判讀</div><div class="body">答案<b>在圖上</b>，不在腦袋裡</div></div>
+        <div class="concept-card" data-reveal><div class="head">④ 情境題組</div><div class="body">線索藏在<b>題幹</b>那一段話裡</div></div>
+        <div class="concept-card" data-reveal><div class="head">⑤ 是非改錯</div><div class="body">先找<b>紅旗字</b>：全部、一定、只有</div></div>
+        <div class="concept-card" data-reveal><div class="head">⑥ 短答申論</div><div class="body">有<b>幾分就寫幾點</b></div></div>
       </div>
       <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">這些句子都是<b>考卷上最常出現的陷阱</b>。</span>
+        <span class="text">六種問法，六個固定的下手步驟。</span>
       </div>
     </section>
 
-    <section class="slide" data-slide-id="r1" aria-labelledby="r1-t" hidden>
-      <div class="page-head"><span class="label">第 1 / 8 句 · 五年祭</span><h2 id="r1-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「排灣族的五年祭，要連續舉行五年。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。是<b>每五年舉行一次</b>，不是辦五年。</span>
-        </div>
+<section class="slide" data-slide-id="d1" aria-labelledby="d1-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第一部分</div>
+        <div id="d1-t" class="headline">問「是什麼」和「為什麼」</div>
+        <div class="sub">最常見的兩種，也最常搞混</div>
       </div>
     </section>
 
-    <section class="slide" data-slide-id="r2" aria-labelledby="r2-t" hidden>
-      <div class="page-head"><span class="label">第 2 / 8 句 · 戰祭</span><h2 id="r2-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「鄒族的戰祭，是為了紀念打勝仗。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。戰祭的重點是<b>凝聚部落團結</b>與傳承，不是慶祝戰爭。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r3" aria-labelledby="r3-t" hidden>
-      <div class="page-head"><span class="label">第 3 / 8 句 · 飛魚祭</span><h2 id="r3-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「達悟族飛魚季只捕飛魚，是因為其他魚不好吃。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。是為了讓其他魚<b>有時間繁殖</b>，保護海洋資源。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r4" aria-labelledby="r4-t" hidden>
-      <div class="page-head"><span class="label">第 4 / 8 句 · 廟宇</span><h2 id="r4-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「廟宇除了拜拜，也是居民集會、教育與休閒的地方。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt" data-correct="true">○ 對</button>
-          <button class="q-opt">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✓ 對。廟宇是聚落的<b>公共生活中心</b>。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r5" aria-labelledby="r5-t" hidden>
-      <div class="page-head"><span class="label">第 5 / 8 句 · 老街</span><h2 id="r5-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「老街變安靜、店家減少，代表這個地方失敗了。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。人潮<b>移到別處</b>而已，老街仍保留家鄉的歷史。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r6" aria-labelledby="r6-t" hidden>
-      <div class="page-head"><span class="label">第 6 / 8 句 · 曆法</span><h2 id="r6-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「農曆和農民曆是同一個東西。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。農曆是<b>一種曆法</b>，農民曆是<b>一本書</b>。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r7" aria-labelledby="r7-t" hidden>
-      <div class="page-head"><span class="label">第 7 / 8 句 · 清明</span><h2 id="r7-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「清明節和端午節一樣，都是看農曆日期。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。清明是<b>節氣</b>（看太陽），日期落在國曆 4 月 4～5 日前後。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r8" aria-labelledby="r8-t" hidden>
-      <div class="page-head"><span class="label">第 8 / 8 句 · 現代節日</span><h2 id="r8-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「兒童節和母親節過很久了，所以算傳統節慶。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。判準是<b>曆法與由來</b>：它們依國曆、由現代社會為特定對象而訂。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r9" aria-labelledby="r9-t" hidden>
-      <div class="page-head"><span class="label">綜合 · 分類</span><h2 id="r9-t" class="title">最後一關：這些各屬於哪一類？</h2></div>
-      <div class="drag-match" data-drag-match>
-        <div class="pool">
-          <span class="chip" draggable="true" data-answer="a">元宵節</span>
-          <span class="chip" draggable="true" data-answer="a">中元節</span>
-          <span class="chip" draggable="true" data-answer="b">教師節</span>
-          <span class="chip" draggable="true" data-answer="b">國慶日</span>
-          <span class="chip" draggable="true" data-answer="c">戰祭</span>
-          <span class="chip" draggable="true" data-answer="c">飛魚祭</span>
-        </div>
-        <div class="zones">
-          <div class="zone" data-zone="a"><div class="zone-head">傳統節慶</div><div class="drop"></div></div>
-          <div class="zone" data-zone="b"><div class="zone-head">現代節日</div><div class="drop"></div></div>
-          <div class="zone" data-zone="c"><div class="zone-head">原住民族祭典</div><div class="drop"></div></div>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-match-check>對答案</button><button class="ds-btn" data-match-reset>重來</button></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">分不出來時，回到兩個判準：<b>看曆法</b>、<b>看由來</b>。</span>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r10" aria-labelledby="r10-t" hidden>
-      <div class="page-head"><span class="label">複習完成</span><h2 id="r10-t" class="title">接下來做這兩件事</h2></div>
-      <div class="action-list">
-        <div class="item" data-reveal><b>線上模擬評量</b>　到 4.exam 練一次，可以重做</div>
-        <div class="item" data-reveal><b>紙本評量</b>　正式計分，題目和線上不一樣，先把觀念弄懂再上場</div>
+<section class="slide" data-slide-id="t1" aria-labelledby="t1-t" hidden>
+      <div class="page-head"><span class="label">題型 ① · 直問直答</span><h2 id="t1-t" class="title">看到特徵，就把名詞叫出來</h2></div>
+      <div class="flow-steps vertical">
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">圈出關鍵詞</div><div class="body">題目裡描述特徵的那幾個字，例如「前面店面、後面住家」</div></div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">回想課本的名詞</div><div class="body">先自己想出答案，再去看選項</div></div>
+        <div class="step" data-reveal><div class="badge">3</div><div class="head">比對選項</div><div class="body">找到一模一樣的就選它，不必再讀完其他選項猶豫</div></div>
       </div>
       <div class="takeaway-band" data-reveal>
         <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
-        <span class="text">兩條線再說一次：<b>信仰→聚落→老街</b>、<b>作息→曆法→節慶→節日</b>。</span>
+        <span class="text">先想答案<b>再看選項</b>，才不會被誘答牽著走。</span>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t1q" aria-labelledby="t1q-t" hidden>
+      <div class="page-head"><span class="label">題型 ① · 馬上試試</span><h2 id="t1q-t" class="title">這個名詞叫什麼？</h2></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
+        <div class="quiz" data-quiz data-mode="single">
+          <p class="q-stem">廟宇建築中，信眾入廟時最先經過、面對街道的那一道門，稱為什麼？</p>
+          <div class="q-options">
+          <button class="q-opt" data-correct="true">三川門</button>
+          <button class="q-opt">天井</button>
+          <button class="q-opt">騎樓</button>
+          <button class="q-opt">山牆</button>
+          </div>
+          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+          <div class="ans-feedback"></div>
+        </div>
+        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
+          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+          <span class="text">不確定時用<b>刪去法</b>：天井在屋子中段、騎樓在街屋前、山牆在側面，只剩三川門。</span>
+        </div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t2" aria-labelledby="t2-t" hidden>
+      <div class="page-head"><span class="label">題型 ② · 最主要的原因</span><h2 id="t2-t" class="title">兩個都對的時候，選哪一個？</h2></div>
+      <div class="misconception">
+        <div class="wrong-side"><div class="head"><span class="mark">✗</span> 常見錯法</div><div class="body">看到「老街沒落」，就選<b>老房子太舊</b>——聽起來也對，但它不是那條線的<b>起點</b>。</div></div>
+        <div class="becomes">→</div>
+        <div class="right-side"><div class="head"><span class="mark">✓</span> 正確作法</div><div class="body">問自己：<b>先發生什麼，才害它沒落？</b>道路改道 → 人不再經過 → 生意做不下去。選<b>道路改道</b>。</div></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
+        <span class="text">「最主要」＝<b>最前面那一個原因</b>。把因果排成一條線，起點就是答案。</span>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t2q" aria-labelledby="t2q-t" hidden>
+      <div class="page-head"><span class="label">題型 ② · 馬上試試</span><h2 id="t2q-t" class="title">哪一個才是「最主要」？</h2></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
+        <div class="quiz" data-quiz data-mode="single">
+          <p class="q-stem">村民在海邊蓋廟供奉媽祖，出海前都先來祭拜。最主要的原因是什麼？</p>
+          <div class="q-options">
+          <button class="q-opt">海邊比較涼快</button>
+          <button class="q-opt" data-correct="true">靠海為生、出海有風險，求平安</button>
+          <button class="q-opt">海邊土地比較便宜</button>
+          <button class="q-opt">政府規定要蓋廟</button>
+          </div>
+          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+          <div class="ans-feedback"></div>
+        </div>
+        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
+          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+          <span class="text">信仰對象反映<b>生活方式</b>：靠海的拜媽祖、種田的拜神農，這是課本反覆用的那條線。</span>
+        </div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="d2" aria-labelledby="d2-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第二部分</div>
+        <div id="d2-t" class="headline">問「圖上有什麼」</div>
+        <div class="sub">答案在圖裡，不在記憶裡</div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t3" aria-labelledby="t3-t" hidden>
+      <div class="page-head"><span class="label">題型 ③ · 圖表判讀</span><h2 id="t3-t" class="title">三步，一步都不能跳</h2></div>
+      <div class="flow-steps vertical">
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">先讀標題</div><div class="body">這張圖在量什麼？店家數？人口？降雨量？</div></div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">再讀單位和刻度</div><div class="body">一格代表多少？單位是「家」還是「百人」？</div></div>
+        <div class="step" data-reveal><div class="badge">3</div><div class="head">回頭看題目問哪一格</div><div class="body">用手指指著那一根長條再作答</div></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">九成的圖表題錯在<b>沒看標題和單位</b>，不是不會判讀。</span>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t3fig" aria-labelledby="t3fig-t" hidden>
+      <div class="page-head"><span class="label">題型 ③ · 讀圖示範</span><h2 id="t3fig-t" class="title">先把這張圖讀完，再看題目</h2></div>
+      <div class="figure-block" style="display:block">
+        <svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="某老街店家數量變化長條圖" style="width:100%;height:auto;max-height:470px"><text x="20" y="30" text-anchor="start" font-size="24" fill="currentColor" font-weight="bold">某老街店家數量變化（單位：家）</text><line x1="90" y1="60" x2="90" y2="270" stroke="currentColor" stroke-width="4"/><line x1="90" y1="270" x2="870" y2="270" stroke="currentColor" stroke-width="4"/><text x="70" y="278" text-anchor="end" font-size="20" fill="currentColor">0</text><line x1="82" y1="212" x2="90" y2="212" stroke="currentColor" stroke-width="4"/><text x="70" y="220" text-anchor="end" font-size="20" fill="currentColor">20</text><line x1="82" y1="154" x2="90" y2="154" stroke="currentColor" stroke-width="4"/><text x="70" y="162" text-anchor="end" font-size="20" fill="currentColor">40</text><line x1="82" y1="96" x2="90" y2="96" stroke="currentColor" stroke-width="4"/><text x="70" y="104" text-anchor="end" font-size="20" fill="currentColor">60</text><rect x="150" y="160" width="110" height="110" fill="#2f7d6f"/><text x="205" y="150" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">38</text><text x="205" y="300" text-anchor="middle" font-size="22" fill="currentColor">1970 年</text><rect x="330" y="82" width="110" height="188" fill="#2f7d6f"/><text x="385" y="72" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">65</text><text x="385" y="300" text-anchor="middle" font-size="22" fill="currentColor">1990 年</text><rect x="510" y="151" width="110" height="119" fill="#2f7d6f"/><text x="565" y="141" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">41</text><text x="565" y="300" text-anchor="middle" font-size="22" fill="currentColor">2010 年</text><rect x="690" y="119" width="110" height="151" fill="#2f7d6f"/><text x="745" y="109" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">52</text><text x="745" y="300" text-anchor="middle" font-size="22" fill="currentColor">2025 年</text></svg>
+        <div class="caption" data-reveal><div class="body">標題＝店家數量；單位＝家；一格 20 家。1990 年最高 65 家，2010 年掉到 41 家，2025 年回升到 52 家。</div></div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t3q" aria-labelledby="t3q-t" hidden>
+      <div class="page-head"><span class="label">題型 ③ · 馬上試試</span><h2 id="t3q-t" class="title">圖上讀得到，還是自己猜的？</h2></div>
+      <div style="display:grid;grid-template-columns:1.05fr 1fr;grid-template-rows:auto 1fr;gap:var(--s3);align-items:start;">
+        <div class="figure-block" style="display:block;grid-area:1/1"><svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="某老街店家數量變化長條圖" style="width:100%;height:auto;max-height:270px"><text x="20" y="30" text-anchor="start" font-size="24" fill="currentColor" font-weight="bold">某老街店家數量變化（單位：家）</text><line x1="90" y1="60" x2="90" y2="270" stroke="currentColor" stroke-width="4"/><line x1="90" y1="270" x2="870" y2="270" stroke="currentColor" stroke-width="4"/><text x="70" y="278" text-anchor="end" font-size="20" fill="currentColor">0</text><line x1="82" y1="212" x2="90" y2="212" stroke="currentColor" stroke-width="4"/><text x="70" y="220" text-anchor="end" font-size="20" fill="currentColor">20</text><line x1="82" y1="154" x2="90" y2="154" stroke="currentColor" stroke-width="4"/><text x="70" y="162" text-anchor="end" font-size="20" fill="currentColor">40</text><line x1="82" y1="96" x2="90" y2="96" stroke="currentColor" stroke-width="4"/><text x="70" y="104" text-anchor="end" font-size="20" fill="currentColor">60</text><rect x="150" y="160" width="110" height="110" fill="#2f7d6f"/><text x="205" y="150" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">38</text><text x="205" y="300" text-anchor="middle" font-size="22" fill="currentColor">1970 年</text><rect x="330" y="82" width="110" height="188" fill="#2f7d6f"/><text x="385" y="72" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">65</text><text x="385" y="300" text-anchor="middle" font-size="22" fill="currentColor">1990 年</text><rect x="510" y="151" width="110" height="119" fill="#2f7d6f"/><text x="565" y="141" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">41</text><text x="565" y="300" text-anchor="middle" font-size="22" fill="currentColor">2010 年</text><rect x="690" y="119" width="110" height="151" fill="#2f7d6f"/><text x="745" y="109" text-anchor="middle" font-size="22" fill="currentColor" font-weight="bold">52</text><text x="745" y="300" text-anchor="middle" font-size="22" fill="currentColor">2025 年</text></svg></div>
+        <div class="quiz" data-quiz data-mode="single" style="grid-area:1/2/3/3">
+          <p class="q-stem">依這張圖，下列哪一句話是<b>圖上讀得到</b>的？</p>
+          <div class="q-options">
+          <button class="q-opt">老街沒落是因為年輕人外移</button>
+          <button class="q-opt" data-correct="true">2025 年比 2010 年多了 11 家</button>
+          <button class="q-opt">1990 年這條街最熱鬧、遊客最多</button>
+          <button class="q-opt">2010 年以後店家一直減少</button>
+          </div>
+          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+          <div class="ans-feedback"></div>
+        </div>
+        <div class="takeaway-band" data-reveal data-after-answer style="grid-area:2/1;margin-top:0">
+          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+          <span class="text">圖上只有<b>數量</b>：原因、遊客數、之後的趨勢都不在圖上，全是陷阱。</span>
+        </div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="d3" aria-labelledby="d3-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第三部分</div>
+        <div id="d3-t" class="headline">問「這段話裡怎麼答」</div>
+        <div class="sub">題幹愈長，線索愈多</div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t4" aria-labelledby="t4-t" hidden>
+      <div class="page-head"><span class="label">題型 ④ · 情境題組</span><h2 id="t4-t" class="title">題幹先畫三種線</h2></div>
+      <div class="card-grid">
+        <div class="concept-card" data-reveal><div class="head">先畫「人」</div><div class="body">誰在說話、誰在做事——阿嬤、漁民、店家，身分就是線索</div></div>
+        <div class="concept-card" data-reveal><div class="head">再畫「地」</div><div class="body">海邊、廟埕、老街、部落——地點決定會發生什麼事</div></div>
+        <div class="concept-card" data-reveal><div class="head">最後畫「做什麼」</div><div class="body">吃湯圓、繞境、捕飛魚——動作對應到課本的哪一段</div></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
+        <span class="text">題組的每一小題，都回到<b>同一段題幹</b>找答案，不要憑印象往下答。</span>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t4d" aria-labelledby="t4d-t" hidden>
+      <div class="page-head"><span class="label">題型 ④ · 拆解示範</span><h2 id="t4d-t" class="title">三條線一畫，答案就浮出來</h2></div>
+      <div class="compare-pair">
+        <div class="side"><div class="head">題幹（畫線後）</div><div class="item" data-reveal><b>阿海的爸爸</b>（人）在<b>蘭嶼</b>（地），每年三到六月<b>只捕飛魚</b>（做什麼），其他月份才捕別的魚。</div></div>
+        <div class="vs">→</div>
+        <div class="side is-focus"><div class="head">對應到課本</div><div class="item" data-reveal>蘭嶼＝<b>達悟族</b>；只捕飛魚＝<b>飛魚祭</b>與海洋資源的保護；三到六月＝跟著<b>飛魚洄游</b>走的一年。</div></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
+        <span class="text">把題幹翻譯成課本的名詞，題目就變回你背過的那一題。</span>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t4q" aria-labelledby="t4q-t" hidden>
+      <div class="page-head"><span class="label">題型 ④ · 馬上試試</span><h2 id="t4q-t" class="title">從題幹找答案</h2></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
+        <div class="quiz" data-quiz data-mode="single">
+          <p class="q-stem">【題幹】小宜跟著爸爸回鄉下，看到街上的房子一間連著一間，二樓往外伸出來蓋住人行道，下雨天大家都在下面走。這條街最可能是什麼？</p>
+          <div class="q-options">
+          <button class="q-opt">新社區的透天厝</button>
+          <button class="q-opt" data-correct="true">有騎樓的老街街屋</button>
+          <button class="q-opt">原住民族的部落</button>
+          <button class="q-opt">農田旁的三合院</button>
+          </div>
+          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+          <div class="ans-feedback"></div>
+        </div>
+        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
+          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+          <span class="text">「二樓外推、下面能走人」就是<b>騎樓</b>——題幹已經把定義寫出來了，只是沒說名字。</span>
+        </div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="d4" aria-labelledby="d4-t" hidden>
+      <div class="section-divider" style="height:100%;justify-content:center;">
+        <div class="kicker">第四部分</div>
+        <div id="d4-t" class="headline">問「這句話對不對」</div>
+        <div class="sub">以及最後那一題怎麼寫</div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t5" aria-labelledby="t5-t" hidden>
+      <div class="page-head"><span class="label">題型 ⑤ · 是非改錯</span><h2 id="t5-t" class="title">四個字眼，看到就亮紅燈</h2></div>
+      <div class="action-list">
+        <div class="item" data-reveal><b>「所有、全部」</b>　只要舉得出一個例外，整句就錯</div>
+        <div class="item" data-reveal><b>「一定、絕對」</b>　課本很少把話講死，看到就要懷疑</div>
+        <div class="item" data-reveal><b>「只有、唯一」</b>　通常還有別的原因或別的功能</div>
+        <div class="item" data-reveal><b>「因為…所以…」</b>　前後兩件事都對，但不一定有因果關係</div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
+        <span class="text">紅旗字不代表一定錯，但看到就<b>停下來找例外</b>——找得到就是錯。</span>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t5q" aria-labelledby="t5q-t" hidden>
+      <div class="page-head"><span class="label">題型 ⑤ · 馬上試試</span><h2 id="t5q-t" class="title">這句話，對還是錯？</h2></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
+        <div class="quiz" data-quiz data-mode="single">
+          <p class="q-stem">「只要是熱鬧、大家會放假的日子，就是傳統節慶。」這句話對嗎？</p>
+          <div class="q-options">
+          <button class="q-opt">○ 對</button>
+          <button class="q-opt" data-correct="true">✗ 錯</button>
+          </div>
+          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+          <div class="ans-feedback"></div>
+        </div>
+        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
+          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
+          <span class="text">✗ 錯。「只要…就是…」是紅旗。判準是<b>曆法</b>與<b>由來</b>：國慶日也放假也熱鬧，但它是現代節日。</span>
+        </div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t6" aria-labelledby="t6-t" hidden>
+      <div class="page-head"><span class="label">題型 ⑥ · 短答申論</span><h2 id="t6-t" class="title">幾分，就寫幾點</h2></div>
+      <div class="flow-steps vertical">
+        <div class="step" data-reveal><div class="badge">1</div><div class="head">先看配分</div><div class="body">4 分通常要兩點，6 分通常要三點</div></div>
+        <div class="step" data-reveal><div class="badge">2</div><div class="head">先給答案，再說理由</div><div class="body">第一句話就把判斷寫出來，不要鋪陳</div></div>
+        <div class="step" data-reveal><div class="badge">3</div><div class="head">用課本的詞</div><div class="body">寫「廟埕」比寫「廟前面那塊空地」拿得到分</div></div>
+        <div class="step" data-reveal><div class="badge">4</div><div class="head">一點一句，分行寫</div><div class="body">改的人一眼看得到兩點，不會漏掉</div></div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
+        <span class="text">短答題不是作文：<b>有幾分寫幾點</b>，寫得長不加分。</span>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="t6d" aria-labelledby="t6d-t" hidden>
+      <div class="page-head"><span class="label">題型 ⑥ · 對照</span><h2 id="t6d-t" class="title">同一題，兩種寫法</h2></div>
+      <div class="compare-pair">
+        <div class="side"><div class="head">✗ 拿不到分</div><div class="item" data-reveal>題目：請說明騎樓和天井各解決了什麼問題。（4 分）</div><div class="item" data-reveal>作答：「因為以前的房子蓋得很特別，所以很方便，大家都覺得很好用。」</div><div class="item" data-reveal>問題：<b>沒有分兩點、沒有用課本的詞、沒有回答「解決什麼」</b>。</div></div>
+        <div class="vs">→</div>
+        <div class="side is-focus"><div class="head">✓ 拿滿分</div><div class="item" data-reveal>「① 騎樓：讓行人下雨、大太陽也能走，店家生意不受天氣影響。</div><div class="item" data-reveal>② 天井：房子又窄又深，中段留露天空間才有<b>採光和通風</b>。」</div><div class="item" data-reveal>優點：<b>分兩點、各答一個問題、用課本名詞</b>。</div></div>
+      </div>
+    </section>
+
+<section class="slide" data-slide-id="end" aria-labelledby="end-t" hidden>
+      <div class="page-head"><span class="label">收尾 · 40 分鐘怎麼分配</span><h2 id="end-t" class="title">會了還不夠，要寫得完</h2></div>
+      <div class="action-list">
+        <div class="item" data-reveal><b>先做會的</b>　從頭掃一遍，秒答的先寫，卡住的畫記號跳過</div>
+        <div class="item" data-reveal><b>圖表題留到中段</b>　需要讀圖，別在第一題耗掉時間</div>
+        <div class="item" data-reveal><b>短答題留 10 分鐘</b>　最後寫，但一定要留時間，那是分數最集中的地方</div>
+        <div class="item" data-reveal><b>最後 5 分鐘檢查</b>　回頭看畫記號的題，以及有沒有漏答</div>
+      </div>
+      <div class="takeaway-band" data-reveal>
+        <span class="icon"><svg class="ico"><use href="#ico-clock"></use></svg></span>
+        <span class="text">六種問法各有拆法，剩下的就是<b>把時間分對地方</b>。</span>
       </div>
     </section>
 

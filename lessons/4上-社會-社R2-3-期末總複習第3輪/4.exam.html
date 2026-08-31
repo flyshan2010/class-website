@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>社R2-2 複習｜最容易錯的八句話</title>
+<title>社R2-3 學習評量｜題型拆解線上模擬 期末總複習第3輪</title>
 <style>
 /* ===== 教學 Design System（內嵌，勿手改；改請回正本重新打包） ===== */
 /* ============================================================
@@ -1989,393 +1989,326 @@ html, body { overflow: auto; height: auto; background: var(--bg); }
 </script>
 <style>
 /* ─────────────────────────────────────────────
-   本頁專用：投影簡報殼層（16:9・1600×900・縮放至滿版）
+   本頁專用覆寫：改為可捲動文件（非投影簡報舞台）
    ───────────────────────────────────────────── */
-#stage { position: fixed; top: 50%; left: 50%; transform-origin: center center; }
-.slide { opacity: 0; visibility: hidden; transition: opacity 220ms ease; }
-.slide.is-active { opacity: 1; visibility: visible; }
-.page-head .step { margin-left: auto; font-size: var(--t5); color: var(--muted); }
-.hud {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
-  display: flex; align-items: center; gap: var(--s3);
-  padding: 0 var(--safe-x);
-  background: linear-gradient(to top, rgba(0,0,0,.06), transparent);
+html, body { overflow: auto; height: auto; background: var(--bg); }
+body { padding: 0; }
+main.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--s6) var(--s4) var(--s7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
 }
-.hud .spacer { flex: 1; }
-.hud .pagemeta { font-size: var(--t5); color: var(--muted); }
-.progress-track { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: rgba(0,0,0,.06); }
-.progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease; }
-.hotspot .hs-stage svg { width: 100%; height: auto; display: block; }
+.lede { font-size: var(--t4); color: var(--muted); }
+.q-block { display: flex; flex-direction: column; gap: var(--s3); }
+.ico { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.takeaway-band .icon .ico { width: 1.4em; height: 1.4em; color: var(--accent); }
+footer.page-foot { text-align: center; color: var(--muted); font-size: var(--t5); padding-top: var(--s4); border-top: var(--line-thin) solid var(--line); }
 .map-svg { display:block; width:100%; height:auto; }
+/* 填充題的題幹不在 .quiz 內，補上 DS 題幹樣式（否則掉回 16px 預設） */
+.q-block > .q-stem { font-size: var(--t4); line-height: var(--lh-normal); font-weight: var(--fw-bold); color: var(--ink); }
+.sec-title { font-size: var(--t2); font-weight: var(--fw-bold); color: var(--accent); border-bottom: var(--line-bold) solid var(--accent); padding-bottom: var(--s2); }
 .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s3); }
-/* 圖＋說明二欄（.figure-block 的 .figure 有 320px 最小高，圖小時會撐破版面，改用本組合） */
-.split-2 { display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s5); align-items:center; }
-@media (max-width: 768px) { .split-2 { grid-template-columns:1fr; } }
-/* 尚未揭露的內容不可點——避免老師誤觸還沒出現的翻牌或選項 */
-[data-reveal]:not(.is-shown) { pointer-events: none; }
-
-/* ===== 本課專用 ===== */
-/* flow-steps vertical 改橫列（RULE §4-2d），3 步實測 ≤900 */
-.flow-steps.vertical > .step { flex-direction: row; align-items: center; gap: var(--s3); padding: 14px var(--s3); }
-.flow-steps.vertical > .step > .badge { width: 46px; height: 46px; flex: none; }
-.flow-steps.vertical > .step > .head { flex: 0 0 auto; min-width: 180px; }
-.flow-steps.vertical > .step > .body { flex: 1 1 auto; }
-
-
-/* ===== 本課專用 ===== */
-/* drag-match 容量覆寫（RULE §4-2b：min-height 歸零＋二欄＋縮 zone-head） */
-.drag-match .zone { min-height: 0; padding: 12px 16px; }
-.drag-match .zone > .drop { min-height: 40px; }
-.drag-match .zones { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s2); align-content: start; }
-.drag-match .zone > .zone-head { font-size: var(--t4); }
-/* flow-steps 直排改橫列（RULE §4-2d：直排 3 步即超 900） */
-.flow-steps.vertical > .step { flex-direction: row; align-items: center; gap: var(--s3); padding: 14px var(--s3); }
-.flow-steps.vertical > .step > .badge { width: 46px; height: 46px; flex: none; }
-.flow-steps.vertical > .step > .head { flex: 0 0 auto; min-width: 300px; }
-.flow-steps.vertical > .step > .body { flex: 1 1 auto; }
-
+@media (max-width: 480px) {
+  main.page { padding: var(--s5) var(--s3) var(--s6); }
+}
 </style>
 </head>
 <body>
-<main class="deck" aria-label="社R2-2 複習｜最容易錯的八句話">
-  <div class="stage" id="stage" tabindex="-1">
+<main class="page" aria-label="社R2-3 學習評量｜題型拆解線上模擬 期末總複習第3輪">
+<header class="page-head">
+    <span class="label">第三、四單元 · 期末總複習第 3 輪</span>
+    <h1 class="title">線上模擬評量（題型拆解）</h1>
+  </header>
+  <p class="lede">選擇 14 題、填充 4 題、短答 2 題，可以重做。<strong>這一份不計分，紙本評量才計分——兩份題目不同，先在這裡把方法練熟。</strong></p>
 
-    <section class="slide is-active" data-slide-id="cover" aria-labelledby="cover-t">
-      <div class="page-head"><span class="label">第三、四單元 期末總複習第 2 輪 · 複習</span><h2 id="cover-t" class="title">最容易錯的八句話</h2></div>
-      <div class="question-frame">
-        <div class="q tier-1" data-reveal><span class="tier">規則</span><span class="text">每一頁都是一句話，先判斷它對不對</span></div>
-        <div class="q tier-2" data-reveal><span class="tier">重點</span><span class="text">答錯不要緊，看清楚「錯在哪一個字」</span></div>
-        <div class="q tier-3" data-reveal><span class="tier">目標</span><span class="text">八句都答對，這一輪的觀念就穩了</span></div>
+  <h2 class="sec-title">一、選擇題</h2>
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">1. （題型）題目問「這最能<b>說明</b>什麼？」時，答案通常是下列哪一種？</p>
+      <div class="q-options">
+          <button class="q-opt">一個具體的年代</button>
+          <button class="q-opt" data-correct="true">一個從現象推出來的道理</button>
+          <button class="q-opt">一個人的名字</button>
+          <button class="q-opt">一個地名</button>
       </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-bulb"></use></svg></span>
-        <span class="text">這些句子都是<b>考卷上最常出現的陷阱</b>。</span>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r1" aria-labelledby="r1-t" hidden>
-      <div class="page-head"><span class="label">第 1 / 8 句 · 五年祭</span><h2 id="r1-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「排灣族的五年祭，要連續舉行五年。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。是<b>每五年舉行一次</b>，不是辦五年。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r2" aria-labelledby="r2-t" hidden>
-      <div class="page-head"><span class="label">第 2 / 8 句 · 戰祭</span><h2 id="r2-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「鄒族的戰祭，是為了紀念打勝仗。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。戰祭的重點是<b>凝聚部落團結</b>與傳承，不是慶祝戰爭。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r3" aria-labelledby="r3-t" hidden>
-      <div class="page-head"><span class="label">第 3 / 8 句 · 飛魚祭</span><h2 id="r3-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「達悟族飛魚季只捕飛魚，是因為其他魚不好吃。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。是為了讓其他魚<b>有時間繁殖</b>，保護海洋資源。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r4" aria-labelledby="r4-t" hidden>
-      <div class="page-head"><span class="label">第 4 / 8 句 · 廟宇</span><h2 id="r4-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「廟宇除了拜拜，也是居民集會、教育與休閒的地方。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt" data-correct="true">○ 對</button>
-          <button class="q-opt">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✓ 對。廟宇是聚落的<b>公共生活中心</b>。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r5" aria-labelledby="r5-t" hidden>
-      <div class="page-head"><span class="label">第 5 / 8 句 · 老街</span><h2 id="r5-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「老街變安靜、店家減少，代表這個地方失敗了。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。人潮<b>移到別處</b>而已，老街仍保留家鄉的歷史。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r6" aria-labelledby="r6-t" hidden>
-      <div class="page-head"><span class="label">第 6 / 8 句 · 曆法</span><h2 id="r6-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「農曆和農民曆是同一個東西。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。農曆是<b>一種曆法</b>，農民曆是<b>一本書</b>。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r7" aria-labelledby="r7-t" hidden>
-      <div class="page-head"><span class="label">第 7 / 8 句 · 清明</span><h2 id="r7-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「清明節和端午節一樣，都是看農曆日期。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。清明是<b>節氣</b>（看太陽），日期落在國曆 4 月 4～5 日前後。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r8" aria-labelledby="r8-t" hidden>
-      <div class="page-head"><span class="label">第 8 / 8 句 · 現代節日</span><h2 id="r8-t" class="title">這句話，對還是錯？</h2></div>
-      <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:var(--s3);align-items:start;">
-        <div class="quiz" data-quiz data-mode="single">
-          <p class="q-stem">「兒童節和母親節過很久了，所以算傳統節慶。」這句話對嗎？</p>
-          <div class="q-options">
-          <button class="q-opt">○ 對</button>
-          <button class="q-opt" data-correct="true">✗ 錯</button>
-          </div>
-          <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
-          <div class="ans-feedback"></div>
-        </div>
-        <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-          <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-          <span class="text">✗ 錯。判準是<b>曆法與由來</b>：它們依國曆、由現代社會為特定對象而訂。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r9" aria-labelledby="r9-t" hidden>
-      <div class="page-head"><span class="label">綜合 · 分類</span><h2 id="r9-t" class="title">最後一關：這些各屬於哪一類？</h2></div>
-      <div class="drag-match" data-drag-match>
-        <div class="pool">
-          <span class="chip" draggable="true" data-answer="a">元宵節</span>
-          <span class="chip" draggable="true" data-answer="a">中元節</span>
-          <span class="chip" draggable="true" data-answer="b">教師節</span>
-          <span class="chip" draggable="true" data-answer="b">國慶日</span>
-          <span class="chip" draggable="true" data-answer="c">戰祭</span>
-          <span class="chip" draggable="true" data-answer="c">飛魚祭</span>
-        </div>
-        <div class="zones">
-          <div class="zone" data-zone="a"><div class="zone-head">傳統節慶</div><div class="drop"></div></div>
-          <div class="zone" data-zone="b"><div class="zone-head">現代節日</div><div class="drop"></div></div>
-          <div class="zone" data-zone="c"><div class="zone-head">原住民族祭典</div><div class="drop"></div></div>
-        </div>
-        <div class="row"><button class="ds-btn primary" data-match-check>對答案</button><button class="ds-btn" data-match-reset>重來</button></div>
-      </div>
-      <div class="takeaway-band" data-reveal data-after-answer style="margin-top:0">
-        <span class="icon"><svg class="ico"><use href="#ico-check"></use></svg></span>
-        <span class="text">分不出來時，回到兩個判準：<b>看曆法</b>、<b>看由來</b>。</span>
-      </div>
-    </section>
-
-    <section class="slide" data-slide-id="r10" aria-labelledby="r10-t" hidden>
-      <div class="page-head"><span class="label">複習完成</span><h2 id="r10-t" class="title">接下來做這兩件事</h2></div>
-      <div class="action-list">
-        <div class="item" data-reveal><b>線上模擬評量</b>　到 4.exam 練一次，可以重做</div>
-        <div class="item" data-reveal><b>紙本評量</b>　正式計分，題目和線上不一樣，先把觀念弄懂再上場</div>
-      </div>
-      <div class="takeaway-band" data-reveal>
-        <span class="icon"><svg class="ico"><use href="#ico-target"></use></svg></span>
-        <span class="text">兩條線再說一次：<b>信仰→聚落→老街</b>、<b>作息→曆法→節慶→節日</b>。</span>
-      </div>
-    </section>
-
-    <div class="hud">
-      <p class="pagemeta"><span data-current>1</span> / <span data-total>0</span> <span data-reveal-meta></span></p>
-      <span class="spacer"></span>
-      <button class="ds-btn" data-action="previous">← 上一步</button>
-      <button class="ds-btn" data-action="next">下一步 →</button>
-      <button class="ds-btn" data-action="reveal-all">整頁攤開</button>
-      <button class="ds-btn" data-action="fullscreen">全螢幕</button>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
     </div>
-    <div class="progress-track"><div class="progress-bar" data-progress></div></div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">「說明什麼」＝從現象推<b>道理</b>。看到只有年代、人名、地名的選項，多半是誘答。</div></div>
   </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">2. （3-1）某座廟供奉的是保佑讀書順利的神明，廟旁還設有義學。從這裡最能推論什麼？</p>
+      <div class="q-options">
+          <button class="q-opt" data-correct="true">當地居民重視子弟的教育</button>
+          <button class="q-opt">當地居民都很有錢</button>
+          <button class="q-opt">當地不需要學校</button>
+          <button class="q-opt">當地的廟蓋得比較大</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">廟宇反映生活重心：主祀神明＋附設義學，指向<b>重視教育</b>。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">3. （3-2）「這條街的房子一間挨著一間，每間門面都很窄。」造成門面窄的最主要原因是什麼？</p>
+      <div class="q-options">
+          <button class="q-opt">蓋房子的技術不好</button>
+          <button class="q-opt" data-correct="true">臨街的土地珍貴，大家都想有店面</button>
+          <button class="q-opt">居民不喜歡寬的房子</button>
+          <button class="q-opt">政府規定門面寬度</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">窄門面是<b>土地珍貴</b>下的取捨：每一家都要臨街，只能往後延伸。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">4. （3-2）下列哪一項是老街「被保存下來」比較常見的原因？</p>
+      <div class="q-options">
+          <button class="q-opt">房子夠新</button>
+          <button class="q-opt" data-correct="true">有歷史特色，居民與政府願意整修維護</button>
+          <button class="q-opt">街道比較寬</button>
+          <button class="q-opt">附近沒有其他街道</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">保存的關鍵是<b>價值被看見＋有人願意維護</b>，不是新舊。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">5. （4-1）下列哪一件事，最能說明「作息跟著自然走」？</p>
+      <div class="q-options">
+          <button class="q-opt">工廠三班制輪班</button>
+          <button class="q-opt" data-correct="true">漁民依飛魚洄游的季節出海</button>
+          <button class="q-opt">便利商店 24 小時營業</button>
+          <button class="q-opt">捷運每天固定班次</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">自然節律＝<b>季節、日照、潮汐</b>；輪班與營業時間是人訂出來的。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">6. （4-1）「農民曆」和「二十四節氣」的關係，下列敘述何者正確？</p>
+      <div class="q-options">
+          <button class="q-opt">兩者是同一件事</button>
+          <button class="q-opt" data-correct="true">農民曆裡會列出節氣，節氣本身則是依太陽訂出來的</button>
+          <button class="q-opt">節氣是農民曆的作者發明的</button>
+          <button class="q-opt">兩者都依月亮的圓缺</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">農民曆是<b>一本書</b>，裡面收了農曆日期、節氣與宜忌；節氣看太陽。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">7. （4-2）下列哪一組節慶，在農曆一年中的順序是<b>由早到晚</b>？</p>
+      <div class="q-options">
+          <button class="q-opt">中秋節 → 端午節 → 元宵節</button>
+          <button class="q-opt" data-correct="true">元宵節 → 端午節 → 中秋節</button>
+          <button class="q-opt">端午節 → 元宵節 → 中秋節</button>
+          <button class="q-opt">中秋節 → 元宵節 → 端午節</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">正月十五 → 五月初五 → 八月十五。排序題把<b>農曆日期寫出來</b>再排，最不容易錯。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">8. （4-3）某個節日固定在國曆十二月二十五日，是從外國傳來、後來臺灣也一起過。這屬於哪一類？</p>
+      <div class="q-options">
+          <button class="q-opt">傳統節慶</button>
+          <button class="q-opt" data-correct="true">從其他文化傳入的現代節日</button>
+          <button class="q-opt">原住民族祭典</button>
+          <button class="q-opt">節氣</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">兩個判準都指向現代節日：依<b>國曆</b>、由來是<b>外來傳入</b>。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">9. （題型）遇到「下列敘述何者<b>錯誤</b>」的題目，最有效的作法是什麼？</p>
+      <div class="q-options">
+          <button class="q-opt">直接選最長的那一個</button>
+          <button class="q-opt" data-correct="true">把每個選項都判斷對錯，先刪掉確定正確的</button>
+          <button class="q-opt">隨便選一個</button>
+          <button class="q-opt">只看第一個選項</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">問「錯誤」時，正確選項有三個。<b>逐一刪去確定正確的</b>，剩下的就是答案。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">10. （題型 · 紅旗）下列哪一個選項，最需要先懷疑？</p>
+      <div class="q-options">
+          <button class="q-opt">廟宇的功能之一是聚會</button>
+          <button class="q-opt">老街的形成與人潮有關</button>
+          <button class="q-opt" data-correct="true">所有的老街都是因為廟才形成的</button>
+          <button class="q-opt">節氣可以提示農事時節</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body"><b>所有</b>是紅旗字：老街也可能因港口、車站、農產交易而形成。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">11. （3-1）不同宗教的信仰場所（廟宇、教堂、清真寺）有一個共同點，最可能是什麼？</p>
+      <div class="q-options">
+          <button class="q-opt">建築樣式相同</button>
+          <button class="q-opt" data-correct="true">都是信眾聚集、彼此照顧的地方</button>
+          <button class="q-opt">都在同一條街上</button>
+          <button class="q-opt">都在同一天做禮拜</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">形式不同、<b>功能相近</b>：都是信仰與人群連結的場所。這是課本要的「尊重差異」的基礎。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">12. （3-2）某條街道因為附近蓋了新的大型商場而變得冷清。這和課本提到的哪一種情形最相似？</p>
+      <div class="q-options">
+          <button class="q-opt" data-correct="true">道路改道使老街沒落</button>
+          <button class="q-opt">老街整修後發展觀光</button>
+          <button class="q-opt">廟會帶來人潮</button>
+          <button class="q-opt">聚落沿河形成</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">本質相同：<b>人潮被吸引到別的地方</b>，原本的街就冷清。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">13. （4-2）參加不同族群的祭典時，下列哪一種做法最恰當？</p>
+      <div class="q-options">
+          <button class="q-opt">想拍照就直接拍</button>
+          <button class="q-opt" data-correct="true">先了解並遵守當地的規定</button>
+          <button class="q-opt">要求對方解釋每個動作</button>
+          <button class="q-opt">把祭典當表演大聲討論</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">尊重的具體作法＝<b>先問、先了解、遵守規定</b>。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz" data-quiz data-mode="single">
+      <p class="q-stem">14. （4-3）下列哪一個判斷方式，最能分辨傳統節慶和現代節日？</p>
+      <div class="q-options">
+          <button class="q-opt">看放不放假</button>
+          <button class="q-opt" data-correct="true">看依農曆還是國曆，以及由來是流傳還是後來訂定</button>
+          <button class="q-opt">看熱不熱鬧</button>
+          <button class="q-opt">看有沒有特別的食物</button>
+      </div>
+      <div class="row"><button class="ds-btn primary" data-quiz-check>對答案</button><button class="ds-btn" data-quiz-reset>重做</button></div>
+      <div class="ans-feedback"></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">解說</div><div class="body">判準固定兩條：<b>曆法</b>與<b>由來</b>，其他都是表面現象。</div></div>
+  </div>
+
+  <h2 class="sec-title">二、填充題（自評）</h2>
+  <div class="q-block">
+    <div class="quiz">
+      <p class="q-stem">15. 題目問「<b>最主要</b>的原因」時，代表好幾個選項可能都對，但只有一個是那條因果線的________。</p>
+      <div class="row"><button class="ds-btn primary" data-show-answer>看參考答案</button></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">參考答案與給分重點</div><div class="body"><b>起點</b>（或：最先發生的原因）。答「開頭」「第一個原因」也可以。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz">
+      <p class="q-stem">16. 讀圖表時要先看的兩件事是：________ 和 ________。</p>
+      <div class="row"><button class="ds-btn primary" data-show-answer>看參考答案</button></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">參考答案與給分重點</div><div class="body"><b>標題</b>（在量什麼）和<b>單位／刻度</b>（一格代表多少）。兩個都寫到才算完整。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz">
+      <p class="q-stem">17. 看到「全部、一定、只有」這類字眼時，應該先去找有沒有 ________。</p>
+      <div class="row"><button class="ds-btn primary" data-show-answer>看參考答案</button></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">參考答案與給分重點</div><div class="body"><b>例外</b>。只要找得到一個例外，這句話就是錯的。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz">
+      <p class="q-stem">18. 短答題標「（6 分）」、要求說明三個功能時，應該分成 ________ 點作答。</p>
+      <div class="row"><button class="ds-btn primary" data-show-answer>看參考答案</button></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">參考答案與給分重點</div><div class="body"><b>三</b>點。原則是「有幾分寫幾點、題目要幾項就寫幾項」。</div></div>
+  </div>
+
+  <h2 class="sec-title">三、短答題（自評）</h2>
+  <div class="q-block">
+    <div class="quiz">
+      <p class="q-stem">19. 一張長條圖只畫了某老街各年度的店家數量。請說明<b>兩件</b>「這張圖看不出來」的事，並各說明理由。（4 分）</p>
+      <div class="row"><button class="ds-btn primary" data-show-answer>看參考答案</button></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">參考答案與給分重點</div><div class="body">參考：① <b>店家增減的原因</b>——圖上只有數量，沒有原因，要有題幹說明才能判斷。② <b>未來的趨勢</b>——圖只到最後一個年度，之後會不會繼續增加是猜測。<br>給分重點：分兩點寫、每點都要有<b>理由</b>，只寫「看不出原因」沒有理由只給一半。</div></div>
+  </div>
+
+  <div class="q-block">
+    <div class="quiz">
+      <p class="q-stem">20. 有人說：「老街變安靜，就代表這個地方失敗了。」請判斷這句話是否恰當，並說明<b>兩個</b>理由。（4 分）</p>
+      <div class="row"><button class="ds-btn primary" data-show-answer>看參考答案</button></div>
+    </div>
+    <div class="concept-card" data-reveal><div class="head">參考答案與給分重點</div><div class="body">參考：不恰當。① 人潮移到新的商圈，是<b>生活方式改變</b>，不是失敗。② 老街仍保留家鄉的<b>歷史與建築</b>，具有保存價值。<br>給分重點：先寫<b>立場</b>再寫理由，兩個理由要說得通、且用課本的概念。</div></div>
+  </div>
+
+  <div class="takeaway-band">
+    <span class="icon"><svg class="ico"><use href="#ico-clock"></use></svg></span>
+    <span class="text">正式考試 40 分鐘：選擇題約 20 分鐘、填充題 8 分鐘、短答題 10 分鐘，最後 <strong>留 2 分鐘檢查有沒有漏答</strong>。</span>
+  </div>
+
 </main>
 
 <script>
 (() => {
-  const STAGE_W = 1600, STAGE_H = 900;
-  const stage = document.querySelector('#stage');
-  const slides = [...document.querySelectorAll('.slide')];
-  const current = document.querySelector('[data-current]');
-  const total = document.querySelector('[data-total]');
-  const progress = document.querySelector('[data-progress]');
-  let index = 0;
-  if (!stage || !slides.length) return;
-
-  const clamp = (v) => Math.max(0, Math.min(v, slides.length - 1));
-
-  /* ── 逐步揭露：一次只出一個元件，讓推論過程在課堂上展開 ──
-     data-after-answer 的元件（含答案的判斷帶）不在手動揭露序列裡，
-     必須等學生按下「對答案」才會出現，否則測驗形同先公布答案。 */
-  const steps = (slide) => [...slide.querySelectorAll('[data-reveal]:not([data-after-answer])')];
-  const revealNext = (slide) => {
-    const next = steps(slide).find((el) => !el.classList.contains('is-shown'));
-    if (!next) return false;
-    next.classList.add('is-shown');
-    return true;
-  };
-  const revealPrev = (slide) => {
-    const shown = steps(slide).filter((el) => el.classList.contains('is-shown'));
-    if (!shown.length) return false;
-    shown[shown.length - 1].classList.remove('is-shown');
-    return true;
-  };
-  const setReveal = (slide, all) => {
-    slide.querySelectorAll('[data-reveal]').forEach((el) => {
-      // 答案帶即使回看也不自動亮，維持「答過才看得到」
-      if (all && !el.hasAttribute('data-after-answer')) el.classList.add('is-shown');
-      else el.classList.remove('is-shown');
+  document.querySelectorAll('.q-block').forEach((block) => {
+    block.addEventListener('tds:answered', () => {
+      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
     });
-  };
-  const updateMeta = () => {
-    const slide = slides[index];
-    const all = steps(slide);
-    const shown = all.filter((el) => el.classList.contains('is-shown')).length;
-    if (current) current.textContent = String(index + 1);
-    if (total) total.textContent = String(slides.length);
-    const meta = document.querySelector('[data-reveal-meta]');
-    if (meta) meta.textContent = all.length ? `· 揭露 ${shown}/${all.length}` : '';
-    if (progress) progress.style.width = `${((index + 1) / slides.length) * 100}%`;
-  };
-
-  const render = (next, updateHash = true, fromBack = false) => {
-    index = clamp(next);
-    slides.forEach((s, i) => {
-      const active = i === index;
-      s.classList.toggle('is-active', active);
-      s.hidden = !active;
-      s.setAttribute('aria-hidden', String(!active));
+  });
+  /* 填充題：按鈕自行揭曉參考答案（無法自動批改，改為自評） */
+  document.querySelectorAll('[data-show-answer]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const block = btn.closest('.q-block');
+      if (!block) return;
+      block.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-shown'));
+      btn.disabled = true;
+      btn.textContent = '參考答案已顯示';
     });
-    // 往前翻＝這頁還沒講，全部收起；往回翻＝這頁講完了，全部攤開
-    setReveal(slides[index], fromBack);
-    updateMeta();
-    if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(slides[index].dataset.slideId)}`);
-  };
-
-  const advance = () => {
-    if (revealNext(slides[index])) { updateMeta(); return; }
-    render(index + 1);
-  };
-  const back = () => {
-    if (revealPrev(slides[index])) { updateMeta(); return; }
-    render(index - 1, true, true);
-  };
-
-  // 非 TDS 題型（點選項、翻答案卡）也要能觸發：作答動作一發生就放出該頁的答案帶
-  document.addEventListener('click', (e) => {
-    const t = e.target && e.target.closest
-      ? e.target.closest('.rcard, .opt, .q-opt, [data-quiz-check], [data-match-check], [data-order-check], [data-flip]')
-      : null;
-    if (!t) return;
-    const sl = t.closest('.slide');
-    if (sl) sl.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
   });
-  // 答對／答錯後才放出含答案的判斷帶
-  document.addEventListener('tds:answered', (e) => {
-    const slide = e.target.closest('.slide');
-    if (!slide) return;
-    slide.querySelectorAll('[data-after-answer]').forEach((el) => el.classList.add('is-shown'));
-  });
-
-  const slideFromHash = () => {
-    const id = decodeURIComponent(location.hash.slice(1));
-    const found = slides.findIndex((s) => s.dataset.slideId === id);
-    return found >= 0 ? found : 0;
-  };
-
-  const isInteractive = (t) => Boolean(t.closest('a, button, input, textarea, select, [data-hotspot], [data-quiz], [data-flip], [data-picker], [data-drag-match], [data-order]'));
-  addEventListener('keydown', (e) => {
-    if (isInteractive(e.target)) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
-    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); back(); }
-    else if (e.key === 'ArrowDown') { e.preventDefault(); render(index + 1); }   // 直接跳下一頁，不逐步
-    else if (e.key === 'ArrowUp') { e.preventDefault(); render(index - 1, true, true); }
-    else if (e.key === 'Home') { e.preventDefault(); render(0); }
-    else if (e.key === 'End') { e.preventDefault(); render(slides.length - 1, true, true); }
-  });
-
-  document.querySelector('[data-action="previous"]')?.addEventListener('click', back);
-  document.querySelector('[data-action="next"]')?.addEventListener('click', advance);
-  document.querySelector('[data-action="reveal-all"]')?.addEventListener('click', () => {
-    setReveal(slides[index], true); updateMeta();
-  });
-  document.querySelector('[data-action="fullscreen"]')?.addEventListener('click', async () => {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
-    } catch (err) { console.warn('無法切換全螢幕', err); }
-  });
-
-  const resize = () => {
-    const scale = Math.min(innerWidth / STAGE_W, innerHeight / STAGE_H);
-    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
-  };
-  addEventListener('hashchange', () => render(slideFromHash(), false));
-  addEventListener('resize', resize);
-  resize();
-  render(slideFromHash(), false);
 })();
 </script>
 
