@@ -92,12 +92,21 @@
       </div>`;
   };
 
+  // 工作薪水費率：正本在 .claude/skills/class-bank/SKILL.md 週結公式
+  // （CLEAN_PAY／LUNCH_PAY／ROUTINE_PAY），改制度要兩邊一起改。
+  // 比照幹部卡的 🪙 薪水標籤——孩子要看得到「做這份工作可以領多少」。
+  const DUTY_PAY = { clean: 2, lunch: 2 };
+  const ROUTINE_PAY = 1, ROUTINE_FULL = 3;
+  const payTag = n => `<span class="duty-pay-tag">🪙 ${n} 幣／次</span>`;
+
   // 「一項工作算一次」獎懲階梯。金額與判準對齊 docs/班級經營與生活常規.md 的獎懲三線：
   // 沒做到先走「同領域邏輯後果」（補做／重做，不扣幣），只有反覆不做才踩班規③扣幣。
+  // 2026-08-31 簡化（老師裁示）：原本「一週 5 次全到 +5」與「每次 2 幣工作薪水」是兩套並行的錢，
+  //   孩子要同時記兩種算法。改為只留**每次 2 幣**——做幾次領幾次，最直觀。
+  //   下面的 −5 與 +10 不是工作薪水，是班規③與亮點，維持不動。
   const DUTY_SCORING = [
-    { icon: "✅", when: "當天把自己負責的工作做完、做好", act: "檢核表記 1 次 ✓", coin: "", tone: "ok" },
-    { icon: "🏅", when: "一週 5 次全部完成", act: "認真負責・程度 1", coin: "+5", tone: "good" },
-    { icon: "🔁", when: "有 1～2 次沒做到", act: "補做或重做一次，不扣崑山幣", coin: "0", tone: "warn" },
+    { icon: "✅", when: "當天把自己負責的工作做完、做好", act: `工作薪水（週五週結入帳）`, coin: `+${DUTY_PAY.clean}`, tone: "good" },
+    { icon: "🔁", when: "有 1～2 次沒做到", act: "補做或重做一次，那幾次沒有薪水", coin: "0", tone: "warn" },
     { icon: "⚠️", when: "有 3 次以上沒做到", act: "踩到班規③「打掃要認真」・程度 1", coin: "−5", tone: "bad" },
     { icon: "🌟", when: "做得特別好、被公開表揚", act: "亮點・程度 1", coin: "+10", tone: "star" },
   ];
@@ -106,7 +115,7 @@
     <div class="duty-score">
       <div class="duty-score-head">
         <span class="duty-score-badge">一項工作 ＝ 一次</span>
-        身上有幾項工作就分開算：例如同時有打掃和午餐工作，就是兩條線各自結算。
+        身上有幾項工作就分開算：例如同時有打掃和午餐工作，就是兩條線各自結算，做幾次領幾次。
       </div>
       <div class="duty-score-rows">
         ${DUTY_SCORING.map(r => `
@@ -230,13 +239,6 @@
       <li><b>當天同一不當行為第一次改過，不扣點</b>；若再有，則需改過且扣點。</li>
       <li>另外還有亮點、進步獎、比賽獲獎、布可星球等獎勵，詳見「🏦 小小銀行」。</li>
     </ul>`;
-
-  // 工作薪水費率：正本在 .claude/skills/class-bank/SKILL.md 週結公式
-  // （CLEAN_PAY／LUNCH_PAY／ROUTINE_PAY），改制度要兩邊一起改。
-  // 比照幹部卡的 🪙 薪水標籤——孩子要看得到「做這份工作可以領多少」。
-  const DUTY_PAY = { clean: 2, lunch: 2 };
-  const ROUTINE_PAY = 1, ROUTINE_FULL = 3;
-  const payTag = n => `<span class="duty-pay-tag">🪙 ${n} 幣／次</span>`;
 
   // ── 一日作息與常規（Notion「🕗 作息與常規」）──
   // 2026-08-09 改為海報式卡片（沿用班級公約 rules-c0～c4 色系）：時段＋名稱做大標，
