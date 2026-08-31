@@ -231,6 +231,13 @@
       <li>另外還有亮點、進步獎、比賽獲獎、布可星球等獎勵，詳見「🏦 小小銀行」。</li>
     </ul>`;
 
+  // 工作薪水費率：正本在 .claude/skills/class-bank/SKILL.md 週結公式
+  // （CLEAN_PAY／LUNCH_PAY／ROUTINE_PAY），改制度要兩邊一起改。
+  // 比照幹部卡的 🪙 薪水標籤——孩子要看得到「做這份工作可以領多少」。
+  const DUTY_PAY = { clean: 2, lunch: 2 };
+  const ROUTINE_PAY = 1, ROUTINE_FULL = 3;
+  const payTag = n => `<span class="duty-pay-tag">🪙 ${n} 幣／次</span>`;
+
   // ── 一日作息與常規（Notion「🕗 作息與常規」）──
   // 2026-08-09 改為海報式卡片（沿用班級公約 rules-c0～c4 色系）：時段＋名稱做大標，
   // S.O.P. 拆成編號步驟卡讓學生一眼抓到流程順序，做到的樣子／對應公約／重做練習
@@ -286,6 +293,10 @@
     <div class="routine-list flows">${routineRows(cr.flows)}</div>` : ""}
     <p class="duty-score-note">
       班級常規沒做到（例如：進教室、排隊、收拾這些「怎麼做」的流程），沒做好就重做一次練到會，<b>不扣點</b>。
+    </p>
+    <p class="duty-score-note">
+      🪙 <b>班級常規獎勵</b>：常規達成一天 ${ROUTINE_PAY} 幣，五天全達成再加 ${ROUTINE_FULL} 幣全勤獎
+      （每週最多 ${ROUTINE_PAY * 5 + ROUTINE_FULL} 幣），週五週結時一起入帳。
     </p>`;
 
   // 抽獎池＝🏪 班級商店勾「抽獎池」的特權券（與商店同源，抽到的就是平常換得到的那些）
@@ -332,7 +343,7 @@
         ${z.groups.map(g => `
         <div class="duty-card">
           <div class="duty-card-head">${App.esc(g.group)}${
-            g.title ? `<span class="duty-title">${App.esc(g.title)}</span>` : ""}</div>
+            g.title ? `<span class="duty-title">${App.esc(g.title)}</span>` : ""}${payTag(DUTY_PAY.clean)}</div>
           <div class="duty-people">${g.members.map(n => `<span class="duty-chip">${App.esc(n)}</span>`).join("")}${
             g.support.length ? g.support.map(n => `<span class="duty-chip sup">${App.esc(n)}<small>支援</small></span>`).join("") : ""}</div>
           ${dutySpec(g)}
@@ -359,7 +370,7 @@
         ${l.fixed.map(f => `
         <div class="duty-card">
           <div class="duty-card-head">${App.esc(f.post)}${
-            f.title ? `<span class="duty-title">${App.esc(f.title)}</span>` : ""}
+            f.title ? `<span class="duty-title">${App.esc(f.title)}</span>` : ""}${payTag(DUTY_PAY.lunch)}
             ${f.isMock ? '<span class="mock-tag">模擬資料・待確認</span>' : ""}</div>
           <div class="duty-people">${f.members.map(n => `<span class="duty-chip">${App.esc(n)}</span>`).join("")}</div>
           ${dutySpec(f)}
@@ -376,7 +387,8 @@
         <div id="lunch-week-body" class="lunch-week-cards">${weeks.length ? lunchSlots(weeks[0]) : ""}</div>
         <p class="meta">
           輪值池 ${l.輪值池人數} 人（午餐長與打飯班不輪），每週 ${l.每週人數} 人，
-          ${l.完整輪替週數} 週輪完一圈，每人各輪 ${l.每人每輪次數} 次。
+          ${l.完整輪替週數} 週輪完一圈，每人各輪 ${l.每人每輪次數} 次；
+          值週生也照 🪙 ${DUTY_PAY.lunch} 幣／次計薪。
         </p>
       </div>
 
@@ -385,7 +397,7 @@
         ${l.posts.map(p => `
         <div class="duty-card">
           <div class="duty-card-head">${App.esc(p.post)}${
-            p.title ? `<span class="duty-title">${App.esc(p.title)}</span>` : ""}</div>
+            p.title ? `<span class="duty-title">${App.esc(p.title)}</span>` : ""}${payTag(DUTY_PAY.lunch)}</div>
           ${dutySpec(p)}
         </div>`).join("")}
       </div>` : ""}

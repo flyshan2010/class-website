@@ -1724,6 +1724,9 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
    標題自成一行才掃得到。三段配色固定：要做的事灰、能管的事藍、做好的標準綠、額外獎金橘。 */
 .duty-title { font-weight: 700; font-size: 0.7778rem; color: #1a5fb4; background: #eaf1fb;
   border-radius: 999px; padding: 2px 10px; }
+/* 工作薪水標籤：比照幹部卡的 🪙 標示，讓孩子看得到這份工作領多少（費率見 about.js DUTY_PAY） */
+.duty-pay-tag { font-weight: 800; font-size: 0.7778rem; color: #c97b12; background: #fdf1dc;
+  border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
 .spec { margin-top: 8px; padding: 8px 10px; border-radius: 8px; border-left: 4px solid; }
 .spec-label { font-weight: 900; font-size: 0.7778rem; letter-spacing: .04em; margin-bottom: 2px; }
 .spec-body { font-size: 0.8889rem; line-height: 1.75; color: var(--ink); }
