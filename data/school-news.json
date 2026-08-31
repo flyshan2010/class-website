@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-08-31T01:13:10.714Z",
+  "fetchedAt": "2026-08-31T08:01:32.263Z",
   "items": [
+    {
+      "date": "2026-08-31",
+      "title": "行政院辦理「性平小學堂」網路問答遊戲活動",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=667&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-08-31",
+      "title": "115年教師法律諮詢補助計畫",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=666&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-08-29",
       "title": "臺南市115學年度崑山國民小學教學支援老師甄選",
@@ -32,12 +44,6 @@
       "dept": "學務處"
     },
     {
-      "date": "2026-08-28",
-      "title": "電子煙vs加熱菸認清不觸法",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=650&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
@@ -54,12 +60,6 @@
       "title": "115學年度第1學期課後才藝社團報名訊息，請留意報名日期及時間。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=606&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-08-18",
-      "title": "115學年度一年級新生課後照顧班錄取名單公告",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=599&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
