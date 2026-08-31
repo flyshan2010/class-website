@@ -1,5 +1,69 @@
 [
   {
+    "title": "社R2-4 期末總複習第4輪｜單元三、四",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "八張對照卡：一個觀念一張「✗常聽到的說法 → ✓ 正確說法 → 判準」",
+      "信仰與聚落：廟宇不只拜拜／沒落≠失敗／先廟後街／騎樓與天井各解一事",
+      "曆法與節慶：農曆≠農民曆／清明是節氣（看太陽）／熱鬧放假不是判準",
+      "族群文化：五年祭是每五年一次／飛魚季只捕飛魚是保護資源",
+      "考場策略：紅旗字先找例外、因果題選最先發生的、短答有幾分寫幾點"
+    ],
+    "date": "2027-01-04",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W19（1/04–1/06）＋W20 的 1/11，共 4 節；第 4 輪（觀念澄清與考前對照卡）。實測：1600×900 投影三份最高 894px（teach 810／practice 894／review 810）無溢出；逐步揭露三項通過；quiz 正解與是非題答案帶逐題比對 0 異常；五頁線上 HTTP 200。撞題：同資料夾 0 處；紙本 vs 前三輪已上線網頁 0 處（改寫 12 題）。紙本：六合一×3（0.前測 20 分鐘／4.評量 40 分鐘 15 選 5 填 2 問答／4b.觀念卷 15 分鐘（1/11））＋差異化三份＋3a.對照卡_考前帶回家（A4 一頁三張、八張可剪下），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-4-期末總複習第4輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-4-期末總複習第4輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-4-期末總複習第4輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-4-期末總複習第4輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-4-期末總複習第4輪/3.review.html"
+    }
+  },
+  {
+    "title": "數R2-4 期末總複習第4輪｜L6～L10",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "三個最常錯的主題各示範一次：除法問法／併式順序／小數對齊",
+      "L6：餘數必須小於除數；「裝滿幾盒」不進位、「至少幾盒」要進位",
+      "L8：先乘除後加減、乘除同級由左往右、要先算就加括號",
+      "L9：整數要補成 9.00 再減；位數多不代表比較大",
+      "L7・L10 速查：三角和 180°、全等依字母順序；圖表先算一格代表多少"
+    ],
+    "date": "2027-01-04",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W19（1/04–1/08）＋W20 的 1/11，共 5 節；第 4 輪（重點衝刺，模擬卷比照定期評量配分）。實測：1600×900 投影三份最高 810px（teach 810／practice 807／review 810）無溢出；逐步揭露三項通過；quiz 正解逐題檢查 0 異常；五頁線上 HTTP 200。撞題：依 U35 數學判準逐題比數值，同資料夾與前三輪均 0 處（改掉 2 題）。紙本：六合一×3（0.前測 20 分鐘 10 選 4 填／4.評量 40 分鐘 15 選 5 填 2 問答／4b.錯題回鍋卷 20 分鐘（1/11））＋差異化三份，存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-4-期末總複習第4輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-4-期末總複習第4輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-4-期末總複習第4輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-4-期末總複習第4輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數R2-4-期末總複習第4輪/3.review.html"
+    }
+  },
+  {
     "title": "國R2-3 期末總複習第3輪｜L7～L12 綜合整理",
     "subject": "國語",
     "grade": "四上",
