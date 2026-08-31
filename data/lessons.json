@@ -1,5 +1,37 @@
 [
   {
+    "title": "社R2-3 期末總複習第3輪｜單元三、四",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "六種問法各一套拆法：直問直答／最主要原因／圖表判讀／情境題組／是非改錯／短答",
+      "因果題：兩個都對時選那條因果線的起點（道路改道 → 人潮 → 生意）",
+      "圖表題三步：先讀標題、再讀單位刻度、才回題目；圖上沒有的原因與預測不可推",
+      "紅旗字：全部、一定、只有、因為所以——先找例外再判斷",
+      "短答策略：有幾分寫幾點、先答判斷再給理由、用課本的詞"
+    ],
+    "date": "2026-12-28",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "期末複習 W18（12/28–12/30）3 節，第 3 輪（試卷題型拆解）。本輪不再加背名詞，改練「看懂題目在問什麼」，素材全部取自單元三、四。網頁與紙本平行題本：同資料夾撞題檢查 0 處，另加驗紙本 vs 前兩輪已上線網頁 0 處（改掉 7 題）。實測：1600×900 投影三份最高 894px（teach 894／practice 862／review 810）無溢出；逐步揭露三項通過（一次一件／整頁攤開不洩答案／作答後才出現）；51 題 quiz 正解逐題檢查一致；五頁線上 HTTP 200。紙本：六合一×2（0.前測 20 分鐘 8 選 4 填 2 問答／4.評量 40 分鐘 15 選 5 填 2 問答）＋差異化三份（基礎 6／進階 6／挑戰 5），存 Drive 正本，未進公開 repo。",
+    "links": {
+      "material": "",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-3-期末總複習第3輪/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-3-期末總複習第3輪/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-3-期末總複習第3輪/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-3-期末總複習第3輪/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社R2-3-期末總複習第3輪/3.review.html"
+    }
+  },
+  {
     "title": "國R2-2 期末總複習第2輪｜L7～L12 內容理解與形式深究",
     "subject": "國語",
     "grade": "四上",
