@@ -948,6 +948,11 @@ async function syncBank() {
   const byPageId = Object.fromEntries(roster.map(r => [r._id, r]));
   const accounts = {}; // seat → {name, seat, code, balance, tx[]}
   let bankSkipped = 0;
+  // 全班先開戶：沒有任何交易的學生也要有存摺（否則查詢會顯示「這個座號目前沒有帳戶」）
+  for (const r of roster) {
+    const seat = Number(r["座號"]);
+    accounts[seat] = { seat, name: r["姓名"], code: String(r["查詢碼"]).trim(), balance: 0, tx: [] };
+  }
   for (const t of txRows) {
     const stu = byPageId[t["學生"][0]];
     if (!stu) { bankSkipped++; continue; }
