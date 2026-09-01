@@ -29,6 +29,21 @@
     App.fetchJSON("data/morning-launch.json").catch(() => null),
     App.fetchJSON("data/lessons.json").catch(() => []),
   ]);
+  // 週次查表：weeks.json 是週次的單一出處，這裡先攤平成 date→標籤 供同步查詢
+  const weeksDoc = await App.fetchJSON("data/weeks.json").catch(() => ({ 學期: [] }));
+  const weekRanges = (weeksDoc.學期 || []).flatMap(sm =>
+    (sm.週 || []).map(w => ({ ...w, 學期名稱: sm.學期名稱 })));
+  const weekOfDate = iso =>
+    weekRanges.find(w => (iso >= w.起 && iso <= w.迄) || w.預排日?.includes(iso)) || null;
+  /* 徽章文字：一般日直接用標籤；預排日的標籤帶的是正式那一週的日期區間（例 1/21 會印成
+     「四下第1週(2/11-2/12)」，看了會愣一下），所以改標「四下第1週・預排日」。
+     ⚠️ 只有畫面這樣顯示——寫進 Notion 週次欄的仍是標籤原文，否則字串比對會對不上。 */
+  const weekLabel = iso => {
+    const w = weekOfDate(iso);
+    if (!w) return "";
+    return w.預排日?.includes(iso) ? `${w.學期名稱}第${w.週次}週・預排日` : w.標籤;
+  };
+
   const days = planDoc.days || [];
   const dayByDate = new Map(days.map(d => [d.date, d]));
 
@@ -526,7 +541,7 @@
     const title = `
       <div class="cp-day-head ${isPast ? "past" : ""}">
         <div>
-          <h3>${App.fmtDate(day.date)}<span class="badge cp-week">第 ${day.week} 週</span>
+          <h3>${App.fmtDate(day.date)}<span class="badge cp-week">${App.esc(weekLabel(day.date) || `第 ${day.week} 週`)}</span>
             ${isToday ? '<span class="badge cp-badge-today">今天</span>' : ""}
             ${isPast ? '<span class="badge cp-badge-past">已過</span>' : ""}
           </h3>

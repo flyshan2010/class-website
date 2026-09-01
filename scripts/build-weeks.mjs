@@ -13,6 +13,14 @@
  *     （所以 115 下第一週是 2/11-2/12，不是 2/8-2/12）。
  *   - 查表區間（起／迄）用週一～週日，週末的日期才不會查不到週次。
  *   - 假期（不在任何學期區間內）→ 查無週次，各 skill 依規則把週次留空。
+ *
+ * 預排日（2026-09-01 老師裁示，不要「修正」成別的算法）：
+ *   daily-plan.json 偶爾會有落在學期區間外的上課日——例如 2027-01-21、01-22，
+ *   在休業式（1/20）之後、下學期開學（2/11）之前。那是老師的**預排緩衝**：
+ *   曾發生下學期課程提前上，所以先把那幾天排出來備用。
+ *   **學期起訖仍以 Google 日曆為準**（休業式 1/20、寒假 1/21 起，115 上就是 21 週），
+ *   但這些天真的用到時上的是下學期的課，所以**一律歸「下一個學期的第 1 週」**
+ *   （1/21、1/22 → 四下第1週）。它們寫在該週的 `預排日` 陣列，查表時要一併比對。
  */
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -86,6 +94,23 @@ const 學期們 = 開學們
   .filter(([, e]) => e)
   .map(([s, e]) => 建學期(s, e));
 
+/* 預排日：daily-plan.json 裡落在所有學期區間外的上課日（老師的緩衝日）。
+   歸「下一個學期的第 1 週」——真的用到時上的是下學期的課。
+   daily-plan.json 由 sync-notion 產生、排在本腳本之前；讀不到就當作沒有預排日。 */
+let 上課日們 = [];
+try {
+  const dp = JSON.parse(await readFile(path.join(DATA_DIR, "daily-plan.json"), "utf8"));
+  上課日們 = (dp.days || []).filter(d => d.date && d.holiday === false).map(d => d.date);
+} catch { /* 沒有 daily-plan.json 就跳過 */ }
+
+for (const iso of 上課日們) {
+  if (學期們.some(sm => iso >= sm.開學日 && iso <= sm.休業日)) continue;   // 已在某學期內
+  const 下個 = 學期們.find(sm => sm.開學日 > iso);
+  if (!下個) continue;                                                     // 沒有下一個學期就不歸
+  (下個.週[0].預排日 ||= []).push(iso);
+}
+for (const sm of 學期們) if (sm.週[0].預排日) sm.週[0].預排日.sort();
+
 if (!學期們.length) {
   console.warn("⚠️ calendar.json 找不到「開學」＋「休業式」配對，weeks.json 未更新");
   process.exit(0);
@@ -93,7 +118,7 @@ if (!學期們.length) {
 
 const out = {
   _說明: "學校週次對照表。由 build-weeks.mjs 從 data/calendar.json 的開學／休業式推算，請勿手改；"
-       + "要調整週次請改 Google 日曆的開學／休業式日期後重跑同步。日期不在任何學期區間內＝假期，週次留空。",
+       + "要調整週次請改 Google 日曆的開學／休業式日期後重跑同步。日期不在任何學期區間內＝假期，週次留空；但要先比對各週的『預排日』（老師的緩衝上課日，歸下一學期第 1 週）。",
   格式: "{學期名稱}第N週(M/D-M/D)，N 用阿拉伯數字；別名收錄國字寫法供舊資料比對",
   來源: "data/calendar.json（開學／線上休業式）",
   學期: 學期們,
