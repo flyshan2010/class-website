@@ -38,6 +38,10 @@ jobs:
       - name: 同步 Google 日曆
         run: node scripts/sync-gcal.mjs
 
+      # 週次對照表由行事曆的開學／休業式推算，必須排在 sync-gcal 之後。
+      - name: 產生學校週次對照表
+        run: node scripts/build-weeks.mjs
+
       - name: 同步 Drive 相簿
         env:
           DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}

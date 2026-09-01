@@ -268,6 +268,32 @@ const App = {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   },
 
+  // ── 學校週次（單一出處：data/weeks.json，由 build-weeks.mjs 產生）──
+  // 在此之前每個頁面各推各的，同一天會被算成不同字串；一律走這裡查。
+  _weeksCache: null,
+  async weeks() {
+    if (!this._weeksCache) {
+      this._weeksCache = await this.fetchJSON("data/weeks.json").catch(() => ({ 學期: [] }));
+    }
+    return this._weeksCache;
+  },
+
+  // ISO 日期 → 該週物件（含標籤／起迄／學期名稱）；假期回傳 null
+  async weekOf(iso) {
+    if (!iso) return null;
+    for (const s of (await this.weeks()).學期 ?? []) {
+      const w = (s.週 ?? []).find(w => iso >= w.起 && iso <= w.迄);
+      if (w) return { ...w, 學年: s.學年, 學期名稱: s.學期名稱 };
+    }
+    return null;
+  },
+
+  // ISO 日期 → 「四上第3週」（不含日期區間，給徽章用）；假期回傳 ""
+  async weekBadge(iso) {
+    const w = await this.weekOf(iso);
+    return w ? `${w.學期名稱}第${w.週次}週` : "";
+  },
+
   esc(s) {
     return String(s ?? "").replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
   },
