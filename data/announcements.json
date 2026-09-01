@@ -186,20 +186,6 @@
     "auto": "school"
   },
   {
-    "id": "s202608281mydoh4",
-    "title": "「115-1學期班級報」方案",
-    "content": "發布單位：教務處",
-    "date": "2026-08-28",
-    "endDate": "",
-    "expiry": "2026-09-27",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=655&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
     "id": "s202608263mjnpv",
     "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
     "content": "發布單位：學務處",
@@ -210,6 +196,20 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
+    "id": "s20260826kj47x6",
+    "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!!",
+    "content": "發布單位：學務處",
+    "date": "2026-08-26",
+    "endDate": "",
+    "expiry": "2026-09-25",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   },
