@@ -282,7 +282,8 @@ const App = {
   async weekOf(iso) {
     if (!iso) return null;
     for (const s of (await this.weeks()).學期 ?? []) {
-      const w = (s.週 ?? []).find(w => iso >= w.起 && iso <= w.迄);
+      // 先比區間，再比「預排日」（老師排在學期區間外的緩衝上課日，歸下一學期第 1 週）
+      const w = (s.週 ?? []).find(w => (iso >= w.起 && iso <= w.迄) || w.預排日?.includes(iso));
       if (w) return { ...w, 學年: s.學年, 學期名稱: s.學期名稱 };
     }
     return null;
