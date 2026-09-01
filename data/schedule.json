@@ -66,7 +66,7 @@
       {
         "subject": "視覺藝術",
         "teacher": "石育恩",
-        "room": "美勞教室",
+        "room": "美勞教室1",
         "parallel": [
           {
             "subject": "本土語(布)",
@@ -104,7 +104,7 @@
       {
         "subject": "視覺藝術",
         "teacher": "石育恩",
-        "room": "美勞教室",
+        "room": "美勞教室1",
         "parallel": []
       },
       {
@@ -154,7 +154,7 @@
       {
         "subject": "自然",
         "teacher": "李妤婕",
-        "room": "自然教室",
+        "room": "自然教室5",
         "parallel": []
       }
     ],
@@ -207,7 +207,7 @@
       {
         "subject": "自然",
         "teacher": "李妤婕",
-        "room": "自然教室",
+        "room": "自然教室5",
         "parallel": []
       },
       "",
@@ -240,7 +240,7 @@
       {
         "subject": "自然",
         "teacher": "李妤婕",
-        "room": "自然教室",
+        "room": "自然教室5",
         "parallel": []
       },
       "",
