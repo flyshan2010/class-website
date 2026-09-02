@@ -942,6 +942,12 @@ main {
 }
 .store-buy:hover:not(:disabled) { background: #ffa722; }
 .store-buy:disabled { background: #eee; color: #999; box-shadow: none; cursor: default; }
+/* 【老師頒予】品項：不是按鈕，是一張獎狀——刻意不做成可點的樣子 */
+.store-award {
+  margin-top: 8px; border-radius: 12px; padding: 7px 6px;
+  font-size: 0.7778rem; font-weight: bold;
+  background: #eef7ee; color: #2f6b3a; border: 2px dotted #a9d0ae;
+}
 .bank-tip { margin-top: 18px; text-align: center; font-size: 0.8611rem; background: #fff8e8; }
 
 /* 班級共同目標（集資）：預設關閉，Notion「⚙️ 網站設定」填「班級共同目標＝開」才出現 */

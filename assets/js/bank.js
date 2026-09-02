@@ -67,7 +67,12 @@
       ["③ 職務公會・解鎖型", "🛡️ 職務公會（要先解鎖）", "不是有錢就能買——要先累積到門檻，換到的是責任與薪水。"],
       ["④ 創造沙盒・系統演化", "🧪 創造沙盒", "解鎖後可以提案，讓班級制度跟著你的想法長大。"],
     ];
+    // 【老師頒予】品項（①社會性四項與④命名權）：價 0 但不可自行兌換。
+    // 沒有這道判斷，價 0 會讓「買得起就出鈕」對全班成立，變成人人可點，
+    // 那就不是「做到了才有」，整層的教育意義會反過來。
+    const awardOnly = i => (i.note || "").startsWith("【老師頒予");
     const buyBtn = i => {
+      if (awardOnly(i)) return `<div class="store-award">🎖️ 老師頒予</div>`;
       if (!session || !i.id || !c.updateProxyUrl) return "";
       if (i.stock <= 0) return "";
       if (alreadyRequested(i)) return `<button class="store-buy" disabled>🕐 已申請，等老師確認</button>`;
@@ -75,11 +80,11 @@
       return `<button class="store-buy" data-id="${App.esc(i.id)}">🛒 我要兌換</button>`;
     };
     const cards = tier => store.filter(i => (i.tier || "② 活動特權・消費型") === tier).map(i => `
-      <div class="store-card ${i.stock <= 0 ? "soldout" : ""}">
+      <div class="store-card ${!awardOnly(i) && i.stock <= 0 ? "soldout" : ""}">
         <div class="store-icon">${App.esc(i.icon)}</div>
         <div class="store-name">${App.esc(i.name)}</div>
         <div class="store-price">${i.price > 0 ? `🪙 ${i.price} 幣` : "免費"}</div>
-        <div class="store-stock">${i.stock <= 0 ? "😢 售完" : `庫存 ${i.stock}`}</div>
+        <div class="store-stock">${awardOnly(i) ? "" : (i.stock <= 0 ? "😢 售完" : `庫存 ${i.stock}`)}</div>
         ${i.note ? `<div class="store-note">${App.esc(i.note)}</div>` : ""}
         ${i.unlock ? `<div class="store-unlock">🔑 ${App.esc(i.unlock)}</div>` : ""}
         ${buyBtn(i)}
