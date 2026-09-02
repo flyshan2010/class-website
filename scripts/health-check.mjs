@@ -71,7 +71,14 @@ async function checkEmptyPagesHidden() {
   if (!site?.nav) { red("前台", "data/site-config.json 讀不到 nav", null); return; }
   const problems = [];
   for (const [id, sources] of Object.entries(cfg.emptyDataPages)) {
-    const counts = await Promise.all(sources.map(async f => (await readJSON(f, []))?.length ?? 0));
+    // 來源可寫 "檔名" 或 "檔名#a.b"（取巢狀陣列長度）——recap 的 SEL／經濟大事記藏在 recap-extra.json
+    // 底下，只數 weekly／gallery 會把「已有經濟資料的學期回顧」誤判成空頁（2026-09-02 實測誤報）。
+    const counts = await Promise.all(sources.map(async src => {
+      const [file, dotted] = src.split("#");
+      let v = await readJSON(file, []);
+      for (const k of (dotted ? dotted.split(".") : [])) v = v?.[k];
+      return Array.isArray(v) ? v.length : 0;
+    }));
     const isEmpty = counts.every(n => n === 0);
     const nav = site.nav.find(n => n.id === id);
     if (!nav) continue;
@@ -99,6 +106,56 @@ async function checkLocalAssets() {
   }
   if (missing.size) red("前台", `${missing.size} 個引用指向不存在的檔案：${[...missing].join("、")}`, "改檔名時漏改引用");
   else ok("頁面引用的本地檔案都在");
+}
+
+// ── A5 資料檔本身壞了沒（JSON 解析）────────────────────────────────────
+// 同步端寫壞一支 json，前端 fetch 到手才 parse 失敗——畫面是「那一區整塊空白」，
+// 沒有紅字、沒有 404，A1 的 HTTP 200 也照樣通過。這條是那個缺口的哨兵。
+async function checkDataJsonParsable() {
+  const bad = [];
+  const walk = async dir => {
+    for (const e of await readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) { await walk(full); continue; }
+      if (!e.name.endsWith(".json")) continue;
+      try { JSON.parse(await readFile(full, "utf8")); }
+      catch (err) { bad.push(path.relative(ROOT, full)); }
+    }
+  };
+  await walk(DATA_DIR);
+  if (bad.length) red("後台", `${bad.length} 支資料檔 JSON 解析失敗：${bad.join("、")}`,
+    "同步端寫壞了；前端不會報錯，只會整區空白");
+  else ok("data 底下的 json 全部解析得動");
+}
+
+// ── A6 程式碼裡 fetch 的資料檔存不存在 ────────────────────────────────
+// A4 只看 src/href 屬性，抓不到 JS 內的 fetch("data/xxx.json")——而那才是資料真正的入口。
+// 新增功能時改了檔名／搬了目錄，舊頁面就靜默少一區（2026-09-02 回歸檢驗補上這條）。
+// 只掃字面路徑；動態拼接（data/bank/${no}.json 這種）判不準，一律不掃（設計原則①）。
+async function checkFetchedDataPaths() {
+  const roots = [ROOT, path.join(ROOT, "assets/js")];
+  const missing = new Set();
+  for (const dir of roots) {
+    let entries = [];
+    try { entries = await readdir(dir); } catch { continue; }
+    for (const f of entries) {
+      if (!/\.(html|js)$/.test(f)) continue;
+      const src = await readFile(path.join(dir, f), "utf8");
+      for (const m of src.matchAll(/["'`](data\/[A-Za-z0-9_\-.\/]+\.json)["'`]/g)) {
+        if (await mtime(path.join(ROOT, m[1])) === null) missing.add(`${f} → ${m[1]}`);
+      }
+    }
+  }
+  // 導覽列指到不存在的頁面＝家長點了就 404
+  const site = await readJSON("site-config.json");
+  for (const n of site?.nav ?? []) {
+    const href = (n.href || "").split("#")[0];
+    if (!href || /^https?:/.test(href)) continue;
+    if (await mtime(path.join(ROOT, href)) === null) missing.add(`導覽「${n.label}」→ ${href}`);
+  }
+  if (missing.size) red("前台", `${missing.size} 個資料／導覽引用指向不存在的檔案：${[...missing].join("、")}`,
+    "改檔名或搬目錄時漏改引用；畫面不會報錯，只會少一區或 404");
+  else ok("程式碼 fetch 的資料檔與導覽連結都在");
 }
 
 // ── C1 藍圖總覽有沒有落後同層文件 ────────────────────────────────────────
@@ -185,6 +242,8 @@ await checkPagesLive();
 await checkSyncFresh();
 await checkEmptyPagesHidden();
 await checkLocalAssets();
+await checkDataJsonParsable();
+await checkFetchedDataPaths();
 await checkBlueprintDrift();
 await checkBlueprintIndex();
 await checkFifthSync();

@@ -1,45 +1,60 @@
 {
   "_說明": "健檢白名單與門檻。每誤報一次就在這裡加一行——白名單長出來的過程，就是這支腳本變可信的過程。規則正本＝ClassOS_v3.5_藍圖/RUNBOOK_系統健檢.md",
-
   "site": "https://flyshan2010.github.io/class-website",
-
   "syncMaxAgeHours": 36,
   "_syncMaxAgeHours說明": "同步排程是 07:00/16:00/20:00 三次，隔一天以上沒同步就是斷了。留 36h 是為了跨過週末與連假的邊界。",
-
   "emptyDataPages": {
-    "gallery": ["gallery.json"],
-    "weekly": ["weekly.json"],
-    "recap": ["weekly.json", "gallery.json"]
+    "gallery": [
+      "gallery.json"
+    ],
+    "weekly": [
+      "weekly.json"
+    ],
+    "recap": [
+      "weekly.json",
+      "gallery.json",
+      "recap-extra.json#sel.weeks",
+      "recap-extra.json#economy.weeks"
+    ]
   },
-  "_emptyDataPages說明": "頁面 id → 它的資料來源。全空卻沒有 autoHidden，代表導覽列上掛著一個點進去只有空狀態的分頁。sync-notion.mjs 收尾會自動維護 autoHidden，這裡是防它壞掉的哨兵。",
-
+  "_emptyDataPages說明": "頁面 id → 它的資料來源。全空卻沒有 autoHidden，代表導覽列上掛著一個點進去只有空狀態的分頁。sync-notion.mjs 收尾會自動維護 autoHidden，這裡是防它壞掉的哨兵。 來源可寫 \"檔名#a.b\" 取巢狀陣列長度；判準必須與 sync-notion.mjs 的 applyAutoHiddenNav 一致（2026-09-02：recap 補上 recap-extra 的 sel／economy weeks，否則誤報）。",
   "blueprintDir": "../ClassOS_v3.5_藍圖",
   "blueprintIndexFile": "README.md",
-  "blueprintIndexExempt": ["README.md"],
+  "blueprintIndexExempt": [
+    "README.md"
+  ],
   "_blueprintIndexExempt說明": "不需要出現在自己索引表裡的檔案。",
-
   "eolDocs": [
     "docs/教師支援系統設計藍圖.md"
   ],
   "_eolDocs說明": "已標註停止維護的歷史文件，mtime 落後是正常的，不列入漂移。2026-08-10 首跑時這份被誤判過一次（頁首明寫「已由 ClassOS v3.5 取代，不再更新」），是白名單的第一位住戶。",
-
   "fifthSyncNewerThan": {
-    "07_排程Agent_routine_prompt.md": ["05_任務路由登記簿_v1.md", "RUNBOOK_任務調度.md"]
+    "07_排程Agent_routine_prompt.md": [
+      "05_任務路由登記簿_v1.md",
+      "RUNBOOK_任務調度.md"
+    ]
   },
   "_fifthSyncNewerThan說明": "第五同步義務：改了登記簿或任務調度 RUNBOOK，雲端 routine 的 prompt 正本必須跟著改。左邊的檔案比右邊任一個舊，就是欠了同步。",
-
-  "historySections": ["## 版本紀錄", "## 裁示紀錄"],
+  "historySections": [
+    "## 版本紀錄",
+    "## 裁示紀錄"
+  ],
   "_historySections說明": "這些標題以下是歷史紀錄，寫的是「當時的事實」，不是現況——現況類檢查一律掃到這裡為止。2026-08-10 首跑就因為這件事誤報一次：v3.5.9 那則寫『claude.ai routines 兩條』是 8/1 的正確記錄，改掉反而是竄改歷史。同一個誤報模式（把歷史敘述當現況）在這場健檢裡出現三次，是最該防的一種。",
-
   "crossFileConsistency": [
     {
       "名稱": "雲端 routine 條數",
-      "檔案": ["README.md", "07_排程Agent_routine_prompt.md"],
-      "禁止字串": ["routines 兩條", "更新兩條 routine", "那兩條 routine"],
+      "檔案": [
+        "README.md",
+        "07_排程Agent_routine_prompt.md"
+      ],
+      "禁止字串": [
+        "routines 兩條",
+        "更新兩條 routine",
+        "那兩條 routine"
+      ],
       "說明": "2026-08-08 起實際只剩一條（trig_01JsQqRizHEv5nYAwLpFUG2x 已 404）。07 檔當天就更正了，README 落後到 8/10 才跟上——同一件事寫在兩個檔案、只改一個，是最容易累積的漂移。"
     }
   ],
-
   "_不做的檢查": {
     "元素越界偵測": "2026-08-10 實測：8 個頁面全部命中，但 scrollWidth 全部正常（收合選單與 overflow-x 容器內的表格）。誤報率 100%，整條廢除，改只看 scrollWidth。",
     "死腳本掃描": "以引用計數判死活，6 支疑似全部誤報（文件敘述、規格書、暫存檔都算引用）。判不出來就不要判。",
