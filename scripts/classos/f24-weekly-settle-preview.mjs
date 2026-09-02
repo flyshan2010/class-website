@@ -93,6 +93,10 @@ for (const d of duties) {
   }
 }
 const cleanTotal = [...cleanShares.values()].reduce((a, b) => a + b, 0) * SCHOOL_DAYS * CLEAN_PAY;
+// 驗算用明細（只印座號與份數，不印姓名）——打掃份數算錯就是有人少領錢，一定要看得見
+console.log(`🧹 打掃列 ${duties.filter(d => sel(d, "類型") === "打掃").length} 組｜份數分布：`
+  + [...cleanShares.entries()].sort((a, b) => a[0] - b[0]).map(([s, n]) => `${s}:${n}`).join(" "));
+console.log(`🍱 午餐固定崗座號：${[...fixedLunch].sort((a, b) => a - b).join("、")}`);
 const noClean = roster.filter(r => !cleanShares.has(r.seat)).map(r => r.seat);
 
 // 午餐輪值：輪次由週次算，池＝在學座號扣掉固定崗（與 build-duties.mjs 同一算法）
