@@ -78,7 +78,7 @@
     "startTime": "16:00",
     "endTime": "17:30",
     "type": "活動",
-    "notes": "A班:1.4.21.25\nA+B班:3"
+    "notes": "A班:1.4.21\nA+B班:3"
   },
   {
     "title": "友善校園週宣導",
@@ -212,6 +212,15 @@
     "endDate": "",
     "startTime": "08:05",
     "endTime": "08:35",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "戶外教育行前講習",
+    "date": "2026-10-05",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "08:40",
     "type": "活動",
     "notes": ""
   },
