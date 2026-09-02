@@ -1,0 +1,33 @@
+name: 週五週結試算
+
+# 每週五 16:00（台北）自動試算週結，結果停在「📥 任務收件匣」的待審任務等老師確認。
+# **這支永遠不寫班級銀行帳本**——只算、只留摘要；真正入帳走 Claude Code 的 /class-bank 週結。
+# 之所以不直接入帳：批次動錢一律要人點頭（通用鐵則 5），且新流程要先手動跑幾輪 PDCA（通用鐵則 1）。
+on:
+  schedule:
+    - cron: "0 8 * * 5"        # UTC 08:00 = 台北 16:00，週五
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: dry-run＝只印不建任務／execute＝建立待審任務
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - execute
+
+jobs:
+  settle-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 週結試算
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          # 排程觸發沒有 inputs，一律 execute（要它真的建待審任務）；手動時照選單。
+          MODE: ${{ github.event.inputs.mode || 'execute' }}
+        run: node scripts/classos/f24-weekly-settle-preview.mjs
