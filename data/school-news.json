@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-09-02T12:29:01.022Z",
+  "fetchedAt": "2026-09-02T14:24:38.743Z",
   "items": [
+    {
+      "date": "2026-09-02",
+      "title": "【學習扶助】115學年度第一學期學習扶助課輔班錄取結果",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=684&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-09-02",
       "title": "臺南市立圖書館行動圖書館服務",
@@ -54,12 +60,6 @@
       "title": "社團法人中華民國關懷生命協會2026第五屆「關懷動物文學獎」延長收件期限",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=669&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-08-31",
-      "title": "行政院辦理「性平小學堂」網路問答遊戲活動",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=667&type=news&from_op=school_department_show",
-      "dept": "學務處"
     }
   ]
 }
