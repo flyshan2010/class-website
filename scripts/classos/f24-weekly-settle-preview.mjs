@@ -37,7 +37,11 @@ const num = (p, k) => p.properties?.[k]?.number ?? null;
 const sel = (p, k) => p.properties?.[k]?.select?.name ?? "";
 const txt = (p, k) => (p.properties?.[k]?.rich_text ?? []).map(t => t.plain_text).join("");
 const relIds = (p, k) => (p.properties?.[k]?.relation ?? []).map(r => r.id);
-const seatsOf = s => String(s ?? "").split(/[,、，\s]+/).map(x => Number(x)).filter(Number.isFinite);
+// ⚠️ 一定要先濾掉空字串再轉數字：Number("") 是 0 而不是 NaN，
+//    空的「支援座號」會變成一位不存在的「座號 0」，整批多算份數（2026-09-02 第一次試算就踩到）。
+const seatsOf = s => String(s ?? "").split(/[,、，\s]+/)
+  .map(x => x.trim()).filter(Boolean)
+  .map(Number).filter(n => Number.isInteger(n) && n > 0);
 
 // ── 本週是哪一週（單一出處：data/weeks.json）────────────────────────
 const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
