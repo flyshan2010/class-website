@@ -26,7 +26,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { queryAll, api, isExecute, DS } from "./lib/notion.mjs";
+import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -153,9 +153,20 @@ console.log("\n" + lines.join("\n"));
 if (!isExecute()) { console.log("\n🔍 dry-run：未建立待審任務（要建請用 mode=execute）"); process.exit(0); }
 
 // ── 寫入收件匣（狀態＝待審；不碰帳本）──────────────────────────────
-const dup = (await queryAll(DS.inbox)).some(p =>
-  (p.properties?.["任務原文"]?.title ?? []).map(t => t.plain_text).join("").includes(`${WEEK} 週結試算`));
-if (dup) { console.log(`\n⏭️ 收件匣已有「${WEEK} 週結試算」，不重複建立。`); process.exit(0); }
+/* 同一週已有待審的試算就「刷新」它，不要跳過也不要疊第二筆：
+   跳過會讓週五排程沿用幾天前的舊金額（獎懲每天都在長），疊第二筆則是兩張單子要對。 */
+const prev = (await queryAll(DS.inbox)).find(p =>
+  (p.properties?.["任務原文"]?.title ?? []).map(t => t.plain_text).join("").includes(`${WEEK} 週結試算`)
+  && (p.properties?.["狀態"]?.select?.name ?? "") === "待審");
+if (prev) {
+  const u = await updatePage(prev.id, {
+    "任務原文": { title: rt(`${WEEK} 週結試算（自動・${today} 更新）`) },
+    "執行紀錄": { rich_text: rt(lines.join("\n")) },
+  });
+  if (!u.ok) { console.error(`❌ 刷新待審任務失敗：${u.status} ${u.json?.message ?? ""}`); process.exit(1); }
+  console.log(`\n♻️ 已刷新收件匣既有的待審試算（合計 ${total} 幣）`);
+  process.exit(0);
+}
 
 const r = await api("POST", "/pages", {
   parent: { type: "data_source_id", data_source_id: DS.inbox },
