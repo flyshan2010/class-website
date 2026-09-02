@@ -570,14 +570,31 @@
     rendered.forEach((el, key) => { el.hidden = key !== tab.id; });
   };
 
-  function wireLunchPicker(scope) {
+  async function wireLunchPicker(scope) {
     const sel = scope.querySelector("#lunch-week");
     const out = scope.querySelector("#lunch-week-body");
     if (!sel || !out || !lunch?.rotation) return;
-    sel.addEventListener("change", () => {
+    const render = () => {
       const w = lunch.rotation.find(x => String(x.week) === sel.value);
       if (w) out.innerHTML = lunchSlots(w);
-    });
+    };
+    sel.addEventListener("change", render);
+
+    /* 開啟時直接跳到「本週」那一輪：輪次 =((該學期週次-1) % 完整輪替週數)+1。
+       模數一定要讀 完整輪替週數（＝池人數÷gcd(池人數,每週人數)），不可寫死——
+       轉學一個人就會變（21 人→21 週、20 人→4 週），寫死會整批指到別人。
+       下學期從第 1 輪重新起算：學期界線就是輪替界線。 */
+    const cur = await App.weekOf(App.todayISO());
+    const cycle = Number(lunch.完整輪替週數) || lunch.rotation.length;
+    if (cur && cycle) {
+      const r = ((cur.週次 - 1) % cycle) + 1;
+      const opt = [...sel.options].find(o => o.value === String(r));
+      if (opt) {
+        sel.value = String(r);
+        opt.textContent = `${r}（本週）`;
+        render();
+      }
+    }
   }
 
   buttons.forEach(b => b.addEventListener("click", () => {
