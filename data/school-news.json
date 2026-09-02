@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-01T15:43:33.052Z",
+  "fetchedAt": "2026-09-02T00:54:08.066Z",
   "items": [
     {
       "date": "2026-09-01",
@@ -44,12 +44,6 @@
       "dept": "教務處"
     },
     {
-      "date": "2026-08-28",
-      "title": "有關台灣發明商品促進協會辦理「2027曼谷國際發明展」，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=658&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
@@ -59,6 +53,12 @@
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!!",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-08-19",
+      "title": "115學年度第1學期課後才藝社團報名訊息，請留意報名日期及時間。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=606&type=news&from_op=school_department_show",
       "dept": "學務處"
     }
   ]
