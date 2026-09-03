@@ -28,6 +28,34 @@
     "images": []
   },
   {
+    "id": "s20260903x5yau4",
+    "title": "115年流感疫苗接種行政電子化系統(NIAS)校園子系統線上簽署家長操作指引流感疫苗",
+    "content": "發布單位：學務處",
+    "date": "2026-09-03",
+    "endDate": "",
+    "expiry": "2026-10-03",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=686&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
+    "id": "s20260903oha3fb",
+    "title": "115學年度第1學期本市特殊教育學生情緒及行為問題專業支援團隊電話諮詢時間",
+    "content": "發布單位：輔導室",
+    "date": "2026-09-03",
+    "endDate": "",
+    "expiry": "2026-10-03",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=685&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
     "id": "s20260902oz3upj",
     "title": "【學習扶助】115學年度第一學期學習扶助課輔班錄取結果",
     "content": "發布單位：教務處",
@@ -112,62 +140,6 @@
     "auto": "school"
   },
   {
-    "id": "s202609011s67m0u",
-    "title": "115年國家防災日訂於9月21日(星期一)上午9時21分辦理",
-    "content": "發布單位：學務處",
-    "date": "2026-09-01",
-    "endDate": "",
-    "expiry": "2026-10-01",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=672&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s202609011wiqsu6",
-    "title": "「行天宮急難濟助」",
-    "content": "發布單位：學務處",
-    "date": "2026-09-01",
-    "endDate": "",
-    "expiry": "2026-10-01",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=671&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s20260901koa81o",
-    "title": "臺南市家庭教育中心提供「主動致電關懷」專線，請有需求家長至本校輔導室提出申請。",
-    "content": "發布單位：輔導室",
-    "date": "2026-09-01",
-    "endDate": "",
-    "expiry": "2026-10-01",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=670&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s2026090111t4tl2",
-    "title": "社團法人中華民國關懷生命協會2026第五屆「關懷動物文學獎」延長收件期限",
-    "content": "發布單位：輔導室",
-    "date": "2026-09-01",
-    "endDate": "",
-    "expiry": "2026-10-01",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=669&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
     "id": "n3cdb1f9d7e",
     "title": "115學年度班親會邀請函",
     "content": "",
@@ -212,6 +184,34 @@
     "images": [
       "data/uploads/de9f31ae6a03-0.png"
     ]
+  },
+  {
+    "id": "s202608263mjnpv",
+    "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
+    "content": "發布單位：學務處",
+    "date": "2026-08-26",
+    "endDate": "",
+    "expiry": "2026-09-25",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
+    "id": "s20260826kj47x6",
+    "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!!",
+    "content": "發布單位：學務處",
+    "date": "2026-08-26",
+    "endDate": "",
+    "expiry": "2026-09-25",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
   },
   {
     "id": "n394b1f9d7e",

@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-09-02T15:51:14.766Z",
+  "fetchedAt": "2026-09-03T01:01:00.311Z",
   "items": [
+    {
+      "date": "2026-09-03",
+      "title": "115年流感疫苗接種行政電子化系統(NIAS)校園子系統線上簽署家長操作指引流感疫苗",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=686&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-09-03",
+      "title": "115學年度第1學期本市特殊教育學生情緒及行為問題專業支援團隊電話諮詢時間",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=685&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-09-02",
       "title": "【學習扶助】115學年度第一學期學習扶助課輔班錄取結果",
@@ -38,28 +50,16 @@
       "dept": "學務處"
     },
     {
-      "date": "2026-09-01",
-      "title": "115年國家防災日訂於9月21日(星期一)上午9時21分辦理",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=672&type=news&from_op=school_department_show",
+      "date": "2026-08-26",
+      "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
       "dept": "學務處"
     },
     {
-      "date": "2026-09-01",
-      "title": "「行天宮急難濟助」",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=671&type=news&from_op=school_department_show",
+      "date": "2026-08-26",
+      "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!!",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-09-01",
-      "title": "臺南市家庭教育中心提供「主動致電關懷」專線，請有需求家長至本校輔導室提出申請。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=670&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-09-01",
-      "title": "社團法人中華民國關懷生命協會2026第五屆「關懷動物文學獎」延長收件期限",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=669&type=news&from_op=school_department_show",
-      "dept": "輔導室"
     }
   ]
 }
