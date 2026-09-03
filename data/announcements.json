@@ -70,34 +70,6 @@
     "auto": "school"
   },
   {
-    "id": "s202609021ozf9ca",
-    "title": "臺南市立圖書館行動圖書館服務",
-    "content": "發布單位：教務處",
-    "date": "2026-09-02",
-    "endDate": "",
-    "expiry": "2026-10-02",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=683&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s20260902vvo3a3",
-    "title": "2026校園圖文徵選「親子天下明星角色大集合」活動",
-    "content": "發布單位：教務處",
-    "date": "2026-09-02",
-    "endDate": "",
-    "expiry": "2026-10-02",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=682&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
     "id": "s20260902iu2lf0",
     "title": "校內英語說唱比賽，競賽時間及出場序號，請參賽選手留意。",
     "content": "發布單位：教務處",
@@ -136,6 +108,20 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=679&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
+    "id": "s202609011s67m0u",
+    "title": "115年國家防災日訂於9月21日(星期一)上午9時21分辦理",
+    "content": "發布單位：學務處",
+    "date": "2026-09-01",
+    "endDate": "",
+    "expiry": "2026-10-01",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=672&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   },
@@ -210,6 +196,20 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
+    "id": "s2026081918ozjwy",
+    "title": "115學年度第1學期課後才藝社團報名訊息，請留意報名日期及時間。",
+    "content": "發布單位：學務處",
+    "date": "2026-08-19",
+    "endDate": "",
+    "expiry": "2026-09-18",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=606&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   },
