@@ -144,8 +144,11 @@ for (const r of roster) {
 /* 只看最近 7 天的帳列——「第1週薪水」下學期還會再出現一次（四下第1週），
    單靠事由字串會誤判成已入帳而整週不發薪。 */
 const since = new Date(Date.now() - 6 * 864e5).toISOString().slice(0, 10);
+/* 帳本的「事由」是 title 不是 rich_text，txt() 讀不到（首版就栽在這裡，
+   ⚠️ 完全不會報錯，只是防重複整條失效）。兩種都讀。 */
+const anyText = (p, k) => ((p.properties?.[k]?.title ?? p.properties?.[k]?.rich_text ?? [])).map(t => t.plain_text).join("");
 const paidOf = (re) => {
-  const hit = ledger.filter(b => re.test(txt(b, "事由") ?? "")
+  const hit = ledger.filter(b => re.test(anyText(b, "事由"))
     && (b.properties?.["日期"]?.date?.start ?? "") >= since);
   return { n: hit.length, sum: hit.reduce((a, b) => a + (num(b, "金額") ?? 0), 0) };
 };
