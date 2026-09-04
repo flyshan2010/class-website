@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-09-04T00:51:50.590Z",
+  "fetchedAt": "2026-09-04T06:33:19.522Z",
   "items": [
+    {
+      "date": "2026-09-04",
+      "title": "有關社團法人中華民國瑩光教育協會「瑩光七周年展」，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=701&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-09-04",
+      "title": "崑山國小115年度暑假學生志願服務時數證明已製作完成，請於上班時間至守衛室簽領。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=699&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-09-04",
       "title": "115學年度全國學生舞蹈比賽-報名相關問題，請查照。",
@@ -44,21 +56,9 @@
       "dept": "學務處"
     },
     {
-      "date": "2026-09-02",
-      "title": "檢送「臺南市115學年度學生音樂比賽實施計畫」（詳如 附件）",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=679&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
       "date": "2026-08-26",
-      "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!",
+      "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!(9/4報名名單公告!!!!!!請參閱附檔)",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
-      "date": "2026-08-26",
-      "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!!",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
       "dept": "學務處"
     }
   ]
