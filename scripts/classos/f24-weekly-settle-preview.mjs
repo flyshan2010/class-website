@@ -32,6 +32,12 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
 
 const CLEAN_PAY = 2, LUNCH_PAY = 2, ROUTINE_PAY = 1, ROUTINE_FULL = 3, SCHOOL_DAYS = 5;
+/* ⑤ 班級常規獎勵的總開關（2026-09-04 老師裁示：先關）。
+   ⑤ 採「例外管理」——預設全員達成，只有記到未達成才扣那天。這在**還沒開始追蹤常規**的週次
+   會變成「發了一週沒人在看的全勤獎」（四上第1週就發生：22 人全勤 +8、5 人是被不相關的
+   生活指導負向紀錄扣到，兩邊都不是常規觀察的結果）。
+   ▶ 開始逐日追蹤常規那一週，把這行改成 true 即可，其餘公式不用動。 */
+const ROUTINE_ENABLED = false;
 const rt = s => [{ type: "text", text: { content: String(s).slice(0, 2000) } }];
 const num = (p, k) => p.properties?.[k]?.number ?? null;
 const sel = (p, k) => p.properties?.[k]?.select?.name ?? "";
@@ -128,7 +134,7 @@ for (const l of logs) {
 }
 let routineTotal = 0;
 const routineDetail = [];
-for (const r of roster) {
+for (const r of (ROUTINE_ENABLED ? roster : [])) {
   const miss = missDays.get(r.seat)?.size ?? 0;
   const days = Math.max(0, SCHOOL_DAYS - miss);
   const amt = days * ROUTINE_PAY + (days === SCHOOL_DAYS ? ROUTINE_FULL : 0);
@@ -172,7 +178,9 @@ const lines = [
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）`,
   `③ 打掃薪水　　　${cleanTotal} 幣（${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份 × 5 天 × ${CLEAN_PAY}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
   `④ 午餐工作薪水　${lunchTotal} 幣（固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}）${mark(paid.lunch)}`,
-  `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`,
+  ROUTINE_ENABLED
+    ? `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`
+    : `⑤ 班級常規獎勵　**本週不計**（尚未開始逐日追蹤常規；要開啟改 f24 的 ROUTINE_ENABLED）`,
   `　　　　　　　　合計 ${total} 幣`
   + (due === total ? "" : `\n　　　　　　　　**本次實際待入帳 ${due} 幣**（其餘已入帳，見上方 ⚠️）`),
   `確認無誤 → 在 Claude Code 說「週結」即入帳（**只入「待入帳」的部分**）；有問題就先改資料再說一次。`,
