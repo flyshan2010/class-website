@@ -341,7 +341,7 @@
             <p><strong>姓名：</strong>${App.esc(displayName)}</p>
             <p><strong>座號：</strong>${seatText}</p>
             <p class="meta">${App.esc(p.period)}</p>
-            ${(c.showReportBalance !== false && !anon && report.finance)
+            ${(c.showReportBalance !== false && report.finance)
               ? `<div class="report-finance">
                    <div class="fin-bal">🏦 存款 <strong>${report.finance.balance}</strong> 崑山幣</div>
                    ${report.finance.income > 0 ? `
@@ -350,7 +350,7 @@
                    <div class="fin-note">${App.esc(financeNote(report.finance))}</div>` : ""}
                    ${xpBlock(report.finance)}
                  </div>`
-              : ((c.showReportBalance !== false && report.balance != null && !anon)
+              : ((c.showReportBalance !== false && report.balance != null)
                   ? `<p class="report-balance">🏦 班級存款 <strong>${report.balance}</strong> 崑山幣</p>` : "")}
           </div>
           <div class="report-overview-card">
