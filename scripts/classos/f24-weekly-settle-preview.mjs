@@ -136,17 +136,43 @@ for (const r of roster) {
   if (miss) routineDetail.push(`座號${r.seat} 少 ${miss} 天`);
 }
 
+// ── 防重複：①③④⑤ 本週是否已經入過帳（2026-09-04 新增）────────────
+/* ② 靠「紀錄id×學生id」防重複，①③④⑤ 原本完全沒有防線——只要公式跑得出來就照列，
+   於是 09-04 手動發完薪水後，同日的試算又把同一筆 1115 幣列成「尚未入帳」。
+   照著再入一次就是全班薪水發兩次，而且帳本不會有任何錯誤訊息。
+   判定鍵＝帳本「事由」開頭的「第N週…」（入帳端寫死的格式），只認本學期第 TERM_NO 週。 */
+/* 只看最近 7 天的帳列——「第1週薪水」下學期還會再出現一次（四下第1週），
+   單靠事由字串會誤判成已入帳而整週不發薪。 */
+const since = new Date(Date.now() - 6 * 864e5).toISOString().slice(0, 10);
+const paidOf = (re) => {
+  const hit = ledger.filter(b => re.test(txt(b, "事由") ?? "")
+    && (b.properties?.["日期"]?.date?.start ?? "") >= since);
+  return { n: hit.length, sum: hit.reduce((a, b) => a + (num(b, "金額") ?? 0), 0) };
+};
+const W = TERM_NO;
+const paid = {
+  job: paidOf(new RegExp(`^第${W}週薪水（`)),
+  clean: paidOf(new RegExp(`^第${W}週打掃薪水`)),
+  lunch: paidOf(new RegExp(`^第${W}週午餐工作薪水`)),
+  routine: paidOf(new RegExp(`^第${W}週(班級)?常規獎勵`)),
+};
+const mark = (p) => p.n ? `　⚠️ **已入帳 ${p.sum} 幣（${p.n} 筆），本次不重複計**` : "";
+
 // ── 報表 ────────────────────────────────────────────────────────
 const total = salary + rewardSum + cleanTotal + lunchTotal + routineTotal;
+// 實際還要入帳的＝扣掉已入過帳的那幾項（②本來就只算未入帳的）
+const due = (paid.job.n ? 0 : salary) + rewardSum + (paid.clean.n ? 0 : cleanTotal)
+  + (paid.lunch.n ? 0 : lunchTotal) + (paid.routine.n ? 0 : routineTotal);
 const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
-  `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}`,
+  `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）`,
-  `③ 打掃薪水　　　${cleanTotal} 幣（${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份 × 5 天 × ${CLEAN_PAY}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}`,
-  `④ 午餐工作薪水　${lunchTotal} 幣（固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}）`,
-  `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}`,
-  `　　　　　　　　合計 ${total} 幣`,
-  `確認無誤 → 在 Claude Code 說「週結」即入帳；有問題就先改資料再說一次。`,
+  `③ 打掃薪水　　　${cleanTotal} 幣（${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份 × 5 天 × ${CLEAN_PAY}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
+  `④ 午餐工作薪水　${lunchTotal} 幣（固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}）${mark(paid.lunch)}`,
+  `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`,
+  `　　　　　　　　合計 ${total} 幣`
+  + (due === total ? "" : `\n　　　　　　　　**本次實際待入帳 ${due} 幣**（其餘已入帳，見上方 ⚠️）`),
+  `確認無誤 → 在 Claude Code 說「週結」即入帳（**只入「待入帳」的部分**）；有問題就先改資料再說一次。`,
 ];
 console.log("\n" + lines.join("\n"));
 
