@@ -1083,6 +1083,11 @@ async function syncRecapExtras() {
 // 老師在 Notion 用**座號**填分配，寫進 data/ 前一律換成遮罩姓名：class-website
 // 整個 repo 都發布到 GitHub Pages，data/*.json 任何人都下載得到，而座號在班內
 // 等同完整識別資訊（鐵則 10：公開頁不得出現姓名／座號）。
+// **已拍板的例外（2026-09-06・Phase 2-2）**：另外輸出 duties-seats.json／seating-seats.json
+// 兩份**純座號、零姓名**的檔給 class-manager（該站一個字都不存姓名，拿遮罩姓名版對不回人）。
+// 判準是資訊量而不是欄位名——這兩份說的事情（誰負責哪個掃區、坐哪裡）班網「關於我們」
+// 早就以遮罩姓名公開了，換成座號並沒有多洩漏什麼，而對班外的人座號本來就沒有意義。
+// 護欄在 lib/build-duties.mjs：座號版含任何一個姓名就中止同步。
 // 轉換邏輯與護欄在 lib/build-duties.mjs（純函式，可離線用真實名冊驗證）。
 async function syncClassDuties() {
   const [dutyRows, rosterRows, settingRows] = await Promise.all([
@@ -1093,11 +1098,15 @@ async function syncClassDuties() {
   const kv = {};
   for (const r of settingRows) if (r["項目"]) kv[r["項目"]] = String(r["內容"] ?? "").trim();
 
-  const { duties, lunch, seating, warnings } = buildDutyData({ dutyRows, rosterRows, kv });
+  const { duties, lunch, seating, dutiesSeats, seatingSeats, warnings } =
+    buildDutyData({ dutyRows, rosterRows, kv });
   for (const w of warnings) console.warn(`⚠️ ${w}`);
   await save("duties.json", duties);
   await save("lunch.json", lunch);
   await save("seating.json", seating);
+  // 座號版兩份：class-manager（同網域、另一個 repo）fetch 用，**只有座號、沒有姓名**。
+  await save("duties-seats.json", dutiesSeats);
+  await save("seating-seats.json", seatingSeats);
 }
 
 // ── 班規與獎懲、作息與常規、抽獎池（班網「班級公約」「作息與常規」兩分頁）──────
