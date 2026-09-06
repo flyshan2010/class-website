@@ -43,7 +43,7 @@ const isoFields = r => ({
  * @param {object[]} dutyRows  🧹 班級工作分配（已 props()，未過濾）
  * @param {object[]} rosterRows 👥 學生名冊（已 props()，未過濾）
  * @param {Record<string,string>} kv ⚙️ 網站設定的「項目→內容」
- * @returns {{duties:object, lunch:object, seating:object, dutiesSeats:object, seatingSeats:object, warnings:string[]}}
+ * @returns {{duties:object, lunch:object, seating:object, dutiesSeats:object, seatingSeats:object, lunchSeats:object, warnings:string[]}}
  */
 export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
   const warnings = [];
@@ -133,6 +133,9 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
     rotation: [],
   };
 
+  // rotationSeats：與 lunch.rotation 同一份輪值，只是留座號（class-manager 用）。
+  // 兩份必須由**同一次計算**產出，分開算兩次就是兩份會各自漂移的正本。
+  let rotationSeats = [];
   if (slots.length && pool.length) {
     // 完整輪替週數：位移每週 +slots.length，要回到起點需 pool/gcd(pool, slots) 週。
     // 例：21 人每週 5 人 → gcd=1 → 21 週（每人剛好各 5 次）。
@@ -143,11 +146,16 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
       每週人數: slots.length,
       完整輪替週數: weeks,
       每人每輪次數: (weeks * slots.length) / pool.length,
-      rotation: Array.from({ length: weeks }, (_, w) => ({
-        week: w + 1,
-        assign: slots.map((slot, i) => ({ slot, name: nameOf(pool[(w * slots.length + i) % pool.length]) })),
-      })),
+      rotation: [],
     });
+    rotationSeats = Array.from({ length: weeks }, (_, w) => ({
+      week: w + 1,
+      assign: slots.map((slot, i) => ({ slot, seat: pool[(w * slots.length + i) % pool.length] })),
+    }));
+    lunch.rotation = rotationSeats.map(wk => ({
+      week: wk.week,
+      assign: wk.assign.map(a => ({ slot: a.slot, name: nameOf(a.seat) })),
+    }));
     // 公平性驗證：完整一輪後每人出場次數必須相同，否則輪值規則有 bug
     const times = {};
     for (const wk of lunch.rotation) for (const a of wk.assign) times[a.name] = (times[a.name] || 0) + 1;
@@ -219,8 +227,27 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
     grid,
   };
 
+  // ── 午餐座號版（class-manager 午餐工作檢核台・2026-09-06 Phase 3-2）────────
+  // 固定崗（午餐長／打飯班）直接給座號；輪值崗給整份 rotation（座號版）＋輪替週數，
+  // 由 class-manager 依 weeks.json 的本學期週次自己算「這週輪到誰」
+  // （公式與班網 about.js 同一條：((週次-1) % 完整輪替週數) + 1，不寫死週數）。
+  const lunchSeats = {
+    _產生自: "sync-notion.mjs ← Notion「🧹 班級工作分配」（勿手改）",
+    _用途: "class-manager 午餐工作檢核台（純座號版，不含姓名）",
+    規則: lunch.規則,
+    輪值池人數: lunch.輪值池人數 ?? 0,
+    每週人數: lunch.每週人數 ?? 0,
+    完整輪替週數: lunch.完整輪替週數 ?? 0,
+    fixed: fixedRows.map(r => ({
+      post: r["組別"], headcount: Number(r["人數"]) || parseSeats(r["成員座號"], r["組別"]).length,
+      seats: parseSeats(r["成員座號"], r["組別"]), ...isoFields(r),
+    })),
+    posts: rotRows.map(r => ({ post: r["組別"], headcount: Number(r["人數"]) || 1, ...isoFields(r) })),
+    rotation: rotationSeats,
+  };
+
   // 座號版的護欄：可以有座號（本來就是為此而生），但**一個姓名都不准有**
-  const seatsJson = JSON.stringify({ dutiesSeats, seatingSeats });
+  const seatsJson = JSON.stringify({ dutiesSeats, seatingSeats, lunchSeats });
   for (const r of roster) {
     const full = String(r["姓名"]).trim();
     if (full.length >= 2 && seatsJson.includes(full))
@@ -236,5 +263,5 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
   }
   if (/"座號"/.test(json)) throw new Error("公開版 JSON 含「座號」欄位，中止");
 
-  return { duties, lunch, seating, dutiesSeats, seatingSeats, warnings };
+  return { duties, lunch, seating, dutiesSeats, seatingSeats, lunchSeats, warnings };
 }
