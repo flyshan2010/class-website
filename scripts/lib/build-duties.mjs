@@ -19,6 +19,17 @@ const SEAT_COLUMNS = ["六", "五", "四", "三", "二", "一"];
 const splitList = s => String(s ?? "").split(/[、,，]/).map(x => x.trim()).filter(Boolean);
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
 
+// 「2:北側；3:南側」→ { 2: "北側", 3: "南側" }。分號／換行分隔，冒號全半形都收。
+// 紙本檢核表是逐人一列的，組層級的 work 撐不起「你負責哪一塊」——這欄才是。
+const parsePersonal = raw => {
+  const out = {};
+  String(raw ?? "").split(/[;；\n]+/).map(x => x.trim()).filter(Boolean).forEach(part => {
+    const m = part.match(/^(\d+)\s*[:：]\s*(.+)$/);
+    if (m) out[Number(m[1])] = m[2].trim();
+  });
+  return out;
+};
+
 // ISO 版四欄（2026-08-16 起）：職稱／要做的事／能管的事／做好的標準。
 // 「升級徽章」刻意不帶出來——那是未來升級制度的內部欄位，班網不顯示。
 const isoFields = r => ({
@@ -32,7 +43,7 @@ const isoFields = r => ({
  * @param {object[]} dutyRows  🧹 班級工作分配（已 props()，未過濾）
  * @param {object[]} rosterRows 👥 學生名冊（已 props()，未過濾）
  * @param {Record<string,string>} kv ⚙️ 網站設定的「項目→內容」
- * @returns {{duties:object, lunch:object, seating:object, warnings:string[]}}
+ * @returns {{duties:object, lunch:object, seating:object, dutiesSeats:object, seatingSeats:object, warnings:string[]}}
  */
 export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
   const warnings = [];
@@ -60,12 +71,18 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
     const groups = dutyOnly.filter(r => r["區域"] === zoneName).map(r => {
       const seats = parseSeats(r["成員座號"], r["組別"]);
       const support = parseSeats(r["支援座號"], `${r["組別"]}・支援`);
-      return { seats, support, group: r["組別"], tools: splitList(r["配置掃具"]), ...isoFields(r) };
+      const sup = String(r["監督座號"] ?? "").trim();
+      return {
+        seats, support, group: r["組別"], tools: splitList(r["配置掃具"]),
+        personal: parsePersonal(r["個人責任範圍"]),
+        supervisor: sup && Number.isInteger(Number(sup)) ? Number(sup) : null,
+        ...isoFields(r),
+      };
     });
     // 人數＝該區實際涵蓋的人；同一人同時是某組主責、另一組支援時不重複計
     const headcount = new Set(groups.flatMap(g => [...g.seats, ...g.support])).size;
     return {
-      zone: zoneName, emoji: ZONE_META[zoneName].emoji, headcount,
+      zone: zoneName, emoji: ZONE_META[zoneName].emoji, headcount, _raw: groups,
       groups: groups.map(g => ({
         group: g.group, members: g.seats.map(nameOf), support: g.support.map(nameOf),
         work: g.work, tools: g.tools, title: g.title, authority: g.authority, standard: g.standard,
@@ -83,7 +100,8 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
   const duties = {
     _產生自: "sync-notion.mjs ← Notion「🧹 班級工作分配」（勿手改）",
     時段: kv["打掃時間"] || "",
-    zones,
+    // _raw 帶的是座號，**公開版一律剝掉**（只有下方 dutiesSeats 才用得到）
+    zones: zones.map(({ _raw, ...z }) => z),
     未分配: unassigned.map(nameOf),
     未分配說明: unassigned.length ? "這些同學還沒排到打掃工作，老師確認後會補上。" : "",
   };
@@ -164,6 +182,51 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
     grid: grid.map(row => Array.from({ length: cols }, (_, i) => (row[i] == null ? null : nameOf(row[i])))),
   };
 
+  // ── 座號版兩份（class-manager 常規檢核台專用・2026-09-06 Phase 2-2）────────
+  // 為什麼要另外一份：class-manager 一個字都不存姓名（該站硬規則 2），
+  // 拿遮罩姓名版對不回座號；而檢核台要點得到「人」，還要顯示「你負責哪一塊」。
+  // ⚠️ 這兩份與 duties/seating 一樣是公開檔，**只帶座號、絕不帶姓名**，下方有護欄擋。
+  const dutiesSeats = {
+    _產生自: "sync-notion.mjs ← Notion「🧹 班級工作分配」（勿手改）",
+    _用途: "class-manager 環境晨掃檢核台（純座號版，不含姓名）",
+    時段: kv["打掃時間"] || "",
+    zones: zones.map(z => ({
+      zone: z.zone, emoji: z.emoji, headcount: z.headcount,
+      groups: z._raw.map(g => ({
+        group: g.group, seats: g.seats, support: g.support,
+        personal: g.personal, supervisor: g.supervisor,
+        work: g.work, tools: g.tools, title: g.title, authority: g.authority, standard: g.standard,
+      })),
+    })),
+    未分配: unassigned,
+  };
+  // 三區監督人：由各組的「監督座號」彙整，同一位監督的組全掛在他名下。
+  // 零事件的監督生 ≠ 不存在（U41）：有欄位就出現，沒排到組也留一個空陣列。
+  const supervisors = {};
+  for (const z of dutiesSeats.zones) for (const g of z.groups) {
+    if (g.supervisor == null) continue;
+    (supervisors[g.supervisor] = supervisors[g.supervisor] || []).push(`${z.zone}・${g.group}`);
+  }
+  dutiesSeats.supervisors = supervisors;
+  if (!Object.keys(supervisors).length)
+    warnings.push("「🧹 班級工作分配」沒有任何一列填「監督座號」——檢核台會退回「老師自己點」模式");
+
+  const seatingSeats = {
+    _產生自: "sync-notion.mjs ← Notion「⚙️ 網站設定」的「座位表」列（勿手改）",
+    _用途: "class-manager 座位加分板（純座號版，不含姓名）",
+    說明: seating.說明,
+    columns: seating.columns,
+    grid,
+  };
+
+  // 座號版的護欄：可以有座號（本來就是為此而生），但**一個姓名都不准有**
+  const seatsJson = JSON.stringify({ dutiesSeats, seatingSeats });
+  for (const r of roster) {
+    const full = String(r["姓名"]).trim();
+    if (full.length >= 2 && seatsJson.includes(full))
+      throw new Error(`座號版 JSON 含姓名「${full}」——中止（class-manager 不得存姓名）`);
+  }
+
   // 最後一道：公開版不得含座號欄位或完整姓名
   const json = JSON.stringify({ duties, lunch, seating });
   for (const r of roster) {
@@ -173,5 +236,5 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
   }
   if (/"座號"/.test(json)) throw new Error("公開版 JSON 含「座號」欄位，中止");
 
-  return { duties, lunch, seating, warnings };
+  return { duties, lunch, seating, dutiesSeats, seatingSeats, warnings };
 }
