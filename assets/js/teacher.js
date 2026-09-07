@@ -222,8 +222,10 @@
     // 這裡只改「顯示」：翻成一句話＋可展開的逐筆明細；送出與排程入庫的格式完全不動。
     const CM_TOOL = { board: "電子白板", arrive: "到校簽到", cleanup: "打掃檢核", homework: "作業清點",
                       lunch: "午餐檢核", teeth: "潔牙檢核", routine: "常規檢核（舊）" };
+    // 2026-09-07 起任務原文第一行是白話標題、行尾帶 #CM-EVENTS v1，第二行起才是 JSON。
+    // 舊格式（首行就是 #CM-EVENTS）一樣吃得下——收件匣裡還留著舊的那幾筆。
     const cmParse = text => {
-      if (!/^#CM-EVENTS/.test(text || "")) return null;
+      if (!/#CM-EVENTS/.test(text || "")) return null;
       const i = text.indexOf("{");
       if (i < 0) return null;
       try { return JSON.parse(text.slice(i)); } catch { return null; }
