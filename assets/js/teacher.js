@@ -217,6 +217,46 @@
       } else msg.textContent = `❌ ${res.error || "送出失敗"}`;
     });
 
+    // 課堂工具送來的 #CM-EVENTS 任務包，原文是一長串 JSON，老師看不懂（2026-09-07 回饋）。
+    // 這裡只改「顯示」：翻成一句話＋可展開的逐筆明細；送出與排程入庫的格式完全不動。
+    const CM_TOOL = { board: "電子白板", arrive: "到校簽到", cleanup: "打掃檢核", homework: "作業清點",
+                      lunch: "午餐檢核", teeth: "潔牙檢核", routine: "常規檢核（舊）" };
+    const cmParse = text => {
+      if (!/^#CM-EVENTS/.test(text || "")) return null;
+      const i = text.indexOf("{");
+      if (i < 0) return null;
+      try { return JSON.parse(text.slice(i)); } catch { return null; }
+    };
+    const cmView = pack => {
+      const evs = pack.events || [];
+      const by = {};
+      evs.forEach(e => { const k = e.act || "（未填行為）"; by[k] = (by[k] || 0) + 1; });
+      const acts = Object.entries(by).sort((a, b) => b[1] - a[1]);
+      const head = `📋 ${CM_TOOL[pack.tool] || pack.tool || "課堂工具"}　` +
+                   `${String(pack.date || "").slice(5).replace("-", "/")}　共 ${evs.length} 筆` +
+                   (pack.parts > 1 ? `（第 ${pack.part}／${pack.parts} 段）` : "");
+      const brief = acts.slice(0, 3).map(([a, n]) => `${a} ×${n}`).join("、") +
+                    (acts.length > 3 ? ` 等 ${acts.length} 種` : "");
+      const rows = evs.map(e => {
+        const bits = [`座號 ${e.seat}`, e.act || "（未填行為）"];
+        if (e.period) bits.push(e.period);
+        if (e.count > 1) bits.push(`${e.count} 次`);
+        if (e.coin !== undefined && e.coin !== "") bits.push(`${e.coin} 幣`);
+        if (e.note) bits.push(e.note);
+        return bits.join("　·　");
+      });
+      return { head, brief, rows };
+    };
+    const taskBody = text => {
+      const pack = cmParse(text);
+      if (!pack) return App.esc(text);
+      const v = cmView(pack);
+      return `<strong>${App.esc(v.head)}</strong>` +
+        (v.brief ? `<br /><span class="meta">${App.esc(v.brief)}</span>` : "") +
+        `<details style="margin-top:4px"><summary class="meta" style="cursor:pointer">看明細（${v.rows.length} 筆）</summary>` +
+        `<span class="meta" style="display:block;line-height:1.9">${v.rows.map(r => App.esc(r)).join("<br />")}</span></details>`;
+    };
+
     // 任務狀態清單（待審置頂＋醒目標記）
     const STATUS_STYLE = {
       "待審": "background:#ffe8cc;color:#b35c00", "待處理": "background:#fff3bf;color:#8a6d00",
@@ -230,14 +270,14 @@
       if (!res.tasks.length) { box.innerHTML = '<p class="empty-hint">目前沒有任務</p>'; return; }
       const sorted = [...res.tasks.filter(t => t.status === "待審"), ...res.tasks.filter(t => t.status !== "待審")];
       box.innerHTML = sorted.map(t => `
-        <p style="${t.status === "待審" ? "border-left:4px solid #ff9f43;padding-left:8px;background:#fff9f2" : ""}">
+        <div style="margin:10px 0;${t.status === "待審" ? "border-left:4px solid #ff9f43;padding-left:8px;background:#fff9f2" : ""}">
           <span class="badge" style="${STATUS_STYLE[t.status] || ""}">${App.esc(t.status || "—")}</span>
-          ${t.status === "待審" ? "🔔 " : ""}${App.esc(t.text)}
+          ${t.status === "待審" ? "🔔 " : ""}${taskBody(t.text)}
           <span class="meta">${App.fmtDateShort(String(t.created).slice(0, 10))}</span>
           ${t.output_url ? ` <a href="${App.esc(t.output_url)}" target="_blank" rel="noopener">產出</a>` : ""}
           ${t.status === "待審" && t.page_url ? ` <a href="${App.esc(t.page_url)}" target="_blank" rel="noopener"><strong>去審核 →</strong></a>` : ""}
           ${t.error ? `<br /><span class="meta" style="color:#c92a2a">${App.esc(t.error)}</span>` : ""}
-        </p>`).join("");
+        </div>`).join("");
     };
     document.getElementById("task-refresh").addEventListener("click", loadTasks);
     loadTasks();
