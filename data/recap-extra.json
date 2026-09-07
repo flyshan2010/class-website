@@ -25,9 +25,9 @@
   },
   "economy": {
     "totals": {
-      "supply": 3680,
-      "txCount": 587,
-      "spend": 140
+      "supply": 3535,
+      "txCount": 592,
+      "spend": 335
     },
     "weeks": [
       {
