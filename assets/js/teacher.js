@@ -83,7 +83,7 @@
       { icon: "💬", label: "一句話交辦", href: "#sec-task", color: "#FF9F43" },
       { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
       { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },
-      { icon: "🎟️", label: "特權執行", href: "#sec-priv", color: "#9B59B6" },
+      { icon: "🎟️", label: "兌換券執行", href: "#sec-priv", color: "#9B59B6" },
       { icon: "⚡", label: "班網維護", href: "#sec-site", color: "#10ac84" },
     ];
 
@@ -135,9 +135,10 @@
       </section>
 
       <section class="card" id="sec-priv" style="--accent:#9B59B6">
-        <h2>🎟️ 特權執行</h2>
-        <p class="meta">學生兌換到的特權券都在這裡。學生要用時按「✅ 使用一次」扣掉次數；扣完自動移出清單。
-          按錯了按「↩️ 撤銷」還原。<strong>這裡即時生效</strong>，學生存摺上的特權要等按「立即更新班網」才會更新。</p>
+        <h2>🎟️ 兌換券執行</h2>
+        <p class="meta">學生換到的券全在這裡——特權券與文具／食物兌換券都算。學生要用時按「✅ 使用一次」扣掉次數；
+          扣完自動移出清單。按錯了按「↩️ 撤銷」還原；不執行也不退幣按「🚫 作廢」；<strong>要把幣還給學生按「💰 退費」</strong>
+          （幣立刻回到帳本、庫存加回、券收回）。<strong>這裡即時生效</strong>，學生存摺要等按「立即更新班網」才會更新。</p>
         <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
           <button id="pv-tab-holding" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px">🎟️ 持有中</button>
           <button id="pv-tab-history" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px;opacity:.75">📜 使用歷史</button>
@@ -381,6 +382,7 @@
             ${bySeat[seat].map(p => `
               <p style="margin:2px 0">
                 ${privIcon(p.item)} ${App.esc(p.item)}
+                ${p.category === "小物" ? `<span class="badge" style="background:#fde7f3;color:#a61e69">小物</span>` : ""}
                 ${privView === "holding"
                   ? `<span class="badge" style="background:#f3e5f8;color:#6c3483">剩 ${p.remaining}/${p.total} 次</span>`
                   : `<span class="badge" style="background:#eee;color:#666">已用完／作廢</span>`}
@@ -388,7 +390,8 @@
                   p.last_used ? `　最近 ${App.fmtDateShort(p.last_used)}` : ""}</span>
                 ${p.remaining > 0 ? `
                   <button class="badge pv-use" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 使用一次</button>
-                  <button class="badge pv-void" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#f1f3f5;color:#666">🚫 作廢</button>` : ""}
+                  <button class="badge pv-void" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#f1f3f5;color:#666">🚫 作廢</button>
+                  <button class="badge pv-refund" data-id="${App.esc(p.page_id)}" data-price="${p.price}" data-seat="${p.seat}" data-item="${App.esc(p.item)}" style="cursor:pointer;border:none;background:#ffe3e3;color:#c92a2a">💰 退費</button>` : ""}
                 ${p.used > 0 ? `
                   <button class="badge pv-undo" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#fff3bf;color:#8a6d00">↩️ 撤銷</button>` : ""}
                 ${p.log ? `<br /><span class="meta">${App.esc(p.log.split("\n")[0])}</span>` : ""}
@@ -425,6 +428,16 @@
         if (reason === null) return;
         await act(btn, "void_privilege", { page_id: btn.dataset.id, reason },
           r => `🚫 已作廢：座號 ${r.seat}「${r.item}」${r.voided} 次（不退幣）`);
+        loadPrivs();
+      }));
+      // 退費：券收回＋幣退回帳本＋庫存加回。動錢，所以先讓老師看到金額再確認一次。
+      document.querySelectorAll(".pv-refund").forEach(btn => btn.addEventListener("click", async () => {
+        const { price, seat, item } = btn.dataset;
+        if (!confirm(`要退 ${price} 幣給座號 ${seat} 嗎？\n「${item}」這張券會收回，庫存加回 1。`)) return;
+        const reason = prompt("退費原因（會記在帳本事由與使用紀錄）：", "老師退費");
+        if (reason === null) return;
+        await act(btn, "refund_privilege", { page_id: btn.dataset.id, reason },
+          r => `💰 已退費：座號 ${r.seat}「${r.item}」退回 ${r.refunded} 幣${r.msg || ""}\n記得按「立即更新班網」讓存摺更新。`);
         loadPrivs();
       }));
     };
