@@ -1,5 +1,5 @@
 /**
- * 班網教師專區代理 v2.2（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋特權執行
+ * 班網教師專區代理 v2.3（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
  *
  * 功能（單一 Web App，doPost 依 action 分派）：
@@ -10,12 +10,15 @@
  *   - redeem_request：學生在小小銀行送出商店兌換申請（以座號＋查詢碼驗證，不需教師口令）
  *   - list_redeems  ：查兌換申請（教師專區處理與明細查詢用）
  *   - approve_redeem：核可申請 → 自動建帳本「消費」列扣幣＋商店庫存 −1 ＋申請設「已完成」
- *                     特權類另寫「剩餘次數」＝商店「使用次數」（空白＝1），該列即成為學生的特權券
+ *                     ⚠️ v2.3 起「所有分類」（特權與小物）一律寫「剩餘次數」＝商店「使用次數」
+ *                     （空白＝1），該列即成為學生的券，全部出現在教師專區「兌換券執行」。
+ *                     v2.2 只發特權類，文具／食物兌換券核可後不會出現，老師無從執行。
  *   - reject_redeem ：駁回申請（填原因）
- *   - list_privileges ：查特權券（holding＝剩餘>0；history＝已用完/作廢）
- *   - use_privilege   ：學生執行特權 → 剩餘 −1、已使用 +1、追加使用紀錄（同日重複扣需 force）
+ *   - list_privileges ：查兌換券（holding＝剩餘>0；history＝已用完/作廢/已退款）
+ *   - use_privilege   ：學生執行 → 剩餘 −1、已使用 +1、追加使用紀錄（同日重複扣需 force）
  *   - undo_privilege  ：誤按還原（剩餘 +1、已使用 −1）
  *   - void_privilege  ：作廢（剩餘歸 0，填原因；不退幣）
+ *   - refund_privilege：退費（剩餘歸 0＋帳本回補正數＋商店庫存 +1＋狀態改「已退款」）
  *
  * 資安原則：
  *   - 教師動作口令一律放 POST body，禁止放 URL query（doGet 僅保留舊版相容一版後移除）。
@@ -24,6 +27,8 @@
  *   - 代理不記錄口令；GitHub/Notion token 只存在指令碼屬性，不進前端。
  *
  * 部署步驟（升級自 v2 約 5 分鐘）：
+ * 0. ⚠️ v2.3 新增：到 Notion「🛒 兌換申請」的「狀態」欄位加一個選項「已退款」（退費用），
+ *    沒有這個選項時退費會失敗。
  * 1. 開 https://script.google.com → 開啟原代理專案 → 貼上本檔全部內容取代舊碼。
  * 2. 指令碼屬性維持五筆不變（PASSWORD / GH_TOKEN / NOTION_TOKEN / INBOX_DB_ID / UPLOAD_FOLDER_ID）。
  *    ⚠️ 兌換功能需要 Notion integration 能存取 👥 學生名冊、🏦 班級銀行帳本、🏪 班級商店、
@@ -79,6 +84,7 @@ function doPost(e) {
       case "use_privilege":   return out_(usePrivilege_(props, body));
       case "undo_privilege":  return out_(undoPrivilege_(props, body));
       case "void_privilege":  return out_(voidPrivilege_(props, body));
+      case "refund_privilege": return out_(refundPrivilege_(props, body));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -272,7 +278,14 @@ function redeemRequest_(props, body) {
   const category = (((ip["分類"] || {}).select) || {}).name || "小物";
   if (!itemName || !listed) return { ok: false, error: "這個商品已下架，請重新整理頁面看看還有什麼" };
   if (stock <= 0) return { ok: false, error: "「" + itemName + "」已經售完囉，下次早點來！" };
-  if (price <= 0) return { ok: false, error: "商品價格設定有誤，請告訴老師" };
+  // 價格閘門：0 幣是合法設計（例：🧪 創造提案權要達 XP 門檻而非花錢），只有負數才是設定錯誤。
+  // 註記寫「不可兌換」的品項是老師頒予的榮譽（榮譽牆／今日之星／命名權…），學生不能自己申請。
+  const itemNote = ((ip["說明"] || {}).rich_text || []).map(t => t.plain_text).join("")
+    + ((ip["備註"] || {}).rich_text || []).map(t => t.plain_text).join("");
+  if (itemNote.indexOf("不可兌換") >= 0) {
+    return { ok: false, error: "「" + itemName + "」是老師頒予的榮譽，不能自己兌換喔！" };
+  }
+  if (price < 0) return { ok: false, error: "商品價格設定有誤，請告訴老師" };
 
   // 4) 建申請列（購買明細正本；狀態=待處理）
   const res = notionV_(token, "pages", "post", {
@@ -342,7 +355,7 @@ function approveRedeem_(props, body) {
   const price = Math.round(Number((rp["價格"] || {}).number) || 0);
   const storePageId = ((rp["商店頁ID"] || {}).rich_text || []).map(t => t.plain_text).join("").trim();
   let category = (((rp["分類"] || {}).select) || {}).name || ""; // 空白＝舊資料，稍後以商店為準補
-  if (!seat || !itemName || price <= 0) return { ok: false, error: "申請資料不完整，請直接到 Notion 檢查這筆申請" };
+  if (!seat || !itemName || price < 0) return { ok: false, error: "申請資料不完整，請直接到 Notion 檢查這筆申請" };
 
   // 2) 名冊找學生
   const stu = findStudent_(token, seat);
@@ -356,9 +369,9 @@ function approveRedeem_(props, body) {
       error: "餘額不足：目前 " + balance + " 幣，需要 " + price + " 幣" };
   }
 
-  // 4) 帳本建「消費」列（扣款正本）
+  // 4) 帳本建「消費」列（扣款正本）；0 幣品項（如 🧪 創造提案權）不建帳本列
   const today = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd");
-  const ledger = notionV_(token, "pages", "post", {
+  const ledger = price === 0 ? { code: 200 } : notionV_(token, "pages", "post", {
     parent: { type: "data_source_id", data_source_id: DS_BANK },
     properties: {
       "事由": { title: [{ text: { content: "兌換 " + itemName } }] },
@@ -389,23 +402,24 @@ function approveRedeem_(props, body) {
   } else stockMsg = "（此申請無商店頁ID，庫存請手動 −1）";
   if (!category) category = "小物";
 
-  // 6) 申請設已完成＋處理紀錄；特權類同時發券（剩餘次數＝可用次數）
+  // 6) 申請設已完成＋處理紀錄＋發券
+  //    v2.3：不分特權／小物一律發券。文具兌換券、食物兌換券也要老師實際交付，
+  //    沒有「剩餘次數」就不會出現在「兌換券執行」，老師看不到也就執行不了。
   const nowIso = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd'T'HH:mm:ss+08:00");
   const newBalance = balance - price;
-  const isPrivilege = category === "特權";
   const doneProps = {
     "狀態": { select: { name: "已完成" } },
     "分類": { select: { name: category } },
     "處理時間": { date: { start: nowIso } },
-    "備註": { rich_text: [{ text: { content: "已扣 " + price + " 幣，餘額 " + newBalance + " 幣" + stockMsg } }] },
+    "備註": { rich_text: [{ text: { content:
+      (price === 0 ? "0 幣品項未扣款，餘額 " + newBalance + " 幣" : "已扣 " + price + " 幣，餘額 " + newBalance + " 幣")
+      + stockMsg } }] },
+    "剩餘次數": { number: uses },
+    "已使用次數": { number: 0 },
   };
-  if (isPrivilege) {
-    doneProps["剩餘次數"] = { number: uses };
-    doneProps["已使用次數"] = { number: 0 };
-  }
   notionV_(token, "pages/" + pageId, "patch", { properties: doneProps }, NOTION_VERSION_DS);
   return { ok: true, seat: seat, item: itemName, price: price, balance: newBalance, stock_msg: stockMsg,
-    category: category, uses: isPrivilege ? uses : 0 };
+    category: category, uses: uses };
 }
 
 /** 駁回申請：狀態=已駁回＋原因 */
@@ -444,10 +458,12 @@ function readPrivilege_(token, pageId) {
   const status = (((p["狀態"] || {}).select) || {}).name || "";
   const category = (((p["分類"] || {}).select) || {}).name || "";
   if (status !== "已完成") return { ok: false, error: "這筆兌換不是已完成狀態（目前：" + (status || "空白") + "）" };
-  if (category !== "特權") return { ok: false, error: "這筆兌換不是特權類，沒有次數可以扣" };
   return {
     ok: true,
     p: p,
+    category: category,
+    price: Math.round(Number((p["價格"] || {}).number) || 0),
+    storePageId: ((p["商店頁ID"] || {}).rich_text || []).map(t => t.plain_text).join("").trim(),
     seat: Math.floor(Number((p["座號"] || {}).number) || 0),
     item: ((p["品項"] || {}).rich_text || []).map(t => t.plain_text).join(""),
     remaining: Math.round(Number((p["剩餘次數"] || {}).number) || 0),
@@ -473,9 +489,9 @@ function listPrivileges_(props, body) {
 
   const holding = String(body.view || "holding") !== "history";
   const limit = holding ? PRIV_PAGE_LIMIT : Math.min(Math.max(parseInt(body.limit, 10) || 50, 1), 100);
+  // v2.3：不過濾分類——特權券與小物兌換券（文具／食物）都要讓老師執行。
   const filter = { and: [
     { property: "狀態", select: { equals: "已完成" } },
-    { property: "分類", select: { equals: "特權" } },
     holding ? { property: "剩餘次數", number: { greater_than: 0 } }
             : { property: "剩餘次數", number: { equals: 0 } },
   ] };
@@ -498,6 +514,8 @@ function listPrivileges_(props, body) {
         page_id: page.id,
         seat: Math.floor(Number((p["座號"] || {}).number) || 0),
         item: ((p["品項"] || {}).rich_text || []).map(t => t.plain_text).join(""),
+        category: (((p["分類"] || {}).select) || {}).name || "",
+        price: Math.round(Number((p["價格"] || {}).number) || 0),
         remaining: remaining,
         used: used,
         total: remaining + used,
@@ -585,6 +603,78 @@ function voidPrivilege_(props, body) {
   }, NOTION_VERSION_DS);
   if (res.code !== 200) return { ok: false, error: "作廢失敗（Notion 回應 " + res.code + "）" };
   return { ok: true, seat: cur.seat, item: cur.item, voided: cur.remaining };
+}
+
+/** 退費（v2.3）：券作廢＋帳本回補正數＋商店庫存 +1＋狀態改「已退款」。
+ *  用於「賣錯了／執行不了／學生反悔」——與「作廢」的差別就是這一筆會把幣還回去。
+ *  防重複：只有狀態＝已完成的列能退，退完狀態改「已退款」，再按就會被擋下。
+ *  ⚠️ Notion「🛒 兌換申請」的「狀態」欄必須先有「已退款」選項，否則會退款失敗（幣不會亂跑，
+ *     因為狀態改不成時已寫的帳本列會由本函式自述於回傳訊息，請照訊息處理）。
+ */
+function refundPrivilege_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const pageId = String(body.page_id || "").trim();
+  if (!pageId) return { ok: false, error: "缺少兌換券編號" };
+  const reason = String(body.reason || "").trim().slice(0, 100) || "老師退費";
+
+  const cur = readPrivilege_(token, pageId);
+  if (!cur.ok) return cur; // 已退款的列狀態不是「已完成」，會在這裡被擋下
+  if (!cur.seat) return { ok: false, error: "這筆兌換沒有座號，請到 Notion 檢查" };
+
+  // 1) 帳本回補（0 幣品項不建列）
+  let ledgerMsg = "";
+  if (cur.price > 0) {
+    const stu = findStudent_(token, cur.seat);
+    if (!stu) return { ok: false, error: "名冊查無座號 " + cur.seat + "（非在學？），退費中止，帳目未變動" };
+    const ledger = notionV_(token, "pages", "post", {
+      parent: { type: "data_source_id", data_source_id: DS_BANK },
+      properties: {
+        "事由": { title: [{ text: { content: "退費 " + cur.item + "（" + reason + "）" } }] },
+        "學生": { relation: [{ id: stu.id }] },
+        "金額": { number: cur.price },
+        "類型": { select: { name: "調整" } },
+        "日期": { date: { start: today_() } },
+        "學年": { select: { name: schoolYear_() } }, // 學年鐵則：空值會讓班網同步標紅中止
+      },
+    }, NOTION_VERSION_DS);
+    if (ledger.code !== 200) {
+      return { ok: false, error: "退幣失敗（Notion 回應 " + ledger.code + "），兌換券未變動，請重試" };
+    }
+  } else ledgerMsg = "（0 幣品項，沒有幣可退）";
+
+  // 2) 商店庫存 +1（失敗不擋流程）
+  let stockMsg = "";
+  if (cur.storePageId) {
+    const store = notionV_(token, "pages/" + cur.storePageId, "get", null, NOTION_VERSION_DS);
+    if (store.code === 200) {
+      const stock = Number(((store.data.properties || {})["庫存"] || {}).number) || 0;
+      const upd = notionV_(token, "pages/" + cur.storePageId, "patch", {
+        properties: { "庫存": { number: stock + 1 } },
+      }, NOTION_VERSION_DS);
+      if (upd.code !== 200) stockMsg = "（庫存未加回，請手動 +1）";
+    } else stockMsg = "（找不到商店品項，庫存請手動 +1）";
+  } else stockMsg = "（此申請無商店頁ID，庫存請手動 +1）";
+
+  // 3) 券收回＋狀態改已退款（幣已經退了，這步失敗要明講，不能靜默）
+  const res = notionV_(token, "pages/" + pageId, "patch", {
+    properties: {
+      "狀態": { select: { name: "已退款" } },
+      "剩餘次數": { number: 0 },
+      "最近使用": { date: { start: today_() } },
+      "使用紀錄": { rich_text: [{ text: { content:
+        appendLog_(cur.log, stampMD_() + " 退費 " + cur.price + " 幣（" + reason + "）") } }] },
+      "備註": { rich_text: [{ text: { content: "已退 " + cur.price + " 幣：" + reason } }] },
+    },
+  }, NOTION_VERSION_DS);
+  if (res.code !== 200) {
+    return { ok: false, error: "幣已經退給座號 " + cur.seat + "（" + cur.price + " 幣），"
+      + "但兌換券狀態沒改成功（Notion 回應 " + res.code + "）。"
+      + "請到 Notion「🛒 兌換申請」把這一列狀態改成「已退款」、剩餘次數改 0，"
+      + "否則券還在學生手上。（若下拉沒有「已退款」選項，請先新增這個選項）" };
+  }
+  return { ok: true, seat: cur.seat, item: cur.item, refunded: cur.price,
+    msg: ledgerMsg + stockMsg };
 }
 
 // 名冊：座號＋在學 → 學生頁（含 properties）；查無回 null

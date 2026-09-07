@@ -389,7 +389,7 @@ const SCHEDULE_META = {
   // 固定時段（非課程節次）；週三、週五半天，下午留空
   fixedRows: {
     "晨掃": ["晨掃", "晨掃", "晨掃", "晨掃", "晨掃"],
-    "早自修": ["早自修", "早自修", "朝會", "早自修", "早自修"],
+    "早自修": ["早自修", "朝會", "早自修", "早自修", "早自修"], // 朝會在週二
     "午休": ["午休", "午休", "", "午休", ""],
   },
   subjectColors: {
@@ -972,7 +972,8 @@ async function syncBank() {
     });
   }
 
-  // 特權券：已完成且剩餘次數 > 0 的兌換申請＝學生手上還能用的券。
+  // 兌換券：已完成且剩餘次數 > 0 的兌換申請＝學生手上還能用的券。
+  // 不分特權／小物（文具・食物兌換券也要讓學生在存摺看到自己還有幾張）。
   // 走同一份加密存摺（座號↔品項對應屬個資，不另開公開檔）；已用完的不出現在學生端。
   const storeMeta = Object.fromEntries((await queryDataSource(DS.store)).map(props)
     .filter(r => r["品項"])
@@ -980,7 +981,7 @@ async function syncBank() {
   const bySeatRoster = Object.fromEntries(roster.map(r => [Number(r["座號"]), r]));
   let privSkipped = 0;
   const privRows = (await queryDataSource(DS.redeem)).map(props)
-    .filter(r => r["狀態"] === "已完成" && r["分類"] === "特權" && Number(r["剩餘次數"]) > 0);
+    .filter(r => r["狀態"] === "已完成" && Number(r["剩餘次數"]) > 0);
   for (const r of privRows) {
     const seat = Number(r["座號"]);
     const stu = bySeatRoster[seat];
