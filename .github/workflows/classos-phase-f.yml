@@ -25,6 +25,7 @@ on:
           - f21-relink-daily-plan
           - f22-renumber-review-rounds
           - f23-settle-week1
+          - f25-clear-weekly-mock
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
