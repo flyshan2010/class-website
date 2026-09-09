@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-09-09T07:04:51.845Z",
+  "fetchedAt": "2026-09-09T10:33:51.180Z",
   "items": [
+    {
+      "date": "2026-09-09",
+      "title": "115年度修復式正義之校園實踐-校園(霸凌、性平、不當管教)事件系列影片競賽",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=742&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-09-09",
+      "title": "臺南市政府衛生局辦理青少年心理健康講座資訊",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=740&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-09-09",
       "title": "財團法人靖娟兒童安全文教基金會提供《交通問題在哪裡？小偵探養成班》交通安全教材包",
@@ -38,28 +50,16 @@
       "dept": "教務處"
     },
     {
-      "date": "2026-09-08",
-      "title": "臺南市永康區崑山國小附設幼兒園誠徵115學年度特教學生助理人員",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=8&zone_id=0&page_id=78&content_id=731&type=news&from_op=school_department_show",
-      "dept": "崑山附設幼兒園"
-    },
-    {
-      "date": "2026-09-08",
-      "title": "校內英語說唱比賽，低年級英語歌謠快樂唱成績公告",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=729&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-09-08",
-      "title": "「2026 CHA-CHING理財之星學校徵選活動」，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=724&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
       "date": "2026-09-06",
       "title": "115學年度第一學期獎學金申請資訊",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=710&type=news&from_op=school_department_show",
       "dept": "教務處"
+    },
+    {
+      "date": "2026-08-26",
+      "title": "115學年度崑山國小桌球課後社團開始報名!!!歡迎新舊生報名參加!!!(9/4報名名單公告!!!!!!請參閱附檔)",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
+      "dept": "學務處"
     }
   ]
 }
