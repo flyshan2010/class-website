@@ -1,0 +1,20 @@
+{
+  "_說明": "當天調課對照表。由 build-schedule-overrides.mjs 從 data/calendar.json 推算，請勿手改；要改調課請改 Google 日曆那筆事件（標題含「調」＋時間對上某一節）。學年課表 schedule.json 不受影響，只有列在這裡的那一天那一節會換科目。",
+  "來源": "data/calendar.json（標題含「調」且 startTime 對上 schedule.json 某一節）",
+  "days": {
+    "2026-09-09": {
+      "第三節": {
+        "subject": "數學",
+        "title": "數學（調9/10第三節）",
+        "from": "調9/10第三節"
+      }
+    },
+    "2026-09-10": {
+      "第三節": {
+        "subject": "資訊",
+        "title": "資訊（調9/9第三節）",
+        "from": "調9/9第三節"
+      }
+    }
+  }
+}

@@ -42,6 +42,10 @@ jobs:
       - name: 產生學校週次對照表
         run: node scripts/build-weeks.mjs
 
+      # 調課對照表要 calendar.json（sync-gcal）與 schedule.json（sync-notion）都在才算得出來。
+      - name: 產生當天調課對照表
+        run: node scripts/build-schedule-overrides.mjs
+
       - name: 同步 Drive 相簿
         env:
           DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
