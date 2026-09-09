@@ -825,6 +825,29 @@
     }).join("");
   };
 
+  /* ── 近期調課清單（2026-09-09 從班網日課表頁搬來） ─────────
+     原本掛在家長也看得到的日課表頁，實際造成誤解（家長把「某天某節改上數學」讀成課表改了）。
+     調課是教師端的排課資訊，所以只在駕駛艙列出，日課表頁維持乾淨的學年課表。
+     資料同樣來自 data/schedule-overrides.json，只列今天以後的，過期的不佔版面。 */
+  const swapNotice = () => {
+    const swaps = Object.entries(ovDoc.days || {})
+      .filter(([iso]) => iso >= todayISO)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .flatMap(([iso, byPeriod]) => Object.entries(byPeriod).map(([period, o]) => ({ iso, period, ...o })));
+    if (!swaps.length) return "";
+    const WD = ["日", "一", "二", "三", "四", "五", "六"];
+    return `<div class="card">
+      <h3>🔄 近期調課</h3>
+      <ul class="sched-swaps">${swaps.map(o => {
+        const d = new Date(`${o.iso}T00:00:00`);
+        return `<li>${d.getMonth() + 1}/${d.getDate()}（${WD[d.getDay()]}）${App.esc(o.period)} 改上
+                <strong>${App.esc(o.subject)}</strong>${o.from ? `<small style="color:var(--ink-soft)">（${App.esc(o.from)}）</small>` : ""}</li>`;
+      }).join("")}</ul>
+      <p style="color:var(--ink-soft);font-size:.9rem;margin:.6em 0 0">
+        調課只影響列出的那一天那一節，其餘日子仍照日課表上課；當天的進度會跟著移動，不會被跳過。</p>
+    </div>`;
+  };
+
   /* ── 組裝與事件 ─────────────────────────────────────────── */
   let view = "day";
   let unitActiveOnly = false;
@@ -838,6 +861,7 @@
       Notion「🚀 教學單元」（或對 AI 說「/lesson-flow 開新單元」）。
       <b>已過的日期會變暗</b>；今天只留還沒上的節次。</p>
       ${scheduleAudit()}
+      ${swapNotice()}
       <div class="cp-tabs">
         <button type="button" class="cockpit-link" data-view="day" aria-pressed="${view === "day"}">📅 行事曆</button>
         <button type="button" class="cockpit-link" data-view="unit" aria-pressed="${view === "unit"}">📚 依單元</button>
