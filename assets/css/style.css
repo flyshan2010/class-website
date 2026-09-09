@@ -1627,6 +1627,12 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .cp-break { background: #f6f6f2; border-radius: 12px; padding: 8px 14px; color: var(--ink-soft); font-size: 0.8333rem; }
 .cp-slot { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 12px 16px; border-left: 6px solid var(--accent, var(--sky)); }
 .cp-slot-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+/* 調課標記（2026-09-09）：那一節換了科目就要看得出來，不然畫面跟平常一模一樣，
+   老師會以為是自己記錯課表。 */
+.cp-swap { font-size: .82rem; font-weight: 700; color: #B25E00;
+  background: #FFF1DC; border: 1px solid #F0C48A; border-radius: 999px; padding: 1px 10px; }
+.sched-swaps { margin: 0; padding-left: 1.2em; }
+.sched-swaps li { margin: .25em 0; }
 .cp-progress { margin: 8px 0 0; font-size: 0.8889rem; font-weight: 700; line-height: 1.6; }
 .cp-lesson { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 0.8333rem; }
 

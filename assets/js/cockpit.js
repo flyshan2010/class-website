@@ -10,6 +10,8 @@
    ・data/schedule.json     日課表（節次時間、每天每節的科目／老師／教室；Notion 每天自動同步）
    ・data/morning-launch.json 早自修 SEL 微儀式（五個主題日 × 四步驟）
    ・data/lessons.json      教學單元與五段連結（Notion「🚀 教學單元」勾「顯示」者，無個資）
+   ・data/schedule-overrides.json 當天調課（老師在 Google 日曆寫「數學（調9/10第三節）」就生效，
+                            只換那一天那一節，學年課表不動）
 
    節次對齊在這裡即時算（見 alignWeek）——不是事先算好存檔。
    因為日課表是 Notion 每天自動同步下來的，隨時可能變；若把進度釘死在「第七節」這種
@@ -29,6 +31,11 @@
     App.fetchJSON("data/morning-launch.json").catch(() => null),
     App.fetchJSON("data/lessons.json").catch(() => []),
   ]);
+  /* 當天調課（data/schedule-overrides.json，由 build-schedule-overrides.mjs 從行事曆推算）。
+     只覆蓋「那一天那一節」的科目，學年課表 sched.table 一個字都不動——
+     所以節數護欄、節次對齊、日課表頁全部不受影響，改的只有畫面上那一格。 */
+  const ovDoc = await App.fetchJSON("data/schedule-overrides.json").catch(() => ({ days: {} }));
+  const overrideOf = (iso, periodName) => ((ovDoc.days || {})[iso] || {})[periodName] || null;
   // 週次查表：weeks.json 是週次的單一出處，這裡先攤平成 date→標籤 供同步查詢
   const weeksDoc = await App.fetchJSON("data/weeks.json").catch(() => ({ 學期: [] }));
   const weekRanges = (weeksDoc.學期 || []).flatMap(sm =>
@@ -493,7 +500,7 @@
     return btns.length ? `<div class="cockpit-links">${btns.join("")}</div>` : "";
   };
 
-  const classCard = (cell, entry) => {
+  const classCard = (cell, entry, ov) => {
     const subject = cell.subject || "";
     const base = subject.replace(/\(.*?\)/g, "").trim();
     const color = SUBJECT_COLOR[base] || "#8395A7";
@@ -501,6 +508,7 @@
       <div class="cp-slot-head">
         <span class="badge" style="background:${color};color:#fff">${SUBJECT_ICON[base] || "📦"} ${App.esc(subject)}</span>
         <span class="meta">${App.esc(cell.teacher || "")}${cell.room ? `・${App.esc(cell.room)}` : ""}</span>
+        ${ov ? `<span class="cp-swap">🔄 調課${ov.from ? `（${App.esc(ov.from)}）` : ""}</span>` : ""}
       </div>`;
     if (!entry) {
       return `<div class="cp-slot" style="--accent:${color}">${head}</div>`;
@@ -528,6 +536,16 @@
           : hit ? `<p class="meta">尚未建立 <b>${App.esc(hit.code)}</b> 的教材——對 AI 說「/lesson-flow 開新單元 ${App.esc(hit.code)}」就會自動掛上。</p>`
                 : `<p class="meta">這一節還沒指定單元——到 Notion「📅 每日課程進度」填該日的「${App.esc(subject)}單元」，再按「🔄 立即更新班網」。</p>`}
       </div>`;
+  };
+
+  /* 調課那一節的進度怎麼算：節次對齊是照學年課表算的，算出來的是**原本那一科**的進度。
+     調課後科目換了，硬掛上去就會把資訊課的格子填上數學進度而毫無警告——所以
+     只有「對齊出來的科目正好等於調課後的科目」才留著，否則整格不掛進度（畫面自己會說沒指定單元）。 */
+  const planFor = (plan, day, p, ov) => {
+    const e = plan.get(`${day.dow}|${p.name}`);
+    if (!ov) return e;
+    if (!e) return null;
+    return App.subjBase(e.subject) === App.subjBase(ov.subject) ? e : null;
   };
 
   /* ── 當日時間軸 ─────────────────────────────────────────── */
@@ -563,7 +581,11 @@
     const rows = [];
     let hidden = 0;
     sched.periods.forEach((p, i) => {
-      const cell = (sched.table[i] || [])[day.dow - 1];
+      const base = (sched.table[i] || [])[day.dow - 1];
+      const ov = overrideOf(day.date, p.name);
+      /* 調課只換科目，老師／教室一律不沿用原課的（換科目通常也換人換教室，
+         沿用等於印一個看起來像真的、其實是錯的資訊）。 */
+      const cell = ov ? { subject: ov.subject, teacher: "", room: "", parallel: [] } : base;
       if (!cell || (typeof cell === "string" && !cell.trim())) return;      // 半天課的空節次
 
       const end = periodEnd(p);
@@ -580,7 +602,7 @@
           <div class="cp-time"><b>${App.esc(p.name)}</b><span>${App.esc(p.time)}</span></div>
           <div class="cp-body">
             ${mlHere ? mlCard(day.dow, day.dow === 3 ? "週三朝會，改在第一節課前 3 分鐘進行" : "") : ""}
-            ${isClass ? classCard(cell, plan.get(`${day.dow}|${p.name}`)) : `<div class="cp-break">${App.esc(name)}</div>`}
+            ${isClass ? classCard(cell, planFor(plan, day, p, ov), ov) : `<div class="cp-break">${App.esc(name)}</div>`}
           </div>
         </div>`);
     });
