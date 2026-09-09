@@ -6,29 +6,9 @@
     return;
   }
   /* 調課只發生在特定某一天，**不改這張學年課表**（改了就變成每週都調）。
-     所以課表照舊，另外掛一張「近期調課」卡把例外講清楚——只列今天以後的，過期的不佔版面。 */
-  const ovDoc = await App.fetchJSON("data/schedule-overrides.json").catch(() => ({ days: {} }));
-  const todayISO = (() => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  })();
-  const swaps = Object.entries(ovDoc.days || {})
-    .filter(([iso]) => iso >= todayISO)
-    .sort(([a2], [b2]) => a2.localeCompare(b2))
-    .flatMap(([iso, byPeriod]) => Object.entries(byPeriod).map(([period, o]) => ({ iso, period, ...o })));
-  const WD = ["日", "一", "二", "三", "四", "五", "六"];
-  const swapBlock = swaps.length ? `
-    <div class="card">
-      <h3>🔄 近期調課</h3>
-      <ul class="sched-swaps">${swaps.map(o => {
-        const d = new Date(`${o.iso}T00:00:00`);
-        return `<li>${d.getMonth() + 1}/${d.getDate()}（${WD[d.getDay()]}）${App.esc(o.period)} 改上
-                <strong>${App.esc(o.subject)}</strong>${o.from ? `<small style="color:var(--ink-soft)">（${App.esc(o.from)}）</small>` : ""}</li>`;
-      }).join("")}</ul>
-      <p style="color:var(--ink-soft);font-size:.9rem;margin:.6em 0 0">
-        調課只影響上面列出的那一天那一節，其餘日子仍照下方課表上課。</p>
-    </div>` : "";
-
+     2026-09-09 起「近期調課」清單移到教學駕駛艙（cockpit.js 的 swapNotice）——
+     這頁家長也看得到，把「某天某節改上數學」讀成課表改了，實際造成誤解。
+     這頁只呈現乾淨的學年課表；當天調課由駕駛艙呈現，進度也在那裡跟著移動。 */
   const days = ["一", "二", "三", "四", "五"];
   const cellInfo = cell => typeof cell === "string"
     ? { subject: cell, teacher: "", room: "", parallel: [] }
@@ -50,7 +30,6 @@
 
   document.getElementById("main").innerHTML = `
     <h2 class="page-title"><span class="dot"></span>🕐 日課表</h2>
-    ${swapBlock}
     <p class="scroll-hint">← 左右滑動看完整課表 →</p>
     <div class="card" style="overflow-x:auto">
       <table class="schedule-table">
