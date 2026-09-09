@@ -530,7 +530,7 @@
     return `
       <div class="cp-slot" style="--accent:${color}">
         ${head}
-        <p class="cp-progress">${App.esc(entry.text)}</p>
+        <p class="cp-progress">${entry.cont ? '<span class="meta">（同日第二節・接續本日進度）</span> ' : ""}${App.esc(entry.text)}</p>
         ${hit?.isExam ? '<p class="meta">📝 本節為課後評量與驗收，教材沿用該課「綜合整理」那份。</p>' : ""}
         ${hits.length ? hits.map(lessonBlock).join("")
           : hit ? `<p class="meta">尚未建立 <b>${App.esc(hit.code)}</b> 的教材——對 AI 說「/lesson-flow 開新單元 ${App.esc(hit.code)}」就會自動掛上。</p>`
@@ -544,8 +544,17 @@
   const planFor = (plan, day, p, ov) => {
     const e = plan.get(`${day.dow}|${p.name}`);
     if (!ov) return e;
-    if (!e) return null;
-    return App.subjBase(e.subject) === App.subjBase(ov.subject) ? e : null;
+    if (e) return App.subjBase(e.subject) === App.subjBase(ov.subject) ? e : null;
+    /* 調課「補進來」的那一節：學年課表上這格原本是別科，所以對齊表裡沒有它。
+       但當天那一科的進度已經掛在同一天的另一節（例：9/9 數學原有第一節，第三節是
+       9/10 調過來的），這一節就是同一天的第二節同科課，應接著上同一份進度——
+       不掛的話畫面會說「這一節還沒指定單元」，看起來像進度被跳過（2026-09-09 老師回報）。 */
+    for (const [k, v] of plan) {
+      if (k.startsWith(`${day.dow}|`) && App.subjBase(v.subject) === App.subjBase(ov.subject)) {
+        return { ...v, cont: true };
+      }
+    }
+    return null;
   };
 
   /* ── 當日時間軸 ─────────────────────────────────────────── */
