@@ -1,6 +1,14 @@
 /**
- * 班網教師專區代理 v2.4（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案
+ * 班網教師專區代理 v2.5（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.5 升級步驟（2026-09-10，約 2 分鐘）──
+ *   本檔全部內容貼到 Apps Script 取代舊碼 →「部署」→「管理部署作業」→ 編輯 → 版本選「新版本」→ 部署（沿用原網址）。
+ *   不必新增指令碼屬性；代理 integration 需讀得到「📝 班經與學習紀錄庫」「🧹 班級工作分配」（繼承 🏫 班級經營中心分享即可）。
+ *   v2.5 新增把關（SPEC_兌換條件自動把關.md；條件全在伺服器端判斷，force 不能繞過）：
+ *     XP 門檻：🏪 商店「解鎖總XP／解鎖貢獻XP」→ redeem_request 拒絕、approve_redeem 再驗、list_redeems 回 blocked/reason
+ *     🧹 免打掃一次券：兌換當週打掃未達標不能換；只限核可後下一週用、一人一週一張、同組同一天一人
+ *       → use_privilege 擋、list_privileges 回 usable/reason
  *
  * ── v2.4 升級步驟（2026-09-10，約 5 分鐘）──
  *   ① Notion 打開「🏫 班級經營中心 → 🧪 創造提案」→ 右上「…」→「連結」→ 加入代理（與 GitHub 同步）用的 integration。
@@ -301,6 +309,11 @@ function redeemRequest_(props, body) {
   }
   if (price < 0) return { ok: false, error: "商品價格設定有誤，請告訴老師" };
 
+  // 3b) v2.5 資格把關：XP 門檻＋品項條件（前端反灰只是提示，這裡才算數）
+  const today = today_();
+  const elig = redeemEligibility_(token, stu.id, itemName, unlockOf_(ip), mondayOf_(today), today, null);
+  if (elig.reason) return { ok: false, blocked: true, error: "還沒辦法兌換「" + itemName + "」：" + elig.reason };
+
   // 4) 建申請列（購買明細正本；狀態=待處理）
   const res = notionV_(token, "pages", "post", {
     parent: { type: "data_source_id", data_source_id: DS_REDEEM },
@@ -335,9 +348,11 @@ function listRedeems_(props, body) {
   const res = queryDS_(token, DS_REDEEM, payload);
   if (res.code !== 200) return { ok: false, error: "查詢兌換申請失敗（Notion 回應 " + res.code + "）" };
 
+  const today = today_();
+  const stores = {}, students = {}, fins = {}; // 同一次清單內快取，避免同品項／同座號重複查
   const items = (res.data.results || []).map(page => {
     const p = page.properties || {};
-    return {
+    const r = {
       page_id: page.id,
       seat: (p["座號"] || {}).number || 0,
       item: ((p["品項"] || {}).rich_text || []).map(t => t.plain_text).join(""),
@@ -347,6 +362,25 @@ function listRedeems_(props, body) {
       created: page.created_time,
       processed: (((p["處理時間"] || {}).date) || {}).start || "",
     };
+    // v2.5：待處理的申請先判資格，教師專區核可鈕據此反灰（核可時伺服器仍會再驗一次）
+    if (r.status === "待處理" && r.seat) {
+      const storeId = ((p["商店頁ID"] || {}).rich_text || []).map(t => t.plain_text).join("").trim();
+      const key = storeId || "name:" + r.item;
+      if (!(key in stores)) stores[key] = storePageFor_(token, storeId, r.item);
+      const unlock = stores[key] ? unlockOf_(stores[key].properties || {}) : { xp: 0, merit: 0 };
+      if (unlock.xp || unlock.merit || REDEEM_RULES[r.item]) {
+        if (!(r.seat in students)) students[r.seat] = findStudent_(token, r.seat);
+        const stu = students[r.seat];
+        if (!stu) { r.blocked = true; r.reason = "名冊查無在學的座號 " + r.seat; }
+        else {
+          const elig = redeemEligibility_(token, stu.id, r.item, unlock,
+            mondayOf_(taipeiDate_(page.created_time)), today, fins[r.seat] || null);
+          if (elig.fin) fins[r.seat] = elig.fin;
+          if (elig.reason) { r.blocked = true; r.reason = elig.reason; }
+        }
+      }
+    }
+    return r;
   });
   return { ok: true, items: items };
 }
@@ -375,9 +409,19 @@ function approveRedeem_(props, body) {
   const stu = findStudent_(token, seat);
   if (!stu) return { ok: false, error: "名冊查無座號 " + seat + "（非在學？），請到 Notion 確認" };
 
+  // 2b) v2.5 商店頁提前讀（門檻、使用次數、分類都在這）；舊申請沒有商店頁ID 就用品項名找
+  const storePage = storePageFor_(token, storePageId, itemName);
+  const sp = storePage ? (storePage.properties || {}) : null;
+
+  // 2c) v2.5 資格再驗：XP 門檻＋品項條件。申請後 XP 不會變少，這關擋的是舊申請與手動建列；force 不能繞過
+  const fin = studentFinance_(token, stu.id);
+  if (!fin) return { ok: false, error: "餘額計算失敗，請稍後再試" };
+  const elig = redeemEligibility_(token, stu.id, itemName, sp ? unlockOf_(sp) : { xp: 0, merit: 0 },
+    mondayOf_(taipeiDate_(req.data.created_time)), today_(), fin);
+  if (elig.reason) return { ok: false, blocked: true, error: "座號 " + seat + " 還不能兌換「" + itemName + "」：" + elig.reason };
+
   // 3) 餘額檢查（帳本該生全部金額加總）；不足時回報，老師可選擇強制核可
-  const balance = studentBalance_(token, stu.id);
-  if (balance === null) return { ok: false, error: "餘額計算失敗，請稍後再試" };
+  const balance = fin.balance;
   if (balance < price && !body.force) {
     return { ok: false, insufficient: true, balance: balance,
       error: "餘額不足：目前 " + balance + " 幣，需要 " + price + " 幣" };
@@ -401,19 +445,15 @@ function approveRedeem_(props, body) {
   // 5) 商店庫存 −1（失敗不擋流程，回報請老師手動調）；順便取「使用次數」與分類
   let stockMsg = "";
   let uses = 1; // 特權券可用次數：商店「使用次數」空白＝1
-  if (storePageId) {
-    const store = notionV_(token, "pages/" + storePageId, "get", null, NOTION_VERSION_DS);
-    if (store.code === 200) {
-      const sp = store.data.properties || {};
-      uses = Math.max(1, Math.round(Number((sp["使用次數"] || {}).number) || 1));
-      if (!category) category = (((sp["分類"] || {}).select) || {}).name || "小物";
-      const stock = Number((sp["庫存"] || {}).number) || 0;
-      const upd = notionV_(token, "pages/" + storePageId, "patch", {
-        properties: { "庫存": { number: Math.max(0, stock - 1) } },
-      }, NOTION_VERSION_DS);
-      if (upd.code !== 200) stockMsg = "（庫存未扣成功，請手動 −1）";
-    } else stockMsg = "（找不到商店品項，庫存請手動 −1）";
-  } else stockMsg = "（此申請無商店頁ID，庫存請手動 −1）";
+  if (sp) {
+    uses = Math.max(1, Math.round(Number((sp["使用次數"] || {}).number) || 1));
+    if (!category) category = (((sp["分類"] || {}).select) || {}).name || "小物";
+    const stock = Number((sp["庫存"] || {}).number) || 0;
+    const upd = notionV_(token, "pages/" + storePage.id, "patch", {
+      properties: { "庫存": { number: Math.max(0, stock - 1) } },
+    }, NOTION_VERSION_DS);
+    if (upd.code !== 200) stockMsg = "（庫存未扣成功，請手動 −1）";
+  } else stockMsg = storePageId ? "（找不到商店品項，庫存請手動 −1）" : "（此申請無商店頁ID，庫存請手動 −1）";
   if (!category) category = "小物";
 
   // 6) 申請設已完成＋處理紀錄＋發券
@@ -484,6 +524,7 @@ function readPrivilege_(token, pageId) {
     used: Math.round(Number((p["已使用次數"] || {}).number) || 0),
     log: ((p["使用紀錄"] || {}).rich_text || []).map(t => t.plain_text).join(""),
     lastUsed: (((p["最近使用"] || {}).date) || {}).start || "",
+    got: (((p["處理時間"] || {}).date) || {}).start || res.data.created_time, // v2.5 免打掃券「下一週」起算
   };
 }
 
@@ -541,6 +582,16 @@ function listPrivileges_(props, body) {
     cursor = res.data.has_more ? res.data.next_cursor : null;
   } while (cursor && items.length < limit);
 
+  // v2.5：有使用條件的券先判能不能用，教師專區「✅ 使用一次」據此反灰（use_privilege 仍會再驗）
+  if (holding && items.some(i => USE_RULES[i.item])) {
+    const ctx = useContext_(token);
+    for (const i of items) {
+      if (!USE_RULES[i.item]) continue;
+      const reason = USE_RULES[i.item](i, ctx);
+      i.usable = !reason;
+      if (reason) i.reason = reason;
+    }
+  }
   return { ok: true, items: items, today: today_() };
 }
 
@@ -554,6 +605,11 @@ function usePrivilege_(props, body) {
   const cur = readPrivilege_(token, pageId);
   if (!cur.ok) return cur;
   if (cur.remaining <= 0) return { ok: false, error: "「" + cur.item + "」已經沒有剩餘次數了" };
+  // v2.5 使用條件先於「同日重複」檢查：force 只能略過重複扣，不能略過這裡
+  if (USE_RULES[cur.item]) {
+    const reason = USE_RULES[cur.item](cur, useContext_(token));
+    if (reason) return { ok: false, blocked: true, error: "座號 " + cur.seat + " 的「" + cur.item + "」現在不能用：" + reason };
+  }
   if (cur.lastUsed === today_() && !body.force) {
     return { ok: false, duplicate: true,
       error: "座號 " + cur.seat + " 的「" + cur.item + "」今天已經扣過一次了" };
@@ -1160,9 +1216,12 @@ function findStudent_(token, seat) {
   return (res.data.results || [])[0] || null;
 }
 
-// 帳本該生餘額（全部交易金額加總，含分頁）；失敗回 null
-function studentBalance_(token, studentPageId) {
-  let balance = 0;
+// 帳本該生財務：餘額（全部金額加總）＋XP（含分頁）；失敗回 null
+// XP 算法與 sync-notion.mjs bankFinanceBySeat 一致：總 XP＝「薪水」＋「獎勵金」正數；貢獻 XP＝「獎勵金」正數。
+const XP_DUTY_TYPES = ["薪水"];
+const XP_MERIT_TYPES = ["獎勵金"];
+function studentFinance_(token, studentPageId) {
+  const fin = { balance: 0, xp: 0, xpMerit: 0 };
   let cursor = null;
   do {
     const payload = {
@@ -1173,11 +1232,147 @@ function studentBalance_(token, studentPageId) {
     const res = queryDS_(token, DS_BANK, payload);
     if (res.code !== 200) return null;
     for (const page of res.data.results || []) {
-      balance += Math.round(Number(((page.properties || {})["金額"] || {}).number) || 0);
+      const p = page.properties || {};
+      const amt = Math.round(Number((p["金額"] || {}).number) || 0);
+      const type = (((p["類型"] || {}).select) || {}).name || "";
+      fin.balance += amt;
+      if (amt > 0 && XP_DUTY_TYPES.indexOf(type) >= 0) fin.xp += amt;
+      if (amt > 0 && XP_MERIT_TYPES.indexOf(type) >= 0) { fin.xp += amt; fin.xpMerit += amt; }
     }
     cursor = res.data.has_more ? res.data.next_cursor : null;
   } while (cursor);
-  return balance;
+  return fin;
+}
+
+// ═══ v2.5 兌換條件自動把關（SPEC_兌換條件自動把關.md）══════════════════════
+// 原則：條件全在這裡判，前端反灰只是提示；判不出來（Notion 查詢失敗）一律當作「不通過」並說明原因。
+const DS_LOG = "eb529fa1-59e5-45ef-bfb4-79fc30de79e4";    // 📝 班經與學習紀錄庫
+const DS_DUTIES = "ccd4b894-5455-49f9-97e7-d56b42b51713"; // 🧹 班級工作分配
+const FREE_CLEAN_TICKET = "免打掃一次券";
+
+// 日期工具：一律用 yyyy-MM-dd 字串（台北日期）運算，以 UTC 午夜承載，避免時區漂移
+function addDays_(ymd, n) {
+  const d = new Date(ymd + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function mondayOf_(ymd) { return addDays_(ymd, -((new Date(ymd + "T00:00:00Z").getUTCDay() + 6) % 7)); }
+function taipeiDate_(iso) {
+  if (!iso) return "";
+  return iso.length === 10 ? iso : Utilities.formatDate(new Date(iso), "Asia/Taipei", "yyyy-MM-dd");
+}
+function md_(ymd) { return ymd.slice(5).replace("-", "/"); }
+
+// 商店頁：優先用申請列的商店頁ID，沒有（舊申請／手動建列）就用品項名找；找不到回 null
+function storePageFor_(token, storePageId, itemName) {
+  if (storePageId) {
+    const r = notionV_(token, "pages/" + storePageId, "get", null, NOTION_VERSION_DS);
+    if (r.code === 200) return r.data;
+  }
+  if (!itemName) return null;
+  const q = queryDS_(token, DS_STORE, { filter: { property: "品項", title: { equals: itemName } }, page_size: 1 });
+  return q.code === 200 ? ((q.data.results || [])[0] || null) : null;
+}
+
+// 機讀門檻：🏪 商店「解鎖總XP」「解鎖貢獻XP」（空白＝沒有門檻）
+function unlockOf_(storeProps) {
+  const n = k => Math.max(0, Math.round(Number((storeProps[k] || {}).number) || 0));
+  return { xp: n("解鎖總XP"), merit: n("解鎖貢獻XP") };
+}
+
+// XP 門檻：通過回 ""，否則回「還差總 XP N／貢獻 XP M」
+function xpBlockReason_(fin, unlock) {
+  const lackXp = Math.max(0, unlock.xp - fin.xp);
+  const lackMerit = Math.max(0, unlock.merit - fin.xpMerit);
+  if (!lackXp && !lackMerit) return "";
+  const parts = [];
+  if (lackXp) parts.push("總 XP " + lackXp);
+  if (lackMerit) parts.push("貢獻 XP " + lackMerit);
+  return "還差" + parts.join("／") + "（目前總 XP " + fin.xp + "、貢獻 XP " + fin.xpMerit + "）";
+}
+
+// 兌換資格規則：REDEEM_RULES[品項] = fn(token, { stuId, from, to }) → "" 通過／原因。
+// 之後別的品項要加兌換條件，只加一條規則。
+const REDEEM_RULES = {};
+REDEEM_RULES[FREE_CLEAN_TICKET] = function (token, ctx) {
+  // 兌換當週（申請日所在週一 ～ 今天）紀錄庫事件描述逐字＝「打掃未達標」（與 f24 tallyBySeat 同撈法）
+  const res = queryDS_(token, DS_LOG, { filter: { and: [
+    { property: "事件描述", title: { equals: "打掃未達標" } },
+    { property: "學生", relation: { contains: ctx.stuId } },
+    { property: "日期", date: { on_or_after: ctx.from } },
+    { property: "日期", date: { on_or_before: ctx.to } },
+  ] }, page_size: 1 });
+  if (res.code !== 200) return "查不到打掃紀錄（紀錄庫回應 " + res.code + "），請稍後再試";
+  return (res.data.results || []).length ? "這週打掃被登記「需改進（未達標）」，下週再來換喔" : "";
+};
+
+// 兌換資格總檢：XP 門檻 → 品項規則。fin 可傳入已算好的財務（省一次帳本查詢）
+function redeemEligibility_(token, stuId, itemName, unlock, from, to, fin) {
+  if ((unlock.xp || unlock.merit) && !fin) fin = studentFinance_(token, stuId);
+  if ((unlock.xp || unlock.merit) && !fin) return { reason: "XP 計算失敗，請稍後再試", fin: null };
+  let reason = (unlock.xp || unlock.merit) ? xpBlockReason_(fin, unlock) : "";
+  if (!reason && REDEEM_RULES[itemName]) reason = REDEEM_RULES[itemName](token, { stuId: stuId, from: from, to: to });
+  return { reason: reason, fin: fin || null };
+}
+
+// 使用條件：USE_RULES[品項] = fn(券, ctx) → "" 可用／原因。券需有 seat、got（核可時間）。
+// ctx 由 useContext_ 一次撈好，清單裡每張券共用，不必各查一次。
+const USE_RULES = {};
+USE_RULES[FREE_CLEAN_TICKET] = function (t, ctx) {
+  if (ctx.error) return ctx.error;
+  const got = taipeiDate_(t.got);
+  if (!got) return "查不到核可日，無法判斷哪一週能用";
+  const allowMon = addDays_(mondayOf_(got), 7);
+  if (ctx.monday < allowMon) return "兌換後的下一週才能用（" + md_(allowMon) + " 起）";
+  if (ctx.monday > allowMon) return "只能在兌換後的下一週（" + md_(allowMon) + "～" + md_(addDays_(allowMon, 6)) + "）使用，已過期，可作廢或退費";
+  if (ctx.freeCleanUses.some(u => u.seat === t.seat)) return "這週已經用過一張免打掃券（一週限用一張）";
+  const mates = {};
+  for (const g of ctx.cleanGroups) {
+    if (g.indexOf(t.seat) < 0) continue;
+    for (const s of g) if (s !== t.seat) mates[s] = true;
+  }
+  const clash = ctx.freeCleanUses.find(u => u.date === ctx.today && mates[u.seat]);
+  if (clash) return "同組的座號 " + clash.seat + " 今天已經用了免打掃券（同組同一天限一人）";
+  return "";
+};
+
+// 使用條件共用資料：本週用過的免打掃券＋打掃組成員
+function useContext_(token) {
+  const today = today_();
+  const ctx = { today: today, monday: mondayOf_(today), freeCleanUses: [], cleanGroups: [], error: "" };
+  // 本週用過的免打掃券：「已使用次數」>0 才算（老師撤銷後會變 0，不算）
+  let cursor = null;
+  do {
+    const payload = { filter: { and: [
+      { property: "品項", rich_text: { equals: FREE_CLEAN_TICKET } },
+      { property: "已使用次數", number: { greater_than: 0 } },
+      { property: "最近使用", date: { on_or_after: ctx.monday } },
+    ] }, page_size: 100 };
+    if (cursor) payload.start_cursor = cursor;
+    const res = queryDS_(token, DS_REDEEM, payload);
+    if (res.code !== 200) { ctx.error = "查不到本週使用紀錄（兌換申請回應 " + res.code + "），請稍後再試"; return ctx; }
+    for (const page of res.data.results || []) {
+      const p = page.properties || {};
+      ctx.freeCleanUses.push({
+        seat: Math.floor(Number((p["座號"] || {}).number) || 0),
+        date: (((p["最近使用"] || {}).date) || {}).start || "",
+      });
+    }
+    cursor = res.data.has_more ? res.data.next_cursor : null;
+  } while (cursor);
+  // 打掃組：類型＝打掃、有勾顯示；成員座號半形逗號分隔（與 f24 seatsOf 同規則，濾掉空字串以免變成座號 0）
+  const duty = queryDS_(token, DS_DUTIES, { filter: { and: [
+    { property: "類型", select: { equals: "打掃" } },
+    { property: "顯示", checkbox: { equals: true } },
+  ] }, page_size: 100 });
+  if (duty.code !== 200) { ctx.error = "查不到打掃分組（工作分配回應 " + duty.code + "），請稍後再試"; return ctx; }
+  for (const page of duty.data.results || []) {
+    const raw = (((page.properties || {})["成員座號"] || {}).rich_text || []).map(t => t.plain_text).join("");
+    const seats = raw.split(/[,、，\s]+/).map(x => x.trim()).filter(Boolean).map(Number)
+      .filter(n => Number.isInteger(n) && n > 0);
+    if (seats.length) ctx.cleanGroups.push(seats);
+  }
+  return ctx;
 }
 
 function queryDS_(token, dsId, payload) {

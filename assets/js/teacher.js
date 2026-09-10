@@ -324,8 +324,11 @@
           <strong>座號 ${r.seat}</strong>　${App.esc(r.item)}　🪙 ${r.price} 幣
           <span class="meta">${App.fmtDateShort(String(r.created).slice(0, 10))}</span>
           ${r.status === "待處理" ? `
-            <button class="badge rd-approve" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 核可</button>
-            <button class="badge rd-reject" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#ffe3e3;color:#c92a2a">❌ 駁回</button>` : ""}
+            ${r.blocked
+              ? `<button class="badge" disabled style="border:none;background:#f1f3f5;color:#999;cursor:not-allowed">🔒 未達條件</button>`
+              : `<button class="badge rd-approve" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 核可</button>`}
+            <button class="badge rd-reject" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#ffe3e3;color:#c92a2a">❌ 駁回</button>
+            ${r.blocked ? `<br /><span class="meta" style="color:#c92a2a">🔒 ${App.esc(r.reason || "")}</span>` : ""}` : ""}
           ${r.note ? `<br /><span class="meta">${App.esc(r.note)}</span>` : ""}
         </p>`).join("");
 
@@ -409,9 +412,11 @@
                   p.last_used ? `　最近 ${App.fmtDateShort(p.last_used)}` : ""}</span>
                 ${p.remaining > 0 && p.item === "創造提案權" ? `
                   <span class="badge" style="background:#e5dbff;color:#5f3dc4">✏️ 學生開始線上填寫時自動核銷</span>` : ""}
-                ${p.remaining > 0 && p.item !== "創造提案權" ? `
+                ${p.remaining > 0 && p.item !== "創造提案權" ? (p.usable === false ? `
+                  <button class="badge" disabled style="border:none;background:#f1f3f5;color:#999;cursor:not-allowed">🔒 現在不能用</button>
+                  <span class="meta" style="color:#c92a2a">${App.esc(p.reason || "")}</span>` : `
                   <button class="badge pv-use" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 使用一次</button>
-` : ""}
+`) : ""}
                 ${p.remaining > 0 ? `
                   <button class="badge pv-void" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#f1f3f5;color:#666">🚫 作廢</button>
                   <button class="badge pv-refund" data-id="${App.esc(p.page_id)}" data-price="${p.price}" data-seat="${p.seat}" data-item="${App.esc(p.item)}" style="cursor:pointer;border:none;background:#ffe3e3;color:#c92a2a">💰 退費</button>` : ""}
