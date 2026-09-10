@@ -1838,3 +1838,51 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   .guide-table { font-size: 0.8056rem; min-width: 420px; }
   .guide-table th, .guide-table td { padding: 6px 8px; }
 }
+
+/* ── 🧪 創造提案（proposal.html＋教師專區提案審核＋報告區塊，2026-09-10）── */
+.pp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pp-head .passbook-owner { margin: 0; }
+.pp-card { margin-bottom: 14px; }
+.pp-card > summary { cursor: pointer; list-style: none; }
+.pp-card > summary::-webkit-details-marker { display: none; }
+.pp-card > summary h3 { display: inline; margin: 0; }
+.pp-card > summary h3::after { content: " ▾"; color: var(--ink-soft); font-size: 0.8em; }
+.pp-steps { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.pp-step { padding: 5px 12px; border-radius: 999px; background: #f1f3f5; color: var(--ink-soft); font-size: 0.8889rem; }
+.pp-step.done { background: #d3f9d8; color: #2b8a3e; }
+.pp-step.now { background: #8E44AD; color: #fff; font-weight: bold; }
+.pp-status { margin: 6px 0; line-height: 1.7; }
+.pp-comment { background: #f8f0fc; border-left: 4px solid #8E44AD; border-radius: 10px; padding: 8px 12px; margin: 8px 0; }
+.pp-comment p { margin: 4px 0 0; white-space: pre-line; }
+.pp-naming { background: #e6fcf5; border-radius: 10px; padding: 8px 12px; }
+.pp-note { color: #b35c00; margin: 8px 0 0; }
+.pp-field { margin: 14px 0; }
+.pp-field > label { display: block; font-weight: bold; margin-bottom: 2px; }
+.pp-req { color: #c92a2a; }
+.pp-hint { margin: 2px 0 6px; color: var(--ink-soft); font-size: 0.9444rem; }
+.pp-eg { margin: 2px 0 6px; padding: 6px 10px; background: #fff9db; border-radius: 8px; font-size: 0.9444rem; color: #5b4a00; }
+.pp-field textarea, .pp-field input[type="text"], .pp-dates input {
+  width: 100%; box-sizing: border-box; padding: 10px; font-size: 1rem; font-family: inherit;
+  border: 1px solid #ccc; border-radius: 10px; background: #fff;
+}
+.pp-field textarea { resize: vertical; line-height: 1.7; }
+.pp-field textarea:disabled, .pp-field input:disabled { background: #f8f9fa; color: var(--ink); }
+.pp-count { display: block; text-align: right; font-size: 0.8333rem; color: var(--ink-soft); }
+.pp-dates { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pp-dates input { width: auto; flex: 1 1 150px; }
+.pp-checks { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.pp-checks label { display: inline-flex; align-items: center; gap: 6px; font-weight: normal; cursor: pointer; }
+.pp-checks input { width: 20px; height: 20px; }
+.pp-checks-col { flex-direction: column; }
+.pp-guard { background: #f1f8ff; border-radius: 12px; padding: 10px 12px; }
+.pp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; position: sticky; bottom: 0; background: var(--card); padding: 8px 0; }
+.pp-actions .store-buy, .pp-actions .report-tool { width: auto; margin: 0; padding: 10px 18px; font-size: 1rem; }
+.pp-past { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.pp-past .report-tool { margin-left: auto; }
+a.store-buy { display: block; text-align: center; text-decoration: none; box-sizing: border-box; }
+.pp-link { display: inline-block; width: auto; padding: 8px 18px; }
+.store-proposal { background: #e5dbff; color: #5f3dc4; box-shadow: 0 2px 0 #b197fc; }
+.pp-review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px 20px; }
+.proposal-report { border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 6px; }
+.proposal-report:first-of-type { border-top: none; }
+.proposal-report p { margin: 4px 0; }
