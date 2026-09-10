@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>🧪 創造提案權｜申請書與注意事項</title>
+<style>
+:root{--bg:#f7f5f0;--card:#fff;--ink:#2b2b2b;--muted:#6b6b6b;--line:#d9d2c3;--accent:#2f7d55;--soft:#eef7f1;--warn:#fff6e5;--warnline:#ecd29a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.8}
+.wrap{max-width:900px;margin:0 auto;padding:20px 18px 80px}
+h1{font-size:1.7rem;margin:.2em 0 .2em}
+.sub{color:var(--muted);margin:0 0 1em}
+h2{font-size:1.3rem;margin:2em 0 .6em;padding-left:.5em;border-left:6px solid var(--accent)}
+h3{font-size:1.05rem;margin:1.4em 0 .4em;color:var(--accent)}
+.note{background:var(--warn);border:1px solid var(--warnline);border-radius:10px;padding:10px 14px;font-size:.93rem;margin:12px 0}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:520px;background:var(--card);font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);white-space:nowrap}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.step{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:10px 12px}
+.step b{display:block;color:var(--accent)}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+.sheet h2{margin-top:.2em}
+.row{margin:10px 0}
+.row .q{font-weight:700}
+.row .hint{color:var(--muted);font-size:.88rem}
+.blank{border-bottom:1.5px solid #9c9486;height:2em}
+.box{border:1.5px solid #9c9486;border-radius:8px;min-height:6em;margin-top:4px}
+.box.s{min-height:3.6em}
+.ck{list-style:none;padding-left:0;margin:6px 0}
+.ck li::before{content:"☐ ";font-size:1.1em}
+.opts span{display:inline-block;margin-right:1.2em;white-space:nowrap}
+.opts span::before{content:"☐ "}
+.sign{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.teacher{background:var(--soft);border-radius:10px;padding:10px 14px;margin-top:14px}
+.example{background:#f4f1ff;border:1px solid #d6cdf5;border-radius:10px;padding:10px 14px;font-size:.93rem}
+.toolbar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2}
+.toolbar button{font:inherit;padding:6px 14px;border-radius:999px;border:1px solid var(--accent);background:#fff;color:var(--accent);cursor:pointer}
+@media print{
+  body{background:#fff}
+  .toolbar,.screen-only{display:none}
+  .sheet{border:none;padding:0;page-break-after:always}
+  .wrap{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="toolbar"><button type="button" onclick="window.print()">🖨️ 列印（每張表自動分頁）</button></div>
+
+<h1>🧪 創造提案權｜申請書與注意事項</h1>
+<p class="sub">給老師參考用的草稿（2026-09-10）。規則正本：<code>docs/班級銀行制度設計.md</code> §五之三。這一頁沒有連在班網選單上，也不含任何學生資料。</p>
+
+<h2>一、流程總覽（四步）</h2>
+<div class="flow">
+  <div class="step"><b>① 申請</b>達到 💫 超新星（總 XP 1200、貢獻 XP 350）後，在班網商店按「🧪 創造提案權」送出（0 幣）。</div>
+  <div class="step"><b>② 交計畫・核准</b>老師核可後，填<strong>表一「提案計畫書」</strong>。老師看完決定：通過／修改再交／不通過。</div>
+  <div class="step"><b>③ 試行・回報</b>照計畫試行（建議 2 週），邊做邊記錄，最後填<strong>表二「成果回報單」</strong>。</div>
+  <div class="step"><b>④ 裁決・頒獎</b>老師裁決。成果通過就頒「🏷️ 命名權」，這個點子正式納入班級制度。</div>
+</div>
+<div class="tw"><table>
+<tr><th>時間點</th><th>貢獻 XP</th><th>說明</th></tr>
+<tr><td>表一計畫通過</td><td>＋10</td><td>鼓勵「提案」這件事本身</td></tr>
+<tr><td>表二成果通過</td><td>＋20</td><td>同時頒「🏷️ 命名權」</td></tr>
+<tr><td>成果沒通過，但認真做完</td><td>保留前面的 ＋10</td><td>不倒扣；可以修改後再提一次</td></tr>
+</table></div>
+
+<h2>二、給學生的注意事項</h2>
+<div class="sheet" id="rules">
+<h3>🛡️ 四條護欄（任何一條沒過，提案就不能通過）</h3>
+<ol>
+  <li><strong>不可以違反校規</strong>（例如：上課時間離開教室、改掉學校規定的作息）。</li>
+  <li><strong>不可以用到錢或要買東西</strong>（包含要老師或家長出錢）。</li>
+  <li><strong>不可以增加同學的負擔</strong>（例如：多寫作業、多掃一區、占用下課時間）。</li>
+  <li><strong>不可以讓人「花錢買到不用負責」</strong>（例如：付幣就不用訂正、不用打掃、不被記點）。</li>
+</ol>
+<h3>📌 其他要記得的事</h3>
+<ul>
+  <li>提案是為了<strong>讓全班更好</strong>，不是只讓自己方便。寫之前先想：「全班有誰會因為這個變好？」</li>
+  <li>可以提的有三類：<strong>常規</strong>（每天怎麼做事）、<strong>班規</strong>（獎勵與提醒）、<strong>商店品項</strong>（新的兌換券）；新創或修改都可以。</li>
+  <li>先<strong>小規模試試看</strong>：試行期間建議 2 週，說清楚「怎樣算成功」。</li>
+  <li>可以找同學一起做，但<strong>提案人要負責到底</strong>，記錄與回報由提案人交。</li>
+  <li>一個人<strong>同時只能有一件提案在進行</strong>，做完（通過或沒通過）才能提下一件。</li>
+  <li>命名權的名字<strong>不能放自己的姓名或座號</strong>，要取一個大家看得懂的名字（例如「閃電歸位法」）。</li>
+  <li>老師會認真看每一份提案，<strong>老師保留最後決定權</strong>；沒通過會告訴你原因，你可以修改後再提。</li>
+  <li>通過的點子會寫進班級正式規則，<strong>之後大家一起遵守</strong>，包含你自己。</li>
+</ul>
+<div class="example"><strong>✏️ 參考例子</strong>（只是示範）<br>
+問題：下課後掃把常常亂放，隔天打掃的人要先找掃把，浪費 3～5 分鐘。<br>
+點子：掃具櫃貼上「掃具的家」編號貼紙，最後一個用的人負責放回對應位置，衛生股長放學前拍一眼。<br>
+成功標準：試行 2 週，打掃開始時「找不到掃具」的次數從每週 4 次降到 1 次以下。</div>
+</div>
+
+<h2>三、表一｜提案計畫書</h2>
+<div class="sheet" id="form1">
+<h2>🧪 創造提案計畫書（表一）</h2>
+<div class="row"><span class="q">提案名稱（暫定）：</span><div class="blank"></div></div>
+<div class="row"><span class="q">提案類型：</span>
+  <div class="opts"><span>新常規</span><span>修改常規</span><span>新班規</span><span>修改班規</span><span>新商店品項</span><span>修改商店品項</span></div></div>
+<div class="row"><span class="q">1. 我發現的問題</span><div class="hint">現在發生什麼事？什麼時候、在哪裡？影響到誰？我觀察到幾次？</div><div class="box"></div></div>
+<div class="row"><span class="q">2. 我的點子（具體做法）</span><div class="hint">誰來做？什麼時候做？怎麼做？寫到別人照著就能做的程度。</div><div class="box"></div></div>
+<div class="row"><span class="q">3. 對全班的好處</span><div class="box s"></div></div>
+<div class="row"><span class="q">4. 可能遇到的困難，我打算怎麼解決</span><div class="box s"></div></div>
+<div class="row"><span class="q">5. 試行計畫</span>
+  <div class="tw"><table>
+  <tr><th>試行期間</th><td>＿＿月＿＿日 到 ＿＿月＿＿日（建議 2 週）</td></tr>
+  <tr><th>怎樣算成功</th><td style="height:3.2em"></td></tr>
+  <tr><th>我怎麼記錄</th><td>☐ 次數表　☐ 照片（不拍同學的臉）　☐ 訪問同學　☐ 其他：＿＿＿＿</td></tr>
+  <tr><th>需要的協助</th><td>☐ 老師：＿＿＿＿＿＿　☐ 同學：＿＿＿＿＿＿　☐ 不需要</td></tr>
+  </table></div></div>
+<div class="row"><span class="q">6. 護欄自我檢查（每一格都要能打勾）</span>
+  <ul class="ck">
+    <li>沒有違反校規</li>
+    <li>不用花錢、不用買東西</li>
+    <li>不會增加同學的負擔</li>
+    <li>不是「花幣就不用負責」</li>
+    <li>我目前沒有其他進行中的提案</li>
+  </ul></div>
+<div class="sign"><div>提案人簽名：<div class="blank"></div></div><div>交件日期：<div class="blank"></div></div></div>
+<div class="teacher"><strong>老師審核</strong>　
+  <div class="opts"><span>通過（貢獻 XP ＋10，開始試行）</span><span>修改後再交</span><span>不通過</span></div>
+  理由／建議：<div class="blank"></div><div class="blank"></div>
+  老師簽名：＿＿＿＿＿＿　日期：＿＿＿＿＿＿</div>
+</div>
+
+<h2>四、表二｜成果回報單</h2>
+<div class="sheet" id="form2">
+<h2>🧪 創造提案成果回報單（表二）</h2>
+<div class="row"><span class="q">提案名稱：</span><div class="blank"></div></div>
+<div class="row"><span class="q">實際試行期間：</span>＿＿月＿＿日 到 ＿＿月＿＿日，共＿＿天</div>
+<div class="row"><span class="q">1. 我實際做了什麼</span><div class="hint">和計畫一樣嗎？哪裡有改？為什麼改？</div><div class="box"></div></div>
+<div class="row"><span class="q">2. 紀錄與結果</span>
+  <div class="tw"><table>
+  <tr><th>比較</th><th>試行前</th><th>試行後</th></tr>
+  <tr><td>我觀察的數字（次數／分鐘…）</td><td style="height:2.6em"></td><td></td></tr>
+  <tr><td>有沒有達到「成功標準」</td><td colspan="2">☐ 達到　☐ 部分達到　☐ 沒達到</td></tr>
+  </table></div></div>
+<div class="row"><span class="q">3. 同學的回饋</span><div class="hint">至少問 3 位同學（只寫他說了什麼，不寫名字）。</div><div class="box s"></div></div>
+<div class="row"><span class="q">4. 我學到什麼／如果再做一次會怎麼改</span><div class="box s"></div></div>
+<div class="row"><span class="q">5. 我想幫這個點子取的名字（命名權）</span><div class="hint">不能有自己的姓名或座號。</div><div class="blank"></div></div>
+<div class="sign"><div>提案人簽名：<div class="blank"></div></div><div>交件日期：<div class="blank"></div></div></div>
+<div class="teacher"><strong>老師裁決</strong>
+  <div class="opts"><span>通過：頒「🏷️ 命名權」、貢獻 XP ＋20、正式納入制度</span><span>延長試行＿＿週</span><span>未通過（保留 ＋10，可修改再提）</span></div>
+  理由／回饋：<div class="blank"></div><div class="blank"></div>
+  老師簽名：＿＿＿＿＿＿　日期：＿＿＿＿＿＿</div>
+</div>
+
+<h2 class="screen-only">五、老師審核參考（不用印給學生）</h2>
+<div class="screen-only">
+<h3>核准表一前看這幾點</h3>
+<div class="tw"><table>
+<tr><th>看什麼</th><th>通過的樣子</th><th>常見要退回的情況</th></tr>
+<tr><td>問題是真的嗎</td><td>有觀察次數或具體情境</td><td>只有「我覺得」、其實是個人喜好</td></tr>
+<tr><td>做法具體嗎</td><td>別人照著寫的就能做</td><td>只有口號（「大家要更守秩序」）</td></tr>
+<tr><td>四條護欄</td><td>五個勾都成立</td><td>暗藏「買豁免」、增加某群人的工作</td></tr>
+<tr><td>成功標準</td><td>可以數、可以比</td><td>「變得更好」這種量不到的標準</td></tr>
+<tr><td>規模</td><td>2 週內試得完</td><td>要改整個制度才試得了</td></tr>
+</table></div>
+<h3>裁決表二的原則</h3>
+<ul>
+  <li><strong>系統只記流程，品質由你判斷</strong>——AI 不代判成果好壞（通用鐵則 1：Check 保留人為把關）。</li>
+  <li>「沒達到成功標準」≠ 不通過：誠實紀錄、清楚說明原因、提出修正，也是有價值的成果，可選「延長試行」。</li>
+  <li>通過後<strong>在 Notion 單一正本改</strong>：常規／班規改「📋 班規庫」，新品項加「🏪 班級商店」（名稱用學生取的命名），再按「立即更新班網」。</li>
+  <li>命名權頒發、XP 發放目前走「紙本＋一句話記錄」（例：「座號N 創造提案計畫通過 貢獻XP+10」），不另開資料庫；跑 1～2 輪穩定後再決定要不要做成 DB。</li>
+  <li>班網上<strong>不出現提案人姓名與座號</strong>，公開的只有點子本身與學生取的名字。</li>
+</ul>
+<div class="note">📝 本頁幾條是 AI 補的建議，採不採用由老師決定：<strong>一人同時限一件提案</strong>、<strong>試行期建議 2 週</strong>、<strong>回報至少訪問 3 位同學</strong>、<strong>照片不拍同學的臉</strong>。</div>
+</div>
+
+</div>
+</body>
+</html>
