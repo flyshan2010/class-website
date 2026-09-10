@@ -91,6 +91,7 @@
         ${i.note ? `<div class="store-note">${App.esc(i.note)}</div>` : ""}
         ${i.unlock ? `<div class="store-unlock">🔑 ${App.esc(i.unlock)}</div>` : ""}
         ${buyBtn(i)}
+        ${i.name === "創造提案權" && session ? `<a class="store-buy store-proposal" href="proposal.html">✏️ 我的創造提案</a>` : ""}
       </div>`).join("");
     return `
       <h3 class="bank-section-title">🏪 班級商店櫥窗</h3>
@@ -136,6 +137,10 @@
 
   // 兌換申請：確認 → 送代理（品項與價格由代理以 Notion 商店為準重新驗證）
   const bindBuyButtons = () => {
+    // 🧪 創造提案頁沿用這個分頁的登入（sessionStorage 只活在這個分頁，關掉就沒了）
+    document.querySelectorAll(".store-proposal").forEach(a => a.addEventListener("click", () => {
+      try { sessionStorage.setItem("proposalLogin", JSON.stringify({ seat: session.seat, code: session.code })); } catch {}
+    }));
     document.querySelectorAll(".store-buy[data-id]").forEach(btn => {
       btn.addEventListener("click", async () => {
         const item = store.find(i => i.id === btn.dataset.id);

@@ -84,6 +84,7 @@
       { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
       { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },
       { icon: "🎟️", label: "兌換券執行", href: "#sec-priv", color: "#9B59B6" },
+      { icon: "🧪", label: "提案審核", href: "#sec-proposal", color: "#8E44AD" },
       { icon: "⚡", label: "班網維護", href: "#sec-site", color: "#10ac84" },
     ];
 
@@ -147,6 +148,21 @@
           <button id="pv-refresh" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px">🔄 重新整理</button>
         </div>
         <div id="priv-list"><p class="empty-hint">載入中…</p></div>
+      </section>
+
+      <section class="card" id="sec-proposal" style="--accent:#8E44AD">
+        <h2>🧪 提案審核</h2>
+        <p class="meta">學生在班網「🧪 創造提案」線上填的計畫書（表一）與成果回報單（表二）。
+          <strong>計畫通過＝帳本獎勵金 +10</strong>（XP 與幣一起）、<strong>成果通過＝+20 並自動頒 🏷️ 命名權券</strong>；同一件不會重複發。
+          「修改／不通過／延長／未通過」要寫理由，學生在提案頁看得到。<strong>這裡即時生效</strong>；存摺、報告要按「立即更新班網」才更新。</p>
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <button id="pp-tab-review" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px">🔔 待審核</button>
+          <button id="pp-tab-all" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px;opacity:.75">📜 本學年全部</button>
+          <button id="pp-refresh" class="emotion-draw" style="margin:0;width:auto;padding:8px 18px">🔄 重新整理</button>
+        </div>
+        <div id="proposal-list"><p class="empty-hint">載入中…</p></div>
+        <p class="meta">系統只記流程、不判品質——成果好不好由你決定。完整資料在
+          <a href="https://app.notion.com/p/6c81bf751d4f402bb3421b81726d64ba" target="_blank" rel="noopener">Notion「🧪 創造提案」</a>。</p>
       </section>
 
       <section class="card" id="sec-site" style="--accent:#10ac84">
@@ -465,6 +481,109 @@
     document.getElementById("pv-filter").addEventListener("input", renderPrivs);
     document.getElementById("pv-refresh").addEventListener("click", loadPrivs);
     loadPrivs();
+
+    // 🧪 提案審核：待審核（計畫審核中／成果審核中）＋本學年全部
+    const PP_REVIEW = ["計畫審核中", "成果審核中"];
+    const PP_COLOR = { "草稿": "#868e96", "計畫審核中": "#F0932B", "計畫需修改": "#E67E22", "計畫不通過": "#8395A7",
+      "試行中": "#54A0FF", "成果審核中": "#9B59B6", "延長試行": "#FF6B81", "成果通過": "#10AC84", "成果未通過": "#8395A7" };
+    const PP_PLAN = ["類型", "問題", "點子", "好處", "困難與解決", "成功標準", "需要協助"];
+    const PP_RESULT = ["實際做法", "試行前", "試行後", "達成", "同學回饋", "反思", "命名候選"];
+    let ppView = "review";
+    let ppItems = [];
+    let ppXp = { plan: 10, result: 20 };
+    const ppRows = (obj, keys) => keys.filter(k => obj[k]).map(k =>
+      `<p style="margin:4px 0;white-space:pre-line"><strong>${App.esc(k)}：</strong>${App.esc(obj[k])}</p>`).join("");
+    const renderProposals = () => {
+      const box = document.getElementById("proposal-list");
+      const items = (ppView === "review" ? ppItems.filter(p => PP_REVIEW.includes(p.status)) : [...ppItems])
+        .sort((a, b) => (PP_REVIEW.includes(b.status) - PP_REVIEW.includes(a.status)) || (a.seat - b.seat));
+      if (!items.length) {
+        box.innerHTML = `<p class="empty-hint">${ppView === "review" ? "目前沒有等你審核的提案 🎉" : "本學年還沒有任何提案"}</p>`;
+        return;
+      }
+      box.innerHTML = items.map(p => {
+        const pl = p.plan, rs = p.result;
+        const stage = p.status === "計畫審核中" ? "plan" : p.status === "成果審核中" ? "result" : "";
+        const hasResult = PP_RESULT.some(k => rs[k]);
+        return `
+        <details class="pp-review" ${stage ? "open" : ""} style="border-left:4px solid ${PP_COLOR[p.status] || "#8395A7"};padding:6px 0 6px 10px;margin-bottom:12px">
+          <summary style="cursor:pointer">
+            <span class="badge" style="background:${PP_COLOR[p.status] || "#8395A7"};color:#fff">${App.esc(p.status)}</span>
+            <strong>座號 ${p.seat}</strong>　${App.esc(pl["提案名稱"] || "（未命名）")}
+            <span class="meta">${p.submitted ? `送出 ${App.fmtDateShort(p.submitted.slice(0, 10))}` : `建立 ${App.fmtDateShort(p.created.slice(0, 10))}`}
+              ${p.xp_plan ? "・計畫XP已發" : ""}${p.xp_result ? "・成果XP已發" : ""}${p.naming ? "・🏷️ 命名權已頒" : ""}</span>
+          </summary>
+          <div class="pp-review-grid">
+            <div><h4 style="margin:6px 0">📝 表一｜計畫書</h4>
+              ${ppRows(pl, PP_PLAN)}
+              ${pl["試行起"] ? `<p style="margin:4px 0"><strong>試行期間：</strong>${App.esc(pl["試行起"])} ～ ${App.esc(pl["試行迄"])}</p>` : ""}
+              ${pl["記錄方式"].length ? `<p style="margin:4px 0"><strong>記錄方式：</strong>${pl["記錄方式"].map(App.esc).join("、")}</p>` : ""}
+              <p style="margin:4px 0"><strong>護欄自檢：</strong>${pl["護欄自檢"].length}／5 ${pl["護欄自檢"].length === 5 ? "✅" : "⚠️"}</p>
+              ${p.plan_comment ? `<p class="meta" style="white-space:pre-line">👩‍🏫 計畫意見：${App.esc(p.plan_comment)}</p>` : ""}
+            </div>
+            ${hasResult ? `<div><h4 style="margin:6px 0">📊 表二｜成果回報</h4>
+              ${ppRows(rs, PP_RESULT)}
+              ${p.result_comment ? `<p class="meta" style="white-space:pre-line">👩‍🏫 成果回饋：${App.esc(p.result_comment)}</p>` : ""}
+            </div>` : ""}
+          </div>
+          ${stage ? `
+          <textarea class="pp-comment-input" rows="2" maxlength="800" placeholder="${stage === "plan" ? "理由／建議（修改、不通過必填；通過可不填）" : "理由／回饋（延長、未通過必填；通過可不填）"}"
+            style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;margin-top:6px"></textarea>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+            ${(stage === "plan"
+              ? [["通過", `✅ 通過（+${ppXp.plan}）`, "#d3f9d8", "#2b8a3e"], ["修改", "✏️ 修改後再交", "#fff3bf", "#8a6d00"], ["不通過", "❌ 不通過", "#ffe3e3", "#c92a2a"]]
+              : [["通過", `🏷️ 通過（+${ppXp.result}＋命名權）`, "#d3f9d8", "#2b8a3e"], ["延長", "⏳ 延長試行", "#fff3bf", "#8a6d00"], ["未通過", "❌ 未通過", "#ffe3e3", "#c92a2a"]]
+            ).map(([d, label, bg, fg]) => `<button class="badge pp-decide" data-id="${App.esc(p.id)}" data-stage="${stage}" data-decision="${d}"
+                data-seat="${p.seat}" data-name="${App.esc(pl["提案名稱"] || "未命名")}" data-paid="${stage === "plan" ? p.xp_plan : p.xp_result}"
+                style="cursor:pointer;border:none;background:${bg};color:${fg};padding:6px 12px">${label}</button>`).join("")}
+          </div>` : ""}
+        </details>`;
+      }).join("");
+
+      box.querySelectorAll(".pp-decide").forEach(btn => btn.addEventListener("click", async () => {
+        const { id, stage, decision, seat, name, paid } = btn.dataset;
+        const comment = btn.closest(".pp-review").querySelector(".pp-comment-input").value.trim();
+        if (decision !== "通過" && !comment) { alert(`「${decision}」要寫理由，學生才知道下一步怎麼做。`); return; }
+        const amount = stage === "plan" ? ppXp.plan : ppXp.result;
+        const next = stage === "plan"
+          ? { "通過": "試行中", "修改": "計畫需修改", "不通過": "計畫不通過" }[decision]
+          : { "通過": "成果通過", "延長": "延長試行", "未通過": "成果未通過" }[decision];
+        const gain = decision !== "通過" ? "不發 XP。"
+          : paid === "true" ? "（這件之前已發過，不會重複發）"
+          : `會發：帳本獎勵金 +${amount}（＝貢獻 XP +${amount}、崑山幣 +${amount}）${stage === "result" ? "，並頒 🏷️ 命名權券" : ""}。`;
+        if (!confirm(`座號 ${seat}「${name}」→ ${decision}\n狀態改為「${next}」。\n${gain}`)) return;
+        btn.closest("div").querySelectorAll("button").forEach(b => { b.disabled = true; });
+        btn.textContent = "⏳ 處理中…";
+        const res = await api(stage === "plan" ? "proposal_review_plan" : "proposal_review_result",
+          { page_id: id, decision, comment }).catch(() => ({ ok: false, error: "連線失敗" }));
+        if (res.ok) alert(`✅ 座號 ${res.seat} 已改為「${res.status}」${res.xp ? `，帳本 +${res.xp}` : ""}${res.naming ? "，🏷️ 命名權券已發" : ""}${res.note || ""}`
+          + (res.warn ? `\n${res.warn}` : "") + (res.xp ? "\n記得按「立即更新班網」讓存摺更新。" : ""));
+        else alert(`❌ ${res.error || "審核失敗"}`);
+        loadProposals();
+        if (res.naming) loadPrivs();
+      }));
+    };
+    const loadProposals = async () => {
+      const box = document.getElementById("proposal-list");
+      box.innerHTML = '<p class="empty-hint">載入中…</p>';
+      const res = await api("proposal_list").catch(() => ({ ok: false }));
+      if (!res.ok) { box.innerHTML = `<p class="empty-hint">載入失敗：${App.esc(res.error || "連線問題（代理可能還沒升級到 v2.4）")}</p>`; return; }
+      ppItems = res.items;
+      ppXp = { plan: res.xp_plan || 10, result: res.xp_result || 20 };
+      renderProposals();
+    };
+    const ppTabReview = document.getElementById("pp-tab-review");
+    const ppTabAll = document.getElementById("pp-tab-all");
+    const setPpView = view => {
+      ppView = view;
+      ppTabReview.style.opacity = view === "review" ? "1" : ".75";
+      ppTabAll.style.opacity = view === "all" ? "1" : ".75";
+      renderProposals();
+    };
+    ppTabReview.addEventListener("click", () => setPpView("review"));
+    ppTabAll.addEventListener("click", () => setPpView("all"));
+    document.getElementById("pp-refresh").addEventListener("click", loadProposals);
+    loadProposals();
 
     // 一鍵更新班網（POST 版）
     document.getElementById("site-update").addEventListener("click", async () => {
