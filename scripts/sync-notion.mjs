@@ -3,7 +3,7 @@
  * 用法：NOTION_TOKEN=secret_xxx node scripts/sync-notion.mjs
  * 圖片：Notion 的檔案連結會過期，因此同步時下載到 data/uploads/ 一併發布。
  */
-import { writeFile, readFile, mkdir, rm } from "node:fs/promises";
+import { writeFile, readFile, mkdir, rm, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { webcrypto as crypto } from "node:crypto";
@@ -42,6 +42,7 @@ const DS = {
   classRules: "1aaeec2b-0dc3-49f3-a915-4ac3fc3ed8bd", // 📋 班規與獎懲（一列＝一筆行為；同班規併成一張卡）
   routines: "effc4788-5a86-4349-aa02-60f982a0c10e", // 🕗 作息與常規（一日作息＋上課常規）
   dailyPlan: "81515593-4d79-4b09-84a5-709628d7b58e", // 📅 每日課程進度（一列＝一個上課日；老師調課改這裡）
+  proposals: "35cb027e-1465-47a2-ad91-e66fb5e83c7a", // 🧪 創造提案（學生線上填；只進加密學習報告，公開檔零洩漏）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -53,7 +54,7 @@ const DS = {
 //        班網維持上一版正常內容，不會被半殘資料覆蓋。
 const YEAR_FIELD = "學年";
 // 需按學年過濾的庫
-const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem", "dailyPlan"].map(k => DS[k]));
+const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem", "dailyPlan", "proposals"].map(k => DS[k]));
 // 有「學年」欄但**刻意不過濾**：教材是跨學年資產，過濾掉會讓升學年後既有課程頁全部消失
 const YEAR_EXEMPT = new Set([DS.lessons]);
 const DS_NAME = Object.fromEntries(Object.entries(DS).map(([k, v]) => [v, k]));
@@ -600,12 +601,74 @@ async function portfolioBySeat() {
   }
 }
 
+// 🧪 創造提案（SPEC_創造提案線上版 §6）：狀態≠草稿者依座號分組，只隨該生學習報告加密發布。
+// PROPOSAL_SNIPPETS 收集所有提案（含草稿）的文字，同步結尾 guardProposalLeak() 掃公開 data/，命中即中止（U42）。
+const PROPOSAL_SNIPPETS = new Set();
+async function proposalsBySeat() {
+  if (!DS.proposals) return {};
+  try {
+    const rows = (await queryDataSource(DS.proposals)).map(props);
+    const TEXT_KEYS = ["提案名稱", "問題", "點子", "好處", "困難與解決", "成功標準", "需要協助",
+      "實際做法", "試行前", "試行後", "同學回饋", "反思", "命名候選", "計畫審核意見", "成果裁決意見"];
+    for (const r of rows) for (const k of TEXT_KEYS) {
+      const t = String(r[k] || "").trim();
+      if (t.length >= 8) PROPOSAL_SNIPPETS.add(t.slice(0, 40)); // 短字（達到、新常規）會誤判，不收
+    }
+    const by = {};
+    for (const r of rows) {
+      const seat = Number(r["座號"]);
+      const status = r["狀態"] || "草稿";
+      if (!seat || status === "草稿") continue;
+      (by[seat] ||= []).push({
+        name: r["提案名稱"] || "（未命名提案）",
+        type: r["類型"] || "",
+        status,
+        trial: [r["試行起"]?.start, r["試行迄"]?.start].filter(Boolean).map(d => d.slice(0, 10)),
+        problem: r["問題"] || "", idea: r["點子"] || "", criteria: r["成功標準"] || "",
+        achieve: r["達成"] || "", before: r["試行前"] || "", after: r["試行後"] || "",
+        reflection: r["反思"] || "",
+        namingName: status === "成果通過" ? (r["命名候選"] || "") : "",
+        planComment: r["計畫審核意見"] || "", resultComment: r["成果裁決意見"] || "",
+        naming: !!r["命名權已頒"],
+        created: r._created,
+      });
+    }
+    for (const list of Object.values(by)) list.sort((a, b) => a.created.localeCompare(b.created));
+    return by;
+  } catch (e) {
+    // 防禦：DB 還沒分享給 integration（404）時不拖垮整個同步，只是報告暫時沒有提案區
+    console.warn(`⚠️ 創造提案同步略過（${e.message.slice(0, 120)}）`);
+    return {};
+  }
+}
+
+// 公開輸出零洩漏護欄：掃 data/ 底下所有 json（加密檔是 base64，不會誤中）
+async function guardProposalLeak() {
+  if (!PROPOSAL_SNIPPETS.size) return;
+  const files = [];
+  const walk = async dir => {
+    for (const ent of await readdir(dir, { withFileTypes: true })) {
+      const fp = path.join(dir, ent.name);
+      if (ent.isDirectory()) { if (ent.name !== "uploads") await walk(fp); }
+      else if (ent.name.endsWith(".json")) files.push(fp);
+    }
+  };
+  await walk(DATA_DIR);
+  for (const f of files) {
+    const body = await readFile(f, "utf8");
+    const hit = [...PROPOSAL_SNIPPETS].find(t => body.includes(t));
+    if (hit) throw new Error(`創造提案防漏：${path.relative(DATA_DIR, f)} 出現提案文字，中止同步（班網維持上一版）`);
+  }
+  console.log(`🔒 創造提案防漏檢查通過（${PROPOSAL_SNIPPETS.size} 段文字 × ${files.length} 個公開檔）`);
+}
+
 const SEL_ABILITIES = ["自我覺察", "自我管理", "社會覺察", "人際技巧", "負責任決策"];
 
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
   const finance = await bankFinanceBySeat();
   const works = await portfolioBySeat();
+  const proposals = await proposalsBySeat();
   // 姓名/查詢碼/頭貼一律以名冊為準（單一來源）；報告列只需 座號＋內容欄
   const roster = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "" && String(r["查詢碼"]).trim());
@@ -719,7 +782,8 @@ async function syncReports() {
       xpTitle: xpTitleOf(f.xp),    // { name, emoji, next, toNext } 或 null
     } : null;
     const payload = await encryptReport(
-      { name: s.name, seat: s.seat, avatar: s.avatar, balance: f ? f.balance : null, finance: fin, periods: s.periods }, s.code, s.seat);
+      { name: s.name, seat: s.seat, avatar: s.avatar, balance: f ? f.balance : null, finance: fin, periods: s.periods,
+        proposals: proposals[s.seat] || [] }, s.code, s.seat);
     await writeFile(path.join(dir, `${s.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
   // 只公開「哪些座號有報告」，不含任何個資
@@ -1262,6 +1326,7 @@ async function applyAutoHiddenNav() {
   if (changed.length) console.log(`   本次變動：${changed.join("；")}`);
 }
 await applyAutoHiddenNav();
+await guardProposalLeak();
 
 // 同步時間戳（頁尾顯示「最後同步」，同步斷了看得見）——無個資
 await writeFile(path.join(DATA_DIR, "synced-at.json"),
