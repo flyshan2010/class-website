@@ -10,8 +10,8 @@
  * 週結五項（公式正本＝docs/班級銀行制度設計.md，與 class-bank SKILL 同源）：
  *   ① 職務薪水     名冊「週薪」
  *   ② 獎懲入帳     紀錄庫本週「金幣影響」≠0 且尚未入帳者（鍵＝紀錄id×學生id）
- *   ③ 打掃薪水     （份數 × 5 天 ＋ 本週「打掃支援」次數）× 2 幣
- *                  固定支援 2026-09-10 廢止：只有老師當天指派去支援，才多發那一次
+ *   ③ 打掃薪水     每人 max(0, 份數×5 ＋ 打掃支援 − 打掃缺席 − 打掃未達標) × 2 幣
+ *                  （與 class-bank SKILL 同一條公式；固定支援 2026-09-10 廢止，支援只看當天指派）
  *   ④ 午餐工作薪水 固定崗 5 次 × 2 幣；輪值崗只有輪到那週算 5 次 × 2 幣
  *   ⑤ 班級常規獎勵 達成天數 × 1 ＋ 五天全到再 +3（例外管理：有常規未達成紀錄才扣那天）
  * 消費類（購物／兌換／捐款／臨時加減幣）是當天結，不在週結範圍。
@@ -104,11 +104,29 @@ for (const d of duties) {
     for (const s of members) fixedLunch.add(s);
   }
 }
-// 浮動支援：紀錄庫本週事件描述「逐字等於」打掃支援（class-manager 工作檢核台送出），次數 × 學生數
+// 例外次數：紀錄庫本週事件描述「逐字等於」撈取鍵（class-manager 工作檢核台送出的 tally），按學生逐人累計
 const titleOf = p => (p.properties?.["事件描述"]?.title ?? []).map(t => t.plain_text).join("");
-const supportTimes = weekLogs.filter(p => titleOf(p) === "打掃支援")
-  .reduce((a, p) => a + (num(p, "次數") ?? 1) * Math.max(1, relIds(p, "學生").length), 0);
-const cleanTotal = ([...cleanShares.values()].reduce((a, b) => a + b, 0) * SCHOOL_DAYS + supportTimes) * CLEAN_PAY;
+const tallyBySeat = act => {
+  const m = new Map();
+  for (const p of weekLogs.filter(p => titleOf(p) === act)) {
+    for (const sid of relIds(p, "學生")) {
+      const s = seatOf.get(sid); if (!s) continue;
+      m.set(s, (m.get(s) ?? 0) + (num(p, "次數") ?? 1));
+    }
+  }
+  return m;
+};
+const cleanSup = tallyBySeat("打掃支援"), cleanAbs = tallyBySeat("打掃缺席"), cleanBad = tallyBySeat("打掃未達標");
+const sumMap = m => [...m.values()].reduce((a, b) => a + b, 0);
+const supportTimes = sumMap(cleanSup), absentTimes = sumMap(cleanAbs), badTimes = sumMap(cleanBad);
+// 逐人算、每人下限 0：缺席扣到負數不能拿去抵別人的支援
+const cleanSeats = new Set([...cleanShares.keys(), ...cleanSup.keys()]);
+let cleanTimes = 0;
+for (const s of cleanSeats) {
+  cleanTimes += Math.max(0, (cleanShares.get(s) ?? 0) * SCHOOL_DAYS + (cleanSup.get(s) ?? 0)
+    - (cleanAbs.get(s) ?? 0) - (cleanBad.get(s) ?? 0));
+}
+const cleanTotal = cleanTimes * CLEAN_PAY;
 // 驗算用明細（只印座號與份數，不印姓名）——打掃份數算錯就是有人少領錢，一定要看得見
 console.log(`🧹 打掃列 ${duties.filter(d => sel(d, "類型") === "打掃").length} 組｜份數分布：`
   + [...cleanShares.entries()].sort((a, b) => a[0] - b[0]).map(([s, n]) => `${s}:${n}`).join(" "));
@@ -182,7 +200,7 @@ const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）`,
-  `③ 打掃薪水　　　${cleanTotal} 幣（(${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份 × 5 天 ＋ 支援 ${supportTimes} 次) × ${CLEAN_PAY}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
+  `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
   `④ 午餐工作薪水　${lunchTotal} 幣（固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}）${mark(paid.lunch)}`,
   ROUTINE_ENABLED
     ? `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`
