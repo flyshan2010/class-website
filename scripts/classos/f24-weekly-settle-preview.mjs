@@ -10,7 +10,8 @@
  * 週結五項（公式正本＝docs/班級銀行制度設計.md，與 class-bank SKILL 同源）：
  *   ① 職務薪水     名冊「週薪」
  *   ② 獎懲入帳     紀錄庫本週「金幣影響」≠0 且尚未入帳者（鍵＝紀錄id×學生id）
- *   ③ 打掃薪水     份數 × 5 天 × 2 幣（成員座號＋支援座號各算一份）
+ *   ③ 打掃薪水     （份數 × 5 天 ＋ 本週「打掃支援」次數）× 2 幣
+ *                  固定支援 2026-09-10 廢止：只有老師當天指派去支援，才多發那一次
  *   ④ 午餐工作薪水 固定崗 5 次 × 2 幣；輪值崗只有輪到那週算 5 次 × 2 幣
  *   ⑤ 班級常規獎勵 達成天數 × 1 ＋ 五天全到再 +3（例外管理：有常規未達成紀錄才扣那天）
  * 消費類（購物／兌換／捐款／臨時加減幣）是當天結，不在週結範圍。
@@ -80,7 +81,8 @@ const settled = new Set();
 for (const b of ledger) {
   for (const lid of relIds(b, "紀錄庫")) for (const sid of relIds(b, "學生")) settled.add(`${lid}|${sid}`);
 }
-const logs = (await queryAll(DS.log)).filter(p => txt(p, "週次") === WEEK && num(p, "金幣影響"));
+const weekLogs = (await queryAll(DS.log)).filter(p => txt(p, "週次") === WEEK);
+const logs = weekLogs.filter(p => num(p, "金幣影響"));
 let rewardN = 0, rewardSum = 0;
 for (const l of logs) {
   for (const sid of relIds(l, "學生")) {
@@ -95,14 +97,18 @@ const cleanShares = new Map();          // 座號 → 份數
 let fixedLunch = new Set();
 for (const d of duties) {
   const type = sel(d, "類型"), zone = sel(d, "區域");
-  const members = seatsOf(txt(d, "成員座號")), support = seatsOf(txt(d, "支援座號"));
+  const members = seatsOf(txt(d, "成員座號"));
   if (type === "打掃") {
-    for (const s of [...members, ...support]) cleanShares.set(s, (cleanShares.get(s) ?? 0) + 1);
+    for (const s of members) cleanShares.set(s, (cleanShares.get(s) ?? 0) + 1);
   } else if (type === "午餐" && zone === "午餐固定崗") {
     for (const s of members) fixedLunch.add(s);
   }
 }
-const cleanTotal = [...cleanShares.values()].reduce((a, b) => a + b, 0) * SCHOOL_DAYS * CLEAN_PAY;
+// 浮動支援：紀錄庫本週事件描述「逐字等於」打掃支援（class-manager 工作檢核台送出），次數 × 學生數
+const titleOf = p => (p.properties?.["事件描述"]?.title ?? []).map(t => t.plain_text).join("");
+const supportTimes = weekLogs.filter(p => titleOf(p) === "打掃支援")
+  .reduce((a, p) => a + (num(p, "次數") ?? 1) * Math.max(1, relIds(p, "學生").length), 0);
+const cleanTotal = ([...cleanShares.values()].reduce((a, b) => a + b, 0) * SCHOOL_DAYS + supportTimes) * CLEAN_PAY;
 // 驗算用明細（只印座號與份數，不印姓名）——打掃份數算錯就是有人少領錢，一定要看得見
 console.log(`🧹 打掃列 ${duties.filter(d => sel(d, "類型") === "打掃").length} 組｜份數分布：`
   + [...cleanShares.entries()].sort((a, b) => a[0] - b[0]).map(([s, n]) => `${s}:${n}`).join(" "));
@@ -176,7 +182,7 @@ const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）`,
-  `③ 打掃薪水　　　${cleanTotal} 幣（${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份 × 5 天 × ${CLEAN_PAY}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
+  `③ 打掃薪水　　　${cleanTotal} 幣（(${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份 × 5 天 ＋ 支援 ${supportTimes} 次) × ${CLEAN_PAY}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
   `④ 午餐工作薪水　${lunchTotal} 幣（固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}）${mark(paid.lunch)}`,
   ROUTINE_ENABLED
     ? `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`

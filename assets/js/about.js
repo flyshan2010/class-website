@@ -338,6 +338,7 @@
   // ── 打掃工作表 ──
   const dutySection = d => !d ? "" : `
     <p class="meta">打掃時間：${App.esc(d.時段)}</p>
+    <p class="meta">🙋 臨時支援：沒有固定人選，由老師當天指派；有去支援，當天就多領一次打掃薪水（${DUTY_PAY.clean} 幣／次）。</p>
     ${d.zones.map(z => `
     <div class="duty-zone">
       <div class="duty-zone-head">${z.emoji} ${App.esc(z.zone)}<span class="duty-zone-count">${z.headcount} 人</span></div>
@@ -346,8 +347,7 @@
         <div class="duty-card">
           <div class="duty-card-head">${App.esc(g.group)}${
             g.title ? `<span class="duty-title">${App.esc(g.title)}</span>` : ""}${payTag(DUTY_PAY.clean)}</div>
-          <div class="duty-people">${g.members.map(n => `<span class="duty-chip">${App.esc(n)}</span>`).join("")}${
-            g.support.length ? g.support.map(n => `<span class="duty-chip sup">${App.esc(n)}<small>支援</small></span>`).join("") : ""}</div>
+          <div class="duty-people">${g.members.map(n => `<span class="duty-chip">${App.esc(n)}</span>`).join("")}</div>
           ${dutySpec(g)}
           <div class="duty-tools">🧰 ${g.tools.map(t => App.esc(t)).join("、")}</div>
         </div>`).join("")}

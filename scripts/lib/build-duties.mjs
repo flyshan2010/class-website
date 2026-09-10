@@ -70,21 +70,24 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
   const zones = Object.keys(ZONE_META).map(zoneName => {
     const groups = dutyOnly.filter(r => r["區域"] === zoneName).map(r => {
       const seats = parseSeats(r["成員座號"], r["組別"]);
-      const support = parseSeats(r["支援座號"], `${r["組別"]}・支援`);
+      // 固定支援 2026-09-10 廢止（實際沒有固定支援）：改由 class-manager 當天指派「打掃支援」，
+      // 有支援才加發當次薪水。欄位還留在 Notion，但填了一律不採計，並在同步警告提醒清空。
+      if (String(r["支援座號"] ?? "").trim())
+        warnings.push(`「${r["組別"]}」的支援座號已停用（改當天浮動支援），請到 Notion 清空；本次不採計`);
       const sup = String(r["監督座號"] ?? "").trim();
       return {
-        seats, support, group: r["組別"], tools: splitList(r["配置掃具"]),
+        seats, group: r["組別"], tools: splitList(r["配置掃具"]),
         personal: parsePersonal(r["個人責任範圍"]),
         supervisor: sup && Number.isInteger(Number(sup)) ? Number(sup) : null,
         ...isoFields(r),
       };
     });
-    // 人數＝該區實際涵蓋的人；同一人同時是某組主責、另一組支援時不重複計
-    const headcount = new Set(groups.flatMap(g => [...g.seats, ...g.support])).size;
+    // 人數＝該區實際涵蓋的人（同一座號出現在兩組時不重複計）
+    const headcount = new Set(groups.flatMap(g => g.seats)).size;
     return {
       zone: zoneName, emoji: ZONE_META[zoneName].emoji, headcount, _raw: groups,
       groups: groups.map(g => ({
-        group: g.group, members: g.seats.map(nameOf), support: g.support.map(nameOf),
+        group: g.group, members: g.seats.map(nameOf),
         work: g.work, tools: g.tools, title: g.title, authority: g.authority, standard: g.standard,
       })),
     };
@@ -92,8 +95,7 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
 
   // 沒被任何一組涵蓋的人：**不中止同步**（會讓整站停在舊版），改在班網標「尚待安排」，
   // 老師看得到、也不會因為一時沒排完就整批資料上不去。
-  const covered = new Set(dutyOnly.flatMap(r =>
-    [...parseSeats(r["成員座號"], r["組別"]), ...parseSeats(r["支援座號"], `${r["組別"]}・支援`)]));
+  const covered = new Set(dutyOnly.flatMap(r => parseSeats(r["成員座號"], r["組別"])));
   const unassigned = allSeats.filter(s => !covered.has(s));
   if (unassigned.length) warnings.push(`打掃分配未涵蓋 ${unassigned.length} 人（班網標「尚待老師安排」）`);
 
@@ -201,7 +203,7 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
     zones: zones.map(z => ({
       zone: z.zone, emoji: z.emoji, headcount: z.headcount,
       groups: z._raw.map(g => ({
-        group: g.group, seats: g.seats, support: g.support,
+        group: g.group, seats: g.seats,
         personal: g.personal, supervisor: g.supervisor,
         work: g.work, tools: g.tools, title: g.title, authority: g.authority, standard: g.standard,
       })),
