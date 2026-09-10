@@ -188,6 +188,7 @@
             <div class="store-price">還可以用 ${p.remaining} 次${p.total > 1 ? `／共 ${p.total} 次` : ""}</div>
             <div class="store-stock">${p.got ? `${App.esc(App.fmtDateShort(p.got))} 兌換` : ""}</div>
             ${p.note ? `<div class="store-note">${App.esc(p.note)}</div>` : ""}
+            ${p.name === "創造提案權" ? `<a class="store-buy store-proposal" href="proposal.html">✏️ 開始寫提案</a>` : ""}
           </div>`).join("")}
       </div>`;
   };
@@ -277,7 +278,7 @@
       ${goalSection()}
       ${storeSection()}`;
     startTips();
-    bindBuyButtons();
+    bindBuyButtons(); // 內含 .store-proposal（商店卡＋我的特權卡）的登入交接
     document.getElementById("bank-exit").onclick = () => showForm();
   }
 
