@@ -369,6 +369,15 @@
     "notes": ""
   },
   {
+    "title": "蟯蟲複檢",
+    "date": "2026-11-04",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "09:00",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "期中考",
     "date": "2026-11-05",
     "endDate": "2026-11-06",
@@ -383,6 +392,15 @@
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:30",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "校內體育競賽",
+    "date": "2026-11-16",
+    "endDate": "2026-11-20",
+    "startTime": "",
+    "endTime": "",
     "type": "活動",
     "notes": ""
   },
@@ -423,6 +441,15 @@
     "notes": ""
   },
   {
+    "title": "校刊徵稿",
+    "date": "2026-12-01",
+    "endDate": "2026-12-31",
+    "startTime": "",
+    "endTime": "",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "成長測驗",
     "date": "2026-12-03",
     "endDate": "",
@@ -441,20 +468,20 @@
     "notes": ""
   },
   {
+    "title": "讀經檢測",
+    "date": "2026-12-11",
+    "endDate": "",
+    "startTime": "10:30",
+    "endTime": "11:00",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "實體升旗",
     "date": "2026-12-15",
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:35",
-    "type": "活動",
-    "notes": ""
-  },
-  {
-    "title": "讀經檢測",
-    "date": "2026-12-18",
-    "endDate": "",
-    "startTime": "10:30",
-    "endTime": "11:00",
     "type": "活動",
     "notes": ""
   },
