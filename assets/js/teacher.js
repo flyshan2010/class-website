@@ -338,7 +338,8 @@
           } else { loadRedeems(); return; }
         }
         if (res.ok) alert(`✅ 已核可：座號 ${res.seat} 兌換「${res.item}」，扣 ${res.price} 幣，餘額 ${res.balance} 幣${res.stock_msg || ""}${
-          res.uses ? `\n🎟️ 已發特權券 ${res.uses} 次，之後在「特權執行」區塊扣次數。` : ""}\n記得按「立即更新班網」讓存摺更新。`);
+          res.item === "創造提案權" ? "\n🧪 學生現在就能到小小銀行商店的「✏️ 我的創造提案」開始寫，送出後會出現在下方「🧪 提案審核」。"
+          : res.uses ? `\n🎟️ 已發特權券 ${res.uses} 次，之後在「特權執行」區塊扣次數。` : ""}\n記得按「立即更新班網」讓存摺更新。`);
         else alert(`❌ ${res.error || "核可失敗"}`);
         loadRedeems();
         if (res.ok && res.uses) loadPrivs();
@@ -406,8 +407,12 @@
                   : `<span class="badge" style="background:#eee;color:#666">已用完／作廢</span>`}
                 <span class="meta">取得 ${App.fmtDateShort(String(p.got).slice(0, 10))}${
                   p.last_used ? `　最近 ${App.fmtDateShort(p.last_used)}` : ""}</span>
-                ${p.remaining > 0 ? `
+                ${p.remaining > 0 && p.item === "創造提案權" ? `
+                  <span class="badge" style="background:#e5dbff;color:#5f3dc4">✏️ 學生開始線上填寫時自動核銷</span>` : ""}
+                ${p.remaining > 0 && p.item !== "創造提案權" ? `
                   <button class="badge pv-use" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 使用一次</button>
+` : ""}
+                ${p.remaining > 0 ? `
                   <button class="badge pv-void" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#f1f3f5;color:#666">🚫 作廢</button>
                   <button class="badge pv-refund" data-id="${App.esc(p.page_id)}" data-price="${p.price}" data-seat="${p.seat}" data-item="${App.esc(p.item)}" style="cursor:pointer;border:none;background:#ffe3e3;color:#c92a2a">💰 退費</button>` : ""}
                 ${p.used > 0 ? `
