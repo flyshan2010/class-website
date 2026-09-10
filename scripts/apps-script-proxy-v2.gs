@@ -1,6 +1,14 @@
 /**
- * 班網教師專區代理 v2.3（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行
+ * 班網教師專區代理 v2.4（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.4 升級步驟（2026-09-10，約 5 分鐘）──
+ *   ① Notion 打開「🏫 班級經營中心 → 🧪 創造提案」→ 右上「…」→「連結」→ 加入代理（與 GitHub 同步）用的 integration。
+ *   ② 本檔全部內容貼到 Apps Script 取代舊碼 →「部署」→「管理部署作業」→ 編輯 → 版本選「新版本」→ 部署（沿用原網址）。
+ *   ③ 指令碼屬性不必新增。沒做 ① 時：學生頁會顯示「系統忙碌（提案查詢 404）」、教師專區會提示去加連結。
+ *   v2.4 新增 action（SPEC_創造提案線上版.md）：
+ *     學生（座號＋查詢碼）：proposal_get／proposal_save／proposal_submit
+ *     教師（口令）：proposal_list／proposal_review_plan／proposal_review_result
  *
  * 功能（單一 Web App，doPost 依 action 分派）：
  *   - submit_task   ：一句話 → 建 Notion「📥 任務收件匣」頁
@@ -67,6 +75,9 @@ function doPost(e) {
   try {
     // 學生動作：不驗教師口令，改以 座號＋查詢碼 對名冊驗證
     if (body.action === "redeem_request") return out_(redeemRequest_(props, body));
+    if (body.action === "proposal_get") return out_(proposalGet_(props, body));
+    if (body.action === "proposal_save") return out_(proposalWrite_(props, body, false));
+    if (body.action === "proposal_submit") return out_(proposalWrite_(props, body, true));
 
     const pw = props.getProperty("PASSWORD");
     if (!pw) return out_({ ok: false, error: "尚未設定指令碼屬性 PASSWORD" });
@@ -85,6 +96,9 @@ function doPost(e) {
       case "undo_privilege":  return out_(undoPrivilege_(props, body));
       case "void_privilege":  return out_(voidPrivilege_(props, body));
       case "refund_privilege": return out_(refundPrivilege_(props, body));
+      case "proposal_list":          return out_(proposalList_(props, body));
+      case "proposal_review_plan":   return out_(proposalReviewPlan_(props, body));
+      case "proposal_review_result": return out_(proposalReviewResult_(props, body));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -676,6 +690,462 @@ function refundPrivilege_(props, body) {
   return { ok: true, seat: cur.seat, item: cur.item, refunded: cur.price,
     msg: ledgerMsg + stockMsg };
 }
+
+// ---------- 動作：🧪 創造提案（v2.4）----------
+//
+// 資料模型：一列「🧪 創造提案」＝一件提案；一張「創造提案權」兌換券（🛒 兌換申請 已完成列）＝一件提案，
+//   兩者以「兌換申請」relation 綁定——沒被任何提案綁走的券才算「還能用」。
+// 存取方案 A（老師 2026-09-10 選定）：沿用同一個 Notion integration，只多分享這一個 DB。
+//   補償護欄：學生動作只能讀寫「學生＝本人」且確實位在本 DB 的列、只能寫白名單欄位；
+//   狀態、老師意見、XP 勾選一律由伺服器依流程推進，學生送什麼都不會被寫進去。
+// 防重複發放（U44）：「計畫XP已發／成果XP已發／命名權已頒」三個勾選＋狀態必須在審核中，
+//   先改狀態與勾選、再寫帳本；帳本失敗就把狀態與勾選改回去，老師可以重按。
+
+const DS_PROPOSAL = "35cb027e-1465-47a2-ad91-e66fb5e83c7a"; // 🧪 創造提案
+const PROPOSAL_TICKET = "創造提案權"; // 🛒 兌換申請「品項」字串（與 🏪 商店品項名一致）
+const NAMING_TICKET = "命名權";
+const PROPOSAL_XP_PLAN = 10;   // 計畫通過：帳本「獎勵金」+10（＝貢獻 XP +10，也是 +10 幣）
+const PROPOSAL_XP_RESULT = 20; // 成果通過：+20，並頒命名權
+const PROPOSAL_TEXT_MAX = 800; // Notion rich_text 單段 2000 字元硬限，留足餘裕
+const PROPOSAL_READS_PER_MIN = 30;  // 每座號每分鐘查詢上限（也拖慢猜查詢碼）
+const PROPOSAL_WRITES_PER_MIN = 8;  // 每座號每分鐘暫存／送出上限
+
+const PROPOSAL_TYPES = ["新常規", "修改常規", "新班規", "修改班規", "新商店品項", "修改商店品項"];
+const PROPOSAL_RECORD = ["次數表", "照片（不拍臉）", "訪問同學", "其他"];
+const PROPOSAL_GUARDS = ["沒有違反校規", "不用花錢不用買東西", "不會增加同學的負擔", "不是花幣就不用負責", "沒有其他進行中的提案"];
+const PROPOSAL_ACHIEVE = ["達到", "部分達到", "沒達到"];
+const PROPOSAL_TEXT_PLAN = ["問題", "點子", "好處", "困難與解決", "成功標準", "需要協助"];
+const PROPOSAL_TEXT_RESULT = ["實際做法", "試行前", "試行後", "同學回饋", "反思", "命名候選"];
+const PROPOSAL_ACTIVE = ["草稿", "計畫審核中", "計畫需修改", "試行中", "成果審核中", "延長試行"];
+const PLAN_EDITABLE = ["草稿", "計畫需修改"];
+const RESULT_EDITABLE = ["試行中", "延長試行"];
+const PLAN_REQUIRED = ["提案名稱", "類型", "問題", "點子", "好處", "困難與解決", "成功標準", "試行起", "試行迄"];
+const RESULT_REQUIRED = ["實際做法", "試行前", "試行後", "同學回饋", "反思", "達成"];
+
+// 白名單：學生能寫的欄位與型別（plan＝表一、result＝表二；不在這裡的一律忽略）
+const PROPOSAL_SPEC = {
+  plan: { "提案名稱": ["title"], "類型": ["select", PROPOSAL_TYPES], "試行起": ["date"], "試行迄": ["date"],
+          "記錄方式": ["multi", PROPOSAL_RECORD], "護欄自檢": ["multi", PROPOSAL_GUARDS] },
+  result: { "達成": ["select", PROPOSAL_ACHIEVE] },
+};
+PROPOSAL_TEXT_PLAN.forEach(k => { PROPOSAL_SPEC.plan[k] = ["text"]; });
+PROPOSAL_TEXT_RESULT.forEach(k => { PROPOSAL_SPEC.result[k] = ["text"]; });
+
+/** 學生：查自己的提案與資格 */
+function proposalGet_(props, body) {
+  if (overLimit_("pr:" + Math.floor(Number(body.seat)), PROPOSAL_READS_PER_MIN)) {
+    return { ok: false, error: "操作太頻繁了，請等一分鐘再試" };
+  }
+  const who = proposalStudent_(props, body);
+  if (who.error) return { ok: false, error: who.error };
+  const list = studentProposals_(who.token, who.stu.id);
+  if (!list.ok) return list;
+  const tickets = proposalTickets_(who.token, who.seat);
+  if (!tickets.ok) return tickets;
+  const active = list.items.filter(x => PROPOSAL_ACTIVE.indexOf(x.status) >= 0);
+  const free = freeTicket_(tickets.items, list.items);
+  return { ok: true, seat: who.seat, proposals: list.items.map(studentView_),
+    has_ticket: !!free, can_start: !active.length && !!free, today: today_() };
+}
+
+/** 學生：暫存（submit=false）或送出（submit=true）。送出＝先暫存、再以伺服器端讀回的內容驗必填 */
+function proposalWrite_(props, body, submit) {
+  if (overLimit_("pw:" + Math.floor(Number(body.seat)), PROPOSAL_WRITES_PER_MIN)) {
+    return { ok: false, error: "按得太頻繁了，請等一分鐘再按" };
+  }
+  const who = proposalStudent_(props, body);
+  if (who.error) return { ok: false, error: who.error };
+  const token = who.token;
+  const part = body.part === "result" ? "result" : "plan";
+  const fields = (body.fields && typeof body.fields === "object") ? body.fields : {};
+  if (part === "result" && nameLeak_(String(fields["命名候選"] || ""), who.name)) {
+    return { ok: false, error: "命名不能放自己的姓名或座號，換一個大家看得懂的名字吧！" };
+  }
+  const writeProps = proposalProps_(part, fields);
+  const pid = String(body.proposal_id || "").trim();
+  let page;
+
+  if (!pid) {
+    // 新提案：只能從表一開始；一人同時一件；要有一張沒被綁走的提案權
+    if (part !== "plan") return { ok: false, error: "要先寫計畫書（表一）喔" };
+    const list = studentProposals_(token, who.stu.id);
+    if (!list.ok) return list;
+    if (list.items.some(x => PROPOSAL_ACTIVE.indexOf(x.status) >= 0)) {
+      return { ok: false, error: "你已經有一件提案在進行中，一次只能做一件喔！請重新整理頁面" };
+    }
+    const tickets = proposalTickets_(token, who.seat);
+    if (!tickets.ok) return tickets;
+    const free = freeTicket_(tickets.items, list.items);
+    if (!free) return { ok: false, error: "你目前沒有可以用的 🧪 創造提案權。先到小小銀行兌換，老師核可後再來寫。" };
+    writeProps["狀態"] = { select: { name: "草稿" } };
+    writeProps["學生"] = { relation: [{ id: who.stu.id }] };
+    writeProps["座號"] = { number: who.seat };
+    writeProps["兌換申請"] = { relation: [{ id: free.id }] };
+    writeProps["學年"] = { select: { name: schoolYear_() } }; // 學年鐵則
+    const res = notionV_(token, "pages", "post", {
+      parent: { type: "data_source_id", data_source_id: DS_PROPOSAL }, properties: writeProps,
+    }, NOTION_VERSION_DS);
+    if (res.code !== 200) return { ok: false, error: "暫存失敗（Notion 回應 " + res.code + "），請稍後再試" };
+    page = res.data;
+    markTicketUsed_(token, free); // 券移出「持有中」；失敗不擋——綁定關係才是正本
+  } else {
+    const cur = readProposalPage_(token, pid);
+    if (!cur.ok || !sameId_(cur.view.student_id, who.stu.id)) {
+      return { ok: false, error: "找不到這件提案，請重新整理頁面" };
+    }
+    const editable = part === "plan" ? PLAN_EDITABLE : RESULT_EDITABLE;
+    if (editable.indexOf(cur.view.status) < 0) {
+      return { ok: false, locked: true, status: cur.view.status,
+        error: "這件提案目前是「" + cur.view.status + "」，" + (part === "plan" ? "計畫書" : "成果回報") + "現在不能修改。請重新整理頁面看最新狀態。" };
+    }
+    if (Object.keys(writeProps).length) {
+      const res = notionV_(token, "pages/" + pid, "patch", { properties: writeProps }, NOTION_VERSION_DS);
+      if (res.code !== 200) return { ok: false, error: "暫存失敗（Notion 回應 " + res.code + "），請稍後再試" };
+      page = res.data;
+    } else page = cur.page;
+  }
+
+  let view = proposalView_(page);
+  if (!submit) return { ok: true, proposal: studentView_(view), saved_at: nowIso_() };
+
+  const miss = proposalMissing_(part, view);
+  if (miss.length) {
+    return { ok: false, missing: miss, proposal: studentView_(view), saved_at: nowIso_(),
+      error: "還有這些沒完成（內容已先幫你暫存）：" + miss.join("、") };
+  }
+  const next = part === "plan" ? "計畫審核中" : "成果審核中";
+  const res = notionV_(token, "pages/" + view.id, "patch", { properties: {
+    "狀態": { select: { name: next } },
+    "最後送出": { date: { start: nowIso_() } },
+  } }, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "送出失敗（Notion 回應 " + res.code + "），內容已暫存，請稍後再按送出" };
+  view = proposalView_(res.data);
+  return { ok: true, submitted: true, proposal: studentView_(view), saved_at: nowIso_() };
+}
+
+/** 教師：列出本學年所有提案（前端再把審核中的排前面） */
+function proposalList_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const items = [];
+  let cursor = null;
+  do {
+    const payload = {
+      filter: { property: "學年", select: { equals: schoolYear_() } },
+      sorts: [{ timestamp: "created_time", direction: "descending" }],
+      page_size: 100,
+    };
+    if (cursor) payload.start_cursor = cursor;
+    const res = queryDS_(token, DS_PROPOSAL, payload);
+    if (res.code !== 200) {
+      return { ok: false, error: "查詢創造提案失敗（Notion 回應 " + res.code + "）"
+        + (res.code === 404 ? "：請到 Notion「🧪 創造提案」→「…」→「連結」加入代理用的 integration" : "") };
+    }
+    (res.data.results || []).forEach(page => items.push(proposalView_(page)));
+    cursor = res.data.has_more ? res.data.next_cursor : null;
+  } while (cursor && items.length < 300);
+  return { ok: true, items: items, xp_plan: PROPOSAL_XP_PLAN, xp_result: PROPOSAL_XP_RESULT };
+}
+
+/** 教師：審核表一。通過→試行中＋帳本獎勵金 +10（恰一次） */
+function proposalReviewPlan_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const MAP = { "通過": "試行中", "修改": "計畫需修改", "不通過": "計畫不通過" };
+  const decision = String(body.decision || "");
+  const comment = String(body.comment || "").trim().slice(0, PROPOSAL_TEXT_MAX);
+  if (!MAP[decision]) return { ok: false, error: "審核結果只能是 通過／修改／不通過" };
+  if (decision !== "通過" && !comment) return { ok: false, error: "「" + decision + "」要寫理由，學生才知道怎麼改" };
+
+  const cur = readProposalPage_(token, String(body.page_id || "").trim());
+  if (!cur.ok) return cur;
+  const v = cur.view;
+  if (v.status !== "計畫審核中") {
+    return { ok: false, error: "這件提案目前是「" + v.status + "」，不在計畫審核階段（可能已經審過，請重新整理）" };
+  }
+  const pay = decision === "通過" && !v.xp_plan;
+  const upd = { "狀態": { select: { name: MAP[decision] } }, "計畫審核意見": rt_(comment), "計畫審核日": { date: { start: today_() } } };
+  if (pay) upd["計畫XP已發"] = { checkbox: true };
+  const res = notionV_(token, "pages/" + v.id, "patch", { properties: upd }, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "審核失敗（Notion 回應 " + res.code + "），沒有任何變動" };
+
+  if (pay) {
+    const led = proposalReward_(token, v, PROPOSAL_XP_PLAN, "創造提案計畫通過：" + (v.plan["提案名稱"] || "未命名"));
+    if (!led.ok) {
+      notionV_(token, "pages/" + v.id, "patch", { properties: {
+        "狀態": { select: { name: "計畫審核中" } }, "計畫XP已發": { checkbox: false } } }, NOTION_VERSION_DS);
+      return { ok: false, error: "帳本沒寫成功（" + led.error + "），已把提案改回「計畫審核中」，請稍後再按一次通過" };
+    }
+  }
+  return { ok: true, seat: v.seat, status: MAP[decision], xp: pay ? PROPOSAL_XP_PLAN : 0,
+    note: decision === "通過" && !pay ? "（這件提案之前已發過計畫 XP，這次不重複發）" : "" };
+}
+
+/** 教師：裁決表二。通過→成果通過＋帳本 +20＋頒命名權券（各恰一次）；延長→可再改表二重送 */
+function proposalReviewResult_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const MAP = { "通過": "成果通過", "延長": "延長試行", "未通過": "成果未通過" };
+  const decision = String(body.decision || "");
+  const comment = String(body.comment || "").trim().slice(0, PROPOSAL_TEXT_MAX);
+  if (!MAP[decision]) return { ok: false, error: "裁決結果只能是 通過／延長／未通過" };
+  if (decision !== "通過" && !comment) return { ok: false, error: "「" + decision + "」要寫理由或回饋，學生才知道下一步" };
+
+  const cur = readProposalPage_(token, String(body.page_id || "").trim());
+  if (!cur.ok) return cur;
+  const v = cur.view;
+  if (v.status !== "成果審核中") {
+    return { ok: false, error: "這件提案目前是「" + v.status + "」，不在成果審核階段（可能已經裁決過，請重新整理）" };
+  }
+  const pay = decision === "通過" && !v.xp_result;
+  const award = decision === "通過" && !v.naming;
+  const upd = { "狀態": { select: { name: MAP[decision] } }, "成果裁決意見": rt_(comment), "成果裁決日": { date: { start: today_() } } };
+  if (pay) upd["成果XP已發"] = { checkbox: true };
+  if (award) upd["命名權已頒"] = { checkbox: true };
+  const res = notionV_(token, "pages/" + v.id, "patch", { properties: upd }, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "裁決失敗（Notion 回應 " + res.code + "），沒有任何變動" };
+
+  const name = v.plan["提案名稱"] || "未命名";
+  if (pay) {
+    const led = proposalReward_(token, v, PROPOSAL_XP_RESULT, "創造提案成果通過：" + name);
+    if (!led.ok) {
+      const back = { "狀態": { select: { name: "成果審核中" } }, "成果XP已發": { checkbox: false } };
+      if (award) back["命名權已頒"] = { checkbox: false };
+      notionV_(token, "pages/" + v.id, "patch", { properties: back }, NOTION_VERSION_DS);
+      return { ok: false, error: "帳本沒寫成功（" + led.error + "），已把提案改回「成果審核中」，請稍後再按一次通過" };
+    }
+  }
+  let warn = "";
+  if (award) {
+    const nowIso = nowIso_();
+    const ticket = notionV_(token, "pages", "post", {
+      parent: { type: "data_source_id", data_source_id: DS_REDEEM },
+      properties: {
+        "申請": { title: [{ text: { content: "座號" + v.seat + " 獲頒 " + NAMING_TICKET } }] },
+        "座號": { number: v.seat },
+        "品項": rt_(NAMING_TICKET),
+        "價格": { number: 0 },
+        "分類": { select: { name: "特權" } },
+        "狀態": { select: { name: "已完成" } },
+        "處理時間": { date: { start: nowIso } },
+        "剩餘次數": { number: 1 },
+        "已使用次數": { number: 0 },
+        "備註": rt_("創造提案成果通過頒予：" + name),
+        "學年": { select: { name: schoolYear_() } },
+      },
+    }, NOTION_VERSION_DS);
+    if (ticket.code !== 200) {
+      notionV_(token, "pages/" + v.id, "patch", { properties: { "命名權已頒": { checkbox: false } } }, NOTION_VERSION_DS);
+      warn = "⚠️ " + (pay ? "XP 已發，" : "") + "但命名權券沒建成功（Notion 回應 " + ticket.code + "），"
+        + "請到 Notion「🛒 兌換申請」手動新增一列：座號 " + v.seat + "、品項「命名權」、價格 0、狀態已完成、剩餘次數 1、學年必填。";
+    }
+  }
+  return { ok: true, seat: v.seat, status: MAP[decision], xp: pay ? PROPOSAL_XP_RESULT : 0,
+    naming: award && !warn, warn: warn,
+    note: decision === "通過" && !pay ? "（這件提案之前已發過成果 XP，這次不重複發）" : "" };
+}
+
+// ---- 創造提案：工具 ----
+
+/** 座號＋查詢碼驗證；回 { token, seat, stu, name } 或 { error } */
+function proposalStudent_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { error: "尚未設定 NOTION_TOKEN" };
+  const bad = { error: "座號或查詢碼不正確，請再試一次" };
+  const seat = Math.floor(Number(body.seat));
+  const code = String(body.code || "").trim();
+  if (!(seat >= 1 && seat <= 99) || !code) return bad;
+  const stu = findStudent_(token, seat);
+  if (!stu) return bad;
+  const sp = stu.properties || {};
+  const stuCode = ((sp["查詢碼"] || {}).rich_text || []).map(t => t.plain_text).join("").trim();
+  if (!stuCode || stuCode !== code) return bad;
+  return { token: token, seat: seat, stu: stu, name: ((sp["姓名"] || {}).title || []).map(t => t.plain_text).join("").trim() };
+}
+
+/** 讀一件提案並確認它真的在「🧪 創造提案」DB（防止拿別的 DB 的頁 ID 來改） */
+function readProposalPage_(token, pageId) {
+  if (!/^[0-9a-f-]{32,36}$/i.test(pageId)) return { ok: false, error: "提案編號有誤，請重新整理頁面" };
+  const res = notionV_(token, "pages/" + pageId, "get", null, NOTION_VERSION_DS);
+  if (res.code !== 200) return { ok: false, error: "找不到這件提案（Notion 回應 " + res.code + "）" };
+  const parent = res.data.parent || {};
+  if (!sameId_(parent.data_source_id || "", DS_PROPOSAL) || res.data.in_trash || res.data.archived) {
+    return { ok: false, error: "找不到這件提案，請重新整理頁面" };
+  }
+  return { ok: true, page: res.data, view: proposalView_(res.data) };
+}
+
+function studentProposals_(token, stuId) {
+  const res = queryDS_(token, DS_PROPOSAL, {
+    filter: { property: "學生", relation: { contains: stuId } },
+    sorts: [{ timestamp: "created_time", direction: "ascending" }],
+    page_size: 100,
+  });
+  if (res.code !== 200) return { ok: false, error: "系統忙碌，請稍後再試（提案查詢 " + res.code + "）" };
+  return { ok: true, items: (res.data.results || []).map(proposalView_) };
+}
+
+/** 該座號已核可的「創造提案權」券 */
+function proposalTickets_(token, seat) {
+  const res = queryDS_(token, DS_REDEEM, {
+    filter: { and: [
+      { property: "座號", number: { equals: seat } },
+      { property: "狀態", select: { equals: "已完成" } },
+      { property: "品項", rich_text: { equals: PROPOSAL_TICKET } },
+    ] },
+    page_size: 100,
+  });
+  if (res.code !== 200) return { ok: false, error: "系統忙碌，請稍後再試（提案權查詢 " + res.code + "）" };
+  return { ok: true, items: (res.data.results || []).map(page => {
+    const p = page.properties || {};
+    return {
+      id: page.id,
+      remaining: Math.round(Number((p["剩餘次數"] || {}).number) || 0),
+      used: Math.round(Number((p["已使用次數"] || {}).number) || 0),
+      log: ((p["使用紀錄"] || {}).rich_text || []).map(t => t.plain_text).join(""),
+    };
+  }) };
+}
+
+/** 還沒被任何提案綁走、也沒被作廢（剩餘與已使用都是 0＝作廢）的券 */
+function freeTicket_(tickets, proposals) {
+  const bound = proposals.map(x => normId_(x.ticket_id)).filter(Boolean);
+  return tickets.find(t => bound.indexOf(normId_(t.id)) < 0 && (t.remaining > 0 || t.used > 0)) || null;
+}
+
+function markTicketUsed_(token, t) {
+  if (t.remaining <= 0) return;
+  notionV_(token, "pages/" + t.id, "patch", { properties: {
+    "剩餘次數": { number: t.remaining - 1 },
+    "已使用次數": { number: t.used + 1 },
+    "最近使用": { date: { start: today_() } },
+    "使用紀錄": rt_(appendLog_(t.log, stampMD_() + " 開始填寫線上創造提案")),
+  } }, NOTION_VERSION_DS);
+}
+
+function proposalReward_(token, v, amount, reason) {
+  let stuId = v.student_id;
+  if (!stuId) {
+    const stu = findStudent_(token, v.seat);
+    if (!stu) return { ok: false, error: "名冊查無座號 " + v.seat };
+    stuId = stu.id;
+  }
+  const res = notionV_(token, "pages", "post", {
+    parent: { type: "data_source_id", data_source_id: DS_BANK },
+    properties: {
+      "事由": { title: [{ text: { content: reason.slice(0, 120) } }] },
+      "學生": { relation: [{ id: stuId }] },
+      "金額": { number: amount },
+      "類型": { select: { name: "獎勵金" } }, // 獎勵金＝貢獻 XP（sync-notion.mjs XP_MERIT_TYPES）
+      "日期": { date: { start: today_() } },
+      "學年": { select: { name: schoolYear_() } },
+    },
+  }, NOTION_VERSION_DS);
+  return res.code === 200 ? { ok: true } : { ok: false, error: "Notion 回應 " + res.code };
+}
+
+function proposalView_(page) {
+  const p = page.properties || {};
+  const txt = k => ((p[k] || {}).rich_text || []).map(t => t.plain_text).join("");
+  const sel = k => (((p[k] || {}).select) || {}).name || "";
+  const multi = k => ((p[k] || {}).multi_select || []).map(o => o.name);
+  const date = k => ((((p[k] || {}).date) || {}).start || "").slice(0, 10);
+  const rel = k => ((((p[k] || {}).relation || [])[0]) || {}).id || "";
+  const out = {
+    id: page.id,
+    seat: Math.floor(Number((p["座號"] || {}).number) || 0),
+    student_id: rel("學生"),
+    ticket_id: rel("兌換申請"),
+    status: sel("狀態") || "草稿",
+    created: page.created_time || "",
+    edited: page.last_edited_time || "",
+    submitted: ((((p["最後送出"] || {}).date) || {}).start) || "",
+    plan: {
+      "提案名稱": ((p["提案名稱"] || {}).title || []).map(t => t.plain_text).join(""),
+      "類型": sel("類型"), "試行起": date("試行起"), "試行迄": date("試行迄"),
+      "記錄方式": multi("記錄方式"), "護欄自檢": multi("護欄自檢"),
+    },
+    result: { "達成": sel("達成") },
+    plan_comment: txt("計畫審核意見"), plan_reviewed: date("計畫審核日"),
+    result_comment: txt("成果裁決意見"), result_reviewed: date("成果裁決日"),
+    xp_plan: !!(p["計畫XP已發"] || {}).checkbox,
+    xp_result: !!(p["成果XP已發"] || {}).checkbox,
+    naming: !!(p["命名權已頒"] || {}).checkbox,
+  };
+  PROPOSAL_TEXT_PLAN.forEach(k => { out.plan[k] = txt(k); });
+  PROPOSAL_TEXT_RESULT.forEach(k => { out.result[k] = txt(k); });
+  return out;
+}
+
+/** 回給學生的版本：拿掉內部關聯 ID */
+function studentView_(v) {
+  const o = JSON.parse(JSON.stringify(v));
+  delete o.student_id; delete o.ticket_id;
+  return o;
+}
+
+/** 前端欄位 → Notion properties（只收白名單、型別與選項不符就清空、文字截斷） */
+function proposalProps_(part, fields) {
+  const spec = PROPOSAL_SPEC[part];
+  const out = {};
+  Object.keys(spec).forEach(k => {
+    if (!Object.prototype.hasOwnProperty.call(fields, k)) return;
+    const kind = spec[k][0], opts = spec[k][1], v = fields[k];
+    if (kind === "text") out[k] = rt_(String(v == null ? "" : v).trim().slice(0, PROPOSAL_TEXT_MAX));
+    else if (kind === "title") {
+      const s = String(v == null ? "" : v).trim().slice(0, 60);
+      out[k] = { title: s ? [{ text: { content: s } }] : [] };
+    } else if (kind === "select") {
+      const s = String(v == null ? "" : v);
+      out[k] = { select: opts.indexOf(s) >= 0 ? { name: s } : null };
+    } else if (kind === "multi") {
+      const arr = (Array.isArray(v) ? v : []).map(String).filter((x, i, a) => opts.indexOf(x) >= 0 && a.indexOf(x) === i);
+      out[k] = { multi_select: arr.map(n => ({ name: n })) };
+    } else if (kind === "date") {
+      const s = String(v == null ? "" : v);
+      out[k] = { date: /^\d{4}-\d{2}-\d{2}$/.test(s) ? { start: s } : null };
+    }
+  });
+  return out;
+}
+
+/** 送出前的必填檢查（以伺服器讀回的內容為準，不信任前端） */
+function proposalMissing_(part, v) {
+  const miss = [];
+  if (part === "plan") {
+    const pl = v.plan;
+    PLAN_REQUIRED.forEach(k => { if (!String(pl[k] || "").trim()) miss.push(k); });
+    if (!pl["記錄方式"].length) miss.push("記錄方式");
+    if (pl["試行起"] && pl["試行迄"] && pl["試行迄"] < pl["試行起"]) miss.push("試行迄（不能早於試行起）");
+    const lack = PROPOSAL_GUARDS.filter(g => pl["護欄自檢"].indexOf(g) < 0);
+    if (lack.length) miss.push("護欄自我檢查（還差 " + lack.length + " 項）");
+  } else {
+    RESULT_REQUIRED.forEach(k => { if (!String(v.result[k] || "").trim()) miss.push(k); });
+  }
+  return miss;
+}
+
+/** 命名不能帶自己的姓名（全名或名字）或「N號」 */
+function nameLeak_(text, fullName) {
+  if (!text) return false;
+  if (/\d+\s*號/.test(text)) return true;
+  if (fullName && text.indexOf(fullName) >= 0) return true;
+  if (fullName && fullName.length >= 3 && text.indexOf(fullName.slice(1)) >= 0) return true;
+  return false;
+}
+
+/** 每座號每分鐘次數上限（CacheService，不需額外授權） */
+function overLimit_(key, max) {
+  const cache = CacheService.getScriptCache();
+  const n = Number(cache.get(key) || 0) + 1;
+  cache.put(key, String(n), 60);
+  return n > max;
+}
+
+function rt_(s) { return { rich_text: s ? [{ text: { content: String(s) } }] : [] }; }
+function normId_(id) { return String(id || "").replace(/-/g, "").toLowerCase(); }
+function sameId_(a, b) { return !!a && normId_(a) === normId_(b); }
+function nowIso_() { return Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd'T'HH:mm:ss+08:00"); }
 
 // 名冊：座號＋在學 → 學生頁（含 properties）；查無回 null
 function findStudent_(token, seat) {
