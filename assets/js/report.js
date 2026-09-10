@@ -244,6 +244,31 @@
     return periods.length - 1;
   };
 
+  // 🧪 我的創造提案（SPEC_創造提案線上版 §6）：草稿不進報告；每週與期末都顯示同一份（提案跨週進行）
+  const PROPOSAL_COLOR = { "計畫審核中": "#F0932B", "計畫需修改": "#E67E22", "計畫不通過": "#8395A7", "試行中": "#54A0FF",
+    "成果審核中": "#9B59B6", "延長試行": "#FF6B81", "成果通過": "#10AC84", "成果未通過": "#8395A7" };
+  const proposalBox = (report, anon) => {
+    const list = report.proposals || [];
+    if (!list.length) return "";
+    const row = (k, v) => v ? `<p style="white-space:pre-line"><strong>${k}：</strong>${App.esc(v)}</p>` : "";
+    return `
+        <div class="report-box" style="--bc:#8E44AD; margin-top:12px">
+          <span class="report-badge" style="--bc:#8E44AD">🧪 我的創造提案</span>
+          ${list.map(x => `
+          <div class="proposal-report">
+            <p><span class="badge" style="background:${PROPOSAL_COLOR[x.status] || "#8395A7"};color:#fff">${App.esc(x.status)}</span>
+              <strong>${App.esc(x.name)}</strong>${x.type ? `　<span class="meta">${App.esc(x.type)}</span>` : ""}
+              ${x.trial.length ? `<span class="meta">　試行 ${x.trial.map(d => App.esc(App.fmtDateShort(d))).join("～")}</span>` : ""}</p>
+            ${row("問題", x.problem)}${row("點子", x.idea)}${row("成功標準", x.criteria)}
+            ${x.achieve ? `<p><strong>成果：</strong>${App.esc(x.achieve)}${x.before || x.after ? `（試行前 ${App.esc(x.before || "—")} → 試行後 ${App.esc(x.after || "—")}）` : ""}</p>` : ""}
+            ${row("反思", x.reflection)}
+            ${row("老師對計畫的意見", x.planComment)}${row("老師的成果回饋", x.resultComment)}
+            ${x.naming ? `<p>🏷️ <strong>獲頒命名權</strong>${x.namingName && !anon ? `：「${App.esc(x.namingName)}」` : ""}</p>` : ""}
+          </div>`).join("")}
+          ${anon ? "" : `<p class="meta no-print"><a href="proposal.html">✏️ 到「創造提案」頁繼續填寫或看進度</a></p>`}
+        </div>`;
+  };
+
   function showReport(report, periodIdx = defaultIdx(report.periods), anon = false) {
     document.body.classList.add("report-open");
     const p = report.periods[periodIdx];
@@ -415,6 +440,8 @@
           </div>` : `
           <p class="work-empty meta">${isTerm ? "本學期作品陸續收錄中。" : "本週沒有新收錄的作品；老師上傳後會自動出現在這裡。"}</p>`}
         </div>
+
+        ${proposalBox(report, anon)}
 
         <div class="report-bottom">
           ${isTerm ? `
