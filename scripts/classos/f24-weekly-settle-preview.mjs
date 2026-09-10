@@ -10,7 +10,8 @@
  * 週結五項（公式正本＝docs/班級銀行制度設計.md，與 class-bank SKILL 同源）：
  *   ① 職務薪水     名冊「週薪」
  *   ② 獎懲入帳     紀錄庫本週「金幣影響」≠0 且尚未入帳者（鍵＝紀錄id×學生id）
- *   ③ 打掃薪水     每人 max(0, 份數×5 ＋ 打掃支援 − 打掃缺席 − 打掃未達標) × 2 幣
+ *   ③ 打掃薪水     每人 max(0, 份數×5 ＋ 打掃支援 − 打掃缺席 − 打掃未達標 − 免打掃券使用) × 2 幣
+ *                  （免打掃券：同日已記打掃缺席就不重扣；2026-09-10 SPEC_兌換條件自動把關 §4）
  *                  （與 class-bank SKILL 同一條公式；固定支援 2026-09-10 廢止，支援只看當天指派）
  *   ④ 午餐工作薪水 固定崗 5 次 × 2 幣；輪值崗只有輪到那週算 5 次 × 2 幣
  *   ⑤ 班級常規獎勵 達成天數 × 1 ＋ 五天全到再 +3（例外管理：有常規未達成紀錄才扣那天）
@@ -53,10 +54,10 @@ const seatsOf = s => String(s ?? "").split(/[,、，\s]+/)
 // ── 本週是哪一週（單一出處：data/weeks.json）────────────────────────
 const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
 const weeksFile = await readJSON("weeks.json");
-let WEEK = null, TERM_NO = null;
+let WEEK = null, TERM_NO = null, WEEK_FROM = null, WEEK_TO = null;
 for (const t of weeksFile.學期 ?? []) {
   const w = (t.週 ?? []).find(w => (today >= w.起 && today <= w.迄) || w.預排日?.includes(today));
-  if (w) { WEEK = w.標籤; TERM_NO = w.週次; break; }
+  if (w) { WEEK = w.標籤; TERM_NO = w.週次; WEEK_FROM = w.起; WEEK_TO = w.迄; break; }
 }
 if (!WEEK) { console.log(`🏖️ ${today} 不在任何上課週內（假期），本次不試算。`); process.exit(0); }
 const YEAR = String(Number(today.slice(0, 4)) - 1911 - (Number(today.slice(5, 7)) < 8 ? 1 : 0));
@@ -119,12 +120,33 @@ const tallyBySeat = act => {
 const cleanSup = tallyBySeat("打掃支援"), cleanAbs = tallyBySeat("打掃缺席"), cleanBad = tallyBySeat("打掃未達標");
 const sumMap = m => [...m.values()].reduce((a, b) => a + b, 0);
 const supportTimes = sumMap(cleanSup), absentTimes = sumMap(cleanAbs), badTimes = sumMap(cleanBad);
+// 🧹 免打掃一次券：使用那天沒有打掃薪水（SPEC_兌換條件自動把關 §4），老師不必再到檢核台點 ✗。
+// 讀 🛒 兌換申請「最近使用」落在本週、且「已使用次數」>0（老師撤銷後會變 0，不算）的券。
+// 同一天老師又點了 ✗ 未到（紀錄庫「打掃缺席」同座號同日期）→ 那次已經少算，不重扣。
+const absentDay = new Set();
+for (const p of weekLogs.filter(p => titleOf(p) === "打掃缺席")) {
+  const d = (p.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
+  for (const sid of relIds(p, "學生")) { const s = seatOf.get(sid); if (s && d) absentDay.add(`${s}|${d}`); }
+}
+const cleanFree = new Map();
+let freeTimes = 0, freeDup = 0;
+for (const t of await queryAll(DS.redeem, { filter: { and: [
+  { property: "品項", rich_text: { equals: "免打掃一次券" } },
+  { property: "已使用次數", number: { greater_than: 0 } },
+  { property: "最近使用", date: { on_or_after: WEEK_FROM } },
+  { property: "最近使用", date: { on_or_before: WEEK_TO } },
+] } })) {
+  const s = num(t, "座號"), d = (t.properties?.["最近使用"]?.date?.start ?? "").slice(0, 10);
+  if (!s || !d) continue;
+  if (absentDay.has(`${s}|${d}`)) { freeDup++; continue; }
+  cleanFree.set(s, (cleanFree.get(s) ?? 0) + 1); freeTimes++;
+}
 // 逐人算、每人下限 0：缺席扣到負數不能拿去抵別人的支援
 const cleanSeats = new Set([...cleanShares.keys(), ...cleanSup.keys()]);
 let cleanTimes = 0;
 for (const s of cleanSeats) {
   cleanTimes += Math.max(0, (cleanShares.get(s) ?? 0) * SCHOOL_DAYS + (cleanSup.get(s) ?? 0)
-    - (cleanAbs.get(s) ?? 0) - (cleanBad.get(s) ?? 0));
+    - (cleanAbs.get(s) ?? 0) - (cleanBad.get(s) ?? 0) - (cleanFree.get(s) ?? 0));
 }
 const cleanTotal = cleanTimes * CLEAN_PAY;
 // 驗算用明細（只印座號與份數，不印姓名）——打掃份數算錯就是有人少領錢，一定要看得見
@@ -200,7 +222,7 @@ const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）`,
-  `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
+  `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes} − 免打掃券 ${freeTimes}${freeDup ? `（另 ${freeDup} 次同日已記缺席，不重扣）` : ""}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
   `④ 午餐工作薪水　${lunchTotal} 幣（固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}）${mark(paid.lunch)}`,
   ROUTINE_ENABLED
     ? `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`

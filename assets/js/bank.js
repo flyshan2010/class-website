@@ -79,6 +79,13 @@
       if (!session || !i.id || !c.updateProxyUrl) return "";
       if (i.stock <= 0) return "";
       if (alreadyRequested(i)) return `<button class="store-buy" disabled>🕐 已申請，等老師確認</button>`;
+      // XP 門檻（解鎖型）：未達就不出兌換鈕。真正把關在代理端，這裡只是先讓孩子看懂還差多少
+      if (session.xp !== null && (i.unlockXp || i.unlockMerit)) {
+        const lack = [];
+        if (session.xp < (i.unlockXp || 0)) lack.push(`總 XP ${i.unlockXp - session.xp}`);
+        if (session.xpMerit < (i.unlockMerit || 0)) lack.push(`貢獻 XP ${i.unlockMerit - session.xpMerit}`);
+        if (lack.length) return `<button class="store-buy" disabled title="還沒解鎖">🔒 還差 ${lack.join("／")}</button>`;
+      }
       if (session.balance < i.price) return `<button class="store-buy" disabled title="崑山幣還不夠">🪙 還差 ${i.price - session.balance} 幣</button>`;
       return `<button class="store-buy" data-id="${App.esc(i.id)}">🛒 我要兌換</button>`;
     };
@@ -232,7 +239,9 @@
         const res = await fetch(`data/bank/${seat}.json`, { cache: "no-cache" });
         if (!res.ok) throw new Error("noseat");
         const acc = await decrypt(await res.json(), seat, code);
-        session = { seat: Number(seat), code, balance: acc.balance };
+        // xp／xpMerit：舊存摺檔沒有這兩欄時為 null，前端就不反灰（代理端仍會擋）
+        session = { seat: Number(seat), code, balance: acc.balance,
+          xp: Number.isFinite(acc.xp) ? acc.xp : null, xpMerit: Number.isFinite(acc.xpMerit) ? acc.xpMerit : null };
         showPassbook(acc);
       } catch (err) {
         showForm(err.message === "noseat" ? "這個座號目前沒有帳戶，請確認座號或詢問老師。" : "查詢碼不正確，請再試一次或詢問老師。");

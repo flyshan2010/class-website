@@ -810,7 +810,10 @@ async function syncStore() {
       // 2026-08-14 導入四層架構時刻意不動它，改用獨立的「層級」欄，避免動到兌換流程。
       category: r["分類"] || "小物",
       tier: r["層級"] || STORE_DEFAULT_TIER,   // 沒填就當第二層（消費型特權）
-      unlock: r["解鎖條件"] || "",             // 第三、四層的資格門檻（例：累積 XP 達 200）
+      unlock: r["解鎖條件"] || "",             // 第三、四層的資格門檻（例：累積 XP 達 200）；給學生看的文字
+      // 機讀門檻（SPEC_兌換條件自動把關 §3）：代理端依這兩欄擋兌換，前端只用來提早反灰
+      unlockXp: Number(r["解鎖總XP"]) || 0,
+      unlockMerit: Number(r["解鎖貢獻XP"]) || 0,
       price: Number(r["價格"]) || 0,
       stock: Number(r["庫存"]) || 0,
       icon: r["圖示"] || "🎁",
@@ -1015,17 +1018,20 @@ async function syncBank() {
   // 全班先開戶：沒有任何交易的學生也要有存摺（否則查詢會顯示「這個座號目前沒有帳戶」）
   for (const r of roster) {
     const seat = Number(r["座號"]);
-    accounts[seat] = { seat, name: r["姓名"], code: String(r["查詢碼"]).trim(), balance: 0, tx: [] };
+    accounts[seat] = { seat, name: r["姓名"], code: String(r["查詢碼"]).trim(), balance: 0, xp: 0, xpMerit: 0, tx: [] };
   }
   for (const t of txRows) {
     const stu = byPageId[t["學生"][0]];
     if (!stu) { bankSkipped++; continue; }
     const seat = Number(stu["座號"]);
     const acc = (accounts[seat] ||= {
-      seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(), balance: 0, tx: [],
+      seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(), balance: 0, xp: 0, xpMerit: 0, tx: [],
     });
     const amount = Math.round(Number(t["金額"]) || 0);
     acc.balance += amount;
+    // XP 算法與 bankFinanceBySeat 相同（商店卡「🔒 還差 XP」用；真正把關在代理端）
+    if (amount > 0 && XP_DUTY_TYPES.has(t["類型"])) acc.xp += amount;
+    if (amount > 0 && XP_MERIT_TYPES.has(t["類型"])) { acc.xp += amount; acc.xpMerit += amount; }
     acc.tx.push({
       date: t["日期"]?.start || "",
       week: t["週次"],
@@ -1071,7 +1077,8 @@ async function syncBank() {
     acc.tx.reverse(); // 存摺新→舊
     (acc.privileges ||= []).sort((a, b) => String(b.got).localeCompare(String(a.got)));
     const payload = await encryptReport(
-      { name: acc.name, seat: acc.seat, balance: acc.balance, tx: acc.tx, privileges: acc.privileges },
+      { name: acc.name, seat: acc.seat, balance: acc.balance, xp: acc.xp, xpMerit: acc.xpMerit,
+        tx: acc.tx, privileges: acc.privileges },
       acc.code, acc.seat);
     await writeFile(path.join(dir, `${acc.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
