@@ -29,6 +29,20 @@
     "images": []
   },
   {
+    "id": "s20260911yx3ehe",
+    "title": "國立高雄科技大學辦理「2027 WINNING English宿霧 冬季STEAM營」，詳如說明。",
+    "content": "發布單位：教務處",
+    "date": "2026-09-11",
+    "endDate": "",
+    "expiry": "2026-10-11",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=759&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
     "id": "s202609111abiv26",
     "title": "轉知社團法人台灣網路教學學會「弱勢學生拔尖助學媒合」方案，詳如附件。",
     "content": "發布單位：教務處",
@@ -99,20 +113,6 @@
     "auto": "school"
   },
   {
-    "id": "s202609101kyoowz",
-    "title": "妙心寺115 年兒童臺語朗讀佛典故事比賽」簡章",
-    "content": "發布單位：教務處",
-    "date": "2026-09-10",
-    "endDate": "",
-    "expiry": "2026-10-10",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=745&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
     "id": "n3d6b1f9d7e",
     "title": "班親會資料",
     "content": "以下是班親會資料(班級經營計畫書、簡報)，供家長參考",
@@ -126,22 +126,6 @@
     "images": [
       "data/uploads/ea6677b01ad3-0.jpg",
       "data/uploads/ea6677b01ad3-1.jpg"
-    ]
-  },
-  {
-    "id": "n3d6b1f9d7e",
-    "title": "（輔導室活動）讓愛流動，成長你我",
-    "content": "",
-    "date": "2026-09-09",
-    "endDate": "2026-10-04",
-    "expiry": "2026-10-04",
-    "source": "學校",
-    "category": "活動",
-    "pinned": false,
-    "link": "",
-    "images": [
-      "data/uploads/e7893da4bc7d-0.heic",
-      "data/uploads/e7893da4bc7d-1.heic"
     ]
   },
   {
