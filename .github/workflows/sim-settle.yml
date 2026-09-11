@@ -1,0 +1,33 @@
+name: 週結模擬驗證（只讀）
+
+# 2026-09-11 計分口徑施工後的模擬驗證：真實 Notion 資料＋記憶體內疊加情境，跑 f24 本體。
+# **完全不寫入**：模擬層把 api／updatePage 換成拋錯、isExecute 固定 false。
+# 情境說明見 scripts/classos/sim/scenarios.mjs。
+on:
+  workflow_dispatch:
+
+jobs:
+  sim:
+    runs-on: ubuntu-latest
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      MODE: dry-run
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 對照組：取出「⑤排除寫回列」修正前的 f24
+        run: git show a7009812~1:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-prefix-old.mjs
+      - name: 資料分析
+        run: node scripts/classos/sim/week-analysis.mjs
+      - name: f24 情境
+        run: |
+          for s in S0 S1 S2 S3N S3; do
+            echo "########## 情境 $s（現行 f24）"
+            SIM_SCENARIO=$s node --import ./scripts/classos/sim/hooks.mjs scripts/classos/f24-weekly-settle-preview.mjs
+          done
+          echo "########## 情境 S3（修正前 f24，對照）"
+          SIM_SCENARIO=S3 node --import ./scripts/classos/sim/hooks.mjs scripts/classos/f24-prefix-old.mjs
