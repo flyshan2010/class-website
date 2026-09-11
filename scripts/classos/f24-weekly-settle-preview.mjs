@@ -180,6 +180,9 @@ const ROUTINE_CATS = new Set(["生活指導", "生活技能"]);
 const missDays = new Map();             // 座號 → Set(日期)
 // 檢核台的「常規未達成」tally 金幣是 0，不在 logs 裡——要從 weekLogs 撈，否則潔牙沒做也照發全勤（2026-09-11 補）
 for (const l of weekLogs) {
+  // 週結寫回列（「第N週打掃未達標（X 次）」③−5 等，2026-09-11 起）日期是週末彙整日、不是當天行為——
+  // 算進來會讓 week-publish 入帳後重跑試算時，平白扣掉那天的 +1 與全勤
+  if (/^第\d+週/.test(titleOf(l))) continue;
   const isTally = titleOf(l) === "常規未達成";
   if (!isTally && !(num(l, "金幣影響") && sel(l, "正負向") === "－" && ROUTINE_CATS.has(sel(l, "類別")))) continue;
   const d = l.properties?.["日期"]?.date?.start;
