@@ -5,7 +5,7 @@
  *      f14（2026-08-01）刪掉 480+ 筆模擬資料（紀錄、銀行帳、報告、成績、作品、兌換），
  *      那些模擬列曾關聯到「當時已存在、至今仍保留」的真實列（商店品項、教學單元、週報、工作分配…）。
  *
- * 範圍推論：死 id 只可能出現在「2026-08-02 以前建立」的現存列。
+ * 範圍推論：死 id 只可能出現在「刪除日以前建立」的現存列；以 f14（8/1）為主，放寬到 8/12 涵蓋其他已過 30 天的刪除。
  *      之後才建立的列，建立時那批頁面已經刪了，不可能關聯得到。名冊已由 F27 處理，略過。
  *
  * 做法（沿用 F27 實證）：官方 API 讀關聯會自動濾掉已刪除頁面，挑不出死 id；
@@ -22,7 +22,8 @@
 import { DS, api, apiOrThrow, queryAll, getSchema, updatePage, isExecute } from "./lib/notion.mjs";
 
 const EXECUTE = isExecute();
-const CUTOFF = "2026-08-02";
+// 放寬到 8/12：垃圾桶保留 30 天，截至 9/11 已永久刪除者最晚刪於 8/12，關聯只可能掛在更早建立的列
+const CUTOFF = "2026-08-12";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const norm = (id) => String(id).replace(/-/g, "");
 
