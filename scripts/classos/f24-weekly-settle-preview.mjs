@@ -39,7 +39,7 @@ const CLEAN_PAY = 2, LUNCH_PAY = 2, ROUTINE_PAY = 1, ROUTINE_FULL = 3, SCHOOL_DA
    會變成「發了一週沒人在看的全勤獎」（四上第1週就發生：22 人全勤 +8、5 人是被不相關的
    生活指導負向紀錄扣到，兩邊都不是常規觀察的結果）。
    ▶ 開始逐日追蹤常規那一週，把這行改成 true 即可，其餘公式不用動。 */
-const ROUTINE_ENABLED = false;
+const ROUTINE_ENABLED = true;   // 2026-09-11 老師裁示：四上第2週起開始發（常規檢核台已逐日記潔牙）
 const rt = s => [{ type: "text", text: { content: String(s).slice(0, 2000) } }];
 const num = (p, k) => p.properties?.[k]?.number ?? null;
 const sel = (p, k) => p.properties?.[k]?.select?.name ?? "";
@@ -164,13 +164,23 @@ const round = cycle ? ((TERM_NO - 1) % cycle) + 1 : null;
 const rotSeats = (cycle && perWeek)
   ? Array.from({ length: perWeek }, (_, i) => pool[((round - 1) * perWeek + i) % pool.length])
   : [];
-const lunchTotal = (fixedLunch.size + rotSeats.length) * SCHOOL_DAYS * LUNCH_PAY;
+// 午餐例外：檢核台的「午餐支援／午餐缺席」tally（2026-09-11 補，原本只算基準，缺席也照發）
+const lunchSup = tallyBySeat("午餐支援"), lunchAbs = tallyBySeat("午餐缺席");
+const lunchSeats = new Set([...fixedLunch, ...rotSeats, ...lunchSup.keys()]);
+let lunchTimes = 0;
+for (const s of lunchSeats) {
+  const base = (fixedLunch.has(s) || rotSeats.includes(s)) ? SCHOOL_DAYS : 0;
+  lunchTimes += Math.max(0, base + (lunchSup.get(s) ?? 0) - (lunchAbs.get(s) ?? 0));
+}
+const lunchTotal = lunchTimes * LUNCH_PAY;
 
 // ⑤ 班級常規獎勵：例外管理（本週有「常規未達成」負向紀錄才扣那天）────
 const ROUTINE_CATS = new Set(["生活指導", "生活技能"]);
 const missDays = new Map();             // 座號 → Set(日期)
-for (const l of logs) {
-  if (sel(l, "正負向") !== "－" || !ROUTINE_CATS.has(sel(l, "類別"))) continue;
+// 檢核台的「常規未達成」tally 金幣是 0，不在 logs 裡——要從 weekLogs 撈，否則潔牙沒做也照發全勤（2026-09-11 補）
+for (const l of weekLogs) {
+  const isTally = titleOf(l) === "常規未達成";
+  if (!isTally && !(num(l, "金幣影響") && sel(l, "正負向") === "－" && ROUTINE_CATS.has(sel(l, "類別")))) continue;
   const d = l.properties?.["日期"]?.date?.start;
   for (const sid of relIds(l, "學生")) {
     const s = seatOf.get(sid); if (!s || !d) continue;
@@ -223,7 +233,7 @@ const lines = [
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）`,
   `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes} − 免打掃券 ${freeTimes}${freeDup ? `（另 ${freeDup} 次同日已記缺席，不重扣）` : ""}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
-  `④ 午餐工作薪水　${lunchTotal} 幣（固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}）${mark(paid.lunch)}`,
+  `④ 午餐工作薪水　${lunchTotal} 幣（${lunchTimes} 次 × ${LUNCH_PAY}＝固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}，支援 ${sumMap(lunchSup)} − 缺席 ${sumMap(lunchAbs)}）${mark(paid.lunch)}`,
   ROUTINE_ENABLED
     ? `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`
     : `⑤ 班級常規獎勵　**本週不計**（尚未開始逐日追蹤常規；要開啟改 f24 的 ROUTINE_ENABLED）`,
