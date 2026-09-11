@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-09-11T08:10:42.550Z",
+  "fetchedAt": "2026-09-11T08:35:56.320Z",
   "items": [
+    {
+      "date": "2026-09-11",
+      "title": "【madakaw時光機】115學年度第1學期臺灣族群互動史參訪體驗活動，歡迎學校踴躍報名。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=764&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-09-11",
       "title": "國立彰化師範大學教育研究所116學年度碩士班推薦甄試招生簡章資訊，敬請惠予轉知所屬並鼓勵報名參加。",
@@ -32,18 +38,6 @@
       "dept": "教務處"
     },
     {
-      "date": "2026-09-10",
-      "title": "轉知為防範腸病毒、流感、COVID-19疫情，請學校及幼兒園加各項防疫工作及衛教宣導",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=750&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
-      "date": "2026-09-10",
-      "title": "轉知「免費體驗課｜蔡思怡的文言文應試課」資訊，鼓勵學生及家長線上試聽體驗",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=749&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
       "date": "2026-09-06",
       "title": "115學年度第一學期獎學金申請資訊",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=710&type=news&from_op=school_department_show",
@@ -59,6 +53,12 @@
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!! (9/4報名名單公告!!!!!!請參閱附檔)",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-08-19",
+      "title": "115學年度第1學期課後才藝社團報名訊息，請留意報名日期及時間。(9/4報名錄取名單公告，未來科學班錄取名單更新)",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=606&type=news&from_op=school_department_show",
       "dept": "學務處"
     }
   ]
