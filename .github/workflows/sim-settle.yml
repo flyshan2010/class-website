@@ -25,7 +25,7 @@ jobs:
         run: node scripts/classos/sim/week-analysis.mjs
       - name: f24 情境
         run: |
-          for s in S0 S1 S2 S3N S3; do
+          for s in S0 S1 S2 S3 S5 S4; do
             echo "########## 情境 $s（現行 f24）"
             SIM_SCENARIO=$s node --import ./scripts/classos/sim/hooks.mjs scripts/classos/f24-weekly-settle-preview.mjs
           done
