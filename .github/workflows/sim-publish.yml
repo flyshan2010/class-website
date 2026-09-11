@@ -1,0 +1,20 @@
+name: 週五發布乾跑驗收（只讀）
+
+# 2026-09-12：week-publish「週結寫回紀錄庫＋班規⑦」第一次上線前的乾跑驗收。
+# 真實 Notion 資料＋記憶體內疊加事件，照 SKILL 算出要寫的列並對 schema／f24 核對。**完全不寫入**。
+on:
+  workflow_dispatch:
+
+jobs:
+  dryrun:
+    runs-on: ubuntu-latest
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      MODE: dry-run
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 乾跑驗收
+        run: node scripts/classos/sim/publish-dryrun.mjs

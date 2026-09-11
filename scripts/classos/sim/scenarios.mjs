@@ -139,13 +139,22 @@ async function build() {
 }
 
 let ctx = null;
+/* SIM_INJECT_FILE：由 publish-dryrun.mjs 產生的 JSON {log, bank, redeem, dropBankWeek}——
+   dropBankWeek＝隱藏「真實」帳本裡週次等於該標籤的列（模擬尚未週結）；注入的帳列不受影響。 */
 export async function inject(dsId, rows) {
-  if (SC === "S0") return rows;
-  ctx ??= build();
+  const file = process.env.SIM_INJECT_FILE;
+  if (!file && SC === "S0") return rows;
+  ctx ??= file
+    ? readFile(file, "utf8").then(t => {
+        const j = JSON.parse(t);
+        return { log: j.log ?? [], bank: j.bank ?? [], redeem: j.redeem ?? [], dropBank: null, dropBankWeek: j.dropBankWeek ?? null };
+      })
+    : build();
   const c = await ctx;
   if (dsId === DS.log) return rows.concat(c.log);
   if (dsId === DS.bank) {
-    const kept = c.dropBank ? rows.filter(b => !c.dropBank.test(anyText(b, "事由"))) : rows;
+    const kept = rows.filter(b => !(c.dropBank && c.dropBank.test(anyText(b, "事由")))
+      && !(c.dropBankWeek && anyText(b, "週次") === c.dropBankWeek));
     return kept.concat(c.bank);
   }
   if (dsId === DS.redeem) return rows.concat(c.redeem);
