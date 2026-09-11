@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-11T00:52:23.578Z",
+  "fetchedAt": "2026-09-11T04:56:46.980Z",
   "items": [
     {
       "date": "2026-09-10",
@@ -38,12 +38,6 @@
       "dept": "學務處"
     },
     {
-      "date": "2026-09-09",
-      "title": "臺南市政府衛生局辦理青少年心理健康講座資訊",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=740&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
       "date": "2026-09-06",
       "title": "115學年度第一學期獎學金申請資訊",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=710&type=news&from_op=school_department_show",
@@ -59,6 +53,12 @@
       "date": "2026-08-26",
       "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!! (9/4報名名單公告!!!!!!請參閱附檔)",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-08-19",
+      "title": "115學年度第1學期課後才藝社團報名訊息，請留意報名日期及時間。(9/4報名錄取名單公告，未來科學班錄取名單更新)",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=606&type=news&from_op=school_department_show",
       "dept": "學務處"
     }
   ]
