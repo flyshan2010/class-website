@@ -28,6 +28,7 @@ on:
           - f25-clear-weekly-mock
           - f26-clear-weekly-focus
           - f27-prune-dangling-relations
+          - f28-prune-dangling-relations-all
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
