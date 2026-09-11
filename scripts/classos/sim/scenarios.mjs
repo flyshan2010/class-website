@@ -87,8 +87,7 @@ async function build() {
   const mine = (p, seat) => relIds(p, "學生").some(id => seatOf.get(id) === seat);
   const dateOf = p => (p.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
   // 與 f24 ⑤ 同一條判準：那天是否已經算「常規沒達成」
-  const missOn = (seat, day) => weekLogs.some(p => mine(p, seat) && dateOf(p) === day && (titleOf(p) === "常規未達成"
-    || (num(p, "金幣影響") && sel(p, "正負向") === "－" && ["生活指導", "生活技能"].includes(sel(p, "類別")))));
+  const missOn = (seat, day) => weekLogs.some(p => mine(p, seat) && dateOf(p) === day && titleOf(p) === "常規未達成");
 
   let X = null, D = null;
   for (const s of cleaners) {
