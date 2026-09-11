@@ -66,6 +66,11 @@ on:
         options:
           - "no"
           - "yes"
+      seat:
+        description: 「僅 f27」只處理此座號（留空＝全班）
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -88,4 +93,5 @@ jobs:
           PATH_MODE: ${{ inputs.path_mode }}
           NEW_CLASS: ${{ inputs.new_class }}
           BACKUP_DONE: ${{ inputs.backup_done }}
+          SEAT: ${{ inputs.seat }}
         run: node scripts/classos/${{ inputs.task }}.mjs

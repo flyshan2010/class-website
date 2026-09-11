@@ -5,22 +5,27 @@
  *      但名冊的關聯欄（🏦 銀行帳／📊 學習報告／📚 學期成績／🧭 輔導…）仍留著那些頁面 id，
  *      Notion 畫面顯示成一排「沒有存取權限」，老師誤以為學生資料不見了。
  *
+ * 關鍵事實（2026-09-11 第一版 dry-run 實測）：
+ *   官方 API 讀關聯時會「自動濾掉」已刪除的頁面——候選 0 筆，完全看不到死 id；
+ *   只有 Notion 畫面與 MCP fetch 看得到。所以無法「挑出死 id 再刪」，
+ *   改成：把 API 看得到的有效清單（＝全部存在的頁面）原樣寫回，覆蓋掉隱藏的死 id。
+ *
  * 目標終態：名冊每個關聯欄只剩真實存在的頁面；有效關聯一筆不少。
  *
- * 判定「死關聯」要同時滿足兩件事（缺一不刪）：
- *   ① 不在關聯目標資料庫的現存列裡（queryAll 撈全庫比對）
- *   ② 單頁 GET 回 404 object_not_found（還在垃圾桶的 in_trash 頁不算，保留不動）
- *
  * 安全設計：
- *   · 預設 dry-run；MODE=execute 才動手。
- *   · 寫入前逐頁「重讀當下關聯」再扣掉死關聯，避免蓋掉讀取後才新增的有效關聯。
+ *   · 預設 dry-run；MODE=execute 才動手。SEAT=座號 可只處理一位（先試一位再全班）。
+ *   · API 看得到的每個 id 都必須在目標庫現存列裡，否則中止（代表判讀前提不成立）。
+ *   · 寫入前逐欄「重讀當下關聯」再寫回，避免蓋掉讀取後才新增的有效關聯。
  *   · 關聯用 property item 端點分頁讀全（頁面 GET 只給前 25 筆）。
+ *   · 寫後回讀：每欄筆數與 id 集合必須與寫入前完全相同。
+ *   · 死 id 是否真的消失，API 看不到——由 Claude 用 MCP fetch 回讀名冊頁驗收。
  *   · Actions log 公開可讀：不印姓名、座號、頁面內容，只印欄名與筆數。
  */
 
-import { DS, api, apiOrThrow, queryAll, getSchema, updatePage, isExecute } from "./lib/notion.mjs";
+import { DS, apiOrThrow, queryAll, getSchema, propText, updatePage, isExecute } from "./lib/notion.mjs";
 
 const EXECUTE = isExecute();
+const SEAT = (process.env.SEAT ?? "").trim();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const norm = (id) => String(id).replace(/-/g, "");
 
@@ -54,63 +59,42 @@ for (const t of new Set(relProps.map((r) => r.target))) {
   live[t] = new Set((await queryAll(t)).map((p) => norm(p.id)));
 }
 
-// ── 3. 逐生讀關聯，找出候選 ────────────────────────────
-const roster = await queryAll(DS.roster);
-console.log(`名冊 ${roster.length} 位\n`);
-const current = []; // { pageId, prop, ids }
-const candidates = new Set();
+// ── 3. 名冊（可限定座號）與前提檢查 ─────────────────────
+let roster = await queryAll(DS.roster);
+if (SEAT) roster = roster.filter((p) => propText(p, "座號") === SEAT);
+if (!roster.length) { console.error("❌ 名冊沒有符合的學生，中止"); process.exit(1); }
+console.log(`範圍：${SEAT ? "單一學生" : "全班"} ${roster.length} 位\n`);
+
+const plan = []; // { pageId, prop, ids }
+let notLive = 0;
 for (const p of roster) {
   for (const r of relProps) {
     const ids = await readRelation(p.id, r.id);
-    current.push({ pageId: p.id, prop: r, ids });
-    for (const id of ids) if (!live[r.target].has(id)) candidates.add(id);
+    notLive += ids.filter((id) => !live[r.target].has(id)).length;
+    plan.push({ pageId: p.id, prop: r, ids });
   }
 }
+if (notLive) { console.error(`❌ API 讀到 ${notLive} 個不在目標庫的 id，與「API 會濾掉死 id」前提不符，中止`); process.exit(1); }
 
-// ── 4. 候選逐頁 GET 確認真的 404 ───────────────────────
-const dead = new Set();
-let inTrash = 0, unknown = 0;
-for (const id of candidates) {
-  const r = await api("GET", `/pages/${id}`);
-  if (r.status === 404 && r.json?.code === "object_not_found") dead.add(id);
-  else if (r.ok && (r.json?.in_trash || r.json?.archived)) inTrash++;
-  else unknown++;
-  await sleep(350);
-}
-console.log(`候選 ${candidates.size} 個 → 確認已永久刪除 ${dead.size}／仍在垃圾桶（保留）${inTrash}／無法判定（保留）${unknown}`);
-if (unknown) { console.error("❌ 有無法判定的頁面，為安全起見中止。"); process.exit(1); }
-
-// ── 5. 彙整計畫（只印欄名與筆數）────────────────────────
-const plan = current
-  .map((c) => ({ ...c, drop: c.ids.filter((id) => dead.has(id)) }))
-  .filter((c) => c.drop.length);
 const byProp = {};
-for (const c of plan) {
-  byProp[c.prop.name] ??= { students: 0, drop: 0 };
-  byProp[c.prop.name].students++;
-  byProp[c.prop.name].drop += c.drop.length;
-}
-console.log(`\n待清理：${new Set(plan.map((c) => c.pageId)).size} 位學生`);
-for (const [name, v] of Object.entries(byProp)) console.log(`    · ${name}：${v.students} 位，共移除 ${v.drop} 筆死關聯`);
-const keptTotal = current.reduce((s, c) => s + c.ids.filter((id) => !dead.has(id)).length, 0);
-console.log(`  有效關聯（保留不動）共 ${keptTotal} 筆`);
+for (const c of plan) byProp[c.prop.name] = (byProp[c.prop.name] ?? 0) + c.ids.length;
+console.log(`將原樣寫回 ${plan.length} 個關聯欄（有效 id 全數保留）：`);
+for (const [name, n] of Object.entries(byProp)) console.log(`    · ${name}：有效 ${n} 筆`);
 
-if (!plan.length) { console.log("\n✅ 無需處理。"); process.exit(0); }
 if (!EXECUTE) {
   console.log("\n🔍 DRY-RUN 結束，未異動任何資料。");
-  console.log("   確認上列數字無誤後，以 MODE=execute 重跑即移除死關聯。");
+  console.log("   以 MODE=execute 重跑即寫回，覆蓋隱藏的死關聯。");
   process.exit(0);
 }
 
-// ── 6. 寫入：重讀當下關聯 → 扣掉死關聯 → 寫回 ─────────────
-console.log("\n開始清理…\n");
+// ── 4. 寫入：重讀當下關聯 → 原樣寫回 ────────────────────
+console.log("\n開始寫回…\n");
 let ok = 0;
 const fail = [];
 const expected = []; // { pageId, prop, keep }
 for (const c of plan) {
   try {
-    const now = await readRelation(c.pageId, c.prop.id);
-    const keep = now.filter((id) => !dead.has(id));
+    const keep = await readRelation(c.pageId, c.prop.id);
     if (keep.length > 100) throw new Error(`「${c.prop.name}」有效關聯 ${keep.length} 筆超過單次寫入上限 100`);
     const r = await updatePage(c.pageId, { [c.prop.name]: { relation: keep.map((id) => ({ id })) } });
     if (!r.ok) throw new Error(`HTTP ${r.status} ${r.json?.code ?? ""}`);
@@ -124,21 +108,22 @@ for (const c of plan) {
 console.log(`  成功 ${ok}／失敗 ${fail.length}`);
 for (const f of fail) console.log(`    ❌ ${f}`);
 
-// ── 7. 回讀驗證 ─────────────────────────────────────────
+// ── 5. 回讀驗證：有效關聯一筆不少、不多 ─────────────────
 console.log("\n回讀驗證…");
-let residual = 0, lost = 0;
+let lost = 0, extra = 0;
 for (const e of expected) {
   const after = new Set(await readRelation(e.pageId, e.prop.id));
-  for (const id of after) if (dead.has(id)) residual++;
-  for (const id of e.keep) if (!after.has(id)) lost++;
+  const before = new Set(e.keep);
+  for (const id of before) if (!after.has(id)) lost++;
+  for (const id of after) if (!before.has(id)) extra++;
 }
-console.log(`  ${residual === 0 ? "✅" : "❌"} 死關聯殘留 ${residual} 筆`);
 console.log(`  ${lost === 0 ? "✅" : "❌"} 有效關聯遺失 ${lost} 筆`);
+console.log(`  ${extra === 0 ? "✅" : "❌"} 多出關聯 ${extra} 筆`);
 
 console.log("\n════════ 總結 ════════");
-if (!fail.length && residual === 0 && lost === 0) {
-  console.log(`結論：已移除 ${dead.size} 個已刪除頁面的舊關聯，名冊不再顯示「沒有存取權限」；有效關聯零遺失。`);
+if (!fail.length && lost === 0 && extra === 0) {
+  console.log(`結論：${ok} 個關聯欄已寫回，有效關聯零遺失。死 id 是否消失請以 MCP fetch 名冊頁驗收。`);
 } else {
-  console.log("結論：未完全清理或有遺失，需檢查上列項目。");
+  console.log("結論：未完全寫回或有遺失，需檢查上列項目。");
   process.exit(1);
 }
