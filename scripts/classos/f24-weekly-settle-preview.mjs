@@ -177,15 +177,12 @@ for (const s of lunchSeats) {
 const lunchTotal = lunchTimes * LUNCH_PAY;
 
 // ⑤ 班級常規獎勵：例外管理（本週有「常規未達成」負向紀錄才扣那天）────
-const ROUTINE_CATS = new Set(["生活指導", "生活技能"]);
+// 2026-09-11 老師定案「依行為分」：只有常規層的「常規未達成」（檢核台送出＝沒做、也沒補做）才扣那天；
+// 班規紀錄（遲到①、不肯重做的⑦、週結寫回的③…）只扣班規那一筆，不再連帶扣常規獎勵。
+// （舊版把「生活指導／生活技能類、有扣幣」的班規紀錄也當常規沒達成，第2週因此 4 人多扣 5 幣。）
 const missDays = new Map();             // 座號 → Set(日期)
-// 檢核台的「常規未達成」tally 金幣是 0，不在 logs 裡——要從 weekLogs 撈，否則潔牙沒做也照發全勤（2026-09-11 補）
 for (const l of weekLogs) {
-  // 週結寫回列（「第N週打掃未達標（X 次）」③−5 等，2026-09-11 起）日期是週末彙整日、不是當天行為——
-  // 算進來會讓 week-publish 入帳後重跑試算時，平白扣掉那天的 +1 與全勤
-  if (/^第\d+週/.test(titleOf(l))) continue;
-  const isTally = titleOf(l) === "常規未達成";
-  if (!isTally && !(num(l, "金幣影響") && sel(l, "正負向") === "－" && ROUTINE_CATS.has(sel(l, "類別")))) continue;
+  if (titleOf(l) !== "常規未達成") continue;
   const d = l.properties?.["日期"]?.date?.start;
   for (const sid of relIds(l, "學生")) {
     const s = seatOf.get(sid); if (!s || !d) continue;
