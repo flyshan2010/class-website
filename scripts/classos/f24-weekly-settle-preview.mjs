@@ -7,7 +7,7 @@
  * **本腳本永遠不寫「🏦 班級銀行帳本」**——它只算、只在「📥 任務收件匣」留一筆待審摘要。
  * 真正入帳仍走 Claude Code 對話的 /class-bank 週結（老師說「週結」時）。
  *
- * 週結五項（公式正本＝docs/班級銀行制度設計.md，與 class-bank SKILL 同源）：
+ * 週結六項（公式正本＝docs/班級銀行制度設計.md，與 class-bank SKILL 同源）：
  *   ① 職務薪水     名冊「週薪」
  *   ② 獎懲入帳     紀錄庫本週「金幣影響」≠0 且尚未入帳者（鍵＝紀錄id×學生id）
  *   ③ 打掃薪水     每人 max(0, 份數×5 ＋ 打掃支援 − 打掃缺席 − 打掃未達標 − 免打掃券使用) × 2 幣
@@ -15,6 +15,7 @@
  *                  （與 class-bank SKILL 同一條公式；固定支援 2026-09-10 廢止，支援只看當天指派）
  *   ④ 午餐工作薪水 固定崗 5 次 × 2 幣；輪值崗只有輪到那週算 5 次 × 2 幣
  *   ⑤ 班級常規獎勵 達成天數 × 1 ＋ 五天全到再 +3（例外管理：有常規未達成紀錄才扣那天）
+ *   ⑥ 作業完成獎勵 本週無作業類負向紀錄、且至少 1 天有「作業完成」tally → +5（一週一筆；本週無該 tally 一律不給）
  * 消費類（購物／兌換／捐款／臨時加減幣）是當天結，不在週結範圍。
  *
  * 午餐輪值輪次 =（該學期週次 −1）% 完整輪替週數 + 1，下學期從第 1 輪重新起算。
@@ -198,6 +199,20 @@ for (const r of (ROUTINE_ENABLED ? roster : [])) {
   if (miss) routineDetail.push(`座號${r.seat} 少 ${miss} 天`);
 }
 
+// ⑥ 作業完成獎勵：看全週一次給（class-bank SKILL 2026-09-06 定案，2026-09-11 補進試算）──
+// 判準＝本週沒有作業類負向紀錄（類別＝作業、正負向＝－，如 ④作業缺交）且至少 1 天有 `作業完成` tally → +5，一週一筆。
+// 本週一筆 `作業完成` tally 都沒有＝老師沒用檢核台清點作業，不是全班沒交——一律不給。
+const HW_PAY = 5;
+const hwBad = new Set();
+for (const l of weekLogs) {
+  if (sel(l, "類別") !== "作業" || sel(l, "正負向") !== "－") continue;
+  for (const sid of relIds(l, "學生")) { const s = seatOf.get(sid); if (s) hwBad.add(s); }
+}
+const hwDone = tallyBySeat("作業完成");
+const hwGive = hwDone.size ? roster.filter(r => hwDone.has(r.seat) && !hwBad.has(r.seat)).map(r => r.seat) : [];
+const hwNo = hwDone.size ? roster.map(r => r.seat).filter(s => !hwGive.includes(s)) : [];
+const hwTotal = hwGive.length * HW_PAY;
+
 // ── 防重複：①③④⑤ 本週是否已經入過帳（2026-09-04 新增）────────────
 /* ② 靠「紀錄id×學生id」防重複，①③④⑤ 原本完全沒有防線——只要公式跑得出來就照列，
    於是 09-04 手動發完薪水後，同日的試算又把同一筆 1115 幣列成「尚未入帳」。
@@ -220,14 +235,15 @@ const paid = {
   clean: paidOf(new RegExp(`^第${W}週打掃薪水`)),
   lunch: paidOf(new RegExp(`^第${W}週午餐工作薪水`)),
   routine: paidOf(new RegExp(`^第${W}週(班級)?常規獎勵`)),
+  hw: paidOf(new RegExp(`^第${W}週作業完成獎勵`)),
 };
 const mark = (p) => p.n ? `　⚠️ **已入帳 ${p.sum} 幣（${p.n} 筆），本次不重複計**` : "";
 
 // ── 報表 ────────────────────────────────────────────────────────
-const total = salary + rewardSum + cleanTotal + lunchTotal + routineTotal;
+const total = salary + rewardSum + cleanTotal + lunchTotal + routineTotal + hwTotal;
 // 實際還要入帳的＝扣掉已入過帳的那幾項（②本來就只算未入帳的）
 const due = (paid.job.n ? 0 : salary) + rewardSum + (paid.clean.n ? 0 : cleanTotal)
-  + (paid.lunch.n ? 0 : lunchTotal) + (paid.routine.n ? 0 : routineTotal);
+  + (paid.lunch.n ? 0 : lunchTotal) + (paid.routine.n ? 0 : routineTotal) + (paid.hw.n ? 0 : hwTotal);
 const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
@@ -237,6 +253,9 @@ const lines = [
   ROUTINE_ENABLED
     ? `⑤ 班級常規獎勵　${routineTotal} 幣${routineDetail.length ? `｜未全勤：${routineDetail.join("、")}` : "（全班全勤）"}${mark(paid.routine)}`
     : `⑤ 班級常規獎勵　**本週不計**（尚未開始逐日追蹤常規；要開啟改 f24 的 ROUTINE_ENABLED）`,
+  hwDone.size
+    ? `⑥ 作業完成獎勵　${hwTotal} 幣（${hwGive.length} 人）${hwNo.length ? `｜不給：座號 ${hwNo.join("、")}` : ""}${mark(paid.hw)}`
+    : `⑥ 作業完成獎勵　0 幣（本週無作業完成 tally，不給）${mark(paid.hw)}`,
   `　　　　　　　　合計 ${total} 幣`
   + (due === total ? "" : `\n　　　　　　　　**本次實際待入帳 ${due} 幣**（其餘已入帳，見上方 ⚠️）`),
   `確認無誤 → 在 Claude Code 說「週結」即入帳（**只入「待入帳」的部分**）；有問題就先改資料再說一次。`,
