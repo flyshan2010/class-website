@@ -116,6 +116,19 @@ for (const b of ledger) {
   }
 }
 
+// 診斷數字（只有筆數，不印事件描述——本 repo 是 public）：
+// 讓「② 到底是漏發還是舊帳」可以當場判斷，而不是靠猜。
+let bkWeekN = 0, bkWeekRel = 0;
+for (const b of ledger) {
+  const ty = sel(b, "類型");
+  if (ty !== "獎勵金" && ty !== "懲罰金") continue;
+  const bw = txt(b, "週次");
+  const d = (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
+  if (bw ? bw !== WEEK : !(d >= WEEK_FROM && d <= WEEK_TO)) continue;
+  bkWeekN++;
+  if (relIds(b, "紀錄庫").length) bkWeekRel++;
+}
+
 const weekLogs = (await queryAll(DS.log)).filter(p => txt(p, "週次") === WEEK);
 const logs = weekLogs.filter(p => num(p, "金幣影響"));
 let rewardN = 0, rewardSum = 0, oldN = 0, oldSum = 0;
@@ -352,7 +365,7 @@ if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {
 const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
-  `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）${
+  `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）｜本週紀錄庫有金幣的 ${logs.length} 列、帳本獎懲列 ${bkWeekN} 筆（其中 ${bkWeekRel} 筆有掛紀錄庫）${
     oldN ? `
 　　ℹ️ 另有 ${oldN} 筆／${oldSum} 幣是**舊帳**：帳本本週已有同學生、同金額、同事由的列，只是沒掛紀錄庫 relation（早期逐筆入帳的批次）——**已排除，不重複發**` : ""}`,
   `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes} − 免打掃券 ${freeTimes}${freeDup ? `（另 ${freeDup} 次同日已記缺席，不重扣）` : ""}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
