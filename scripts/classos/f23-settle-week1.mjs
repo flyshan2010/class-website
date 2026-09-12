@@ -1,4 +1,12 @@
 /**
+ * 🛑【已廢止 2026-09-12，不要再跑】改用 f29-settle-week-rewards.mjs
+ * ───────────────────────────────────────────────────────────────
+ * 廢止原因：本腳本是 2026-08-31 的一次性補結，`date >= FROM_DATE` **沒有結束日期上限**，
+ *   而且會把掃到的來源列「週次」正規化成第1週——2026-09-12 之後再跑會污染第2、3 週的資料。
+ *   f29 是它的安全超集：以「週次」欄圈定範圍、只建帳本列、不動來源列、execute 後回讀驗收。
+ * 檔案刻意保留不刪：2026-08-31 那次入帳的依據就是它，刪掉等於毀掉帳的來源說明。
+ * 已從 Phase F 選單移除（老師 2026-09-12 裁示）。腳本狀態總表見 scripts/classos/README.md。
+ *
  * f23｜第一週週結補結：把 8/28（返校日）與 8/31（開學日）的獎懲紀錄入帳
  * ───────────────────────────────────────────────────────────────
  * 背景（老師 2026-08-31 裁示）：紀錄庫累積 200+ 筆「金幣影響 ≠ 0」卻從未週結，
@@ -22,6 +30,13 @@
  * ⚠️ 本 repo 為 PUBLIC，Actions log 公開可讀——只印座號與金額，不印姓名與事件描述。
  */
 import { queryAll, api, updatePage, isExecute, DS, forEachThrottled } from "./lib/notion.mjs";
+
+if (process.env.ALLOW_DEPRECATED_F23 !== "yes") {
+  console.error("🛑 f23 已於 2026-09-12 廢止（沒有結束日期上限、且會改寫來源列的週次）。");
+  console.error("   要補某一週的獎懲請用 f29-settle-week-rewards（Phase F 選單第一項，需填 week）。");
+  console.error("   真的非跑不可時才設 ALLOW_DEPRECATED_F23=yes，並先確認你知道它會改到哪些列。");
+  process.exit(1);
+}
 
 const WEEK = "四上第1週(8/31-9/4)";
 const YEAR = "115";
