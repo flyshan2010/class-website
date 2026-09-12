@@ -10,6 +10,13 @@ name: 週五週結試算
 #    **原本的 16:00 cron 已移除**——同一件事跑兩次只會產生兩份要對照的數字。
 #    要手動補跑：Actions 上按 Run workflow，或在 Claude Code 說「跑週結試算」。
 on:
+  # 週五 14:30（台北）＝ 06:30 UTC。2026-09-12 恢復排程（老師回報「週五 15:00 什麼都沒自己跑」）：
+  # 原本靠本機 Claude 排程 friday-weekly-closeout 觸發，但那支不在現在這台電腦上，
+  # 等於週結試算與健檢都要老師自己記得跑。機器做得到的事不該綁在「電腦有沒有開」。
+  # 收件匣由雲端 routine 平日每小時清（最後一輪 14:00），所以 14:30 算的時候通常已清完；
+  # f24 冪等，本機排程若也跑只會刷新同一筆待審，不會疊第二張單子。
+  schedule:
+    - cron: "30 6 * * 5"
   workflow_dispatch:
     inputs:
       mode:
@@ -41,3 +48,10 @@ jobs:
           MODE: ${{ github.event.inputs.mode || 'execute' }}
           F24_TODAY: ${{ github.event.inputs.as_of }}
         run: node scripts/classos/f24-weekly-settle-preview.mjs
+
+      # 健檢紅燈要自己跑到老師眼前（收件匣），沒人會去翻 Actions log。全綠就不建列。
+      - name: 系統健檢 → 有紅燈才進收件匣
+        if: ${{ github.event_name == 'schedule' || inputs.mode == 'execute' }}
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: node scripts/classos/f30-health-to-inbox.mjs
