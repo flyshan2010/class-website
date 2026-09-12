@@ -121,8 +121,11 @@ await forEachThrottled(creates, async c => {
     parent: { type: "data_source_id", data_source_id: DS.bank },
     properties: c.props,
   });
-  if (res?.id) ok++;
-  else { fail++; console.error(`   ❌ 座號${c.seat} ${c.amt} 幣寫入失敗`); }
+  // ⚠️ lib 的 api() 回的是 { status, ok, json }，**不是** Notion 頁物件本身——
+  // 第一版寫 `res?.id` 判成功，於是 53 筆真的寫進去了卻全報「寫入失敗」（2026-09-12 踩到）。
+  // 回讀那一關救了這次：它看的是帳本實際筆數與防重複鍵，不是這裡的計數。
+  if (res.ok && res.json?.id) ok++;
+  else { fail++; console.error(`   ❌ 座號${c.seat} ${c.amt} 幣寫入失敗（HTTP ${res.status} ${res.json?.code ?? ""}）`); }
 });
 console.log(`\n✍️ 寫入完成：成功 ${ok} 筆／失敗 ${fail} 筆`);
 
