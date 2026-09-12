@@ -29,6 +29,7 @@ on:
           - f26-clear-weekly-focus
           - f27-prune-dangling-relations
           - f28-prune-dangling-relations-all
+          - f29-settle-week-rewards
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
@@ -72,6 +73,11 @@ on:
         required: false
         default: ""
         type: string
+      week:
+        description: 「僅 f29」要補結的週次標籤（逐字等於 weeks.json 的「標籤」，如 四上第1週(8/31-9/4)）
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -95,4 +101,5 @@ jobs:
           NEW_CLASS: ${{ inputs.new_class }}
           BACKUP_DONE: ${{ inputs.backup_done }}
           SEAT: ${{ inputs.seat }}
+          WEEK_LABEL: ${{ inputs.week }}
         run: node scripts/classos/${{ inputs.task }}.mjs
