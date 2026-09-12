@@ -11,7 +11,7 @@ on:
         required: true
         type: choice
         options:
-          - "[常用] f24 的入帳版 → f29-settle-week-rewards（補結某一週獎懲，需填 week）"
+          - "[常用] f29-settle-week-rewards（補結某一週的獎懲入帳，需填 week；f24 只試算不入帳）"
           - "[常用] f03-backfill-year（回填學年，同步被護欄擋下時跑這支）"
           - "[常用] f27-prune-dangling-relations（清死關聯・只做學生名冊・可填 seat 單人試跑）"
           - "[常用] f28-prune-dangling-relations-all（清死關聯・全庫 27 個庫，含名冊）"
