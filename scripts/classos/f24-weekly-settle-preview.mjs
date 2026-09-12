@@ -101,9 +101,15 @@ for (const b of ledger) {
   const amt = num(b, "金額");
   if (!amt) continue;
   if (relIds(b, "紀錄庫").length) continue; // 有 relation 的已由 settled 處理
+  // 認哪幾列算「本週」：優先用帳本自己的「週次」欄（補登入帳常常寫在下週一二，用日期會漏），
+  // 週次空白（代理 v2.6 以前寫的列）才退回日期區間。
+  const bw = txt(b, "週次");
   const d = (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
-  if (!(d >= WEEK_FROM && d <= WEEK_TO)) continue;
-  const reason = (b.properties?.["事由"]?.title ?? []).map(t => t.plain_text).join("").slice(0, 12);
+  if (bw ? bw !== WEEK : !(d >= WEEK_FROM && d <= WEEK_TO)) continue;
+  // 事由要去掉「座號N 」前綴：早期逐筆入帳的事由是「座號9 晨掃工作窗戶沒擦乾淨」，
+  // 紀錄庫的事件描述沒有那個前綴，不去掉就永遠對不上（2026-09-12 第一版就是這樣落空的）。
+  const reason = (b.properties?.["事由"]?.title ?? []).map(t => t.plain_text).join("")
+    .replace(/^座號\d+\s*/, "").slice(0, 12);
   for (const sid of relIds(b, "學生")) {
     const k = `${sid}|${amt}|${reason}`;
     altPaid.set(k, (altPaid.get(k) ?? 0) + 1);
