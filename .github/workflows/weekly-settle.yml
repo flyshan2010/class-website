@@ -20,6 +20,11 @@ on:
         options:
           - dry-run
           - execute
+      as_of:
+        description: 回溯試算的日期 yyyy-mm-dd（空白＝今天；**只在 dry-run 生效**，用來對帳「第N週應該發多少」）
+        required: false
+        default: ""
+        type: string
 
 jobs:
   settle-preview:
@@ -34,4 +39,5 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           # 週五收尾會帶 -f mode=execute（真的建待審任務）；手動 Run workflow 時照選單，預設 dry-run。
           MODE: ${{ github.event.inputs.mode || 'execute' }}
+          F24_TODAY: ${{ github.event.inputs.as_of }}
         run: node scripts/classos/f24-weekly-settle-preview.mjs

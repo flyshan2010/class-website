@@ -328,7 +328,10 @@
               ? `<button class="badge" disabled style="border:none;background:#f1f3f5;color:#999;cursor:not-allowed">🔒 未達條件</button>`
               : `<button class="badge rd-approve" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 核可</button>`}
             <button class="badge rd-reject" data-id="${App.esc(r.page_id)}" style="cursor:pointer;border:none;background:#ffe3e3;color:#c92a2a">❌ 駁回</button>
-            ${r.blocked ? `<br /><span class="meta" style="color:#c92a2a">🔒 ${App.esc(r.reason || "")}</span>` : ""}` : ""}
+            ${r.blocked ? `<br /><span class="meta" style="color:#c92a2a">🔒 ${App.esc(r.reason || "")}</span>` : ""}
+            ${typeof r.balance === "number" ? `<br /><span class="meta" style="${r.overspend ? "color:#c92a2a;font-weight:700" : ""}">🪙 餘額 ${r.balance} 幣${
+              r.pending_sum > r.price ? `　·　這位同學待處理合計 ${r.pending_sum} 幣` : ""}${
+              r.overspend ? "　⚠️ 合計已超過餘額，不可能全部核可——請和他確認要留哪幾項" : ""}</span>` : ""}` : ""}
           ${r.note ? `<br /><span class="meta">${App.esc(r.note)}</span>` : ""}
         </p>`).join("");
 
@@ -412,10 +415,12 @@
                   p.last_used ? `　最近 ${App.fmtDateShort(p.last_used)}` : ""}</span>
                 ${p.remaining > 0 && p.item === "創造提案權" ? `
                   <span class="badge" style="background:#e5dbff;color:#5f3dc4">✏️ 學生開始線上填寫時自動核銷</span>` : ""}
+                ${p.remaining > 0 && p.item === "命名權" ? `
+                  <span class="meta" style="display:block;color:#6c3483">🏷️ 名字由學生自己取（提案表二的「命名候選」欄）；老師把名稱實際改到 Notion 之後再按「使用一次」核銷。</span>` : ""}
                 ${p.remaining > 0 && p.item !== "創造提案權" ? (p.usable === false ? `
                   <button class="badge" disabled style="border:none;background:#f1f3f5;color:#999;cursor:not-allowed">🔒 現在不能用</button>
                   <span class="meta" style="color:#c92a2a">${App.esc(p.reason || "")}</span>` : `
-                  <button class="badge pv-use" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 使用一次</button>
+                  <button class="badge pv-use" data-id="${App.esc(p.page_id)}" data-item="${App.esc(p.item)}" style="cursor:pointer;border:none;background:#d3f9d8;color:#2b8a3e">✅ 使用一次</button>
 `) : ""}
                 ${p.remaining > 0 ? `
                   <button class="badge pv-void" data-id="${App.esc(p.page_id)}" style="cursor:pointer;border:none;background:#f1f3f5;color:#666">🚫 作廢</button>
@@ -434,6 +439,10 @@
         return res;
       };
       document.querySelectorAll(".pv-use").forEach(btn => btn.addEventListener("click", async () => {
+        // 命名權是「一次性行使」的券：按下去就核銷，但名字得先真的改上去，
+        // 否則券沒了、名字還沒掛（2026-09-12 端到端驗收時實際踩到）。先問一句，按錯還有 ↩️ 撤銷。
+        if (btn.dataset.item === "命名權" &&
+            !confirm("🏷️ 命名權：名字是學生在提案表二「命名候選」提出的。\n\n確認你已經把新名稱實際改到 Notion（班規／常規／商店品項）了嗎？\n按下「確定」＝這張券核銷。")) return;
         let res = await act(btn, "use_privilege", { page_id: btn.dataset.id },
           r => `✅ 座號 ${r.seat}「${r.item}」已扣 1 次，還剩 ${r.remaining}/${r.total} 次`);
         if (!res.ok && res.duplicate) {

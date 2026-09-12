@@ -1050,7 +1050,8 @@ async function syncBank() {
     .map(r => [r["品項"], { icon: r["圖示"] || "🎟️", note: r["說明"] || "" }]));
   const bySeatRoster = Object.fromEntries(roster.map(r => [Number(r["座號"]), r]));
   let privSkipped = 0;
-  const privRows = (await queryDataSource(DS.redeem)).map(props)
+  const redeemRows = (await queryDataSource(DS.redeem)).map(props);
+  const privRows = redeemRows
     .filter(r => r["狀態"] === "已完成" && Number(r["剩餘次數"]) > 0);
   for (const r of privRows) {
     const seat = Number(r["座號"]);
@@ -1070,6 +1071,23 @@ async function syncBank() {
     });
   }
 
+  // 待處理申請：學生按了「我要兌換」、老師還沒核可的。這筆錢還沒扣，但已經被「預定」掉了——
+  // 存摺要讓孩子看到「可用餘額＝餘額 − 待處理合計」，否則三筆各自看起來都買得起、
+  // 合計卻超過餘額（2026-09-12 抽查座號9：餘額 152、待處理 30＋100＋60＝190）。
+  for (const r of redeemRows.filter(r => r["狀態"] === "待處理")) {
+    const seat = Number(r["座號"]);
+    const stu = bySeatRoster[seat];
+    if (!stu) continue;
+    const acc = (accounts[seat] ||= {
+      seat, name: stu["姓名"], code: String(stu["查詢碼"]).trim(), balance: 0, tx: [],
+    });
+    (acc.pending ||= []).push({
+      name: r["品項"] || "",
+      price: Math.round(Number(r["價格"]) || 0),
+      at: r["申請時間"]?.start?.slice(0, 10) || "",
+    });
+  }
+
   const dir = path.join(DATA_DIR, "bank");
   await rm(dir, { recursive: true, force: true });
   await mkdir(dir, { recursive: true });
@@ -1078,7 +1096,7 @@ async function syncBank() {
     (acc.privileges ||= []).sort((a, b) => String(b.got).localeCompare(String(a.got)));
     const payload = await encryptReport(
       { name: acc.name, seat: acc.seat, balance: acc.balance, xp: acc.xp, xpMerit: acc.xpMerit,
-        tx: acc.tx, privileges: acc.privileges },
+        tx: acc.tx, privileges: acc.privileges, pending: acc.pending || [] },
       acc.code, acc.seat);
     await writeFile(path.join(dir, `${acc.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }

@@ -1,6 +1,18 @@
 /**
- * 班網教師專區代理 v2.5（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.6（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.6 升級步驟（2026-09-12，約 2 分鐘）──
+ *   本檔全部內容貼到 Apps Script 取代舊碼 →「部署」→「管理部署作業」→ 編輯 → 版本選「新版本」→ 部署（沿用原網址）。
+ *   不必新增指令碼屬性、不必改 Notion。
+ *   v2.6 修的是一個會讓學生誤會的漏洞（2026-09-12 抽查座號9 發現）：
+ *     **redeem_request 原本完全沒驗餘額**（只有核可時才驗），學生可以連送總額超過餘額的申請
+ *     （餘額 152，待處理 30＋100＋60＝190），畫面上每一項都還顯示「我要兌換」，看起來像可以無限買。
+ *     → 改為「可用餘額＝餘額 − 待處理申請合計」把關（0 幣品項不占額度；餘額查不到一律擋）。
+ *     → list_redeems 對待處理列多回 `balance`／`pending_sum`／`overspend`，教師端直接標紅。
+ *   v2.6 另補：代理寫進帳本的列（兌換扣款／退費／提案 XP）**補上「週次」**——原本一律空白，
+ *     那些錢在存摺與學習報告的週視圖裡會落在「無週次」。週次取班網 weeks.json（快取 6 小時），
+ *     查無（假期）就留空，不自行推算。
  *
  * ── v2.5 升級步驟（2026-09-10，約 2 分鐘）──
  *   本檔全部內容貼到 Apps Script 取代舊碼 →「部署」→「管理部署作業」→ 編輯 → 版本選「新版本」→ 部署（沿用原網址）。
@@ -282,12 +294,16 @@ function redeemRequest_(props, body) {
       { property: "座號", number: { equals: seat } },
       { property: "狀態", select: { equals: "待處理" } },
     ] },
-    page_size: MAX_PENDING_PER_SEAT,
+    page_size: 100, // v2.6：要算「待處理合計」，不能只抓到上限筆數就停
   });
   if (pending.code !== 200) return { ok: false, error: "系統忙碌，請稍後再試（申請查詢 " + pending.code + "）" };
-  if ((pending.data.results || []).length >= MAX_PENDING_PER_SEAT) {
+  const pendingRows = pending.data.results || [];
+  if (pendingRows.length >= MAX_PENDING_PER_SEAT) {
     return { ok: false, error: "你已經有 " + MAX_PENDING_PER_SEAT + " 筆申請在等老師確認，先等結果再申請喔！" };
   }
+  const pendingSum = pendingRows.reduce(function (n, pg) {
+    return n + Math.round(Number(((pg.properties || {})["價格"] || {}).number) || 0);
+  }, 0);
 
   // 3) 品項與價格以 Notion 商店為準（不信任前端）
   const item = notionV_(token, "pages/" + itemId, "get", null, NOTION_VERSION_DS);
@@ -313,6 +329,23 @@ function redeemRequest_(props, body) {
   const today = today_();
   const elig = redeemEligibility_(token, stu.id, itemName, unlockOf_(ip), mondayOf_(today), today, null);
   if (elig.reason) return { ok: false, blocked: true, error: "還沒辦法兌換「" + itemName + "」：" + elig.reason };
+
+  // 3c) v2.6 可用餘額把關：餘額要先扣掉「已送出、還沒核可」的申請，剩下的才是這次能花的錢。
+  //     少了這關，學生可以連送好幾筆總額超過餘額的申請，畫面上每一項都還顯示得起
+  //     （2026-09-12 抽查座號9：餘額 152 幣，待處理三筆合計 190 幣），
+  //     等老師核可才發現不夠——錯誤要在孩子按下去的那一刻就說清楚，不要留到核可才爆。
+  //     0 幣品項（🧪 創造提案權等）不占額度；查不到餘額一律擋（fail-closed）。
+  if (price > 0) {
+    const finNow = elig.fin || studentFinance_(token, stu.id);
+    if (!finNow) return { ok: false, error: "系統忙碌，請稍後再試（餘額計算失敗）" };
+    const avail = finNow.balance - pendingSum;
+    if (price > avail) {
+      return { ok: false, insufficient: true, balance: finNow.balance, pending: pendingSum, available: avail,
+        error: pendingSum > 0
+          ? "可以用的錢不夠：你有 " + finNow.balance + " 幣，其中 " + pendingSum + " 幣是還在等老師確認的申請，現在只能用 " + avail + " 幣；「" + itemName + "」要 " + price + " 幣，還差 " + (price - avail) + " 幣。等老師處理完前面的申請再來喔！"
+          : "崑山幣還不夠：你有 " + finNow.balance + " 幣，「" + itemName + "」要 " + price + " 幣，還差 " + (price - finNow.balance) + " 幣。" };
+    }
+  }
 
   // 4) 建申請列（購買明細正本；狀態=待處理）
   const res = notionV_(token, "pages", "post", {
@@ -362,6 +395,14 @@ function listRedeems_(props, body) {
       created: page.created_time,
       processed: (((p["處理時間"] || {}).date) || {}).start || "",
     };
+    // v2.6：待處理的申請帶回該生餘額，教師端才看得出「這幾筆合計已超過他的錢」
+    if (r.status === "待處理" && r.seat) {
+      if (!(r.seat in students)) students[r.seat] = findStudent_(token, r.seat);
+      if (students[r.seat]) {
+        if (!fins[r.seat]) fins[r.seat] = studentFinance_(token, students[r.seat].id);
+        if (fins[r.seat]) r.balance = fins[r.seat].balance;
+      }
+    }
     // v2.5：待處理的申請先判資格，教師專區核可鈕據此反灰（核可時伺服器仍會再驗一次）
     if (r.status === "待處理" && r.seat) {
       const storeId = ((p["商店頁ID"] || {}).rich_text || []).map(t => t.plain_text).join("").trim();
@@ -381,6 +422,18 @@ function listRedeems_(props, body) {
       }
     }
     return r;
+  });
+
+  // v2.6：同座號「待處理」價格合計。三筆各自都買得起、合計超過餘額是真實案例
+  // （2026-09-12 抽查座號9：餘額 152、待處理 190），老師要一眼看得出來，不能等核可才擋。
+  const sums = {};
+  items.forEach(function (r) {
+    if (r.status === "待處理" && r.seat) sums[r.seat] = (sums[r.seat] || 0) + (Number(r.price) || 0);
+  });
+  items.forEach(function (r) {
+    if (r.status !== "待處理" || !r.seat) return;
+    r.pending_sum = sums[r.seat] || 0;
+    if (typeof r.balance === "number") r.overspend = r.pending_sum > r.balance;
   });
   return { ok: true, items: items };
 }
@@ -437,6 +490,7 @@ function approveRedeem_(props, body) {
       "金額": { number: -price },
       "類型": { select: { name: "消費" } },
       "日期": { date: { start: today } },
+      "週次": { rich_text: [{ text: { content: weekLabel_(today) } }] }, // v2.6：空白會讓這筆落在「無週次」
       "學年": { select: { name: schoolYear_() } }, // 學年鐵則：空值會讓班網同步標紅中止
     },
   }, NOTION_VERSION_DS);
@@ -705,6 +759,7 @@ function refundPrivilege_(props, body) {
         "金額": { number: cur.price },
         "類型": { select: { name: "調整" } },
         "日期": { date: { start: today_() } },
+        "週次": { rich_text: [{ text: { content: weekLabel_(today_()) } }] }, // v2.6
         "學年": { select: { name: schoolYear_() } }, // 學年鐵則：空值會讓班網同步標紅中止
       },
     }, NOTION_VERSION_DS);
@@ -1094,6 +1149,7 @@ function proposalReward_(token, v, amount, reason) {
       "金額": { number: amount },
       "類型": { select: { name: "獎勵金" } }, // 獎勵金＝貢獻 XP（sync-notion.mjs XP_MERIT_TYPES）
       "日期": { date: { start: today_() } },
+      "週次": { rich_text: [{ text: { content: weekLabel_(today_()) } }] }, // v2.6
       "學年": { select: { name: schoolYear_() } },
     },
   }, NOTION_VERSION_DS);
@@ -1404,6 +1460,39 @@ function notionV_(token, path, method, payload, version) {
 }
 
 // 學年欄位鐵則：西元年 − 1911 −（月份 < 8 ? 1 : 0）；以寫入當下的台北時間為準
+// ── v2.6 週次：帳本列的「週次」不能空 ───────────────────────────────────────
+// 為什麼要補：存摺與學習報告是按「週次」字串分組的，代理寫的列（兌換扣款、退費、提案 XP）
+// 原本全部留空，那些錢就落在「無週次」，老師與家長在週視圖裡看不到（2026-09-12 抽查發現）。
+// 唯一出處＝班網 weeks.json（不自行推算，寫法一漂就整批對不上）；查無（假期）就留空，不亂填。
+const WEEKS_URL = "https://flyshan2010.github.io/class-website/data/weeks.json";
+function weekLabel_(dateStr) {
+  const d = String(dateStr || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return "";
+  const cache = CacheService.getScriptCache();
+  let raw = cache.get("weeks_json");
+  if (!raw) {
+    try {
+      const res = UrlFetchApp.fetch(WEEKS_URL, { muteHttpExceptions: true });
+      if (res.getResponseCode() !== 200) return "";
+      raw = res.getContentText();
+      cache.put("weeks_json", raw, 21600); // 6 小時；週次表一學期才變一次
+    } catch (e) { return ""; }
+  }
+  let data;
+  try { data = JSON.parse(raw); } catch (e) { return ""; }
+  const terms = (data && data["學期"]) || [];
+  for (let i = 0; i < terms.length; i++) {
+    const weeks = terms[i]["週"] || [];
+    for (let j = 0; j < weeks.length; j++) {
+      const w = weeks[j];
+      if (w["起"] && w["迄"] && d >= w["起"] && d <= w["迄"]) return w["標籤"] || "";
+      const pre = w["預排日"] || [];
+      for (let k = 0; k < pre.length; k++) if (String(pre[k]).slice(0, 10) === d) return w["標籤"] || "";
+    }
+  }
+  return "";
+}
+
 function schoolYear_() {
   const now = new Date();
   const y = Number(Utilities.formatDate(now, "Asia/Taipei", "yyyy"));

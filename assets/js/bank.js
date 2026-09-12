@@ -48,7 +48,11 @@
   };
 
   // 登入狀態（成功解密存摺後才有；兌換申請需要 座號＋查詢碼＋餘額）
-  let session = null; // { seat, code, balance }
+  let session = null; // { seat, code, balance, pending, xp, xpMerit }
+  // pending＝已送出、老師還沒處理的申請金額合計。**可用餘額＝balance − pending**——
+  // 只比單筆價格與餘額的話，孩子可以連送三筆各自都「買得起」、合計卻超過餘額的申請
+  // （2026-09-12 抽查座號9：餘額 152、待處理 30＋100＋60＝190），畫面看起來像可以無限買。
+  const avail = () => (session ? session.balance - (session.pending || 0) : 0);
 
   // 這台裝置本節課已申請過的品項（防連按重複申請；代理端另有 3 筆待處理上限）
   const requestedKey = item => `bankRedeem:${session?.seat}:${item.id}`;
@@ -86,7 +90,12 @@
         if (session.xpMerit < (i.unlockMerit || 0)) lack.push(`貢獻 XP ${i.unlockMerit - session.xpMerit}`);
         if (lack.length) return `<button class="store-buy" disabled title="還沒解鎖">🔒 還差 ${lack.join("／")}</button>`;
       }
-      if (session.balance < i.price) return `<button class="store-buy" disabled title="崑山幣還不夠">🪙 還差 ${i.price - session.balance} 幣</button>`;
+      if (avail() < i.price) {
+        const lack = i.price - avail();
+        return session.pending
+          ? `<button class="store-buy" disabled title="餘額 ${session.balance} 幣，其中 ${session.pending} 幣的申請還在等老師確認">🪙 還差 ${lack} 幣（${session.pending} 幣已被申請占用）</button>`
+          : `<button class="store-buy" disabled title="崑山幣還不夠">🪙 還差 ${lack} 幣</button>`;
+      }
       return `<button class="store-buy" data-id="${App.esc(i.id)}">🛒 我要兌換</button>`;
     };
     const cards = tier => store.filter(i => (i.tier || "② 活動特權・消費型") === tier).map(i => `
@@ -163,6 +172,21 @@
           if (res.ok) {
             sessionStorage.setItem(requestedKey(item), "1");
             btn.textContent = "🕐 已申請，等老師確認";
+            // 這一筆立刻占用額度：不等下次同步，其他品項的鈕馬上跟著重算
+            session.pending = (session.pending || 0) + (Number(item.price) || 0);
+            document.querySelectorAll(".store-buy[data-id]").forEach(b => {
+              const it = store.find(x => x.id === b.dataset.id);
+              if (!it || b === btn || b.disabled) return;
+              if (avail() < it.price) {
+                b.disabled = true;
+                b.textContent = `🪙 還差 ${it.price - avail()} 幣（${session.pending} 幣已被申請占用）`;
+              }
+            });
+            const availEl = document.getElementById("bk-avail");
+            if (availEl) {
+              availEl.textContent = `其中 🪙 ${session.pending} 幣的申請正在等老師確認，現在可用 🪙 ${avail()} 幣`;
+              availEl.hidden = false;
+            }
           } else {
             btn.disabled = false; btn.textContent = "🛒 我要兌換";
             alert(res.error || "申請失敗，請稍後再試");
@@ -241,6 +265,7 @@
         const acc = await decrypt(await res.json(), seat, code);
         // xp／xpMerit：舊存摺檔沒有這兩欄時為 null，前端就不反灰（代理端仍會擋）
         session = { seat: Number(seat), code, balance: acc.balance,
+          pending: (acc.pending || []).reduce((n, x) => n + (Number(x.price) || 0), 0),
           xp: Number.isFinite(acc.xp) ? acc.xp : null, xpMerit: Number.isFinite(acc.xpMerit) ? acc.xpMerit : null };
         showPassbook(acc);
       } catch (err) {
@@ -274,6 +299,13 @@
             <span>目前餘額</span>
             <strong>🪙 ${acc.balance}</strong>
           </div>
+          ${(acc.pending || []).length ? `<p class="meta" style="flex-basis:100%;margin:6px 0 0">🕐 等老師確認：${
+            acc.pending.map(x => `${App.esc(x.name)} 🪙 ${x.price}`).join("、")}</p>` : ""}
+          <p class="meta" id="bk-avail" style="flex-basis:100%;color:#c77700;margin:2px 0 0"${
+            session && session.pending ? "" : " hidden"}>${
+            session && session.pending
+              ? `其中 🪙 ${session.pending} 幣的申請正在等老師確認，現在可用 🪙 ${avail()} 幣`
+              : ""}</p>
           <button id="bank-exit" class="report-exit">🔒 離開</button>
         </div>
         ${acc.tx.length ? `
