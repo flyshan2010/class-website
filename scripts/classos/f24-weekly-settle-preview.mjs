@@ -54,7 +54,12 @@ const seatsOf = s => String(s ?? "").split(/[,、，\s]+/)
   .map(Number).filter(n => Number.isInteger(n) && n > 0);
 
 // ── 本週是哪一週（單一出處：data/weeks.json）────────────────────────
-const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
+// F24_TODAY：回溯試算用（「第N週應該發多少」對帳）。**只在非 execute 模式生效**——
+// 帶著假日期去 execute 會把待審任務寫到錯誤的週次（2026-09-12 加入時就先擋掉這條路）。
+const AS_OF = process.env.MODE !== "execute" && /^\d{4}-\d{2}-\d{2}$/.test(process.env.F24_TODAY || "")
+  ? process.env.F24_TODAY : "";
+const today = AS_OF || new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
+if (AS_OF) console.log(`🕰️ 回溯試算（只讀）：以 ${AS_OF} 當作「今天」`);
 const weeksFile = await readJSON("weeks.json");
 let WEEK = null, TERM_NO = null, WEEK_FROM = null, WEEK_TO = null;
 for (const t of weeksFile.學期 ?? []) {
