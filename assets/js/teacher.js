@@ -439,15 +439,22 @@
         return res;
       };
       document.querySelectorAll(".pv-use").forEach(btn => btn.addEventListener("click", async () => {
-        // 命名權是「一次性行使」的券：按下去就核銷，但名字得先真的改上去，
-        // 否則券沒了、名字還沒掛（2026-09-12 端到端驗收時實際踩到）。先問一句，按錯還有 ↩️ 撤銷。
-        if (btn.dataset.item === "命名權" &&
-            !confirm("🏷️ 命名權：名字是學生在提案表二「命名候選」提出的。\n\n確認你已經把新名稱實際改到 Notion（班規／常規／商店品項）了嗎？\n按下「確定」＝這張券核銷。")) return;
-        let res = await act(btn, "use_privilege", { page_id: btn.dataset.id },
-          r => `✅ 座號 ${r.seat}「${r.item}」已扣 1 次，還剩 ${r.remaining}/${r.total} 次`);
+        // 命名權：按「使用一次」跳輸入框，老師把學生提的名字打進去才核銷（老師 2026-09-12 指示）。
+        // 券的行使結果就是那個名字——不記下來，券用掉了也查不到當初命名什麼；空白不送，誤觸也不會吃掉券。
+        // 代理端同樣要求命名權必須帶 note（fail-closed，前端繞不過）。
+        let useNote = "";
+        if (btn.dataset.item === "命名權") {
+          const ans = prompt("🏷️ 命名權核銷：請輸入這次要掛上的名稱\n（學生在提案表二「命名候選」提的，老師裁定後的正式名稱）\n\n※ 記得先把這個名字實際改到 Notion（班規／常規／商店品項），按下就核銷。", "");
+          if (ans === null) return;
+          useNote = String(ans).trim();
+          if (!useNote) { alert("❌ 沒有輸入名稱，這張券保留未動。"); return; }
+          useNote = "命名＝" + useNote;
+        }
+        let res = await act(btn, "use_privilege", { page_id: btn.dataset.id, note: useNote },
+          r => `✅ 座號 ${r.seat}「${r.item}」已扣 1 次，還剩 ${r.remaining}/${r.total} 次${useNote ? `（已記：${useNote}）` : ""}`);
         if (!res.ok && res.duplicate) {
           if (confirm(`${res.error}。\n確定要再扣一次嗎？`)) {
-            res = await api("use_privilege", { page_id: btn.dataset.id, force: true }).catch(() => ({ ok: false, error: "連線失敗" }));
+            res = await api("use_privilege", { page_id: btn.dataset.id, force: true, note: useNote }).catch(() => ({ ok: false, error: "連線失敗" }));
             if (res.ok) alert(`✅ 座號 ${res.seat}「${res.item}」已扣 1 次，還剩 ${res.remaining}/${res.total} 次`);
             else alert(`❌ ${res.error || "操作失敗"}`);
           }
