@@ -132,6 +132,7 @@ for (const b of ledger) {
 const weekLogs = (await queryAll(DS.log)).filter(p => txt(p, "週次") === WEEK);
 const logs = weekLogs.filter(p => num(p, "金幣影響"));
 let rewardN = 0, rewardSum = 0, oldN = 0, oldSum = 0;
+const dueBySeat = new Map(); // 待入帳的座號 → 金額小計（只印座號與金額，供老師抽查）
 for (const l of logs) {
   const amt = num(l, "金幣影響");
   const desc = (l.properties?.["事件描述"]?.title ?? []).map(t => t.plain_text).join("").slice(0, 12);
@@ -141,6 +142,8 @@ for (const l of logs) {
     const left = altPaid.get(k) ?? 0;
     if (left > 0) { altPaid.set(k, left - 1); oldN++; oldSum += amt; continue; } // 舊帳：已發過，只是沒掛 relation
     rewardN++; rewardSum += amt;
+    const seatDue = seatOf.get(sid);
+    if (seatDue) dueBySeat.set(seatDue, (dueBySeat.get(seatDue) ?? 0) + amt);
   }
 }
 
@@ -366,6 +369,8 @@ const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）｜本週紀錄庫有金幣的 ${logs.length} 列、帳本獎懲列 ${bkWeekN} 筆（其中 ${bkWeekRel} 筆有掛紀錄庫）${
+    dueBySeat.size ? `
+　　待入帳明細：${[...dueBySeat.entries()].sort((a, b) => a[0] - b[0]).map(([s2, v]) => `座號${s2} ${v >= 0 ? "+" : ""}${v}`).join("、")}` : ""}${
     oldN ? `
 　　ℹ️ 另有 ${oldN} 筆／${oldSum} 幣是**舊帳**：帳本本週已有同學生、同金額、同事由的列，只是沒掛紀錄庫 relation（早期逐筆入帳的批次）——**已排除，不重複發**` : ""}`,
   `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes} − 免打掃券 ${freeTimes}${freeDup ? `（另 ${freeDup} 次同日已記缺席，不重扣）` : ""}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
