@@ -89,12 +89,26 @@ const settled = new Set();
 for (const b of ledger) {
   for (const lid of relIds(b, "紀錄庫")) for (const sid of relIds(b, "學生")) settled.add(`${lid}|${sid}`);
 }
+// 舊帳護欄（2026-09-12）：② 的防重複完全靠「帳本列有掛『紀錄庫』relation」。
+// 開始掛 relation 之前的舊帳（例：四上第1週逐筆入帳的 489 列都沒掛）比對不到，
+// 會被判成「尚未入帳」——回溯試算第1週就跑出 420 幣／54 筆的假缺口。
+// 照著入帳＝全班重發。所以：**取帳本第一筆有掛 relation 的日期當分界**，
+// 更早的紀錄一律另列「舊帳・需人工」，不進待入帳合計。日期由資料自己長出來，不寫死。
+const relLedgerDates = ledger
+  .filter(b => relIds(b, "紀錄庫").length)
+  .map(b => (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10))
+  .filter(Boolean)
+  .sort();
+const RELATION_SINCE = relLedgerDates[0] ?? "9999-12-31";
+
 const weekLogs = (await queryAll(DS.log)).filter(p => txt(p, "週次") === WEEK);
 const logs = weekLogs.filter(p => num(p, "金幣影響"));
-let rewardN = 0, rewardSum = 0;
+let rewardN = 0, rewardSum = 0, oldN = 0, oldSum = 0;
 for (const l of logs) {
+  const ld = (l.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
   for (const sid of relIds(l, "學生")) {
     if (settled.has(`${l.id}|${sid}`)) continue;
+    if (ld && ld < RELATION_SINCE) { oldN++; oldSum += num(l, "金幣影響"); continue; }
     rewardN++; rewardSum += num(l, "金幣影響");
   }
 }
@@ -269,10 +283,60 @@ const total = salary + rewardSum + cleanTotal + lunchTotal + routineTotal + hwTo
 // 實際還要入帳的＝扣掉已入過帳的那幾項（②本來就只算未入帳的；⑦ 已入帳者必有寫回列，已在上面排除）
 const due = (paid.job.n ? 0 : salary) + rewardSum + (paid.clean.n ? 0 : cleanTotal)
   + (paid.lunch.n ? 0 : lunchTotal) + (paid.routine.n ? 0 : routineTotal) + (paid.hw.n ? 0 : hwTotal) + badTotal;
+// ── 🎈 通膨體檢（2026-09-12 老師指示自動化）───────────────────────────────
+/* 為什麼要做：作業完成 +5 之類的定額不是失衡主因（占總收入約 9%），真正會讓獎勵失去意義的是
+   「錢一直進、沒什麼出去」。兩週實測：總收入 5427 幣、總支出只 730 幣（12.4%），
+   平均餘額 174 幣 ≈ 商店中位價的 3 倍——什麼都買得起，特權就不特別了。
+   所以每週試算順手算兩個數字，過線才出聲（沒過線只印一行，不要變成每週都在喊的罐頭警示）。
+   指標一：當週消費÷當週收入（低＝錢只進不出）
+   指標二：全班平均餘額÷商店中位價（>3 就該動手，門檻由老師 2026-09-12 裁定） */
+const INFL_RATIO_LIMIT = 3;     // 平均餘額 ÷ 商店中位價
+const INFL_SPEND_FLOOR = 0.15;  // 當週消費÷收入 低於這個值＝錢幾乎沒流出
+const inWeek = b => {
+  const d = (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
+  return d >= WEEK_FROM && d <= WEEK_TO;
+};
+let wkIn = 0, wkOut = 0, balAll = 0;
+for (const b of ledger) {
+  const amt = num(b, "金額") ?? 0;
+  balAll += amt;
+  if (!inWeek(b)) continue;
+  if (amt > 0) wkIn += amt; else wkOut += -amt;
+}
+const storeRows = (await queryAll(DS.store))
+  .filter(p => p.properties?.["上架"]?.checkbox && (num(p, "價格") ?? 0) > 0);
+const prices = storeRows.map(p => num(p, "價格")).sort((a, b) => a - b);
+const median = prices.length
+  ? (prices.length % 2 ? prices[(prices.length - 1) / 2]
+    : Math.floor((prices[prices.length / 2 - 1] + prices[prices.length / 2]) / 2 + 0.5))
+  : 0;
+const avgBal = roster.length ? Math.floor(balAll / roster.length + 0.5) : 0;
+const ratio = median ? avgBal / median : 0;
+const spendRate = wkIn ? wkOut / wkIn : 0;
+const hot = storeRows
+  .filter(p => (num(p, "價格") ?? 0) >= median)
+  .map(p => `${(p.properties?.["品項"]?.title ?? []).map(t => t.plain_text).join("")} ${num(p, "價格")}`);
+const inflLines = [];
+inflLines.push(`🎈 通膨體檢　平均餘額 ${avgBal} 幣 ÷ 商店中位價 ${median} 幣＝**${ratio.toFixed(1)} 倍**`
+  + `（門檻 ${INFL_RATIO_LIMIT}）｜本週收入 ${wkIn} 幣、支出 ${wkOut} 幣＝流出率 ${(spendRate * 100).toFixed(0)}%`);
+if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {
+  inflLines.push(`　⚠️ **過線了**${ratio > INFL_RATIO_LIMIT ? "（餘額太厚：什麼都買得起，特權就不特別了）" : ""}`
+    + `${wkIn > 0 && spendRate < INFL_SPEND_FLOOR ? "（流出率太低：錢只進不出）" : ""}`);
+  inflLines.push(`　建議三選一（都不必改公式，動商店就好）：`);
+  inflLines.push(`　　① **提高高階特權比重**：現在 ≥ 中位價的品項 ${hot.length} 項──${hot.slice(0, 6).join("、")}${hot.length > 6 ? "…" : ""}。加 1～2 項 150–200 幣的（要存好幾週才換得到），讓存錢重新有目標`);
+  inflLines.push(`　　② **開消耗管道**：班級共同目標捐款（🏦 帳本類型＝消費、事由「捐款 班級共同目標」），把個人餘額變成全班的東西`);
+  inflLines.push(`　　③ **熱門特權調價**：一直有人換的那幾張往上調 10–20 幣（改 🏪 商店「價格」即可，已發出的券不受影響）`);
+  inflLines.push(`　　※ 不建議的做法：減少薪水或獎勵金——那會讓「做事有回報」這件事變得不可靠，比通膨更傷`);
+} else {
+  inflLines.push(`　✅ 在合理範圍，不必調整。`);
+}
+
 const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
-  `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）`,
+  `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）${
+    oldN ? `
+　　⚠️ 另有 ${oldN} 筆／${oldSum} 幣是 ${RELATION_SINCE} 之前的**舊帳**（那時帳本列還沒掛紀錄庫 relation，比對不到）——**不列入待入帳，也不要照著發**；要確認請抽該週紀錄庫幾列，看帳本有沒有同事由同金額的列` : ""}`,
   `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes} − 免打掃券 ${freeTimes}${freeDup ? `（另 ${freeDup} 次同日已記缺席，不重扣）` : ""}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
   `④ 午餐工作薪水　${lunchTotal} 幣（${lunchTimes} 次 × ${LUNCH_PAY}＝固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}，支援 ${sumMap(lunchSup)} − 缺席 ${sumMap(lunchAbs)}）${mark(paid.lunch)}`,
   ROUTINE_ENABLED
@@ -287,6 +351,7 @@ const lines = [
   `　　　　　　　　合計 ${total} 幣`
   + (due === total ? "" : `\n　　　　　　　　**本次實際待入帳 ${due} 幣**（其餘已入帳，見上方 ⚠️）`),
   `確認無誤 → 在 Claude Code 說「週結」即入帳（**只入「待入帳」的部分**）；有問題就先改資料再說一次。`,
+  ...inflLines,
 ];
 console.log("\n" + lines.join("\n"));
 

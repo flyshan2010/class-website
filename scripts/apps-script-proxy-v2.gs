@@ -670,6 +670,12 @@ function usePrivilege_(props, body) {
   }
 
   const note = String(body.note || "").trim().slice(0, 60);
+  // v2.6 命名權：必須連同「命名內容」一起送才算核銷（老師 2026-09-12 指示）。
+  // 這張券的行使結果就是那個名字——沒記下來，券沒了也查不到當初命名什麼；
+  // 也順便讓誤觸不會吃掉券（前端會跳輸入框，空白就不送）。
+  if (cur.item === NAMING_TICKET && !note) {
+    return { ok: false, error: "命名權要連同「命名內容」一起送才能核銷：請輸入學生提案表二的命名候選（老師裁定後的正式名稱）" };
+  }
   const res = notionV_(token, "pages/" + pageId, "patch", {
     properties: {
       "剩餘次數": { number: cur.remaining - 1 },
