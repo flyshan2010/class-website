@@ -350,6 +350,22 @@ const spendRate = wkIn ? wkOut / wkIn : 0;
 const hot = storeRows
   .filter(p => (num(p, "價格") ?? 0) >= median)
   .map(p => `${(p.properties?.["品項"]?.title ?? []).map(t => t.plain_text).join("")} ${num(p, "價格")}`);
+/* 班級共同目標的啟用條件（老師 2026-09-12 裁定：現在先讓學生熟悉兌換系統，期中考後再開）：
+   **期中考後** 且（兌換過的學生 ≥ 80% 或 兌換總額 ≥ 發出總額 50%）。
+   條件是數字，就該由機器盯——不然「等使用量上來再開」會變成沒人記得的一句話。 */
+const GOAL_USER_RATE = 0.8, GOAL_SPEND_RATE = 0.5;
+const spenders = new Set();
+let spentAll = 0, issuedAll = 0;
+for (const b of ledger) {
+  const amt = num(b, "金額") ?? 0;
+  if (amt > 0) { issuedAll += amt; continue; }
+  if (sel(b, "類型") !== "消費") continue;   // 懲罰金不算「花掉」，那是扣款
+  spentAll += -amt;
+  for (const sid of relIds(b, "學生")) { const s2 = seatOf.get(sid); if (s2) spenders.add(s2); }
+}
+const userRate = roster.length ? spenders.size / roster.length : 0;
+const spendAllRate = issuedAll ? spentAll / issuedAll : 0;
+
 const inflLines = [];
 inflLines.push(`🎈 通膨體檢　平均餘額 ${avgBal} 幣 ÷ 商店中位價 ${median} 幣＝**${ratio.toFixed(1)} 倍**`
   + `（門檻 ${INFL_RATIO_LIMIT}）｜本週收入 ${wkIn} 幣、支出 ${wkOut} 幣＝流出率 ${(spendRate * 100).toFixed(0)}%`);
@@ -364,6 +380,12 @@ if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {
 } else {
   inflLines.push(`　✅ 在合理範圍，不必調整。`);
 }
+inflLines.push(`🎯 共同目標啟用條件　兌換過的學生 ${spenders.size}/${roster.length}＝${(userRate * 100).toFixed(0)}%（門檻 80%）`
+  + `｜兌換總額 ${spentAll} ÷ 發出總額 ${issuedAll}＝${(spendAllRate * 100).toFixed(0)}%（門檻 50%）`
+  + (userRate >= GOAL_USER_RATE || spendAllRate >= GOAL_SPEND_RATE
+    ? `
+　🔔 **有一項達標了**——期中考後可以討論啟用「班級共同目標」（⚙️ 網站設定加「班級共同目標」「班級共同目標金額」兩列即開）`
+    : `　→ 還沒到，先讓學生熟悉兌換系統（老師 2026-09-12 裁定）`));
 
 const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
