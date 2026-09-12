@@ -11,25 +11,24 @@ on:
         required: true
         type: choice
         options:
-          - f01-purge-test-data
-          - f02-add-year-field
-          - f03-backfill-year
-          - f04-unpublish-mock-reports
-          - f05-test-failloud
-          - f10-sandbox
-          - f11-upgrade-wizard
-          - f12-simulate-skill-writes
-          - f13-fill-contactbook
-          - f14-purge-mock-data
-          - f20-import-daily-plan
-          - f21-relink-daily-plan
-          - f22-renumber-review-rounds
-          - f23-settle-week1
-          - f25-clear-weekly-mock
-          - f26-clear-weekly-focus
-          - f27-prune-dangling-relations
-          - f28-prune-dangling-relations-all
-          - f29-settle-week-rewards
+          - "[常用] f24 的入帳版 → f29-settle-week-rewards（補結某一週獎懲，需填 week）"
+          - "[常用] f03-backfill-year（回填學年，同步被護欄擋下時跑這支）"
+          - "[常用] f27-prune-dangling-relations（清死關聯・只做學生名冊・可填 seat 單人試跑）"
+          - "[常用] f28-prune-dangling-relations-all（清死關聯・全庫 27 個庫，含名冊）"
+          - "[半常用] f21-relink-daily-plan（大批調課後重掛單元 relation）"
+          - "[驗收用] f05-test-failloud（證明學年為空會擋同步）"
+          - "[驗收用] f12-simulate-skill-writes（9 支 skill 學年寫入模擬）"
+          - "[升級用・2027-06] f10-sandbox（沙盒建置／拆除）"
+          - "[升級用・2027-06] f11-upgrade-wizard（學年升級精靈）"
+          - "[一次性・已完成・別再跑] f01-purge-test-data"
+          - "[一次性・已完成・別再跑] f02-add-year-field"
+          - "[一次性・已完成・別再跑] f04-unpublish-mock-reports"
+          - "[一次性・已完成・會覆寫老師改過的聯絡簿] f13-fill-contactbook"
+          - "[一次性・已完成・別再跑] f14-purge-mock-data"
+          - "[一次性・已完成・會蓋掉 Notion 最新進度] f20-import-daily-plan"
+          - "[一次性・已完成・別再跑] f22-renumber-review-rounds"
+          - "[一次性・已完成・別再跑] f25-clear-weekly-mock"
+          - "[一次性・已完成・別再跑] f26-clear-weekly-focus"
       mode:
         description: dry-run＝只列不改（預設）／execute＝實際寫入
         required: true
@@ -102,4 +101,13 @@ jobs:
           BACKUP_DONE: ${{ inputs.backup_done }}
           SEAT: ${{ inputs.seat }}
           WEEK_LABEL: ${{ inputs.week }}
-        run: node scripts/classos/${{ inputs.task }}.mjs
+          TASK_CHOICE: ${{ inputs.task }}
+        run: |
+          # 選單值帶了狀態前綴與說明（例：「[常用] f28-…（清死關聯・全庫）」），
+          # 這裡只抽出 fNN-xxx 當檔名——前綴是給老師看的，不是檔名的一部分。
+          NAME=$(printf '%s' "$TASK_CHOICE" | grep -oE 'f[0-9]{2}-[a-z0-9-]+' | head -1)
+          if [ -z "$NAME" ] || [ ! -f "scripts/classos/$NAME.mjs" ]; then
+            echo "❌ 選項解析不出腳本名或檔案不存在：$TASK_CHOICE"; exit 1
+          fi
+          echo "▶️ 執行 scripts/classos/$NAME.mjs（mode=$MODE）"
+          node "scripts/classos/$NAME.mjs"
