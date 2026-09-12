@@ -89,27 +89,39 @@ const settled = new Set();
 for (const b of ledger) {
   for (const lid of relIds(b, "紀錄庫")) for (const sid of relIds(b, "學生")) settled.add(`${lid}|${sid}`);
 }
-// 舊帳護欄（2026-09-12）：② 的防重複完全靠「帳本列有掛『紀錄庫』relation」。
-// 開始掛 relation 之前的舊帳（例：四上第1週逐筆入帳的 489 列都沒掛）比對不到，
-// 會被判成「尚未入帳」——回溯試算第1週就跑出 420 幣／54 筆的假缺口。
-// 照著入帳＝全班重發。所以：**取帳本第一筆有掛 relation 的日期當分界**，
-// 更早的紀錄一律另列「舊帳・需人工」，不進待入帳合計。日期由資料自己長出來，不寫死。
-const relLedgerDates = ledger
-  .filter(b => relIds(b, "紀錄庫").length)
-  .map(b => (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10))
-  .filter(Boolean)
-  .sort();
-const RELATION_SINCE = relLedgerDates[0] ?? "9999-12-31";
+// 舊帳護欄（2026-09-12，第二版）：② 的防重複靠「帳本列有掛『紀錄庫』relation」。
+// 開始掛 relation 之前的舊帳（四上第1週逐筆入帳的那批）比對不到，會被判成「尚未入帳」
+// ——回溯第1週跑出 420 幣／54 筆的假缺口，照發就是全班重發。
+// 第一版想用「帳本第一筆有 relation 的日期」當分界，實測不成立：第1週本身就混了少數有 relation 的列。
+// 改用與寫回紀錄庫同款的**次要比對鍵＝學生 × 金額 × 事由前 12 字**，且只認**日期落在本週**的帳本列
+// （跨週同名同額才不會互相吃掉）；並且**比對筆數而非有無**——同一週真的發生兩次一樣的事
+// （同一人兩天都「社會課舉手發表 +5」）時，帳本只有一筆就還有一筆該發。
+const altPaid = new Map();
+for (const b of ledger) {
+  const amt = num(b, "金額");
+  if (!amt) continue;
+  if (relIds(b, "紀錄庫").length) continue; // 有 relation 的已由 settled 處理
+  const d = (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
+  if (!(d >= WEEK_FROM && d <= WEEK_TO)) continue;
+  const reason = (b.properties?.["事由"]?.title ?? []).map(t => t.plain_text).join("").slice(0, 12);
+  for (const sid of relIds(b, "學生")) {
+    const k = `${sid}|${amt}|${reason}`;
+    altPaid.set(k, (altPaid.get(k) ?? 0) + 1);
+  }
+}
 
 const weekLogs = (await queryAll(DS.log)).filter(p => txt(p, "週次") === WEEK);
 const logs = weekLogs.filter(p => num(p, "金幣影響"));
 let rewardN = 0, rewardSum = 0, oldN = 0, oldSum = 0;
 for (const l of logs) {
-  const ld = (l.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
+  const amt = num(l, "金幣影響");
+  const desc = (l.properties?.["事件描述"]?.title ?? []).map(t => t.plain_text).join("").slice(0, 12);
   for (const sid of relIds(l, "學生")) {
     if (settled.has(`${l.id}|${sid}`)) continue;
-    if (ld && ld < RELATION_SINCE) { oldN++; oldSum += num(l, "金幣影響"); continue; }
-    rewardN++; rewardSum += num(l, "金幣影響");
+    const k = `${sid}|${amt}|${desc}`;
+    const left = altPaid.get(k) ?? 0;
+    if (left > 0) { altPaid.set(k, left - 1); oldN++; oldSum += amt; continue; } // 舊帳：已發過，只是沒掛 relation
+    rewardN++; rewardSum += amt;
   }
 }
 
@@ -336,7 +348,7 @@ const lines = [
   `① 職務薪水　　　${salary} 幣（${roster.length - noPay.length} 人）${noPay.length ? `｜未填週薪：座號 ${noPay.join("、")}` : ""}${mark(paid.job)}`,
   `② 獎懲入帳　　　${rewardSum >= 0 ? "+" : ""}${rewardSum} 幣（${rewardN} 筆待入帳）${
     oldN ? `
-　　⚠️ 另有 ${oldN} 筆／${oldSum} 幣是 ${RELATION_SINCE} 之前的**舊帳**（那時帳本列還沒掛紀錄庫 relation，比對不到）——**不列入待入帳，也不要照著發**；要確認請抽該週紀錄庫幾列，看帳本有沒有同事由同金額的列` : ""}`,
+　　ℹ️ 另有 ${oldN} 筆／${oldSum} 幣是**舊帳**：帳本本週已有同學生、同金額、同事由的列，只是沒掛紀錄庫 relation（早期逐筆入帳的批次）——**已排除，不重複發**` : ""}`,
   `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×5 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes} − 免打掃券 ${freeTimes}${freeDup ? `（另 ${freeDup} 次同日已記缺席，不重扣）` : ""}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
   `④ 午餐工作薪水　${lunchTotal} 幣（${lunchTimes} 次 × ${LUNCH_PAY}＝固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}，支援 ${sumMap(lunchSup)} − 缺席 ${sumMap(lunchAbs)}）${mark(paid.lunch)}`,
   ROUTINE_ENABLED
