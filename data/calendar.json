@@ -153,13 +153,22 @@
     "notes": ""
   },
   {
+    "title": "母語-《魔法小廚師II》【客語版】EP15 #長長短短義大利麵 #對味的小黃瓜醬",
+    "date": "2026-09-16",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "08:35",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "國際教育交流社線上招生",
     "date": "2026-09-18",
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:35",
     "type": "活動",
-    "notes": ""
+    "notes": "9/18(五)晨讀時間將進行國際教育交流社線上招生說明，招生說明結束後若需報名表再請學生至教務處索取，報名至9/22(二)截止"
   },
   {
     "title": "正式防災演練",
@@ -189,7 +198,7 @@
     "notes": ""
   },
   {
-    "title": "線上升旗",
+    "title": "線上升旗-敬師活動",
     "date": "2026-09-22",
     "endDate": "",
     "startTime": "08:00",
@@ -306,6 +315,15 @@
     "notes": ""
   },
   {
+    "title": "流感施打",
+    "date": "2026-10-13",
+    "endDate": "",
+    "startTime": "",
+    "endTime": "",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "實體升旗",
     "date": "2026-10-13",
     "endDate": "",
@@ -414,7 +432,7 @@
     "notes": ""
   },
   {
-    "title": "英語巡迴1",
+    "title": "英語巡迴1(要跟自然師調課)",
     "date": "2026-11-20",
     "endDate": "",
     "startTime": "10:30",
@@ -471,8 +489,8 @@
     "title": "讀經檢測",
     "date": "2026-12-11",
     "endDate": "",
-    "startTime": "10:30",
-    "endTime": "11:00",
+    "startTime": "09:30",
+    "endTime": "10:10",
     "type": "活動",
     "notes": ""
   },
@@ -486,7 +504,7 @@
     "notes": ""
   },
   {
-    "title": "線上升旗",
+    "title": "線上升旗-耶誕活動",
     "date": "2026-12-22",
     "endDate": "",
     "startTime": "08:00",
@@ -558,6 +576,15 @@
     "notes": ""
   },
   {
+    "title": "課照班最後一天",
+    "date": "2027-01-19",
+    "endDate": "",
+    "startTime": "",
+    "endTime": "",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "線上升旗",
     "date": "2027-01-19",
     "endDate": "",
@@ -594,6 +621,15 @@
     "notes": ""
   },
   {
+    "title": "課照班開始",
+    "date": "2027-02-11",
+    "endDate": "",
+    "startTime": "",
+    "endTime": "",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "開學",
     "date": "2027-02-11",
     "endDate": "",
@@ -617,6 +653,15 @@
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:40",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "性平宣導",
+    "date": "2027-02-19",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "08:35",
     "type": "活動",
     "notes": ""
   },
@@ -722,19 +767,10 @@
   {
     "title": "清明連假",
     "date": "2027-04-03",
-    "endDate": "2027-04-05",
+    "endDate": "2027-04-06",
     "startTime": "",
     "endTime": "",
     "type": "放假",
-    "notes": ""
-  },
-  {
-    "title": "線上升旗",
-    "date": "2027-04-06",
-    "endDate": "",
-    "startTime": "08:00",
-    "endTime": "08:30",
-    "type": "活動",
     "notes": ""
   },
   {
@@ -783,11 +819,47 @@
     "notes": ""
   },
   {
+    "title": "校刊徵稿",
+    "date": "2027-05-01",
+    "endDate": "2027-05-31",
+    "startTime": "",
+    "endTime": "",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "母親節活動",
+    "date": "2027-05-03",
+    "endDate": "2027-05-07",
+    "startTime": "",
+    "endTime": "",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "語文競賽-國語演說",
+    "date": "2027-05-03",
+    "endDate": "",
+    "startTime": "",
+    "endTime": "",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "線上升旗",
     "date": "2027-05-04",
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:30",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "語文競賽-台語情境式演說",
+    "date": "2027-05-10",
+    "endDate": "",
+    "startTime": "",
+    "endTime": "",
     "type": "活動",
     "notes": ""
   },
@@ -831,8 +903,8 @@
     "title": "讀經檢測",
     "date": "2027-05-28",
     "endDate": "",
-    "startTime": "10:30",
-    "endTime": "11:10",
+    "startTime": "09:30",
+    "endTime": "10:10",
     "type": "活動",
     "notes": "主考官測驗完之後會發下測驗記錄單，請通過的同學到獎品兌換區交回這張紀錄單並兌獎\n。也請提醒同學務必大聲清楚的向主考官說出：「主考官您好，我是O年O班O號 OOO，請幫我檢測！」以免登記錯誤~"
   },
@@ -842,6 +914,15 @@
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:35",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "抽查作文",
+    "date": "2027-06-07",
+    "endDate": "2027-06-10",
+    "startTime": "",
+    "endTime": "",
     "type": "活動",
     "notes": ""
   },
@@ -858,15 +939,6 @@
     "title": "端午節",
     "date": "2027-06-09",
     "endDate": "",
-    "startTime": "",
-    "endTime": "",
-    "type": "活動",
-    "notes": ""
-  },
-  {
-    "title": "抽查作文",
-    "date": "2027-06-14",
-    "endDate": "2027-06-17",
     "startTime": "",
     "endTime": "",
     "type": "活動",
