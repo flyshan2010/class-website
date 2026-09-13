@@ -37,8 +37,8 @@
   },
   "economy": {
     "totals": {
-      "supply": 5117,
-      "txCount": 815,
+      "supply": 5222,
+      "txCount": 836,
       "spend": 730
     },
     "weeks": [
@@ -46,7 +46,7 @@
         "week": 1,
         "label": "四上第1週(8/31-9/4)",
         "salary": 1115,
-        "reward": 2865,
+        "reward": 2925,
         "penalty": 25,
         "interest": 0,
         "spend": 0,
@@ -57,7 +57,7 @@
         "week": 2,
         "label": "四上第2週(9/7-9/11)",
         "salary": 1172,
-        "reward": 305,
+        "reward": 350,
         "penalty": 35,
         "interest": 0,
         "spend": 0,
