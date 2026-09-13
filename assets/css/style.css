@@ -787,6 +787,20 @@ main {
 }
 .grade-chip .k { display: block; font-size: 0.75rem; color: var(--ink-soft); }
 .grade-chip .v { font-size: 1.3333rem; font-weight: bold; color: var(--gc); }
+/* 等第標準說明（收合）：放在概覽卡與各科之間 */
+.grade-guide { margin: 4px 0 16px; border: 1px solid var(--line, #e5e7eb); border-radius: 12px; padding: 10px 14px; background: var(--card, #fff); }
+.grade-guide summary { cursor: pointer; font-weight: bold; }
+.grade-guide-hint { margin: 4px 0 6px; font-size: 0.8889rem; color: var(--ink-soft); }
+.grade-guide[open] summary { margin-bottom: 8px; }
+.grade-guide-note { margin: 0 0 10px; color: var(--ink-soft); line-height: 1.6; }
+.grade-guide-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.grade-guide-card { border-left: 4px solid var(--gc); border-radius: 8px; padding: 8px 10px; background: color-mix(in srgb, var(--gc) 8%, transparent); }
+.grade-guide-card .head { font-weight: bold; color: var(--gc); margin-bottom: 4px; }
+.grade-guide-card dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 8px; margin: 0; }
+.grade-guide-card dt { font-weight: bold; white-space: nowrap; }
+.grade-guide-card dd { margin: 0; line-height: 1.5; }
+@media (max-width: 640px) { .grade-guide-grid { grid-template-columns: 1fr; } }
+@media print { .grade-guide { break-inside: avoid; } }
 /* ✍️ 作文批改報告（SPEC_作文批改 §8 D5）：題目/文體/總評三張 chip 一欄排；值是文字不是分數，縮小字級 */
 .report-essay .report-grades { grid-template-columns: 1fr; gap: 8px; }
 .report-essay .grade-chip { text-align: left; }

@@ -80,6 +80,35 @@
   };
 
   const GRADE_COLORS = { "內容評量": "#54A0FF", "作業成績": "#FF6B81", "上課參與": "#1DD1A1", "生活常規": "#FECA57" };
+  // 等第標準說明（老師 2026-09-13 要求：給家長與孩子參考）。只列特優／優／甲；
+  // 正本＝docs/學生評分標準.md，改標準時兩處一起改。
+  const GRADE_GUIDE = [
+    ["內容評量", ["小考、聽寫等評量表現優異（期考週：三科平均 90 分以上）",
+                "評量表現良好（期考週：三科平均 80–89 分）",
+                "大致掌握學習內容（期考週：三科平均 70–79 分）"]],
+    ["作業成績", ["全部準時、內容用心，主動加做或協助同學",
+                "準時繳交、完整用心，會主動訂正",
+                "大致準時完整，偶爾需要提醒"]],
+    ["上課參與", ["積極發言、帶動討論，能協助同組同學學習",
+                "主動舉手、認真參與討論",
+                "專心聽講，被點到能回答"]],
+    ["生活常規", ["常規優良、主動維護環境，能提醒帶動同學",
+                "整潔守規，打掃值日盡責",
+                "常規平穩，沒有特別事件"]],
+  ];
+  const gradeGuide = () => `
+    <p class="grade-guide-hint">💡 「甲」是基準＝這週穩定、符合期待。等第只看本週紀錄，請搭配下方建議與亮點一起看。</p>
+    <details class="grade-guide">
+      <summary>📏 等第怎麼看？（特優・優・甲 的標準）</summary>
+      <p class="grade-guide-note">等第由高到低是 <strong>特優 ＞ 優 ＞ 甲</strong>。<strong>「甲」是基準，代表這週表現穩定、符合期待，不是退步</strong>；這週沒有特別紀錄時也是甲。<br>等第只反映<strong>這一週</strong>老師記錄到的事件，請搭配下方「各科詳細狀況與建議」和「學生亮點」一起看，不要只看等級。</p>
+      <div class="grade-guide-grid">
+        ${GRADE_GUIDE.map(([k, rows]) => `
+          <div class="grade-guide-card" style="--gc:${GRADE_COLORS[k]}">
+            <div class="head">${k}</div>
+            <dl>${["特優", "優", "甲"].map((g, i) => `<dt>${g}</dt><dd>${rows[i]}</dd>`).join("")}</dl>
+          </div>`).join("")}
+      </div>
+    </details>`;
   const SUBJ_EMOJI = { "國語": "📖", "數學": "🔢", "社會": "🌏", "人際互動": "🙌", "生活技能": "🎒" };
   const SUBJ_COLORS = { "國語": "#FF6B81", "數學": "#54A0FF", "社會": "#FECA57", "人際互動": "#FF9F43", "生活技能": "#1DD1A1" };
 
@@ -391,6 +420,8 @@
             </div>
           </div>
         </div>
+
+        ${Object.values(p.grades).some(v => v) ? gradeGuide() : ""}
 
         <span class="report-badge" style="--bc:#FF9F43">${isTerm ? "各科學期總評與建議" : "各科詳細狀況與建議"}</span>
         <div class="report-subjects">
