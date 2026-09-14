@@ -60,7 +60,9 @@ function guessCode(subject, t, date, weekTexts, pos, hasCode) {
   }
 
   if (subject === "數學") {
-    const m = /(?:^|[\s—－-])(\d+)-(\d+)/.exec(t);
+    /* 小節代碼只看括號外：括號內是頁碼／數練編號（「數練 5-4」≠ 課本 5-4，課本第五單元只到 5-3），
+       10/12、12/18 曾因此掛錯（2026-09-14）。 */
+    const m = /(?:^|[\s—－-])(\d+)-(\d+)/.exec(t.replace(/[（(][^）)]*[）)]/g, ""));
     if (m) {
       const base = `數L${Number(m[1])}-${Number(m[2])}`;
       if (hasCode(base)) return { code: base, sure: true };
