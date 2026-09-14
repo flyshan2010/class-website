@@ -62,9 +62,11 @@ function guessCode(subject, t, date, weekTexts, pos, hasCode) {
   if (subject === "數學") {
     /* 小節代碼只看括號外：括號內是頁碼／數練編號（「數練 5-4」≠ 課本 5-4，課本第五單元只到 5-3），
        10/12、12/18 曾因此掛錯（2026-09-14）。 */
-    const m = /(?:^|[\s—－-])(\d+)-(\d+)/.exec(t.replace(/[（(][^）)]*[）)]/g, ""));
+    const m = /(?:^|[\s—－-])(\d+)-(\d+)([a-z]?)/.exec(t.replace(/[（(][^）)]*[）)]/g, ""));
     if (m) {
       const base = `數L${Number(m[1])}-${Number(m[2])}`;
+      // 進度文字直接寫了 a／b（6-2b、8-3b）就照寫的掛，不再一律推成 a（2026-09-14 11/12、11/30 掛錯）
+      if (m[3] && hasCode(`${base}${m[3]}`)) return { code: `${base}${m[3]}`, sure: true };
       if (hasCode(base)) return { code: base, sure: true };
       if (hasCode(`${base}a`)) return { code: `${base}a`, sure: false };   // 6-2 拆成 2a／2b
       return { code: base, sure: true };
