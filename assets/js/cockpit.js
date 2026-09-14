@@ -527,7 +527,7 @@
       <div class="cp-slot-head">
         <span class="badge" style="background:${color};color:#fff">${SUBJECT_ICON[base] || "📦"} ${App.esc(subject)}</span>
         <span class="meta">${App.esc(cell.teacher || "")}${cell.room ? `・${App.esc(cell.room)}` : ""}</span>
-        ${ov ? `<span class="cp-swap">🔄 調課${ov.from ? `（${App.esc(ov.from)}）` : ""}</span>` : ""}
+        ${ov ? (ov.kind === "補課" ? `<span class="cp-swap">📌 補課</span>` : `<span class="cp-swap">🔄 調課${ov.from ? `（${App.esc(ov.from)}）` : ""}</span>`) : ""}
       </div>`;
     if (!entry) {
       return `<div class="cp-slot" style="--accent:${color}">${head}</div>`;
@@ -891,11 +891,11 @@
     const WD = ["日", "一", "二", "三", "四", "五", "六"];
     const pending = swaps.map(stalePlanOf).filter(Boolean);
     return `<div class="card">
-      <h3>🔄 近期調課</h3>
+      <h3>🔄 近期調課／補課</h3>
       <ul class="sched-swaps">${swaps.map(o => {
         const d = new Date(`${o.iso}T00:00:00`);
         return `<li>${d.getMonth() + 1}/${d.getDate()}（${WD[d.getDay()]}）${App.esc(o.period)} 改上
-                <strong>${App.esc(o.subject)}</strong>${o.from ? `<small style="color:var(--ink-soft)">（${App.esc(o.from)}）</small>` : ""}</li>`;
+                <strong>${App.esc(o.subject)}</strong>${o.from ? `<small style="color:var(--ink-soft)">（${o.kind === "補課" ? "📌 補課" : App.esc(o.from)}）</small>` : ""}</li>`;
       }).join("")}</ul>
       ${pending.length ? `<div class="cp-audit"><strong>⚠️ 調課後進度還沒搬</strong><ul>${pending.map(x =>
         `<li>${x.to} 第${App.esc(x.period)}改上${App.esc(x.subject)}（調自 ${x.src}），但 ${x.src} 的「${App.esc(x.subject)}進度」仍有文字、那天已沒有${App.esc(x.subject)}課</li>`).join("")}</ul>
