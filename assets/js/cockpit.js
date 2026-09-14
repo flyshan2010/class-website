@@ -119,6 +119,25 @@
      ② 那天沒有該科的課（調課、放假、日課表換了）才依序遞補到本週剩下的節次，
         遞補順序仍是「正課優先」，節次不夠時保住正課、彈性內容才落到本週彈性補充。
      ③ 全程不看「第幾節」這種節次名，只看當下的日課表 —— 換一份真的日課表不必重排任何進度。 */
+  /* 該科本週可用節次＝學年課表 − 放假日，再套當天調課（schedule-overrides.json）：
+     那節被換成別科 → 拿掉；換成本科 → 補一格。9/9 第三節調自 9/10 時，數學本週就是
+     週三兩格、週四零格，同日兩行進度才排得進兩節（2026-09-14）。鍵名仍是「星期|節次」，
+     因為一週只算一次，週內星期與日期一對一。 */
+  const availOf = (week, subject, holidays) => {
+    const list = (slots[subject] || []).filter(s => !holidays.has(s.dow));
+    days.filter(d => d.week === week && !d.holiday).forEach(d => {
+      Object.entries((ovDoc.days || {})[d.date] || {}).forEach(([period, ov]) => {
+        const i = list.findIndex(s => s.dow === d.dow && s.period === period);
+        const mine = SUBJ_BASE(ov.subject) === subject;
+        if (i >= 0 && !mine) list.splice(i, 1);
+        if (i < 0 && mine) {
+          const order = sched.periods.findIndex(p => p.name === period);
+          if (order >= 0) list.push({ dow: d.dow, period, order });
+        }
+      });
+    });
+    return list.sort((x, y) => x.dow - y.dow || x.order - y.order);
+  };
   const alignWeek = week => {
     if (alignCache.has(week)) return alignCache.get(week);
     const wk = (planDoc.weeks || {})[String(week)] || {};
@@ -131,7 +150,7 @@
       const marked = entries.filter(e => SECTION_RE.test(e.text));
       const core = marked.length ? marked : entries;
       const ordered = [...core, ...entries.filter(e => !core.includes(e))];
-      const avail = (slots[subject] || []).filter(s => !holidays.has(s.dow));
+      const avail = availOf(week, subject, holidays);
       const taken = new Set();            // 已被占用的 avail index
       const put = (idx, e) => {
         taken.add(idx);
