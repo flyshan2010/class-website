@@ -527,7 +527,7 @@
       <div class="cp-slot-head">
         <span class="badge" style="background:${color};color:#fff">${SUBJECT_ICON[base] || "📦"} ${App.esc(subject)}</span>
         <span class="meta">${App.esc(cell.teacher || "")}${cell.room ? `・${App.esc(cell.room)}` : ""}</span>
-        ${ov ? (ov.kind === "補課" ? `<span class="cp-swap">📌 補課</span>` : `<span class="cp-swap">🔄 調課${ov.from ? `（${App.esc(ov.from)}）` : ""}</span>`) : ""}
+        ${ov ? (ov.kind === "補課" ? `<span class="cp-swap">📌 補課-${App.esc(ov.subject)}</span>` : `<span class="cp-swap">🔄 調課${ov.from ? `（${App.esc(ov.from)}）` : ""}</span>`) : ""}
       </div>`;
     if (!entry) {
       return `<div class="cp-slot" style="--accent:${color}">${head}</div>`;
@@ -613,7 +613,8 @@
       const ov = overrideOf(day.date, p.name);
       /* 調課只換科目，老師／教室一律不沿用原課的（換科目通常也換人換教室，
          沿用等於印一個看起來像真的、其實是錯的資訊）。 */
-      const cell = ov ? { subject: ov.subject, teacher: "", room: "", parallel: [] } : base;
+      /* 補課（2026-09-14 老師定義）：課表那一節名稱照舊（例：綜合），只加小標「📌 補課-數學」，進度照補的科目掛。 */
+      const cell = ov && ov.kind !== "補課" ? { subject: ov.subject, teacher: "", room: "", parallel: [] } : base;
       if (!cell || (typeof cell === "string" && !cell.trim())) return;      // 半天課的空節次
 
       const end = periodEnd(p);
@@ -894,8 +895,9 @@
       <h3>🔄 近期調課／補課</h3>
       <ul class="sched-swaps">${swaps.map(o => {
         const d = new Date(`${o.iso}T00:00:00`);
-        return `<li>${d.getMonth() + 1}/${d.getDate()}（${WD[d.getDay()]}）${App.esc(o.period)} 改上
-                <strong>${App.esc(o.subject)}</strong>${o.from ? `<small style="color:var(--ink-soft)">（${o.kind === "補課" ? "📌 補課" : App.esc(o.from)}）</small>` : ""}</li>`;
+        return `<li>${d.getMonth() + 1}/${d.getDate()}（${WD[d.getDay()]}）${App.esc(o.period)} ${o.kind === "補課"
+                ? `<strong>📌 補課-${App.esc(o.subject)}</strong>`
+                : `改上 <strong>${App.esc(o.subject)}</strong>${o.from ? `<small style="color:var(--ink-soft)">（${App.esc(o.from)}）</small>` : ""}`}</li>`;
       }).join("")}</ul>
       ${pending.length ? `<div class="cp-audit"><strong>⚠️ 調課後進度還沒搬</strong><ul>${pending.map(x =>
         `<li>${x.to} 第${App.esc(x.period)}改上${App.esc(x.subject)}（調自 ${x.src}），但 ${x.src} 的「${App.esc(x.subject)}進度」仍有文字、那天已沒有${App.esc(x.subject)}課</li>`).join("")}</ul>
