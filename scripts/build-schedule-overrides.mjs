@@ -47,15 +47,36 @@ for (const e of events) {
   n++;
 }
 
+/* 補課（2026-09-14 老師定義）：某天把某一節直接改上別科，**不跟別天互換**——跟調課不同，所以不走日曆。
+   寫法＝Notion「📅 每日課程進度」該科進度那一行加「（第四節補課）」。
+   例：11/13 數學第二行「6-4 多個 0 的除法問題（第四節補課）」→ 11/13 第四節改上數學、標「補課」。
+   同一格日曆已記調課時以日曆為準（不覆蓋）。log 只印日期與節次，不印進度文字（repo 為 PUBLIC）。 */
+const plan = await read("daily-plan.json").catch(() => ({ weeks: {} }));
+const periodNames = new Set((sched.periods || []).map(p => p.name));
+let nMakeup = 0;
+for (const bySubject of Object.values(plan.weeks || {})) {
+  for (const [subject, entries] of Object.entries(bySubject || {})) {
+    for (const x of entries || []) {
+      const m = /[（(](第[一二三四五六七八]節)補課[）)]/.exec(x.text || "");
+      if (!m || !periodNames.has(m[1]) || !x.date) continue;
+      const day = (out[x.date] ||= {});
+      if (day[m[1]]) continue;
+      day[m[1]] = { subject, title: `${subject}（補課）`, from: "補課", kind: "補課" };
+      nMakeup++;
+      console.log(`  📌 補課 ${x.date} ${m[1]} ${subject}`);
+    }
+  }
+}
+
 await writeFile(
   path.join(DATA_DIR, "schedule-overrides.json"),
   JSON.stringify({
     _說明: "當天調課對照表。由 build-schedule-overrides.mjs 從 data/calendar.json 推算，請勿手改；"
          + "要改調課請改 Google 日曆那筆事件（標題含「調」＋時間對上某一節）。"
          + "學年課表 schedule.json 不受影響，只有列在這裡的那一天那一節會換科目。",
-    來源: "data/calendar.json（標題含「調」且 startTime 對上 schedule.json 某一節）",
+    來源: "data/calendar.json（標題含「調」且 startTime 對上 schedule.json 某一節）＋ data/daily-plan.json（進度行含「（第N節補課）」）",
     days: out,
   }, null, 2) + "\n",
   "utf8"
 );
-console.log(`✅ schedule-overrides.json（${n} 筆調課，涵蓋 ${Object.keys(out).length} 天）`);
+console.log(`✅ schedule-overrides.json（${n} 筆調課、${nMakeup} 筆補課，涵蓋 ${Object.keys(out).length} 天）`);
