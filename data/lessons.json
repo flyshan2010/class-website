@@ -3244,6 +3244,37 @@
     }
   },
   {
+    "title": "數L2-2 乘法｜乘以三位數",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "一位數×整百：個位十位省略0，從百位記起",
+      "二位數×整百：規律相同，答案看成幾個百",
+      "乘數是三位數：分三層併式，逐層對齊合併",
+      "乘數十位為0：這層仍要算，只記一個0"
+    ],
+    "date": "2026-09-09",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "",
+    "links": {
+      "material": "https://drive.google.com/file/d/1SegfxvbHMWHs3gig76GZkCSg1mqbCAg4/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/3.review.html"
+    }
+  },
+  {
     "title": "國L2-2 請到我的家鄉來 第二節 內容理解",
     "subject": "國語",
     "grade": "四上",
@@ -3640,37 +3671,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L6-4-多個0的除法問題/3.review.html"
-    }
-  },
-  {
-    "title": "數L2-2 乘法｜乘以三位數",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "一位數×整百：個位十位省略0，從百位記起",
-      "二位數×整百：規律相同，答案看成幾個百",
-      "乘數是三位數：分三層併式，逐層對齊合併",
-      "乘數十位為0：這層仍要算，只記一個0"
-    ],
-    "date": "",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "",
-    "links": {
-      "material": "https://drive.google.com/file/d/1SegfxvbHMWHs3gig76GZkCSg1mqbCAg4/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L2-2-乘以三位數/3.review.html"
     }
   }
 ]
