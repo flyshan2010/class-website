@@ -72,6 +72,8 @@ function guessCode(subject, t, date, weekTexts, pos, hasCode) {
     const round = /[（(](\d)[）)]\s*$/.exec(t);
     if (round) return { code: `數R${term}-${Number(round[1])}`, sure: true };
     if (/習作範圍總驗收與訂正/.test(t)) return { code: `數R${term}-1`, sure: true };   // 還沒補 (1) 的舊寫法
+    // 「第1-5單元 綜合與應用（N）」是總驗收前一兩天的習作綜合題，沒有獨立教材，歸第 1 輪總複習（2026-09-14 老師要求補掛）
+    if (/綜合與應用/.test(t)) return { code: `數R${term}-1`, sure: true };
     const u = /第([一二三四五六七八九十]+)單元/.exec(t);
     if (u) {                                   // 練習園地／重點複習訂正 → 該單元最後一小節
       const n = cnNum(u[1]);
