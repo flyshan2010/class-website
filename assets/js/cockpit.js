@@ -857,6 +857,31 @@
      原本掛在家長也看得到的日課表頁，實際造成誤解（家長把「某天某節改上數學」讀成課表改了）。
      調課是教師端的排課資訊，所以只在駕駛艙列出，日課表頁維持乾淨的學年課表。
      資料同樣來自 data/schedule-overrides.json，只列今天以後的，過期的不佔版面。 */
+  /* 調課提醒（只提醒不代搬，2026-09-14）：A 日某節調自 B 日（from 欄「調9/10第三節」），
+     B 日同科進度欄仍有文字、且 B 日調課後已沒有這一科的課 → 那段進度沒搬過來，上課當天會找不到。
+     判準只看調課表的 from 與 B 日實際節次，不做「某天多一節另一天少一節」的推論（放假週會誤報）。
+     與 scripts/health-check.mjs 的 checkSwapPlanMoved 同一條規則，改了要兩邊一起改。 */
+  const stalePlanOf = o => {
+    const m = /調\s*(\d{1,2})\/(\d{1,2})/.exec(o.from || "");
+    const subject = SUBJ_BASE(o.subject);
+    if (!m) return null;
+    let y = Number(o.iso.slice(0, 4));
+    const mon = Number(m[1]), tMon = Number(o.iso.slice(5, 7));
+    if (mon - tMon > 6) y--; else if (tMon - mon > 6) y++;
+    const src = `${y}-${String(mon).padStart(2, "0")}-${String(m[2]).padStart(2, "0")}`;
+    const day = dayByDate.get(src);
+    if (!day || day.holiday) return null;
+    const left = sched.periods.filter((p, i) => {
+      const ov = overrideOf(src, p.name);
+      const cell = ov || (sched.table[i] || [])[day.dow - 1];
+      return cell && typeof cell === "object" && SUBJ_BASE(cell.subject) === subject;
+    }).length;
+    if (left) return null;
+    const has = ((planDoc.weeks || {})[String(day.week)]?.[subject] || []).some(e => e.date === src);
+    const md = iso => `${Number(iso.slice(5, 7))}/${Number(iso.slice(8, 10))}`;
+    return has ? { to: md(o.iso), src: md(src), period: o.period.replace(/^第/, ""), subject } : null;
+  };
+
   const swapNotice = () => {
     const swaps = Object.entries(ovDoc.days || {})
       .filter(([iso]) => iso >= todayISO)
@@ -864,6 +889,7 @@
       .flatMap(([iso, byPeriod]) => Object.entries(byPeriod).map(([period, o]) => ({ iso, period, ...o })));
     if (!swaps.length) return "";
     const WD = ["日", "一", "二", "三", "四", "五", "六"];
+    const pending = swaps.map(stalePlanOf).filter(Boolean);
     return `<div class="card">
       <h3>🔄 近期調課</h3>
       <ul class="sched-swaps">${swaps.map(o => {
@@ -871,6 +897,9 @@
         return `<li>${d.getMonth() + 1}/${d.getDate()}（${WD[d.getDay()]}）${App.esc(o.period)} 改上
                 <strong>${App.esc(o.subject)}</strong>${o.from ? `<small style="color:var(--ink-soft)">（${App.esc(o.from)}）</small>` : ""}</li>`;
       }).join("")}</ul>
+      ${pending.length ? `<div class="cp-audit"><strong>⚠️ 調課後進度還沒搬</strong><ul>${pending.map(x =>
+        `<li>${x.to} 第${App.esc(x.period)}改上${App.esc(x.subject)}（調自 ${x.src}），但 ${x.src} 的「${App.esc(x.subject)}進度」仍有文字、那天已沒有${App.esc(x.subject)}課</li>`).join("")}</ul>
+        <p class="meta">到 Notion「📅 每日課程進度」把那段文字搬到 ${pending.map(x => x.to).join("、")}（同日兩節就 Shift+Enter 寫兩行），再按「立即更新班網」。</p></div>` : ""}
       <p style="color:var(--ink-soft);font-size:.9rem;margin:.6em 0 0">
         調課只影響列出的那一天那一節，其餘日子仍照日課表上課；當天的進度會跟著移動，不會被跳過。</p>
     </div>`;

@@ -237,6 +237,44 @@ async function checkCrossFile() {
   }
 }
 
+// ── B3 調課後進度有沒有搬（2026-09-14）─────────────────────────────────────
+// A 日某節調自 B 日（schedule-overrides.json 的 from「調9/10第三節」），B 日調課後已沒有這一科的課，
+// B 日的同科進度卻還有文字 → 進度沒搬，駕駛艙那天會找不到。只查今天以後的調課。
+// 判準只用 from 欄與 B 日實際節次，零推論；與 assets/js/cockpit.js 的 stalePlanOf 同規則，改要兩邊改。
+async function checkSwapPlanMoved() {
+  const ovDoc = await readJSON("schedule-overrides.json", { days: {} });
+  const plan = await readJSON("daily-plan.json", { days: [], weeks: {} });
+  const sched = await readJSON("schedule.json", { periods: [], table: [] });
+  const base = s => String(s ?? "").replace(/（/g, "(").replace(/）/g, ")").replace(/\(.*?\)/g, "").trim();
+  const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
+  const dayBy = new Map((plan.days || []).map(d => [d.date, d]));
+  const hits = [];
+  for (const [iso, byPeriod] of Object.entries(ovDoc.days || {})) {
+    if (iso < today) continue;
+    for (const [period, o] of Object.entries(byPeriod)) {
+      const m = /調\s*(\d{1,2})\/(\d{1,2})/.exec(o.from || "");
+      if (!m) continue;
+      let y = Number(iso.slice(0, 4));
+      const mon = Number(m[1]), tMon = Number(iso.slice(5, 7));
+      if (mon - tMon > 6) y--; else if (tMon - mon > 6) y++;
+      const src = `${y}-${String(mon).padStart(2, "0")}-${String(m[2]).padStart(2, "0")}`;
+      const day = dayBy.get(src);
+      if (!day || day.holiday) continue;
+      const subject = base(o.subject);
+      const left = (sched.periods || []).filter((p, i) => {
+        const cell = ovDoc.days?.[src]?.[p.name] || (sched.table[i] || [])[day.dow - 1];
+        return cell && typeof cell === "object" && base(cell.subject) === subject;
+      }).length;
+      if (left) continue;
+      if ((plan.weeks?.[String(day.week)]?.[subject] || []).some(e => e.date === src))
+        hits.push(`${iso} ${period} 改上${subject}（${o.from}），但 ${src} 的${subject}進度仍有文字`);
+    }
+  }
+  if (hits.length) warn("駕駛艙", `調課後進度未搬 ${hits.length} 筆：${hits.join("；")}`,
+    "到 Notion「📅 每日課程進度」把來源日那段文字搬到調課日（同日兩節 Shift+Enter 寫兩行），再同步");
+  else ok("調課後進度皆已搬移");
+}
+
 // ── 執行與輸出 ──────────────────────────────────────────────────────────
 await checkPagesLive();
 await checkSyncFresh();
@@ -248,6 +286,7 @@ await checkBlueprintDrift();
 await checkBlueprintIndex();
 await checkFifthSync();
 await checkCrossFile();
+await checkSwapPlanMoved();
 
 const reds = findings.filter(f => f.level === "red");
 const warns = findings.filter(f => f.level === "warn");
