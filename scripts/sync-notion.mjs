@@ -898,6 +898,14 @@ const PLAN_CODE_RE = /(?:^|\s)((?:國|數|社|自|英|健康|藝|綜)[A-Za-z]*\d
 // 單元 → 上課日期（2026-08-30）：從「📅 每日課程進度」的「◯◯單元」relation 反推，
 // 取該單元被排到的第一天與最後一天。老師在 Notion 拖進度日期，駕駛艙卡片的日期就跟著動，
 // 不必再手填第二處；真要手動指定就填「🚀 教學單元」的「日期」欄（優先於自動值）。
+/* 同日同科兩節（2026-09-14）：「◯◯進度」欄 Shift+Enter 寫兩行＝兩節，一行一節、早→晚。
+   「◯◯單元」relation 依序配對；行數多於 relation 就沿用最後一個（只掛一個單元的舊寫法照常）。 */
+function planLines(r, s) {
+  const lines = String(r[`${s}進度`] || "").split("\n").map(t => t.trim()).filter(Boolean);
+  const rel = r[`${s}單元`] || [];
+  return lines.map((text, i) => ({ text, relId: rel[Math.min(i, rel.length - 1)] }));
+}
+
 let _unitDatesPromise;
 function unitDatesFromPlan() {
   return (_unitDatesPromise ||= (async () => {
@@ -911,13 +919,14 @@ function unitDatesFromPlan() {
       const date = r["上課日"]?.start;
       if (!date || r["放假"]) continue;
       for (const s of PLAN_SUBJECTS) {
-        if (!String(r[`${s}進度`] || "").trim()) continue;
-        const code = codeById.get((r[`${s}單元`] || [])[0]);
-        if (!code) continue;
-        const cur = m.get(code);
-        if (!cur) m.set(code, { first: date, last: date });
-        else if (date < cur.first) cur.first = date;
-        else if (date > cur.last) cur.last = date;
+        for (const { relId } of planLines(r, s)) {
+          const code = codeById.get(relId);
+          if (!code) continue;
+          const cur = m.get(code);
+          if (!cur) m.set(code, { first: date, last: date });
+          else if (date < cur.first) cur.first = date;
+          else if (date > cur.last) cur.last = date;
+        }
       }
     }
     return m;
@@ -948,10 +957,9 @@ async function syncDailyPlan() {
     days.push({ date, week, dow, holiday: !!r["放假"], note: r["重要行事"] || "" });
     if (r["放假"]) continue;                       // 放假日不排新課，也不進 weeks
     for (const s of PLAN_SUBJECTS) {
-      const text = String(r[`${s}進度`] || "").trim();
-      if (!text) continue;
-      const unit = codeById.get((r[`${s}單元`] || [])[0]) || "";
-      ((weeks[String(week)] ||= {})[s] ||= []).push({ date, text, unit });
+      for (const { text, relId } of planLines(r, s)) {
+        ((weeks[String(week)] ||= {})[s] ||= []).push({ date, text, unit: codeById.get(relId) || "" });
+      }
     }
   }
 
