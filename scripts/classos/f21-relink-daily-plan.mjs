@@ -12,7 +12,9 @@
  *   數學／社會 句尾「(N)」→ `數R?-N`／`社R?-N`
  *   進度文字的輪次已與代碼對齊（f22，2026-08-29），**寫幾就是第幾輪，沒有偏移量**。
  *   期中／期末以第一次定期評量日為界；R2 卷教材尚未產出，會標「教材未建」並清空 relation。
- * 教材未建的課次留空（不清掉舊值，只在報表標「⚠️ 教材未建」讓老師自己判斷）。
+ * 教材未建的課次清空 relation，報表標「⚠️ 教材未建」。
+ * 同日同科兩節（進度欄多行）逐行解析，relation 依行序寫成陣列、整個陣列相同才算已正確；
+ * 多行裡任一行解析不出或教材未建 → 整格不寫，標「需人工」（relation 無法留空位，寫了會錯位）。
  *
  * 用法：GitHub Actions → ClassOS Phase F 工具 → task=f21-relink-daily-plan
  *       mode=dry-run（預設，只列不寫）／execute（實際覆寫 relation）
@@ -113,8 +115,12 @@ const days = (await queryAll(DS.dailyPlan))
   .sort((a, b) => a.date.localeCompare(b.date));
 console.log(`📅 每日課程進度 ${days.length} 列（${days[0]?.date} ~ ${days.at(-1)?.date}）`);
 
-// 週內同課次的第幾節：以「同一週次、同科目」的進度文字序列判定（與 f20 同義）
-const weekTexts = new Map();          // `${週次}|${科目}` → 該週進度文字陣列（依日期）
+/* 同日同科兩節（2026-09-14，與 sync-notion.mjs 的 planLines() 同義）：
+   「◯◯進度」一行一節、早→晚；「◯◯單元」relation 依行序配對，行數多於 relation 就沿用最後一個。 */
+const lines = t => String(t || "").split("\n").map(x => x.trim()).filter(Boolean);
+
+// 週內同課次的第幾節：以「同一週次、同科目」的進度行序列判定（與 f20 同義；兩節的日子算兩行）
+const weekTexts = new Map();          // `${週次}|${科目}` → 該週進度行陣列（依日期、行序）
 for (const d of days) {
   d.pos = {};
   for (const s of SUBJECTS) {
@@ -122,45 +128,67 @@ for (const d of days) {
     const k = `${d.week}|${s}`;
     const arr = weekTexts.get(k) ?? weekTexts.set(k, []).get(k);
     d.pos[s] = arr.length;
-    arr.push(d.texts[s]);
+    arr.push(...lines(d.texts[s]));
   }
 }
 
 const updates = [];
 const report = [];
-let stat = { same: 0, change: 0, fill: 0, noMaterial: 0, none: 0 };
+let stat = { same: 0, change: 0, fill: 0, noMaterial: 0, none: 0, manual: 0 };
+const codesOf = ids => ids.map(id => idToCode.get(id) ?? "?").join("、");
 
 days.forEach(d => {
   const props = {};
   for (const s of SUBJECTS) {
-    const t = d.texts[s];
-    if (!t) continue;
-    const { code, sure } = guessCode(s, t, d.date, weekTexts.get(`${d.week}|${s}`) ?? [], d.pos[s] ?? 0, hasCode);
+    const ls = lines(d.texts[s]);
+    if (!ls.length) continue;
+    const wk = weekTexts.get(`${d.week}|${s}`) ?? [];
+    const guesses = ls.map((t, i) => guessCode(s, t, d.date, wk, (d.pos[s] ?? 0) + i, hasCode));
+    const sure = guesses.every(g => g.sure);
     const now = d.rels[s];
-    const nowCode = now.length === 1 ? (idToCode.get(now[0]) ?? "?") : now.length ? `${now.length} 筆` : "";
-    if (!code) { stat.none++; if (now.length) report.push(`${d.date}\t${s}\t（無法解析，保留 ${nowCode}）`); continue; }
-    /* 教材還沒產出：把 relation 清掉，讓駕駛艙顯示「尚未建立 <代碼> 的教材」。
-       留著舊值會讓那一節指著別輪的教材（例：第 3 輪指著第 1 輪），畫面上看不出來是錯的。
-       教材一建好，重跑本腳本就會掛上。 */
-    if (!hasCode(code)) {
-      stat.noMaterial++;
-      if (!now.length) { report.push(`${d.date}\t${s}\t${code} ⚠️ 教材未建（本來就空）`); continue; }
-      props[`${s}單元`] = { relation: [] };
-      report.push(`${d.date}\t${s}\t${nowCode} → （清空）${code} ⚠️ 教材未建`);
-      continue;
+    const nowCode = now.length === 1 ? (idToCode.get(now[0]) ?? "?") : now.length > 1 ? codesOf(now) : "";
+
+    if (ls.length === 1) {
+      const { code } = guesses[0];
+      if (!code) { stat.none++; if (now.length) report.push(`${d.date}\t${s}\t（無法解析，保留 ${nowCode}）`); continue; }
+      /* 教材還沒產出：把 relation 清掉，讓駕駛艙顯示「尚未建立 <代碼> 的教材」。
+         留著舊值會讓那一節指著別輪的教材（例：第 3 輪指著第 1 輪），畫面上看不出來是錯的。
+         教材一建好，重跑本腳本就會掛上。 */
+      if (!hasCode(code)) {
+        stat.noMaterial++;
+        if (!now.length) { report.push(`${d.date}\t${s}\t${code} ⚠️ 教材未建（本來就空）`); continue; }
+        props[`${s}單元`] = { relation: [] };
+        report.push(`${d.date}\t${s}\t${nowCode} → （清空）${code} ⚠️ 教材未建`);
+        continue;
+      }
+    } else {
+      /* 多行：relation 無法留「空位」——任一行解析不出或教材未建，寫出去都會讓那一行（或其後各行）
+         沿用別節的單元，畫面看不出錯。所以整格不寫、保留現值，報表標「需人工」由老師處理。 */
+      const bad = guesses.map((g, i) => (!g.code ? `第${i + 1}行無法解析` : !hasCode(g.code) ? `第${i + 1}行 ${g.code} 教材未建` : ""))
+        .filter(Boolean);
+      if (bad.length) {
+        stat.manual++;
+        report.push(`${d.date}\t${s}\t⚠️ 需人工（${ls.length} 行）：${bad.join("；")}，保留 ${nowCode || "（空）"}`);
+        continue;
+      }
     }
-    const target = byCode.get(code);
-    if (now.length === 1 && now[0] === target) { stat.same++; continue; }
-    props[`${s}單元`] = { relation: [{ id: target }] };
-    if (now.length) { stat.change++; report.push(`${d.date}\t${s}\t${nowCode} → ${code}${sure ? "" : " ❓推測"}`); }
-    else { stat.fill++; report.push(`${d.date}\t${s}\t（空）→ ${code}${sure ? "" : " ❓推測"}`); }
+
+    // 依行序的代碼；只合併「尾端」連續同代碼（planLines 沿用最後一個）。中段重複不能合併，否則後面各行會錯位。
+    const codes = guesses.map(g => g.code);
+    while (codes.length > 1 && codes.at(-1) === codes.at(-2)) codes.pop();
+    const target = codes.map(c => byCode.get(c));
+    if (now.length === target.length && now.every((id, i) => id === target[i])) { stat.same++; continue; }
+    props[`${s}單元`] = { relation: target.map(id => ({ id })) };
+    const codeStr = codes.join("、");
+    if (now.length) { stat.change++; report.push(`${d.date}\t${s}\t${nowCode} → ${codeStr}${sure ? "" : " ❓推測"}`); }
+    else { stat.fill++; report.push(`${d.date}\t${s}\t（空）→ ${codeStr}${sure ? "" : " ❓推測"}`); }
   }
   if (Object.keys(props).length) updates.push({ date: d.date, id: d.id, props });
 });
 
 console.log(`\n── 變更明細（${report.length}）──`);
 console.log(report.join("\n"));
-console.log(`\n📊 已正確 ${stat.same}　改掛 ${stat.change}　補掛 ${stat.fill}　教材未建 ${stat.noMaterial}　無法解析 ${stat.none}`);
+console.log(`\n📊 已正確 ${stat.same}　改掛 ${stat.change}　補掛 ${stat.fill}　教材未建 ${stat.noMaterial}　無法解析 ${stat.none}　多行需人工 ${stat.manual}`);
 console.log(`📝 待更新 ${updates.length} 列`);
 
 if (!isExecute()) {
