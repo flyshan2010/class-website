@@ -11,7 +11,7 @@
     "weeks": [
       {
         "week": 1,
-        "period": "四上第一週(8/31-9/4)",
+        "period": "四上第1週(8/31-9/4)",
         "n": 27,
         "avg": {
           "自我覺察": 3,
@@ -37,9 +37,9 @@
   },
   "economy": {
     "totals": {
-      "supply": 5222,
-      "txCount": 836,
-      "spend": 730
+      "supply": 5092,
+      "txCount": 838,
+      "spend": 860
     },
     "weeks": [
       {
@@ -62,6 +62,17 @@
         "interest": 0,
         "spend": 0,
         "spendCount": 0,
+        "adjust": 0
+      },
+      {
+        "week": 3,
+        "label": "四上第3週(9/14-9/18)",
+        "salary": 0,
+        "reward": 0,
+        "penalty": 0,
+        "interest": 0,
+        "spend": 130,
+        "spendCount": 2,
         "adjust": 0
       }
     ]
