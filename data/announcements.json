@@ -29,6 +29,50 @@
     "images": []
   },
   {
+    "id": "n3dbb1f9d7e",
+    "title": "超越盃數學競賽",
+    "content": "2026超越盃全國數學競賽報名，有意願可以找老師拿報名簡章",
+    "date": "2026-09-14",
+    "endDate": "2026-10-08",
+    "expiry": "2026-10-08",
+    "source": "班級",
+    "category": "活動",
+    "pinned": false,
+    "link": "",
+    "images": [
+      "data/uploads/cab15c9dfb27-0.heic"
+    ]
+  },
+  {
+    "id": "n3dbb1f9d7e",
+    "title": "115學年度上學期書法班招生簡章",
+    "content": "書法班招生簡章，有意願可以找老師拿報名簡章",
+    "date": "2026-09-14",
+    "endDate": "2026-09-18",
+    "expiry": "2026-09-18",
+    "source": "學校",
+    "category": "活動",
+    "pinned": false,
+    "link": "",
+    "images": [
+      "data/uploads/ce80b85ef9f5-0.heic"
+    ]
+  },
+  {
+    "id": "s20260914y3ha6q",
+    "title": "轉知財團法人國語日報社2026「讓好文、好品格一起發光 徵文活動」活動簡章，詳如說明。",
+    "content": "發布單位：教務處",
+    "date": "2026-09-14",
+    "endDate": "",
+    "expiry": "2026-10-14",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=768&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
+  },
+  {
     "id": "s20260911577ydx",
     "title": "校內英語說唱比賽，中年級英語歡樂唸韻文成績公告",
     "content": "發布單位：教務處",
@@ -213,20 +257,6 @@
     "category": "公告",
     "pinned": false,
     "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=633&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
-    "id": "s20260826zyhpxz",
-    "title": "115學年度崑山國小桌球隊招生!!!歡迎報名參加!!! (9/4報名名單公告!!!!!!請參閱附檔)",
-    "content": "發布單位：學務處",
-    "date": "2026-08-26",
-    "endDate": "",
-    "expiry": "2026-09-25",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=632&type=news&from_op=school_department_show",
     "images": [],
     "auto": "school"
   },
