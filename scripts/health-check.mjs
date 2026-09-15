@@ -275,6 +275,30 @@ async function checkSwapPlanMoved() {
   else ok("調課後進度皆已搬移");
 }
 
+// ── A8 已知錯字有沒有再出現（2026-09-15，SPEC_文字校對 第二層）─────────────────
+// 對照表 scripts/data/錯字對照表.json 只收「整串出現就一定是錯」的寫法，逐字比對＝零推論。
+// 命中代表 Notion 正本又寫進舊錯字（或沒修到）；修 Notion 後重新同步即消失。
+async function checkKnownTypos() {
+  const table = JSON.parse(await readFile(path.join(ROOT, "scripts/data/錯字對照表.json"), "utf8")).對照;
+  const hits = [];
+  const walk = async dir => {
+    for (const e of await readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) { await walk(full); continue; }
+      if (!e.name.endsWith(".json")) continue;
+      const text = await readFile(full, "utf8");
+      for (const [bad, good] of Object.entries(table)) {
+        const n = text.split(bad).length - 1;
+        if (n) hits.push(`${path.relative(ROOT, full)}「${bad}」→「${good}」×${n}`);
+      }
+    }
+  };
+  await walk(DATA_DIR);
+  if (hits.length) warn("文字", `已知錯字 ${hits.length} 處：${hits.join("；")}`,
+    "到 Notion 正本改正（整欄重寫要逐字回讀），再同步；確定不是錯字就從對照表拿掉那一組");
+  else ok("已知錯字 0 處");
+}
+
 // ── 執行與輸出 ──────────────────────────────────────────────────────────
 await checkPagesLive();
 await checkSyncFresh();
@@ -287,6 +311,7 @@ await checkBlueprintIndex();
 await checkFifthSync();
 await checkCrossFile();
 await checkSwapPlanMoved();
+await checkKnownTypos();
 
 const reds = findings.filter(f => f.level === "red");
 const warns = findings.filter(f => f.level === "warn");
