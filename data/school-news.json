@@ -1,6 +1,24 @@
 {
-  "fetchedAt": "2026-09-15T06:21:18.484Z",
+  "fetchedAt": "2026-09-15T13:05:21.166Z",
   "items": [
+    {
+      "date": "2026-09-15",
+      "title": "臺灣生命教育意象館歡迎各級學校踴躍報名參觀",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=773&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
+    {
+      "date": "2026-09-15",
+      "title": "函轉教育部「無毒有我‧攜手防護」宣導單張與相關宣導影片及法務部「依托咪酯類毒品」宣導影片與電子圖卡修正案",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=772&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-09-15",
+      "title": "因應菸害防制法部分條文修正草案，衛生福利部國民健康署辦理電子煙回收作業",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=771&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-09-14",
       "title": "轉知財團法人國語日報社2026「讓好文、好品格一起發光 徵文活動」活動簡章，詳如說明。",
@@ -42,24 +60,6 @@
       "title": "國立成功大學辦理「心連心・學情緒」：2026 SEL社會情緒學習嘉年華活動",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=757&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-09-10",
-      "title": "校內英語說唱比賽，高年級英語Talk Show成績公告",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=752&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-09-10",
-      "title": "轉知為防範腸病毒、流感、COVID-19疫情，請學校及幼兒園加各項防疫工作及衛教宣導",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=750&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
-      "date": "2026-09-06",
-      "title": "115學年度第一學期獎學金申請資訊",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=710&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
