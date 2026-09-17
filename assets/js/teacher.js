@@ -246,10 +246,20 @@
       if (i < 0) return null;
       try { return JSON.parse(text.slice(i)); } catch { return null; }
     };
+    // 顯示用行為名：班規名稱常是「A、B」的情境列舉（④bad0＝「作業缺交、複習卷沒交」），
+    // 整串照抄會讓老師以為當天真的有複習卷沒交（2026-09-09、09-17 老師回報）。
+    // 作業清點依狀態對到固定短名；其他工具保留原名（括號內的「、」不能切，如「衝突動口（罵人、挑釁）」）。
+    // 只改顯示——JSON 與寫進紀錄庫的 act 原封不動，週結比對不受影響。
+    const HW_ACT = { 0: "作業缺交", 1: "作業潦草／未訂正" };
+    const cmAct = (e, tool) => {
+      if (!e.act) return "（未填行為）";
+      if (tool === "homework" && e.src === "rule" && e.rule_n === 4 && HW_ACT[e.act_i]) return HW_ACT[e.act_i];
+      return e.act;
+    };
     const cmView = pack => {
       const evs = pack.events || [];
       const by = {};
-      evs.forEach(e => { const k = e.act || "（未填行為）"; by[k] = (by[k] || 0) + 1; });
+      evs.forEach(e => { const k = cmAct(e, pack.tool); by[k] = (by[k] || 0) + 1; });
       const acts = Object.entries(by).sort((a, b) => b[1] - a[1]);
       const head = `📋 ${CM_TOOL[pack.tool] || pack.tool || "課堂工具"}　` +
                    `${String(pack.date || "").slice(5).replace("-", "/")}　共 ${evs.length} 筆` +
@@ -257,7 +267,7 @@
       const brief = acts.slice(0, 3).map(([a, n]) => `${a} ×${n}`).join("、") +
                     (acts.length > 3 ? ` 等 ${acts.length} 種` : "");
       const rows = evs.map(e => {
-        const bits = [`座號 ${e.seat}`, e.act || "（未填行為）"];
+        const bits = [`座號 ${e.seat}`, cmAct(e, pack.tool)];
         if (e.period) bits.push(e.period);
         if (e.count > 1) bits.push(`${e.count} 次`);
         if (e.coin !== undefined && e.coin !== "") bits.push(`${e.coin} 幣`);
