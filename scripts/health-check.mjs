@@ -286,6 +286,8 @@ async function checkKnownTypos() {
       const full = path.join(dir, e.name);
       if (e.isDirectory()) { await walk(full); continue; }
       if (!e.name.endsWith(".json")) continue;
+      // school-news.json＝校網原文快取（前台不讀），錯字在併入 announcements.json 時才改
+      if (e.name === "school-news.json") continue;
       const text = await readFile(full, "utf8");
       for (const [bad, good] of Object.entries(table)) {
         const n = text.split(bad).length - 1;

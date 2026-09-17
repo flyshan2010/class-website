@@ -154,11 +154,16 @@ const slugId = (date, title) => {
   return `s${date.replace(/-/g, "")}${h.toString(36)}`;
 };
 
+// 校網原文的錯字（老師確認過的才收，見 scripts/data/錯字對照表.json）同步時就改掉；
+// 這裡的公告每輪整批重抓，改 json 或 Notion 都會被蓋回去，只能在產生端修（U42）。
+const TYPOS = JSON.parse(await readFile(path.join(ROOT, "scripts/data/錯字對照表.json"), "utf8")).對照;
+const fixTypos = (s) => Object.entries(TYPOS).reduce((t, [bad, good]) => t.split(bad).join(good), s);
+
 const merged = [
   ...kept,
   ...picked.map((it) => ({
     id: slugId(it.date, it.title),
-    title: it.title,
+    title: fixTypos(it.title),
     content: it.dept ? `發布單位：${it.dept}` : "",
     date: it.date,
     endDate: "",
