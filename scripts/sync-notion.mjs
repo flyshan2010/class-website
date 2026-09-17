@@ -177,7 +177,17 @@ function heicToJpg(buf, base) {
 }
 
 // 下載 Notion 圖片到 data/uploads/（Notion 檔案網址一小時就過期，必須落地）
-async function saveImages(files, pageId) {
+// 依檔頭判斷真實圖片格式；不是瀏覽器能顯示的圖片就回 null（副檔名不可信：Notion 圖片欄也收 PDF）
+function sniffImage(buf) {
+  if (buf[0] === 0xff && buf[1] === 0xd8) return "jpg";
+  if (buf.toString("latin1", 1, 4) === "PNG") return "png";
+  if (buf.toString("latin1", 0, 3) === "GIF") return "gif";
+  if (buf.toString("latin1", 0, 4) === "RIFF" && buf.toString("latin1", 8, 12) === "WEBP") return "webp";
+  return null;
+}
+
+// docs：傳入陣列時，非圖片檔（PDF、簡報…）改收成附件 {name, url}；沒傳就略過並警告，避免被當圖片顯示成破圖
+async function saveImages(files, pageId, docs = null) {
   const saved = [];
   let i = 0;
   for (const f of files || []) {
@@ -197,6 +207,17 @@ async function saveImages(files, pageId) {
         if (!jpg) { console.warn(`⚠️ HEIC 轉 JPG 失敗，略過此圖（請改傳 JPG）：${f.name}`); continue; }
         buf = jpg; ext = "jpg";
       }
+      const kind = sniffImage(buf);
+      if (!kind) {
+        if (!docs) { console.warn(`⚠️ 不是圖片，略過（此欄只放圖片）：${f.name}`); continue; }
+        const dext = buf.toString("latin1", 0, 4) === "%PDF" ? "pdf"
+          : ((f.name || "").match(/\.([a-z0-9]{2,5})$/i)?.[1] || "bin").toLowerCase();
+        const dname = `${base}.${dext}`;
+        await writeFile(path.join(UPLOAD_DIR, dname), buf);
+        docs.push({ name: f.name || `附件.${dext}`, url: `data/uploads/${dname}` });
+        continue;
+      }
+      ext = kind;
       const filename = `${base}.${ext}`;
       await writeFile(path.join(UPLOAD_DIR, filename), buf);
       saved.push(`data/uploads/${filename}`);
@@ -273,8 +294,10 @@ async function syncAnnouncements() {
     // 同步每天跑三次（07:00／16:00／20:00），到日當天早上自動上線。
     if (date > today) continue;
     if (addDays(expiry, ANN_KEEP_DAYS) < today) continue;   // 過期太久，不再輸出
+    const docs = [];
     rows.push({
-      id: `n${String(r._id).replace(/-/g, "").slice(0, 10)}`,  // 首頁標題連結用的錨點
+      // 首頁標題連結用的錨點；取 ID 後段（前段同工作區幾乎相同，2026-09-17 曾兩則公告撞同一個錨點）
+      id: `n${String(r._id).replace(/-/g, "").slice(-12)}`,
       title: r["標題"],
       content: r["內容"],
       date,
@@ -284,7 +307,8 @@ async function syncAnnouncements() {
       category: r["分類"] || "其他",
       pinned: !!r["置頂"],
       link: r["連結"],
-      images: await saveImages(r["圖片"], r._id),
+      images: await saveImages(r["圖片"], r._id, docs),
+      files: docs,             // 圖片欄裡的 PDF 等非圖片檔，前端顯示成下載連結
     });
   }
   rows.sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date));

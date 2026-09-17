@@ -40,6 +40,11 @@
     <div class="photo-grid" style="margin-top:10px">
       ${a.images.map(src => `<img src="${App.esc(src)}" alt="公告圖片" loading="lazy" />`).join("")}
     </div>` : "";
+  // 圖片欄裡的 PDF 等檔案：顯示成附件連結（當 <img> 會破圖）
+  const docs = a => (a.files || []).length ? `
+    <div class="ann-files">
+      ${a.files.map(f => `<a class="ann-file" href="${App.esc(f.url)}" target="_blank" rel="noopener">📄 ${App.esc(f.name)}</a>`).join("")}
+    </div>` : "";
 
   // 內文長就摺疊：先露前 3 行，其餘點「看全文」再展開——一頁能一眼掃完幾則標題，
   // 而不是被一則長公告佔滿整個畫面。
@@ -88,6 +93,7 @@
         ${expTag}
         ${body(a)}
         ${imgs(a)}
+        ${docs(a)}
         ${a.link ? `<p class="ann-actions"><a class="ann-link" href="${App.esc(a.link)}" target="_blank" rel="noopener">🔗 開啟相關連結</a></p>` : ""}
       </section>`;
   };

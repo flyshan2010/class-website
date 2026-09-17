@@ -625,6 +625,13 @@ main {
 .album-card:hover { transform: translateY(-4px); text-decoration: none; }
 .album-card .cover { aspect-ratio: 4/3; object-fit: cover; width: 100%; background: var(--line); }
 .album-card .info { padding: 10px 14px 14px; }
+.ann-files { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ann-file {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--card, #fff);
+  color: inherit; text-decoration: none; font-weight: 600; overflow-wrap: anywhere;
+}
+.ann-file:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
 .photo-grid img {
   aspect-ratio: 1;
