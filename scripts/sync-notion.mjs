@@ -154,18 +154,19 @@ function heicToJpg(buf, base) {
   const src = path.join(tmpdir(), `${base}.heic`);
   const out = path.join(tmpdir(), `${base}.jpg`);
   const tries = [
-    () => execFileSync("heif-dec", ["-q", "85", src, out], { stdio: "ignore" }),
-    () => execFileSync("heif-convert", ["-q", "85", src, out], { stdio: "ignore" }),
+    () => execFileSync("heif-dec", ["-q", "85", src, out], { stdio: "pipe" }),
+    () => execFileSync("heif-convert", ["-q", "85", src, out], { stdio: "pipe" }),
     () => execFileSync("sips", ["-s", "format", "jpeg", "-Z", "1600", src, "--out", out], { stdio: "ignore" }),
   ];
+  const errs = [];
   try {
     rmSync(out, { force: true });
     writeFileSync(src, buf);
     for (const t of tries) {
-      try { t(); break; } catch { /* 換下一個工具 */ }
+      try { t(); break; } catch (e) { errs.push(e.message.split("\n")[0]); /* 換下一個工具 */ }
     }
     let jpg;
-    try { jpg = readFileSync(out); } catch { return null; }
+    try { jpg = readFileSync(out); } catch { console.warn(`   轉檔工具錯誤：${errs.join("｜")}`); return null; }
     // 縮圖（手機原圖動輒 3000px 以上）；沒有 ImageMagick 就保留原尺寸
     try { execFileSync("mogrify", ["-resize", "1600x1600>", "-quality", "85", out], { stdio: "ignore" }); jpg = readFileSync(out); } catch {}
     return jpg;

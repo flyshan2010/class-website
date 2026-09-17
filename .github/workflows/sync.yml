@@ -24,7 +24,8 @@ jobs:
           node-version: 20
 
       - name: 安裝 HEIC 轉檔工具（iPhone 照片轉 JPG）
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq libheif-examples imagemagick > /dev/null
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libheif-examples libheif-plugin-libde265 imagemagick > /dev/null
+          heif-dec --version || heif-convert --version || true
 
       - name: 同步 Notion 資料
         env:
