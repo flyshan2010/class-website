@@ -1,6 +1,6 @@
 [
   {
-    "id": "n394b1f9d7e",
+    "id": "ne6736f538e23",
     "title": "關於午餐內容說明",
     "content": "🍎午餐辦公室報告：\n因政府補助學生一餐的餐費為56元，而我們去年收費只有35元，有部份老師反應家長以為我們每餐增加21元的費用，想問是不是會有更好的菜色出現(例如鮑魚、活蝦)～\n在此向大家說明：過去收35元是因為有扣除三章一Q的補助14元，所以其實每餐要49元～\n56-49=7元，但今年又因為乳品要增加供應，所以2元要用在乳品，因此今年午餐成本比去年只增加：7-2=5元～\n又因物價飛漲，其實原本收費已經是在苦撐～😅\n所以並無‘’餐費增加，就要吃得更豪華‘’的情況，望周知～謝謝😊",
     "date": "2026-08-07",
@@ -10,7 +10,24 @@
     "category": "公告",
     "pinned": true,
     "link": "",
-    "images": []
+    "images": [],
+    "files": []
+  },
+  {
+    "id": "nee79e81772ed",
+    "title": "布可星球停機公告",
+    "content": "",
+    "date": "2026-09-17",
+    "endDate": "2026-10-27",
+    "expiry": "2026-10-27",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "",
+    "images": [
+      "data/uploads/ee79e81772ed-0.jpg"
+    ],
+    "files": []
   },
   {
     "id": "s20260917gdr5zq",
@@ -139,7 +156,7 @@
     "auto": "school"
   },
   {
-    "id": "n3dbb1f9d7e",
+    "id": "ncab15c9dfb27",
     "title": "超越盃數學競賽",
     "content": "2026超越盃全國數學競賽報名，有意願可以找老師拿報名簡章",
     "date": "2026-09-14",
@@ -151,10 +168,11 @@
     "link": "",
     "images": [
       "data/uploads/cab15c9dfb27-0.jpg"
-    ]
+    ],
+    "files": []
   },
   {
-    "id": "n3dbb1f9d7e",
+    "id": "nce80b85ef9f5",
     "title": "115學年度上學期書法班招生簡章",
     "content": "書法班招生簡章，有意願可以找老師拿報名簡章",
     "date": "2026-09-14",
@@ -166,10 +184,11 @@
     "link": "",
     "images": [
       "data/uploads/ce80b85ef9f5-0.jpg"
-    ]
+    ],
+    "files": []
   },
   {
-    "id": "n3d6b1f9d7e",
+    "id": "nea6677b01ad3",
     "title": "班親會資料",
     "content": "以下是班親會資料(班級經營計畫書、簡報)，供家長參考",
     "date": "2026-09-09",
@@ -179,13 +198,20 @@
     "category": "公告",
     "pinned": false,
     "link": "",
-    "images": [
-      "data/uploads/ea6677b01ad3-0.jpg",
-      "data/uploads/ea6677b01ad3-1.jpg"
+    "images": [],
+    "files": [
+      {
+        "name": "115公版班級簡報.pdf",
+        "url": "data/uploads/ea6677b01ad3-0.pdf"
+      },
+      {
+        "name": "115-404班級經營計畫(fin).pdf",
+        "url": "data/uploads/ea6677b01ad3-1.pdf"
+      }
     ]
   },
   {
-    "id": "n3d6b1f9d7e",
+    "id": "ne7893da4bc7d",
     "title": "（輔導室活動）讓愛流動，成長你我",
     "content": "",
     "date": "2026-09-09",
@@ -198,7 +224,8 @@
     "images": [
       "data/uploads/e7893da4bc7d-0.jpg",
       "data/uploads/e7893da4bc7d-1.jpg"
-    ]
+    ],
+    "files": []
   },
   {
     "id": "s20260906yr86s5",
@@ -215,7 +242,7 @@
     "auto": "school"
   },
   {
-    "id": "n3d1b1f9d7e",
+    "id": "nff732bb72c05",
     "title": "美術用具說明",
     "content": "",
     "date": "2026-09-04",
@@ -228,10 +255,11 @@
     "images": [
       "data/uploads/ff732bb72c05-0.jpg",
       "data/uploads/ff732bb72c05-1.jpg"
-    ]
+    ],
+    "files": []
   },
   {
-    "id": "n3cdb1f9d7e",
+    "id": "nfbad0a1caddc",
     "title": "115學年度班親會邀請函",
     "content": "",
     "date": "2026-08-31",
@@ -243,10 +271,11 @@
     "link": "",
     "images": [
       "data/uploads/fbad0a1caddc-0.png"
-    ]
+    ],
+    "files": []
   },
   {
-    "id": "n3ccb1f9d7e",
+    "id": "nc9c265eec7c8",
     "title": "115學年四上成語檢測重點",
     "content": " 四上成語內容公告如下，供家長參考",
     "date": "2026-08-31",
@@ -259,10 +288,11 @@
     "images": [
       "data/uploads/c9c265eec7c8-0.png",
       "data/uploads/c9c265eec7c8-1.png"
-    ]
+    ],
+    "files": []
   },
   {
-    "id": "n3ccb1f9d7e",
+    "id": "nde9f31ae6a03",
     "title": "115學年四上讀經內容",
     "content": " 四上讀經內容公告如下，供家長參考",
     "date": "2026-08-31",
@@ -274,10 +304,11 @@
     "link": "",
     "images": [
       "data/uploads/de9f31ae6a03-0.png"
-    ]
+    ],
+    "files": []
   },
   {
-    "id": "n3bbb1f9d7e",
+    "id": "ne1fed87707ff",
     "title": "(轉知健康中心通知)115年流感疫苗施打調查",
     "content": "通知內容及相關連結如下，請家長撥空填答，謝謝您",
     "date": "2026-08-13",
@@ -289,10 +320,11 @@
     "link": "https://reurl.cc/lnvOYd",
     "images": [
       "data/uploads/e1fed87707ff-0.jpg"
-    ]
+    ],
+    "files": []
   },
   {
-    "id": "n394b1f9d7e",
+    "id": "ndd4db1cbfee8",
     "title": "8/28返校說明",
     "content": "各位 404 班的家長與小朋友們好：\n期待在開學前與大家見面！為了讓返校日順利進行，以下整理了當天重要的時間、必帶物品與班務重點，請家長協助提醒孩子做好準備。\n⏰ 集合時間與地點\n• 返校日期：8 月 28 日（星期五）\n• 到校時間：07:40 前到校\n• 放學時間：11:10 放學\n• 集合地點：404 班教室（請學生直接回教室）\n🎒 返校日必帶物品\n• [ ] 暑假作業（已完成請記得帶來繳交）\n• [ ] 書包與基本文具（鉛筆盒、紅筆、螢光筆）\n• [ ] 水壺（請裝滿水，隨時補充水分）\n📌 當天班務重點\n1. 發放新學期課本（請準備書包裝書）\n2. 抄寫日課表與聯絡簿說明\n3. 班級生活常規與座位認識\n📲 重要任務：加入班級官方 LINE 班群\n請家長掃描圖片下方（或班網側邊）的 404 班官方 LINE 班群 QR Code 加入班群，並傳訊告訴我，您是哪位小朋友的家長，方便我記錄，並傳送小朋友個人查詢碼給您，以及即時掌握班級重要訊息與後續通知！\n升上四年級的你非常棒！期待 8/28 見面時看到大家燦爛的笑容！\n— 404 班導師 關心您 —",
     "date": "2026-08-07",
@@ -304,6 +336,7 @@
     "link": "",
     "images": [
       "data/uploads/dd4db1cbfee8-0.jpg"
-    ]
+    ],
+    "files": []
   }
 ]
