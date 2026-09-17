@@ -6,6 +6,9 @@
 import { writeFile, readFile, mkdir, rm, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
+import { readFileSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { webcrypto as crypto } from "node:crypto";
 import { uniqueMaskNames } from "./lib/mask-name.mjs";
 import { buildDutyData } from "./lib/build-duties.mjs";
@@ -139,6 +142,39 @@ function props(page) {
   return out;
 }
 
+// HEIF/HEIC 判定：檔頭第 4–12 byte 為 ftyp＋heic/heix/mif1 等品牌
+function isHeif(buf) {
+  if (buf.length < 12 || buf.toString("latin1", 4, 8) !== "ftyp") return false;
+  return /^(heic|heix|hevc|hevx|heim|heis|mif1|msf1)$/.test(buf.toString("latin1", 8, 12));
+}
+
+// HEIC → JPG（最長邊 1600px）。雲端 Actions 用 libheif（heif-dec／heif-convert）＋ImageMagick 縮圖；本機 Mac 用 sips。
+// 全部工具都失敗回 null，由呼叫端略過該圖（寧可少一張，不留破圖）
+function heicToJpg(buf, base) {
+  const src = path.join(tmpdir(), `${base}.heic`);
+  const out = path.join(tmpdir(), `${base}.jpg`);
+  const tries = [
+    () => execFileSync("heif-dec", ["-q", "85", src, out], { stdio: "ignore" }),
+    () => execFileSync("heif-convert", ["-q", "85", src, out], { stdio: "ignore" }),
+    () => execFileSync("sips", ["-s", "format", "jpeg", "-Z", "1600", src, "--out", out], { stdio: "ignore" }),
+  ];
+  try {
+    rmSync(out, { force: true });
+    writeFileSync(src, buf);
+    for (const t of tries) {
+      try { t(); break; } catch { /* 換下一個工具 */ }
+    }
+    let jpg;
+    try { jpg = readFileSync(out); } catch { return null; }
+    // 縮圖（手機原圖動輒 3000px 以上）；沒有 ImageMagick 就保留原尺寸
+    try { execFileSync("mogrify", ["-resize", "1600x1600>", "-quality", "85", out], { stdio: "ignore" }); jpg = readFileSync(out); } catch {}
+    return jpg;
+  } finally {
+    rmSync(src, { force: true });
+    rmSync(out, { force: true });
+  }
+}
+
 // 下載 Notion 圖片到 data/uploads/（Notion 檔案網址一小時就過期，必須落地）
 async function saveImages(files, pageId) {
   const saved = [];
@@ -147,13 +183,21 @@ async function saveImages(files, pageId) {
     if (!f.url) continue;
     const extMatch = (f.name || "").match(/\.(jpe?g|png|gif|webp|heic)$/i) ||
                      f.url.split("?")[0].match(/\.(jpe?g|png|gif|webp|heic)$/i);
-    const ext = extMatch ? extMatch[1].toLowerCase().replace("jpeg", "jpg") : "jpg";
+    let ext = extMatch ? extMatch[1].toLowerCase().replace("jpeg", "jpg") : "jpg";
     // 取 ID 後 12 碼：同工作區頁面 ID 前段幾乎相同，取前段會讓不同頁面的圖互相覆蓋
-    const filename = `${pageId.replace(/-/g, "").slice(-12)}-${i++}.${ext}`;
+    const base = `${pageId.replace(/-/g, "").slice(-12)}-${i++}`;
     try {
       const res = await fetch(f.url);
       if (!res.ok) { console.warn(`⚠️ 圖片下載失敗（${res.status}）：${f.name}`); continue; }
-      await writeFile(path.join(UPLOAD_DIR, filename), Buffer.from(await res.arrayBuffer()));
+      let buf = Buffer.from(await res.arrayBuffer());
+      // iPhone 的 HEIC 只有 Safari 顯示得出來（Notion 會自己轉檔，所以在 Notion 看起來正常）→ 一律轉 JPG
+      if (ext === "heic" || isHeif(buf)) {
+        const jpg = heicToJpg(buf, base);
+        if (!jpg) { console.warn(`⚠️ HEIC 轉 JPG 失敗，略過此圖（請改傳 JPG）：${f.name}`); continue; }
+        buf = jpg; ext = "jpg";
+      }
+      const filename = `${base}.${ext}`;
+      await writeFile(path.join(UPLOAD_DIR, filename), buf);
       saved.push(`data/uploads/${filename}`);
     } catch (e) {
       console.warn(`⚠️ 圖片下載失敗：${f.name}（${e.message}）`);
