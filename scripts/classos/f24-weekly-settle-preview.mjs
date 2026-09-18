@@ -199,9 +199,12 @@ for (const t of await queryAll(DS.redeem, { filter: { and: [
 // 逐人算、每人下限 0：缺席扣到負數不能拿去抵別人的支援
 const cleanSeats = new Set([...cleanShares.keys(), ...cleanSup.keys()]);
 let cleanTimes = 0;
+const cleanBySeat = new Map();   // 座號 → 本週打掃次數（入帳端逐人建帳用，見檔尾「薪水類逐人明細」）
 for (const s of cleanSeats) {
-  cleanTimes += Math.max(0, (cleanShares.get(s) ?? 0) * SCHOOL_DAYS + (cleanSup.get(s) ?? 0)
+  const n = Math.max(0, (cleanShares.get(s) ?? 0) * SCHOOL_DAYS + (cleanSup.get(s) ?? 0)
     - (cleanAbs.get(s) ?? 0) - (cleanBad.get(s) ?? 0) - (cleanFree.get(s) ?? 0));
+  cleanTimes += n;
+  if (n) cleanBySeat.set(s, n);
 }
 const cleanTotal = cleanTimes * CLEAN_PAY;
 // 驗算用明細（只印座號與份數，不印姓名）——打掃份數算錯就是有人少領錢，一定要看得見
@@ -223,9 +226,12 @@ const rotSeats = (cycle && perWeek)
 const lunchSup = tallyBySeat("午餐支援"), lunchAbs = tallyBySeat("午餐缺席");
 const lunchSeats = new Set([...fixedLunch, ...rotSeats, ...lunchSup.keys()]);
 let lunchTimes = 0;
+const lunchBySeat = new Map();   // 座號 → 本週午餐工作次數
 for (const s of lunchSeats) {
   const base = (fixedLunch.has(s) || rotSeats.includes(s)) ? SCHOOL_DAYS : 0;
-  lunchTimes += Math.max(0, base + (lunchSup.get(s) ?? 0) - (lunchAbs.get(s) ?? 0));
+  const n = Math.max(0, base + (lunchSup.get(s) ?? 0) - (lunchAbs.get(s) ?? 0));
+  lunchTimes += n;
+  if (n) lunchBySeat.set(s, n);
 }
 const lunchTotal = lunchTimes * LUNCH_PAY;
 
@@ -245,11 +251,13 @@ for (const l of weekLogs) {
 }
 let routineTotal = 0;
 const routineDetail = [];
+const routineBySeat = new Map();   // 座號 → 本週常規獎勵金額
 for (const r of (ROUTINE_ENABLED ? roster : [])) {
   const miss = missDays.get(r.seat)?.size ?? 0;
   const days = Math.max(0, SCHOOL_DAYS - miss);
   const amt = days * ROUTINE_PAY + (days === SCHOOL_DAYS ? ROUTINE_FULL : 0);
   routineTotal += amt;
+  if (amt) routineBySeat.set(r.seat, amt);
   if (miss) routineDetail.push(`座號${r.seat} 少 ${miss} 天`);
 }
 
@@ -313,6 +321,16 @@ const paid = {
 const mark = (p) => p.n ? `　⚠️ **已入帳 ${p.sum} 幣（${p.n} 筆），本次不重複計**` : "";
 
 // ── 報表 ────────────────────────────────────────────────────────
+/* 薪水類逐人明細（2026-09-18 新增）：①③④⑤ 沒有腳本入帳，是由 Claude Code 逐筆建帳本列，
+   而逐人金額只有這支算得出來。不印出來，入帳端就只能自己算一次——那是兩份會漂的公式。
+   ⚠️ 本 repo 為 PUBLIC：只印座號與金額，不印姓名。 */
+const perSeat = m => [...m.entries()].sort((a, b) => a[0] - b[0]).map(([s, v]) => `${s}:${v}`).join(" ");
+console.log(`💰 薪水類逐人明細（單位：幣）`);
+console.log(`　① 職務薪水　　${roster.filter(r => r.pay).sort((a, b) => a.seat - b.seat).map(r => `${r.seat}:${r.pay}`).join(" ")}`);
+console.log(`　③ 打掃薪水　　${perSeat(new Map([...cleanBySeat].map(([s, n]) => [s, n * CLEAN_PAY])))}`);
+console.log(`　④ 午餐薪水　　${perSeat(new Map([...lunchBySeat].map(([s, n]) => [s, n * LUNCH_PAY])))}`);
+console.log(`　⑤ 常規獎勵　　${perSeat(routineBySeat)}`);
+
 const total = salary + rewardSum + cleanTotal + lunchTotal + routineTotal + hwTotal + badTotal;
 // 實際還要入帳的＝扣掉已入過帳的那幾項（②本來就只算未入帳的；⑦ 已入帳者必有寫回列，已在上面排除）
 const due = (paid.job.n ? 0 : salary) + rewardSum + (paid.clean.n ? 0 : cleanTotal)
