@@ -155,7 +155,12 @@ console.log(`\n✍️ 寫入完成：成功 ${ok} 筆／失敗 ${fail} 筆`);
 // ── 回讀驗收（「沒噴錯」不算數，看帳本實際有沒有那一筆）──────────
 /* 寫完立刻查，最後一兩筆常常還沒進 Notion 的查詢索引——2026-09-18 首跑就這樣：
    92 筆全部寫成功，回讀卻只看到 91 筆而報「缺 1 組鍵」，等幾秒再查就對了。
-   假紅燈比沒有紅燈更糟（下一個人會以為要重跑，而重跑就是重複發錢），所以這裡重試。 */
+   假紅燈有兩種害處，**第二種在 2026-09-18 真的發生了**：
+   ① 下一個人會以為要重跑，而重跑就是重複發錢；
+   ② **它會誘使人編故事**——看到自己沒預期的狀態，最省力的解釋永遠是「有別人動過」。
+      那天 f29 同樣噴假紅燈，結果被寫成「530 幣是不明行動者入的」並列為最優先待辦，
+      而答案就在自己幾分鐘前下的 `gh workflow run`、在 `gh run list` 的第一頁。
+   所以這裡重試，而且紅燈文案一定要附「下一步怎麼判」。 */
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let bank2, booked2, missing;
 for (let attempt = 1; attempt <= 3; attempt++) {
@@ -183,7 +188,7 @@ for (const b of bankFinal) {
 console.log(`🔁 回讀：帳本 ${bank.length} → ${bankFinal.length}（＋${bankFinal.length - bank.length}）`
   + `｜本週薪水類 ${n2} 筆／${sum2} 幣｜應有的鍵缺 ${missing.length} 組｜學年為空 ${noYear} 筆`);
 if (missing.length || noYear) {
-  console.error("❌ 回讀不通過：缺鍵或學年為空，請人工檢查後再處理，不要重跑。");
+  console.error("❌ 回讀不通過：缺鍵或學年為空，請人工檢查後再處理，不要重跑；再跑一次 dry-run 看「待入帳」是不是 0 筆最快。");
   process.exit(1);
 }
 console.log("✅ 回讀通過。");
