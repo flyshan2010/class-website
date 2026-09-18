@@ -130,14 +130,25 @@ await forEachThrottled(creates, async c => {
 console.log(`\n✍️ 寫入完成：成功 ${ok} 筆／失敗 ${fail} 筆`);
 
 // ── 回讀驗收（不是「沒噴錯」就算數）────────────────────────────
-const bank2 = await queryAll(DS.bank);
-const booked2 = new Set();
-for (const b of bank2) {
-  for (const sid of relIds(b, "學生")) for (const lid of relIds(b, "紀錄庫")) booked2.add(`${lid}|${sid}`);
+/* Notion 的查詢索引有延遲：2026-09-18 第3週跑 f29，202 筆全部寫成功，
+   回讀卻只看到 201 筆而報「缺 1 組鍵」——當天重跑 dry-run 確認待入帳 0 筆，錢一分沒漏。
+   **假紅燈比沒有紅燈更糟**：它會誘使下一個人重跑，而重跑就是重複發錢。
+   （同一個病 f31 首跑也踩到，92 筆回讀成 91 筆；兩支用同一套重試。）*/
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let bank2, missing;
+for (let attempt = 1; attempt <= 3; attempt++) {
+  await sleep(attempt * 4000);
+  bank2 = await queryAll(DS.bank);
+  const booked2 = new Set();
+  for (const b of bank2) {
+    for (const sid of relIds(b, "學生")) for (const lid of relIds(b, "紀錄庫")) booked2.add(`${lid}|${sid}`);
+  }
+  missing = creates.filter(c => !booked2.has(`${c.logId}|${c.stuId}`));
+  if (!missing.length) break;
+  console.log(`   ⏳ 第 ${attempt} 次回讀還缺 ${missing.length} 組，等索引跟上再查…`);
 }
-const missing = creates.filter(c => !booked2.has(`${c.logId}|${c.stuId}`));
 const added = bank2.length - bank.length;
 console.log(`🔁 回讀：帳本 ${bank.length} → ${bank2.length}（＋${added}）｜應有的防重複鍵缺 ${missing.length} 組`);
 console.log(missing.length || fail || added !== ok
-  ? "❌ 驗收未通過，請人工檢查（不要重跑，先看帳本）"
+  ? "❌ 驗收未通過，請人工檢查（不要重跑，先看帳本；再跑一次 dry-run 看「待入帳」是不是 0 筆最快）"
   : "✅ 驗收通過：筆數與防重複鍵都對得上；再跑一次本任務應該是 0 筆");
