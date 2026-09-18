@@ -153,19 +153,34 @@ await forEachThrottled(creates, async c => {
 console.log(`\n✍️ 寫入完成：成功 ${ok} 筆／失敗 ${fail} 筆`);
 
 // ── 回讀驗收（「沒噴錯」不算數，看帳本實際有沒有那一筆）──────────
-const bank2 = await queryAll(DS.bank);
-const booked2 = new Set();
+/* 寫完立刻查，最後一兩筆常常還沒進 Notion 的查詢索引——2026-09-18 首跑就這樣：
+   92 筆全部寫成功，回讀卻只看到 91 筆而報「缺 1 組鍵」，等幾秒再查就對了。
+   假紅燈比沒有紅燈更糟（下一個人會以為要重跑，而重跑就是重複發錢），所以這裡重試。 */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let bank2, booked2, missing;
+for (let attempt = 1; attempt <= 3; attempt++) {
+  await sleep(attempt * 4000);
+  bank2 = await queryAll(DS.bank);
+  booked2 = new Set();
+  for (const b of bank2) {
+    const subj = anyText(b, "事由");
+    const k = KINDS.find(x => subj.startsWith(x.prefix));
+    if (!k) continue;
+    for (const sid of relIds(b, "學生")) booked2.add(`${k.key}|${sid}`);
+  }
+  missing = creates.filter(c => !booked2.has(`${c.kind}|${c.stuId}`));
+  if (!missing.length) break;
+  console.log(`   ⏳ 第 ${attempt} 次回讀還缺 ${missing.length} 組，等索引跟上再查…`);
+}
+const bankFinal = bank2;
 let sum2 = 0, n2 = 0, noYear = 0;
-for (const b of bank2) {
+for (const b of bankFinal) {
   const subj = anyText(b, "事由");
-  const k = KINDS.find(x => subj.startsWith(x.prefix));
-  if (!k) continue;
+  if (!KINDS.some(x => subj.startsWith(x.prefix))) continue;
   n2++; sum2 += b.properties?.["金額"]?.number ?? 0;
   if (!b.properties?.["學年"]?.select?.name) noYear++;
-  for (const sid of relIds(b, "學生")) booked2.add(`${k.key}|${sid}`);
 }
-const missing = creates.filter(c => !booked2.has(`${c.kind}|${c.stuId}`));
-console.log(`🔁 回讀：帳本 ${bank.length} → ${bank2.length}（＋${bank2.length - bank.length}）`
+console.log(`🔁 回讀：帳本 ${bank.length} → ${bankFinal.length}（＋${bankFinal.length - bank.length}）`
   + `｜本週薪水類 ${n2} 筆／${sum2} 幣｜應有的鍵缺 ${missing.length} 組｜學年為空 ${noYear} 筆`);
 if (missing.length || noYear) {
   console.error("❌ 回讀不通過：缺鍵或學年為空，請人工檢查後再處理，不要重跑。");
