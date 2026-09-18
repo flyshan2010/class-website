@@ -32,14 +32,26 @@
           "人際技巧": 3.3,
           "負責任決策": 3.9
         }
+      },
+      {
+        "week": 3,
+        "period": "四上第3週(9/14-9/18)",
+        "n": 27,
+        "avg": {
+          "自我覺察": 3,
+          "自我管理": 2.7,
+          "社會覺察": 3.3,
+          "人際技巧": 3.3,
+          "負責任決策": 3.9
+        }
       }
     ]
   },
   "economy": {
     "totals": {
-      "supply": 5022,
-      "txCount": 839,
-      "spend": 930
+      "supply": 6742,
+      "txCount": 1133,
+      "spend": 1170
     },
     "weeks": [
       {
@@ -67,9 +79,9 @@
       {
         "week": 3,
         "label": "四上第3週(9/14-9/18)",
-        "salary": 0,
-        "reward": 0,
-        "penalty": 0,
+        "salary": 1190,
+        "reward": 770,
+        "penalty": 240,
         "interest": 0,
         "spend": 200,
         "spendCount": 3,
