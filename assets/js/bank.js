@@ -10,7 +10,9 @@
   let store = [];
   try { store = await App.fetchJSON("data/store.json"); } catch { /* 尚未上架 */ }
 
-  // 班級共同目標（集資）：預設關閉，老師在 Notion「⚙️ 網站設定」填「班級共同目標＝開」才出現。
+  // 班級共同目標（集資）：2026-09-19 起由 🏪 商店「⑥ 全班集資・共同達成」層驅動——
+  // 商店有上架的 ⑥ 層列就會出現，沒有就不出現。**「⚙️ 網站設定」的「班級共同目標」總開關
+  // 與「班級共同目標名稱」兩列已廢棄**（sync 不再讀它們，改那裡不會有任何效果）。
   // 資料只有總額與人數，沒有誰捐多少——公開頁列個別金額等於攤開各家的餘裕程度。
   let goal = { enabled: false };
   try { goal = await App.fetchJSON("data/class-goal.json"); } catch { /* 尚未產生 */ }
