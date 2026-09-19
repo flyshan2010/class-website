@@ -71,8 +71,8 @@ const has = (s, title, d) => weekLogs.some(p => titleOf(p) === title && dateOf(p
 const A = cleaners.find(s => !has(s, "打掃缺席", days[2]));
 const B = roster.map(r => r.seat).find(s => s !== A && !has(s, "常規未達成", days[3]));
 const C = cleaners.find(s => s !== A && s !== B && !weekLogs.some(p => titleOf(p) === "打掃未達標" && mine(p, s)));
-const i7a = (card(7)?.bad ?? []).findIndex(a => a.act === "答應的工作或幹部職務擺爛");
-const i7b = (card(7)?.bad ?? []).findIndex(a => a.act === "常規沒做到、也不肯重做");
+const i7a = (card(7)?.bad ?? []).findIndex(a => a.act === "輪到的工作或幹部職務沒做完");
+const i7b = (card(7)?.bad ?? []).findIndex(a => a.act === "午餐後沒潔牙，也沒有補刷");
 check(i7a >= 0 && i7b >= 0, `班規⑦ 兩行都在 class-rules.json（act_i ${i7a}、${i7b}）`);
 const ruleEv = (seat, date, i, period, tool) => ({ tool, date, seat, src: "rule", rule_n: 7, kind: "bad", act_i: i,
   act: card(7).bad[i].act, coin: card(7).bad[i].coin, level: card(7).bad[i].level, period });
