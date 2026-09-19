@@ -24,7 +24,6 @@ const relIds = (p, k) => (p.properties?.[k]?.relation ?? []).map(r => r.id);
 const dateOf = (p, k) => (p.properties?.[k]?.date?.start ?? "").slice(0, 10);
 const TALLY = new Set(["打掃未達標", "打掃缺席", "打掃支援", "作業完成", "午餐缺席", "午餐支援", "常規未達成"]);
 const WB = /^第\d+週/;
-const CIRCLE = "①②③④⑤⑥⑦⑧⑨⑩";
 const yearOf = d => String(Number(d.slice(0, 4)) - 1911 - (Number(d.slice(5, 7)) < 8 ? 1 : 0));
 const fmt = m => [...m.entries()].sort((a, b) => a[0] - b[0]).map(([s, v]) => `${s}:${v}`).join(" ") || "（無）";
 
@@ -146,7 +145,10 @@ console.log("\n== E ⑤ 班級常規獎勵：班規紀錄連帶扣掉的部分�
       const m = isT ? tallyDays : ruleDays;
       if (!m.has(s)) m.set(s, new Set());
       m.get(s).add(r.date);
-      if (isR) { const c = CIRCLE.includes(r.title[0]) ? r.title[0] : "其他"; why[c] = (why[c] ?? 0) + 1; }
+      /* 2026-09-19 起事件描述不再帶「⑤上課守秩序－」前綴，圈號分組失效。改用「類別」分組——
+         這裡是 PUBLIC repo，手動記的負向列（如「座號N 晨掃…」）標題本身含座號與事由，
+         拿標題當分組鍵等於把事件描述原文印出來，違反本檔開頭的護欄。 */
+      if (isR) { why[r.cat] = (why[r.cat] ?? 0) + 1; }
     }
   }
   const amt = miss => Math.max(0, 5 - miss) + (miss === 0 ? 3 : 0);
