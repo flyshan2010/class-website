@@ -917,7 +917,10 @@ async function syncStore() {
 // 隱私：只輸出總額與「幾個人捐過」，不出姓名、座號、也不出誰捐多少——
 // 公開頁列出個別捐款金額，等於把「誰家比較有餘裕」攤在班網上。
 const GOAL_TIER = "⑥ 全班集資・共同達成";
-const GOAL_THRESHOLD_RATIO = 3 / 4;   // 參與門檻＝在學人數的 3/4，無條件進位（27 人 → 20 人）
+// 參與門檻＝在學人數的 3/4，**無條件捨去**：27 人 → 20 人。
+// 捨去不是進位——老師在 SPEC §2-3 明寫「27 人 → 20 人」（27×3/4＝20.25，進位會變 21）。
+// 門檻是「讓人人進得來」的設計，取捨有疑義時往寬的那邊走。
+const GOAL_THRESHOLD_RATIO = 3 / 4;
 
 async function syncClassGoal() {
   const items = (await queryDataSource(DS.store)).map(props)
@@ -926,7 +929,7 @@ async function syncClassGoal() {
 
   const enrolled = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "").length;
-  const backersNeeded = Math.ceil(enrolled * GOAL_THRESHOLD_RATIO);
+  const backersNeeded = Math.max(1, Math.floor(enrolled * GOAL_THRESHOLD_RATIO));
 
   const txRows = (await queryDataSource(DS.bank)).map(props)
     .filter(r => r["學生"]?.length && r["金額"] !== "" && (r["類型"] || "") === "消費");
