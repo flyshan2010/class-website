@@ -104,19 +104,6 @@
     "note": "下課邀2–3位同學玩桌遊"
   },
   {
-    "id": "39bb1f9d-7e45-8197-9df5-fafde20b5efe",
-    "name": "班級自由閱讀券",
-    "category": "特權",
-    "tier": "② 活動特權・消費型",
-    "unlock": "",
-    "unlockXp": 0,
-    "unlockMerit": 0,
-    "price": 35,
-    "stock": 99,
-    "icon": "📖",
-    "note": "彈性時間或午休，在教室閱讀角自由看書 20 分鐘"
-  },
-  {
     "id": "3cfb1f9d-7e45-8153-88b6-c3237ff11805",
     "name": "布告欄設計師券",
     "category": "特權",
