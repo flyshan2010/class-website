@@ -973,7 +973,7 @@ main {
 }
 .bank-tip { margin-top: 18px; text-align: center; font-size: 0.8611rem; background: #fff8e8; }
 
-/* 班級共同目標（集資）：預設關閉，Notion「⚙️ 網站設定」填「班級共同目標＝開」才出現 */
+/* 班級共同目標（通用集資）：資料來自 🏪 班級商店「⑥ 全班集資・共同達成」層，一列一個目標 */
 .goal-card { border: 3px solid #ffd9a0; background: linear-gradient(180deg, #fffaf2, var(--card)); }
 .goal-card.reached { border-color: #9fe0b6; background: linear-gradient(180deg, #f2fff7, var(--card)); }
 .goal-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
@@ -1002,6 +1002,15 @@ main {
   margin-top: 10px; font-size: 0.7778rem; line-height: 1.6;
   background: #fff8e8; border-radius: 12px; padding: 8px 10px;
 }
+.goal-card + .goal-card { margin-top: 12px; }
+/* 第二條軌道＝參加人數。金額與人數**都**要滿才算達成，所以兩條都要看得到，
+   不能只畫金額那條——那會讓孩子以為錢湊夠就結束了 */
+.goal-bar-people { margin-top: 6px; height: 22px; background: #e6eef0; }
+.goal-bar-people .goal-fill { background: linear-gradient(90deg, #8ecae6, #4aa3c7); }
+.goal-card.reached .goal-bar-people .goal-fill { background: linear-gradient(90deg, #7fd6a2, #1dd1a1); }
+.goal-bar-people .goal-pct { color: #123f52; }
+/* ⑥ 層的「庫存」語意是「一學期可以達成幾次」，不是庫存幾件——文案分層寫（SPEC §6） */
+.goal-rounds { font-size: 0.7778rem; color: var(--ink-soft); font-weight: bold; }
 @media (prefers-reduced-motion: reduce) { .goal-fill { transition: none; } }
 
 /* ===== 教師專區（左側快速鍵＋內容，沿用首頁 side-menu 圖例） ===== */

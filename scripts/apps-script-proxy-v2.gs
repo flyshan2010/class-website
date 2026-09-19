@@ -316,6 +316,14 @@ function redeemRequest_(props, body) {
   const category = (((ip["分類"] || {}).select) || {}).name || "小物";
   if (!itemName || !listed) return { ok: false, error: "這個商品已下架，請重新整理頁面看看還有什麼" };
   if (stock <= 0) return { ok: false, error: "「" + itemName + "」已經售完囉，下次早點來！" };
+  // v2.7 ⑥ 層閘門（SPEC_班級經濟機制 §2）：「⑥ 全班集資・共同達成」不是個人可兌換的商品，
+  // 它是全班一起募的目標，捐款走老師記一筆「消費」帳列（事由 集資-{名稱}）。
+  // 班網不會為 ⑥ 層出兌換鈕，但那只是視覺；沒有這道閘，手工送一筆請求就會讓一個人被扣掉整筆目標金額。
+  // ⑥ 層的「庫存」語意也不同（＝一學期可達成幾次），核可時扣庫存會把次數扣掉。
+  const tier = (((ip["層級"] || {}).select) || {}).name || "";
+  if (tier.indexOf("⑥") === 0 || tier.indexOf("全班集資") >= 0) {
+    return { ok: false, error: "「" + itemName + "」是全班一起集資的目標，不能自己兌換——跟老師說「我要捐 N 幣」就可以了！" };
+  }
   // 價格閘門：0 幣是合法設計（例：🧪 創造提案權要達 XP 門檻而非花錢），只有負數才是設定錯誤。
   // 註記寫「不可兌換」的品項是老師頒予的榮譽（榮譽牆／今日之星／命名權…），學生不能自己申請。
   const itemNote = ((ip["說明"] || {}).rich_text || []).map(t => t.plain_text).join("")

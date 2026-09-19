@@ -123,32 +123,74 @@
   // 班級共同目標：一條全班一起推的進度條。
   // 這是四層架構裡「延宕滿足」的極致——一個人存不到的東西，全班一起就存得到。
   // 關閉時整塊不渲染（回傳空字串），班網跟沒這功能一樣乾淨。
-  const goalSection = () => {
-    if (!goal || !goal.enabled || !(goal.goal > 0)) return "";
-    const raised = Math.max(0, Math.round(goal.raised || 0));
-    const target = Math.round(goal.goal);
-    const pct = Math.min(100, Math.round((raised / target) * 100));
-    const left = Math.max(0, target - raised);
-    const done = raised >= target;
+  // 班級共同目標（通用集資）：資料來自 🏪 班級商店「⑥ 全班集資・共同達成」層，
+  // 一列一個目標，可以同時有好幾個。只有總額與人數，沒有誰捐多少
+  // ——公開頁列個別金額等於攤開各家的餘裕程度。
+  //
+  // 達成要「金額到」**而且**「人數到」：錢夠但人不夠＝還沒達成，繼續募。
+  // 這會讓孩子主動去邀同學（出 1 幣就算數），社會壓力往正確方向走。
+  const goalCard = g => {
+    const target = Math.round(g.target || 0);
+    if (!(target > 0)) return "";
+    const raised = Math.max(0, Math.round(g.raised || 0));
+    const backers = g.backers || 0;
+    const need = g.backersNeeded || 0;
+    const pctMoney = Math.min(100, Math.round((raised / target) * 100));
+    const pctPeople = need ? Math.min(100, Math.round((backers / need) * 100)) : 100;
+    const leftMoney = Math.max(0, target - raised);
+    const leftPeople = Math.max(0, need - backers);
+    const done = leftMoney === 0 && leftPeople === 0;
+    const rounds = g.roundsDone || 0;
+    const limit = g.roundsLimit || 1;
+    // ⑥ 層的「庫存」語意是「一學期可以達成幾次」，不是「庫存幾件」——文案要分層寫
+    const roundInfo = limit > 1 || rounds
+      ? `<span class="goal-rounds">本學期已達成 ${rounds}／${limit} 次</span>` : "";
+    if (g.closed) {
+      return `
+      <div class="card goal-card reached">
+        <div class="goal-head">
+          <span class="goal-name">🎉 ${App.esc(g.icon || "🎯")} ${App.esc(g.name)}</span>
+          ${roundInfo}
+        </div>
+        <p class="goal-stat">這學期的 ${limit} 次都達成了，好厲害！下學期再來。</p>
+        ${g.note ? `<p class="goal-note">${App.esc(g.note)}</p>` : ""}
+      </div>`;
+    }
     return `
-      <h3 class="bank-section-title">🎯 班級共同目標</h3>
       <div class="card goal-card ${done ? "reached" : ""}">
         <div class="goal-head">
-          <span class="goal-name">${done ? "🎉 " : ""}${App.esc(goal.name || "班級共同目標")}</span>
-          <span class="goal-target">目標 🪙 ${target}</span>
+          <span class="goal-name">${done ? "🎉 " : ""}${App.esc(g.icon || "🎯")} ${App.esc(g.name)}</span>
+          <span class="goal-target">目標 🪙 ${target}・${need} 人</span>
         </div>
         <div class="goal-bar" role="img"
-             aria-label="目前進度 ${pct}%，已集資 ${raised} 枚，共 ${goal.backers || 0} 人參與">
-          <span class="goal-fill" style="width:${pct}%"></span>
-          <span class="goal-pct">${pct}%</span>
+             aria-label="金錢進度 ${pctMoney}%，已集資 ${raised} 枚，目標 ${target} 枚">
+          <span class="goal-fill" style="width:${pctMoney}%"></span>
+          <span class="goal-pct">🪙 ${pctMoney}%</span>
         </div>
-        <p class="goal-stat">已經集到 <strong>🪙 ${raised}</strong>${
-          done ? "　<em>目標達成，等老師實現囉！</em>" : `，還差 <strong>🪙 ${left}</strong>`
-        }<span class="goal-backers">・${goal.backers || 0} 位同學一起出力</span></p>
-        ${goal.note ? `<p class="goal-note">${App.esc(goal.note)}</p>` : ""}
-        <p class="goal-how">想參加就跟老師說「我要捐 N 幣」，老師會幫你記一筆。
-          捐出去的崑山幣會從存摺扣掉，但 <strong>XP 不會減少</strong>——你的努力紀錄一直都在。</p>
+        <div class="goal-bar goal-bar-people" role="img"
+             aria-label="參加人數進度 ${pctPeople}%，已有 ${backers} 人，需要 ${need} 人">
+          <span class="goal-fill" style="width:${pctPeople}%"></span>
+          <span class="goal-pct">🙋 ${pctPeople}%</span>
+        </div>
+        <p class="goal-stat">${
+          done
+            ? "<em>金額和人數都到了，等老師宣布日子囉！</em>"
+            : `已經集到 <strong>🪙 ${raised}</strong>${leftMoney ? `，還差 <strong>🪙 ${leftMoney}</strong>` : "（金額已達標）"}<span class="goal-backers">・${backers} 位同學一起出力${leftPeople ? `，還需要 <strong>${leftPeople} 個人</strong>參加` : "（人數已達標）"}</span>`
+        }${roundInfo ? `　${roundInfo}` : ""}</p>
+        ${g.note ? `<p class="goal-note">${App.esc(g.note)}</p>` : ""}
       </div>`;
+  };
+
+  const goalSection = () => {
+    const list = (goal && goal.enabled && Array.isArray(goal.goals) ? goal.goals : [])
+      .map(goalCard).filter(Boolean).join("");
+    if (!list) return "";
+    return `
+      <h3 class="bank-section-title">🎯 全班集資・共同達成</h3>
+      ${list}
+      <p class="goal-how">想參加就跟老師說「我要捐 N 幣」，老師會幫你記一筆。
+        <strong>出 1 幣也算一個人</strong>——要錢夠、人也夠，才算全班一起做到。
+        捐出去的崑山幣會從存摺扣掉，但 <strong>XP 不會減少</strong>——你的努力紀錄一直都在。</p>`;
   };
 
   // 兌換申請：確認 → 送代理（品項與價格由代理以 Notion 商店為準重新驗證）

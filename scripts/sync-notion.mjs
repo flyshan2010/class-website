@@ -892,64 +892,83 @@ async function syncStore() {
   await save("store.json", rows);
 }
 
-// ── 班級共同目標（集資；公開進度條，只出總額與人數，無個資）──
+// ── 班級共同目標（通用集資；公開進度條，只出總額與人數，無個資）──
 //
-// 為什麼不開新資料庫：系統的帳本每一筆都必須掛在一位學生身上，沒有「班級共同帳戶」這種東西。
-// 硬做一個共同帳戶，等於多一份要對帳、要防呆、要寫進手冊的資料源——換來的只是一條進度條。
-// 所以集資就用**既有帳本**表達：學生捐款＝一筆普通的「消費」，事由以「集資」開頭。
-//   類型：消費　金額：−N　事由：集資・期末夢幻餐點
-// 這樣做的三個好處：
+// 2026-09-19 改為「商店 ⑥ 層」驅動（SPEC_班級經濟機制 §2）：集資目標＝一件很貴、全班一起買的商品。
+// 🏪 班級商店已經有名稱／價格／庫存／說明／層級，直接借用，**零新欄位**——
+// 之後新增集資目標＝在商店加一列、層級選 ⑥ 並勾上架，**不必改一行程式**。
+//   stock（庫存）在 ⑥ 層借用為「一學期可達成幾次」；班網文案要分層寫，
+//   否則會顯示成「庫存 2 件」，孩子看不懂（SPEC §6）。
+//
+// 為什麼不開新資料庫：帳本每一筆都必須掛在一位學生身上，沒有「班級共同帳戶」這種東西。
+// 捐款＝一筆普通的「消費」帳列，事由 `集資-{商店列名稱}`：
 //   1. 學生的存摺自己就看得到「我捐了多少」，不必另外查。
-//   2. 捐款是消費會扣崑山幣，但 **XP 不受影響**（XP 只增不減）——孩子不會因為慷慨而掉稱號。
+//   2. 捐款扣崑山幣但 **XP 不受影響**——不會因為慷慨而掉稱號。
 //   3. 老師的操作跟平常記一筆消費完全一樣，不必學新流程。
 //
-// 開關與參數全在 Notion「⚙️ 網站設定」（項目／內容），老師自己就能開，不必動程式：
-//   班級共同目標      → 填「開」才上站；留空或填「否/關/停」都是關閉（預設關閉）
-//   班級共同目標名稱  → 例：期末夢幻餐點
-//   班級共同目標金額  → 例：5000
-//   班級共同目標說明  → 選填，顯示在進度條下方的一句話
+// 三條通則（SPEC §2-3）：參與門檻＝在學人數的 3/4 有出資（出 1 幣也算，**算人頭不算金額**）；
+// 金額與人數**都到**才算達成；**沒有期限**（沒有失敗，只有還沒到 → 不需退款、不需認捐）。
+//
+// 多輪：SPEC §2-3 原寫「達成後 stock−1、池歸零」。這裡改成**零人工操作**的算法——
+// 帳列依日期排序累加，每跨過一次（金額＋人數都到）就結算一輪、池自動歸零繼續累，
+// `stock` 維持「一學期上限次數」不必老師手動減。手動減會讓「已完成輪數」與「剩餘次數」
+// 變成兩份會互相漂掉的正本（U58）。
 //
 // 隱私：只輸出總額與「幾個人捐過」，不出姓名、座號、也不出誰捐多少——
 // 公開頁列出個別捐款金額，等於把「誰家比較有餘裕」攤在班網上。
-const GOAL_PREFIX = /^\s*集資/;  // 事由前綴；分隔符（・‧·：等）愛用哪個都行
+const GOAL_TIER = "⑥ 全班集資・共同達成";
+const GOAL_THRESHOLD_RATIO = 3 / 4;   // 參與門檻＝在學人數的 3/4，無條件進位（27 人 → 20 人）
 
 async function syncClassGoal() {
-  const kv = {};
-  for (const r of (await queryDataSource(DS.settings)).map(props)) {
-    if (r["項目"] && String(r["內容"]).trim()) kv[r["項目"]] = String(r["內容"]).trim();
-  }
-  const raw = kv["班級共同目標"] || "";
-  const goal = Math.round(Number(String(kv["班級共同目標金額"] || "").replace(/[^\d.-]/g, "")) || 0);
-  // 預設關閉：沒設定、或明講否／關／停／隱藏，一律不上站
-  const on = !!raw && !/否|關|停|隱藏|不開/.test(raw) && goal > 0;
-  if (!on) {
-    await save("class-goal.json", { enabled: false });
-    return;
-  }
+  const items = (await queryDataSource(DS.store)).map(props)
+    .filter(r => r["上架"] && r["品項"] && String(r["層級"] || "").trim() === GOAL_TIER);
+  if (!items.length) { await save("class-goal.json", { enabled: false, goals: [] }); return; }
+
+  const enrolled = (await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && r["座號"] !== "").length;
+  const backersNeeded = Math.ceil(enrolled * GOAL_THRESHOLD_RATIO);
 
   const txRows = (await queryDataSource(DS.bank)).map(props)
-    .filter(r => r["學生"]?.length && r["金額"] !== "" &&
-                 (r["類型"] || "") === "消費" && GOAL_PREFIX.test(String(r["事由"] || "")));
-  let raised = 0;
-  const backers = new Set();
-  let lastDate = "";
-  for (const t of txRows) {
-    raised += Math.abs(Math.round(Number(t["金額"]) || 0));
-    backers.add(t["學生"][0]);            // 只拿來數人頭，不輸出
-    const d = t["日期"]?.start || "";
-    if (d > lastDate) lastDate = d;
-  }
+    .filter(r => r["學生"]?.length && r["金額"] !== "" && (r["類型"] || "") === "消費");
 
-  await save("class-goal.json", {
-    enabled: true,
-    name: kv["班級共同目標名稱"] || "班級共同目標",
-    note: kv["班級共同目標說明"] || "",
-    goal,
-    raised,
-    backers: backers.size,
-    lastDate,
-    reached: raised >= goal,
+  const goals = items.map(it => {
+    const name = String(it["品項"]).trim();
+    const target = Math.round(Number(it["價格"]) || 0);
+    const limit = Math.max(1, Math.round(Number(it["庫存"]) || 1));
+    const prefix = `集資-${name}`;
+    // 事由以「集資-{名稱}」開頭才算這一列的捐款。**名稱一旦有捐款就不可改**——
+    // 事由靠名稱對帳，改名會靜默斷掉（SPEC §2-4 護欄 1、U58）。
+    const mine = txRows
+      .filter(t => String(t["事由"] || "").trim().startsWith(prefix))
+      .sort((a, b) => String(a["日期"]?.start || "").localeCompare(String(b["日期"]?.start || "")));
+
+    let rounds = 0, pool = 0, lastDate = "";
+    let backers = new Set();
+    for (const t of mine) {
+      pool += Math.abs(Math.round(Number(t["金額"]) || 0));
+      // distinct 學生，不是筆數——同一人捐三次只算一人（U41 同一個病）
+      backers.add(t["學生"][0]);
+      const d = t["日期"]?.start || "";
+      if (d > lastDate) lastDate = d;
+      if (target > 0 && rounds < limit && pool >= target && backers.size >= backersNeeded) {
+        rounds++; pool = 0; backers = new Set();
+      }
+    }
+    return {
+      name, target,
+      note: it["說明"] || "",
+      icon: it["圖示"] || "🎯",
+      raised: pool,
+      backers: backers.size,
+      backersNeeded,
+      roundsDone: rounds,
+      roundsLimit: limit,
+      closed: rounds >= limit,
+      lastDate,
+    };
   });
+
+  await save("class-goal.json", { enabled: true, enrolled, backersNeeded, goals });
 }
 
 // ── 教學駕駛艙（🚀 教學單元；公開頁，只放連結與進度，無個資）──
