@@ -108,6 +108,7 @@
         <div class="store-stock">${awardOnly(i) ? "" : (i.stock <= 0 ? "😢 售完" : `庫存 ${i.stock}`)}</div>
         ${i.note ? `<div class="store-note">${App.esc(i.note)}</div>` : ""}
         ${i.unlock ? `<div class="store-unlock">🔑 ${App.esc(i.unlock)}</div>` : ""}
+        ${i.openTo ? `<div class="store-unlock">⏳ 開放到 ${App.esc(i.openTo.slice(5).replace("-", "/"))}</div>` : ""}
         ${buyBtn(i)}
         ${i.name === "創造提案權" && session ? `<a class="store-buy store-proposal" href="proposal.html">✏️ 我的創造提案</a>` : ""}
       </div>`).join("");

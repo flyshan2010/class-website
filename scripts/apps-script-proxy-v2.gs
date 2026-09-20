@@ -1,6 +1,12 @@
 /**
- * 班網教師專區代理 v2.6（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.8（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.8 升級步驟（2026-09-20，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）
+ *   v2.8 新增「開放期間」閘門：🏪 商店新增日期欄「開放期間」（起／迄可只填一邊，空白＝常態開放），
+ *   起日未到或迄日已過的品項 → redeem_request 直接拒絕、approve_redeem 再驗一次。
+ *   班網 store.json 也會把未開放的品項整列濾掉（產生端過濾，U42），但那是櫥窗；這裡才是真的關。
  *
  * ── v2.6 升級步驟（2026-09-12，約 2 分鐘）──
  *   本檔全部內容貼到 Apps Script 取代舊碼 →「部署」→「管理部署作業」→ 編輯 → 版本選「新版本」→ 部署（沿用原網址）。
@@ -316,6 +322,9 @@ function redeemRequest_(props, body) {
   const category = (((ip["分類"] || {}).select) || {}).name || "小物";
   if (!itemName || !listed) return { ok: false, error: "這個商品已下架，請重新整理頁面看看還有什麼" };
   if (stock <= 0) return { ok: false, error: "「" + itemName + "」已經售完囉，下次早點來！" };
+  // v2.8 開放期間閘門：限期品項只在起迄之間可兌換（空白＝常態開放）。
+  const windowMsg = openWindowReason_(ip, itemName);
+  if (windowMsg) return { ok: false, error: windowMsg };
   // v2.7 ⑥ 層閘門（SPEC_班級經濟機制 §2）：「⑥ 全班集資・共同達成」不是個人可兌換的商品，
   // 它是全班一起募的目標，捐款走老師記一筆「消費」帳列（事由 集資-{名稱}）。
   // 班網不會為 ⑥ 層出兌換鈕，但那只是視覺；沒有這道閘，手工送一筆請求就會讓一個人被扣掉整筆目標金額。
@@ -480,6 +489,11 @@ function approveRedeem_(props, body) {
   const elig = redeemEligibility_(token, stu.id, itemName, sp ? unlockOf_(sp) : { xp: 0, merit: 0 },
     mondayOf_(taipeiDate_(req.data.created_time)), today_(), fin);
   if (elig.reason) return { ok: false, blocked: true, error: "座號 " + seat + " 還不能兌換「" + itemName + "」：" + elig.reason };
+  // v2.8 開放期間再驗：擋的是「申請時還開放、老師隔了很久才核可」與手動建列的申請。
+  if (sp) {
+    const windowMsg2 = openWindowReason_(sp, itemName);
+    if (windowMsg2) return { ok: false, blocked: true, error: "座號 " + seat + " 的申請已超出開放期間：" + windowMsg2 };
+  }
 
   // 3) 餘額檢查（帳本該生全部金額加總）；不足時回報，老師可選擇強制核可
   const balance = fin.balance;
@@ -1345,6 +1359,22 @@ function storePageFor_(token, storePageId, itemName) {
 }
 
 // 機讀門檻：🏪 商店「解鎖總XP」「解鎖貢獻XP」（空白＝沒有門檻）
+/** v2.8 開放期間：🏪 商店「開放期間」日期範圍（起／迄可只填一邊）。
+ *  空白＝常態開放（既有品項行為不變）；迄日當天仍算開放（含當日）。
+ *  回傳 "" ＝可兌換，否則回一句給學生看的理由。班網櫥窗也會把未開放的品項整列濾掉
+ *  （sync-notion.mjs openWindow()），這裡是伺服器端那道真的關——前端濾掉只是視覺。 */
+function openWindowReason_(storeProps, itemName) {
+  const d = (storeProps["開放期間"] || {}).date || null;
+  if (!d) return "";
+  const today = today_();
+  const from = (d.start || "").slice(0, 10);
+  const to = (d.end || "").slice(0, 10);
+  const md = iso => iso.slice(5).replace("-", "/");
+  if (from && today < from) return "「" + itemName + "」" + md(from) + " 才開放兌換喔！";
+  if (to && today > to) return "「" + itemName + "」的兌換期間已經到 " + md(to) + " 結束囉！";
+  return "";
+}
+
 function unlockOf_(storeProps) {
   const n = k => Math.max(0, Math.round(Number((storeProps[k] || {}).number) || 0));
   return { xp: n("解鎖總XP"), merit: n("解鎖貢獻XP") };
