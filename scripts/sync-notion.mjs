@@ -869,9 +869,29 @@ async function syncReports() {
 // 老師沒填層級的品項一律當第二層，既有品項不必逐一補填也不會消失。
 const STORE_DEFAULT_TIER = "② 活動特權・消費型";
 
+// ── 開放期間（2026-09-20）──
+// 🏪 班級商店的「開放期間」是一個日期範圍（起日／迄日皆可只填一邊）：
+//   空白＝常態開放（既有品項不必逐一補填，行為完全不變）。
+//   起日未到或迄日已過 → **整列不輸出到 store.json**（U42：公開檔案的過濾做在產生端，
+//   前端 filter 只是視覺隱藏，資料仍在檔案裡）。
+// 迄日當天仍算開放（含當日）。同步每天跑三次（07:00／16:00／20:00），
+// 起迄當天早上自動上／下架；要立刻生效就按一次「立即更新班網」。
+// ⚠️ 這只是櫥窗的門；真正擋兌換的是 Apps Script 代理 v2.8 的同一道判斷（前端反灰只是提示）。
+const todayTaipei = () =>
+  new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 10);
+
+/** 開放期間判定：回傳 { open, from, to }。日期欄空白一律視為開放（fail-open 是刻意的：
+ *  沒填＝老師沒有要限期，不能把沒填當成「關閉」而讓整間店消失）。 */
+function openWindow(r, today = todayTaipei()) {
+  const from = (r["開放期間"]?.start || "").slice(0, 10);
+  const to = (r["開放期間"]?.end || "").slice(0, 10);
+  const open = (!from || from <= today) && (!to || today <= to);
+  return { open, from, to };
+}
+
 async function syncStore() {
   const rows = (await queryDataSource(DS.store)).map(props)
-    .filter(r => r["上架"] && r["品項"])
+    .filter(r => r["上架"] && r["品項"] && openWindow(r).open)
     .map(r => ({
       id: r._id, // Notion 頁 ID：小小銀行「兌換申請」與教師核可扣庫存靠它對回品項
       name: r["品項"],
@@ -887,6 +907,9 @@ async function syncStore() {
       stock: Number(r["庫存"]) || 0,
       icon: r["圖示"] || "🎁",
       note: r["說明"],
+      // 開放期間（空字串＝常態開放）；卡片用來顯示「開放至 X/X」的倒數提示
+      openFrom: openWindow(r).from,
+      openTo: openWindow(r).to,
     }))
     .sort((a, b) => a.tier.localeCompare(b.tier, "zh-Hant") || a.price - b.price);
   await save("store.json", rows);
@@ -924,7 +947,8 @@ const GOAL_THRESHOLD_RATIO = 3 / 4;
 
 async function syncClassGoal() {
   const items = (await queryDataSource(DS.store)).map(props)
-    .filter(r => r["上架"] && r["品項"] && String(r["層級"] || "").trim() === GOAL_TIER);
+    .filter(r => r["上架"] && r["品項"] && String(r["層級"] || "").trim() === GOAL_TIER
+      && openWindow(r).open);   // 集資目標同樣吃「開放期間」：還沒開放就不出進度條
   if (!items.length) { await save("class-goal.json", { enabled: false, goals: [] }); return; }
 
   const enrolled = (await queryDataSource(DS.roster)).map(props)
