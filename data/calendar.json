@@ -299,9 +299,9 @@
   {
     "title": "四年級健康檢查",
     "date": "2026-10-12",
-    "endDate": "2026-10-13",
-    "startTime": "",
-    "endTime": "",
+    "endDate": "",
+    "startTime": "14:30",
+    "endTime": "15:10",
     "type": "活動",
     "notes": ""
   },
@@ -828,18 +828,18 @@
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
