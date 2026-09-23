@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-09-22T15:55:11.044Z",
+  "fetchedAt": "2026-09-23T01:20:24.549Z",
   "items": [
+    {
+      "date": "2026-09-23",
+      "title": "115學年度崑山國小校內美術比賽成績出爐",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=814&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-09-22",
       "title": "轉知本市國教輔導團自然團協辦「2026科學探究競賽--這樣教我就懂」說明會，請轉知所屬教師踴躍報名。",
@@ -53,12 +59,6 @@
       "date": "2026-09-18",
       "title": "國立臺灣師範大學辦理「特殊群體資優學生發掘與輔導知能線上研 習」",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=799&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-09-18",
-      "title": "有關臺南市政府教育局刊物-特教風第83期邀稿相關事宜",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=798&type=news&from_op=school_department_show",
       "dept": "輔導室"
     }
   ]
