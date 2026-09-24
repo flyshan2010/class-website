@@ -190,6 +190,56 @@
       </div>`;
   }
 
+  // ── 課堂量尺（2026-09-25，正本 ClassOS_v3.5_藍圖/SPEC_課堂量尺.md §1）──
+  // 學習報告「上課參與」原本只寫「大致良好」「明顯正向」，換模型就會漂；改成仿品格量尺的等級制。
+  // 課堂多一級「+2 主動參與」，所以量尺級數比紀錄庫程度多 1（+2→程度1、+3→程度2、+4→程度3），
+  // 金幣照程度×5；+1 盡本分不逐筆記錄、不發幣。負向全部取自現行班規⑤⑨，不新增扣點項目。
+  const CLASS_SCALE = [
+    { lv: 4,  emoji: "🌟", label: "正向影響全班：帶著全班一起學會", coin: "+15",
+      eg: "全班卡住時提出關鍵想法讓大家都懂；上台帶全班練習，大家都跟得上",
+      next: "你已經在量尺的最上面了——把好方法變成習慣，帶更多同學一起學。" },
+    { lv: 3,  emoji: "🙌", label: "正向影響別人：帶動別人學", coin: "+10",
+      eg: "帶動小組討論，讓每個組員都說出想法；上台講解自己的解法，同學聽得懂",
+      next: "讓全班都聽懂、一起學會（例如上台帶大家練習），就會到 +4。" },
+    { lv: 2,  emoji: "✋", label: "主動參與", coin: "+5",
+      eg: "主動舉手發表；上台做題或回答（被點名上台也算）；分組時主動提出想法",
+      next: "發表完，再帶著小組討論到每個人都懂，就會到 +3。" },
+    { lv: 1,  emoji: "🙂", label: "被動盡本分", coin: "不記點",
+      eg: "遵守上課規則、專心聽課、完成課堂指派任務",
+      next: "心裡有想法就舉手說出來，就會到 +2。" },
+    { lv: -1, emoji: "😟", label: "沒做到上課的本分，影響課堂", coin: "−5",
+      eg: "干擾上課（講話、吵到旁邊同學）；打斷、嘲笑同學發言（班規⑨⑤）",
+      next: "先把該做的補回來（改正方式），下一次就能站回 +1。" },
+    { lv: -2, emoji: "😠", label: "不但自己不學，還讓別人沒辦法學", coin: "−10",
+      eg: "提醒兩次以後還是繼續吵到上課；科任課沒有遵守課堂規則（班規⑨⑤）",
+      next: "先向受影響的同學和老師修復，再把上課的本分補起來。" },
+    { lv: -3, emoji: "😡", label: "嚴重傷害他人", coin: "紅線",
+      eg: "重大安全事件、霸凌、性平（與品格量尺同一條紅線）",
+      next: "這是絕對不能跨過的紅線，會依校內防治準則處理。" },
+  ];
+
+  const classScale = () => `
+    <div class="cscale">
+      <div class="cscale-zone top">行有餘力可行</div>
+      ${CLASS_SCALE.filter(s => s.lv > 0).map(s => classScaleRow(s)).join("")}
+      <div class="cscale-duty"><span>義　務</span></div>
+      <p class="cscale-dutynote">本週沒有課堂負向＝站在 +1；有負向就掉到線下。</p>
+      ${CLASS_SCALE.filter(s => s.lv < 0).map(s => classScaleRow(s)).join("")}
+      <div class="cscale-zone bottom">萬不可行</div>
+    </div>`;
+
+  const classScaleRow = s => `
+      <div class="cscale-row lv${s.lv > 0 ? "p" : "n"}${Math.abs(s.lv)}">
+        <span class="cs-num">${lvText(s.lv)}</span>
+        <span class="cs-emoji" aria-hidden="true">${s.emoji}</span>
+        <span class="cs-body">
+          <span class="cs-label">${s.label}</span>
+          <span class="cs-eg">例：${s.eg}</span>
+          <span class="cs-next">↗ ${s.next}</span>
+        </span>
+        <span class="cs-coin">${s.coin === "不記點" ? "不記點" : `🪙 ${s.coin}`}</span>
+      </div>`;
+
   // 重大安全事件不是「改正」就了事的層級，標籤改稱「處理方式」
   const lvBadge = lv => {
     if (!lv) return "";
@@ -474,6 +524,15 @@
             就知道下一步可以往哪裡走。
           </p>
           ${characterScale()}
+        </section>
+        <section class="card" style="border-top-color:var(--sky)">
+          <h3>✋ 課堂量尺——上課時我在哪一格？</h3>
+          <p class="meta">
+            上課的表現也放在一把尺上量。每週學習報告的「上課參與」就照這把尺判：
+            本週有 +3 以上＝特優、有 +2＝優、守住 +1 盡本分＝甲（基準）；有課堂負向就往下降一級。
+            課後教同學功課算品格量尺的「幫助他人」，不算在這裡。
+          </p>
+          ${classScale()}
         </section>
         <section class="card" style="border-top-color:var(--orange)">
           <h3>📋 我們的班規（Rules）</h3>
