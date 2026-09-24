@@ -54,7 +54,11 @@ export function calcWeekOf(weeksFile, months, year) {
 }
 
 /**
- * W＝期內所有帳列金額淨總和 ÷ 在學人數 ÷ 已過上課週數（排除學期第 1 週）。
+ * W＝期內**收入面**帳列金額淨總和 ÷ 在學人數 ÷ 已過上課週數（排除學期第 1 週）。
+ * 收入面＝類型不是「消費」的列（薪水、獎勵金、懲罰金、利息、調整）。
+ * **消費（購物、集資捐款、換章）不算**（老師 2026-09-24 裁示）：W 量的是「賺多少」，
+ * 把花掉的也扣掉會變成「越常用商店、W 越低、價格反而往下調」——跟調價的目的相反。
+ * 2026-09-24 前的版本連消費一起扣，W 因此從 9/19 的 48 掉到 25。
  * asOf：只算到這天為止（本期用今天；上一期傳期末即可）。
  * 捨入禁用 round()——一律 floor(x+0.5)。
  */
@@ -65,6 +69,7 @@ export function computeW({ ledgerRows, weeksFile, rosterN, months, year, asOf })
   const wFrom = weeks.length ? weeks[0].起 : from;
   let net = 0;
   for (const b of ledgerRows) {
+    if (b.type === "消費") continue;
     if (!b.date || b.date < wFrom || b.date > to || b.date > asOf) continue;
     net += b.amount;
   }
