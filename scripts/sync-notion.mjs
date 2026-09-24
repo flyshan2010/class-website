@@ -643,23 +643,67 @@ function periodWeek(period) {
   return tens * 10 + (rest ? (cn[rest[0]] ?? 0) : 0);
 }
 
-// 🎨 學生作品集：發布勾選者依座號分組（照片為 Drive 外部連結，不落地、不進公開資料夾，
-// 只隨該生報告 AES 加密發布——家長輸入座號＋查詢碼解密後才看得到）
+// 🎨 學生作品集：發布勾選者依座號分組，只隨該生報告 AES 加密發布——家長輸入座號＋查詢碼解密後才看得到。
+// 照片兩種來源：
+//   ① Drive 外部連結 → 照舊只存網址（前端轉縮圖網址），不落地。
+//   ② Notion 內建上傳 → 網址一小時就過期，必須落地；但作品屬個資，不能放公開的 uploads/。
+//      改成每張各自 AES-GCM 加密成 data/report-works/<id>.bin，金鑰與 iv 只寫進該生的加密報告（2026-09-24）。
+//      金鑰由圖片內容雜湊導出：同一張圖每次同步產生同一個檔，不會每跑一次就在 git 多一份二進位檔。
+const WORKS_DIR = path.join(DATA_DIR, "report-works");
+
+async function saveEncryptedWork(url, pageId, i) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) { console.warn(`⚠️ 作品照片下載失敗（${res.status}）`); return null; }
+    let buf = Buffer.from(await res.arrayBuffer());
+    const base = `${pageId.replace(/-/g, "").slice(-12)}-${i}`;
+    if (isHeif(buf)) {
+      const jpg = heicToJpg(buf, `work-${base}`);
+      if (!jpg) { console.warn("⚠️ 作品照片 HEIC 轉 JPG 失敗，略過"); return null; }
+      buf = jpg;
+    }
+    const kind = sniffImage(buf);
+    if (!kind) { console.warn("⚠️ 作品照片不是圖片，略過"); return null; }
+    const digest = new Uint8Array(await crypto.subtle.digest("SHA-256",
+      Buffer.concat([Buffer.from("classos-work|"), buf])));
+    const iv = digest.slice(0, 12);
+    const key = await crypto.subtle.importKey("raw", digest, "AES-GCM", false, ["encrypt"]);
+    const data = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, buf);
+    const name = `${base}.bin`;
+    writeFileSync(path.join(WORKS_DIR, name), Buffer.from(data));
+    return { enc: `data/report-works/${name}`, k: b64(digest), iv: b64(iv),
+             type: kind === "jpg" ? "image/jpeg" : `image/${kind}` };
+  } catch (e) {
+    console.warn(`⚠️ 作品照片處理失敗（${e.message}）`);
+    return null;
+  }
+}
+
 async function portfolioBySeat() {
   if (!DS.portfolio) return {};
+  rmSync(WORKS_DIR, { recursive: true, force: true });
+  await mkdir(WORKS_DIR, { recursive: true });
   try {
     const rows = (await queryDataSource(DS.portfolio)).map(props).filter(r => r["發布"]);
     const by = {};
     for (const r of rows) {
       const seat = Number(r["座號"]);
       if (!seat) continue;
+      const photos = [];
+      let i = 0;
+      for (const f of r["照片"] || []) {
+        if (!f.url) continue;
+        if (/drive\.google\.com/.test(f.url)) { photos.push(f.url); continue; }
+        const w = await saveEncryptedWork(f.url, r._id, i++);
+        if (w) photos.push(w);
+      }
       (by[seat] ||= []).push({
         title: r["作品"] || "作品",
         subject: r["類型"] || "",
         caption: r["說明"] || "",
         date: r["日期"]?.start || "",
         week: periodWeek(r["週次"]), // 空白/假期 → 9998，只出現在期末作品牆
-        photos: (r["照片"] || []).map(f => f.url).filter(Boolean),
+        photos,
       });
     }
     for (const list of Object.values(by)) list.sort((a, b) => a.date.localeCompare(b.date));

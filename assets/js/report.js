@@ -240,6 +240,21 @@
     return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200` : u;
   };
 
+  // 作品照片（Notion 上傳、加密落地版）：報告解開後才抓照片檔，用報告內附的金鑰解密成 blob 顯示
+  const hydrateWorks = root => root.querySelectorAll("img[data-enc]").forEach(async img => {
+    try {
+      const res = await fetch(img.dataset.enc, { cache: "force-cache" });
+      if (!res.ok) throw new Error(res.status);
+      const key = await crypto.subtle.importKey("raw", b64d(img.dataset.k), "AES-GCM", false, ["decrypt"]);
+      const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(img.dataset.iv) }, key, await res.arrayBuffer());
+      const url = URL.createObjectURL(new Blob([plain], { type: img.dataset.type }));
+      img.src = url;
+      img.closest("a")?.setAttribute("href", url);
+    } catch {
+      img.alt = "（照片暫時無法顯示）";
+    }
+  });
+
   const growthChart = periods => {
     // 只取每週列：期末總報告不入曲線；作文批改列沒有五向度分數（radar 為 undefined）也必須排除
     const weeks = periods.filter(x => x.reportType !== "期末總報告" && x.reportType !== "作文批改");
@@ -460,9 +475,14 @@
           <div class="work-grid">
             ${p.works.map(w => w.photos.map(u => `
             <figure class="work-item">
+              ${typeof u === "string" ? `
               <a href="${App.esc(u)}" target="_blank" rel="noopener">
                 <img class="work-img" src="${App.esc(workImg(u))}" alt="${App.esc(w.title)}" loading="lazy" />
-              </a>
+              </a>` : `
+              <a target="_blank" rel="noopener">
+                <img class="work-img" data-enc="${App.esc(u.enc)}" data-k="${App.esc(u.k)}" data-iv="${App.esc(u.iv)}"
+                     data-type="${App.esc(u.type)}" alt="${App.esc(w.title)}" />
+              </a>`}
               <figcaption class="meta">
                 ${w.subject ? `<span class="badge">${App.esc(w.subject)}</span> ` : ""}${App.esc(w.title)}
                 ${w.caption ? `<br />${App.esc(w.caption)}` : ""}
@@ -517,6 +537,7 @@
         <p class="report-footnote">${anon ? "本報告已去識別化。" : `本報告僅供 ${App.esc(displayName)} 的家長參考，請勿外傳。`}　${App.esc(c.schoolYear)} ${App.esc(c.className)}</p>
       </div>`);
 
+    hydrateWorks(main);
     main.querySelectorAll(".report-tabs button").forEach(b =>
       b.onclick = () => showReport(report, Number(b.dataset.i), anon));
     const sel = document.getElementById("report-period");
