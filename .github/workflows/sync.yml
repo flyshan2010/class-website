@@ -29,6 +29,15 @@ jobs:
           sudo apt-get install -y -qq libheif-examples libheif-plugin-libde265 imagemagick > /dev/null
           ls /usr/bin | grep -E '^heif-' | tr '\n' ' '
 
+      # 浮動調價生效日套用（SPEC_班級經濟機制 §4）：放在同步之前，store.json 一次拿到新價。
+      # 失敗不擋同步——價格沒改只是晚一輪，下一次同步會再試；錯誤另記收件匣。
+      - name: 商店調價生效日套用
+        continue-on-error: true
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          MODE: execute
+        run: node scripts/classos/f34-price-apply.mjs
+
       - name: 同步 Notion 資料
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}

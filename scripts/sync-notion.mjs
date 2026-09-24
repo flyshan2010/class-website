@@ -933,6 +933,12 @@ function openWindow(r, today = todayTaipei()) {
   return { open, from, to };
 }
 
+function nextPriceOf(r, today = todayTaipei()) {
+  const date = (r["調價生效日"]?.start || "").slice(0, 10);
+  const price = Number(r["下期價格"]) || 0;
+  return date > today && price > 0 && price !== Number(r["價格"]) ? { price, date } : null;
+}
+
 async function syncStore() {
   const rows = (await queryDataSource(DS.store)).map(props)
     .filter(r => r["上架"] && r["品項"] && openWindow(r).open)
@@ -954,6 +960,9 @@ async function syncStore() {
       // 開放期間（空字串＝常態開放）；卡片用來顯示「開放至 X/X」的倒數提示
       openFrom: openWindow(r).from,
       openTo: openWindow(r).to,
+      // 浮動調價預告（SPEC_班級經濟機制 §4）：生效日未到才輸出，卡片顯示「11/01 起 120 幣」。
+      // 否決由 f34 在同步前清空兩欄，這裡不必再判斷公告。
+      ...(nextPriceOf(r) ? { nextPrice: nextPriceOf(r).price, nextDate: nextPriceOf(r).date } : {}),
     }))
     .sort((a, b) => a.tier.localeCompare(b.tier, "zh-Hant") || a.price - b.price);
   await save("store.json", rows);
