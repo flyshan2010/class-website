@@ -1185,6 +1185,7 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
   padding: 8px 12px; margin: 5px 0; border-radius: 14px;
   background: var(--cs-bg, #f6f7f9);
 }
+.cscale-row.lvp4 { --cs-bg: #e3f4d9; }  /* 課堂量尺 +4（2026-09-25）*/
 .cscale-row.lvp3 { --cs-bg: #fff3c4; }
 .cscale-row.lvp2 { --cs-bg: #ffe6cc; }
 .cscale-row.lvp1 { --cs-bg: #ffe0d6; }
@@ -1194,6 +1195,8 @@ html { scroll-behavior: smooth; } /* 教師專區側欄錨點捲動；全站錨�
 .cs-num { font-size: 1.2222rem; font-weight: 900; text-align: center; color: #5a4b3c; }
 .cs-emoji { font-size: 1.4444rem; text-align: center; line-height: 1; }
 .cs-label { display: block; font-weight: bold; line-height: 1.45; }
+.cs-eg { display: block; font-size: 0.7778rem; color: #4b4b4b; line-height: 1.5; margin-top: 2px; }
+.cscale-dutynote { text-align: center; font-size: 0.7778rem; color: #2f6f63; margin: -4px 0 6px; }
 .cs-next { display: block; font-size: 0.7778rem; color: #6b5b4b; line-height: 1.5; margin-top: 2px; }
 .cs-coin { text-align: right; font-weight: 900; white-space: nowrap; font-size: 0.8056rem; color: #5a4b3c; }
 .cscale-foot { text-align: center; color: var(--ink-soft); font-size: 0.8333rem; margin-top: 12px; line-height: 1.8; }
