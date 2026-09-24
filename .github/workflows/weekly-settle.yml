@@ -50,6 +50,14 @@ jobs:
           F24_TODAY: ${{ github.event.inputs.as_of }}
         run: node scripts/classos/f24-weekly-settle-preview.mjs
 
+      # 浮動調價算價（SPEC §4）：只有每期倒數第二次週結那一週才動作，其他週印一行就結束。
+      - name: 浮動調價算價（倒數第二次週結才動作）
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          MODE: ${{ github.event.inputs.mode || 'execute' }}
+          F33_TODAY: ${{ github.event.inputs.as_of }}
+        run: node scripts/classos/f33-price-draft.mjs
+
       # 健檢紅燈要自己跑到老師眼前（收件匣），沒人會去翻 Actions log。全綠就不建列。
       - name: 系統健檢 → 有紅燈才進收件匣
         if: ${{ github.event_name == 'schedule' || inputs.mode == 'execute' }}

@@ -31,6 +31,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
+import { computeW, periodOf } from "./lib/price.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -393,36 +394,21 @@ const spendAllRate = issuedAll ? spentAll / issuedAll : 0;
         ÷ 在學人數 ÷ 本期已過的上課週數。
    排除**學期第 1 週**：那週在補結舊帳、薪水也還沒跑完整一輪，會灌爆平均（SPEC §6）。
    期別＝兩個月一期：9-10／11-12／2-3／4-5（6 月不調，期末直接收尾）。 */
-const PERIODS = [[9, 10], [11, 12], [2, 3], [4, 5]];
-const curMonth = Number(today.slice(5, 7));
-const period = PERIODS.find(([a, b]) => curMonth === a || curMonth === b) || null;
+// 算法正本在 lib/price.mjs 的 computeW（f33 算調價也呼叫同一支），這裡只負責印。
+const period = periodOf(today);
 let WAVG = null, wWeeks = 0, wNet = 0, periodLabel = "—";   // 變數名避開第 313 行的 W（＝學期週次）
 if (period) {
-  const yr = Number(today.slice(0, 4));
-  // 11-12 與 9-10 同年；2-3、4-5 也同年，所以期內兩個月必定落在同一個西元年
-  const from = `${yr}-${String(period[0]).padStart(2, "0")}-01`;
-  const endMonth = period[1];
-  const to = new Date(Date.UTC(yr, endMonth, 0)).toISOString().slice(0, 10);
-  periodLabel = `${period[0]}–${endMonth} 月`;
-  // 本期已開始的上課週（排除學期第 1 週）
-  const weeksInPeriod = (weeksFile.學期 ?? []).flatMap(t => (t.週 ?? [])
-    .filter(w => w.週次 !== 1 && w.起 >= from && w.起 <= to && w.起 <= today));
-  wWeeks = weeksInPeriod.length;
-  const wFrom = weeksInPeriod.length ? weeksInPeriod[0].起 : from;
-  for (const b of ledger) {
-    const d = (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
-    if (d < wFrom || d > to || d > today) continue;
-    wNet += num(b, "金額") ?? 0;
-  }
-  // 捨入禁用 round()（銀行家捨入會讓 x.5 往下掉）——一律 floor(x+0.5)
-  if (wWeeks > 0 && roster.length) WAVG = Math.floor(wNet / roster.length / wWeeks + 0.5);
+  const ledgerRows = ledger.map(b => ({
+    date: (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10), amount: num(b, "金額") ?? 0 }));
+  ({ W: WAVG, weeks: wWeeks, net: wNet, label: periodLabel } = computeW({
+    ledgerRows, weeksFile, rosterN: roster.length, months: period.months, year: Number(today.slice(0, 4)), asOf: today }));
 }
 
 const inflLines = [];
 inflLines.push(WAVG === null
   ? `📈 W（每人每週實得）　本期（${periodLabel}）尚無可計週數，暫不計算`
   : `📈 **W＝${WAVG} 幣**／人／週　本期 ${periodLabel}・已過 ${wWeeks} 週（不含學期第 1 週）・淨額 ${wNet} 幣 ÷ ${roster.length} 人 ÷ ${wWeeks} 週`
-    + `\n　　浮動價格的唯一基準（SPEC §3-1）。期末（10/31、12/31、3/31、5/31）用它算倍數 R＝W(本期)÷W(上期)，下期首日生效、提前一週公告。`);
+    + `\n　　浮動價格的唯一基準（SPEC §3-1）。每期倒數第二次週結由 f33 算 R＝W(本期)÷W(上期)（9–10 月為基準期不調；1/01、4/01 生效），公告週內可否決。`);
 inflLines.push(`🎈 通膨體檢　平均餘額 ${avgBal} 幣 ÷ 商店中位價 ${median} 幣＝**${ratio.toFixed(1)} 倍**`
   + `（門檻 ${INFL_RATIO_LIMIT}）｜本週收入 ${wkIn} 幣、支出 ${wkOut} 幣＝流出率 ${(spendRate * 100).toFixed(0)}%`);
 if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {
