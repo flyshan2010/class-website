@@ -399,7 +399,7 @@ const period = periodOf(today);
 let WAVG = null, wWeeks = 0, wNet = 0, periodLabel = "—";   // 變數名避開第 313 行的 W（＝學期週次）
 if (period) {
   const ledgerRows = ledger.map(b => ({
-    date: (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10), amount: num(b, "金額") ?? 0 }));
+    date: (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10), amount: num(b, "金額") ?? 0, type: sel(b, "類型") }));
   ({ W: WAVG, weeks: wWeeks, net: wNet, label: periodLabel } = computeW({
     ledgerRows, weeksFile, rosterN: roster.length, months: period.months, year: Number(today.slice(0, 4)), asOf: today }));
 }
@@ -407,7 +407,7 @@ if (period) {
 const inflLines = [];
 inflLines.push(WAVG === null
   ? `📈 W（每人每週實得）　本期（${periodLabel}）尚無可計週數，暫不計算`
-  : `📈 **W＝${WAVG} 幣**／人／週　本期 ${periodLabel}・已過 ${wWeeks} 週（不含學期第 1 週）・淨額 ${wNet} 幣 ÷ ${roster.length} 人 ÷ ${wWeeks} 週`
+  : `📈 **W＝${WAVG} 幣**／人／週　本期 ${periodLabel}・已過 ${wWeeks} 週（不含學期第 1 週）・收入淨額（不含消費）${wNet} 幣 ÷ ${roster.length} 人 ÷ ${wWeeks} 週`
     + `\n　　浮動價格的唯一基準（SPEC §3-1）。每期倒數第二次週結由 f33 算 R＝W(本期)÷W(上期)（9–10 月為基準期不調；1/01、4/01 生效），公告週內可否決。`);
 inflLines.push(`🎈 通膨體檢　平均餘額 ${avgBal} 幣 ÷ 商店中位價 ${median} 幣＝**${ratio.toFixed(1)} 倍**`
   + `（門檻 ${INFL_RATIO_LIMIT}）｜本週收入 ${wkIn} 幣、支出 ${wkOut} 幣＝流出率 ${(spendRate * 100).toFixed(0)}%`);

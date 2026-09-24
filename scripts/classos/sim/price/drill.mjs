@@ -132,6 +132,16 @@ f = fresh("s10", ledger([[...NOV_DEC, 50], [...FEB_MAR, 60]]));
 out = run("f33-price-draft.mjs", fri23, f);
 check(`⑩${fri23} 算 2–3 月 R＝1.20、4/01 生效`, /R＝1\.20/.test(out) && price(f, "s-a")["調價生效日"]?.date.start === "2027-04-01");
 
+// ⑫ 消費不算進 W：同 ③ 但 11–12 月每週另有一筆大額消費，R 必須仍是 1.25
+{
+  const led = ledger([[...SEP_OCT, 40], [...NOV_DEC, 50]]);
+  for (const r of led.filter(r => r.id >= "b-2026-11")) led.push({ id: r.id + "-spend",
+    properties: { ...r.properties, "金額": { number: -30 * 27 }, "類型": { select: { name: "消費" } } } });
+  f = fresh("s12", led);
+  out = run("f33-price-draft.mjs", "2026-12-25", f);
+  check("⑫大量消費不拉低 W（R 仍 1.25）", /R＝1\.25/.test(out));
+}
+
 // ⑪ dry-run 零寫入（正式 workflow 手動跑的預設模式）
 f = fresh("s11", ledger([[...SEP_OCT, 40], [...NOV_DEC, 50]]));
 run("f33-price-draft.mjs", "2026-12-25", f, "dry-run");

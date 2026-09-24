@@ -54,7 +54,8 @@ console.log(`📈 ${today}｜${label} 倒數第二次週結＝算價週`);
 
 // ── 讀資料（任何一庫撈失敗 apiOrThrow 會丟例外 → 腳本失敗、零寫入＝fail-closed）──
 const roster = (await queryAll(DS.roster)).filter(p => p.properties?.["在學"]?.checkbox);
-const ledgerRows = (await queryAll(DS.bank)).map(b => ({ date: dateOf(b, "日期"), amount: num(b, "金額") ?? 0 }));
+const ledgerRows = (await queryAll(DS.bank)).map(b => ({ date: dateOf(b, "日期"), amount: num(b, "金額") ?? 0,
+  type: b.properties?.["類型"]?.select?.name ?? "" }));
 const cur = computeW({ ledgerRows, weeksFile, rosterN: roster.length, months: period.months, year, asOf: today });
 
 // ── 判斷：調不調 ─────────────────────────────────────────────
@@ -76,7 +77,7 @@ if (cur.W === null || cur.weeks < MIN_WEEKS) {
     if (inDeadZone(R)) verdict = `本期 R＝${R.toFixed(2)}（${cur.W}÷${prev.W}），在 ${DEAD_LO}～${DEAD_HI} 之間，不調`;
   }
 }
-const wLine = `W(本期 ${label})＝${cur.W ?? "無"}（${cur.weeks} 週・淨額 ${cur.net} ÷ ${roster.length} 人）`
+const wLine = `W(本期 ${label})＝${cur.W ?? "無"}（${cur.weeks} 週・收入淨額 ${cur.net} ÷ ${roster.length} 人）`
   + (prev ? `｜W(上期 ${prev.label})＝${prev.W ?? "無"}（${prev.weeks} 週）` : "");
 console.log(wLine);
 
