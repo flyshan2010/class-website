@@ -31,7 +31,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
-import { computeW, periodOf } from "./lib/price.mjs";
+import { evaluate } from "./lib/price.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -388,27 +388,18 @@ const userRate = roster.length ? spenders.size / roster.length : 0;
 const spendAllRate = issuedAll ? spentAll / issuedAll : 0;
 
 // ── 📈 W：全班每人平均每週實得金幣（SPEC_班級經濟機制 §3-1）───────────────
-/* `W` 是浮動價格的唯一基準數字，**正本只有這一處**——別處要用就讀這裡印出來的值，
-   自己再算一次就是第二份會漂掉的正本（U58／SPEC §5-1）。
-   定義：本期所有帳列金額的**淨總和**（含薪水、獎勵金、懲罰金、消費的正負）
-        ÷ 在學人數 ÷ 本期已過的上課週數。
-   排除**學期第 1 週**：那週在補結舊帳、薪水也還沒跑完整一輪，會灌爆平均（SPEC §6）。
-   期別＝兩個月一期：9-10／11-12／2-3／4-5（6 月不調，期末直接收尾）。 */
-// 算法正本在 lib/price.mjs 的 computeW（f33 算調價也呼叫同一支），這裡只負責印。
-const period = periodOf(today);
-let WAVG = null, wWeeks = 0, wNet = 0, periodLabel = "—";   // 變數名避開第 313 行的 W（＝學期週次）
-if (period) {
-  const ledgerRows = ledger.map(b => ({
-    date: (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10), amount: num(b, "金額") ?? 0, type: sel(b, "類型") }));
-  ({ W: WAVG, weeks: wWeeks, net: wNet, label: periodLabel } = computeW({
-    ledgerRows, weeksFile, rosterN: roster.length, months: period.months, year: Number(today.slice(0, 4)), asOf: today }));
-}
+/* 算法正本在 lib/price.mjs 的 evaluate()（f33 決定調不調也呼叫同一支），這裡只負責印「近 4 週中位數」。
+   達標觸發制（2026-09-24）：R＝M÷上次定價時的 W，±15% 連續 2 週就調；要不要調以 f33 的收件匣列為準
+   （f33 讀得到調價公告、知道上次定價點；這裡沒讀公告，只印 M）。 */
+const ledgerRows = ledger.map(b => ({
+  date: (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10), amount: num(b, "金額") ?? 0, type: sel(b, "類型") }));
+const ev = evaluate({ ledgerRows, weeksFile, rosterN: roster.length, today });
 
 const inflLines = [];
-inflLines.push(WAVG === null
-  ? `📈 W（每人每週實得）　本期（${periodLabel}）尚無可計週數，暫不計算`
-  : `📈 **W＝${WAVG} 幣**／人／週　本期 ${periodLabel}・已過 ${wWeeks} 週（不含學期第 1 週）・收入淨額（不含消費）${wNet} 幣 ÷ ${roster.length} 人 ÷ ${wWeeks} 週`
-    + `\n　　浮動價格的唯一基準（SPEC §3-1）。每期倒數第二次週結由 f33 算 R＝W(本期)÷W(上期)（9–10 月為基準期不調；1/01、4/01 生效），公告週內可否決。`);
+inflLines.push(ev.M == null
+  ? `📈 W（每人每週實得）　已結完的上課週還不到 4 週，暫不計算`
+  : `📈 **近 4 週中位數 W＝${ev.M} 幣**／人／週（不含學期第 1 週、不含消費；本週還沒入帳不算）`
+    + `\n　　浮動價格的基準（SPEC §3-1）。f33 每週拿它跟上次定價時比：±15% 連續 2 週就調價（10/31 前只記錄），公告週內可否決。`);
 inflLines.push(`🎈 通膨體檢　平均餘額 ${avgBal} 幣 ÷ 商店中位價 ${median} 幣＝**${ratio.toFixed(1)} 倍**`
   + `（門檻 ${INFL_RATIO_LIMIT}）｜本週收入 ${wkIn} 幣、支出 ${wkOut} 幣＝流出率 ${(spendRate * 100).toFixed(0)}%`);
 if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {
