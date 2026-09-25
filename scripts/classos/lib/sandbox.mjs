@@ -142,3 +142,47 @@ export async function buildSandbox() {
 export async function teardownSandbox(pageId) {
   return api("PATCH", `/pages/${pageId}`, { archived: true });
 }
+
+// ───────────────────────────────────────────────────────────────
+// R18 沙盒（SPEC_R18事件包入庫腳本 §5 第 2 步）
+// 與 Phase F 沙盒分開一頁：f10 的「存在就刪」切換邏輯不會誤刪它，它也不佔 Phase F 的庫。
+// 每次 f35 SANDBOX=1 都「建立 → 跑 → 驗 → 整頁刪除」，不留狀態。
+// 學生 relation 指向沙盒名冊（不碰正式學生頁）；座號 1、2 在學，3 已非在學（驗證只對照在學）。
+// ───────────────────────────────────────────────────────────────
+export const R18_SANDBOX_TITLE = "🧪 R18 入庫沙盒";
+
+export async function buildR18Sandbox() {
+  const page = await apiOrThrow("POST", "/pages", {
+    parent: { type: "page_id", page_id: PARENT_PAGE },
+    properties: { title: { title: [{ text: { content: R18_SANDBOX_TITLE } }] } },
+  });
+  const mk = async (title, properties) => {
+    const db = await apiOrThrow("POST", "/databases", {
+      parent: { type: "page_id", page_id: page.id },
+      title: [{ text: { content: title } }],
+      initial_data_source: { properties },
+    });
+    return db.data_sources?.[0]?.id;
+  };
+  const roster = await mk("👥 學生名冊（R18 沙盒）", { 姓名: { title: {} }, 座號: { number: {} }, 在學: { checkbox: {} } });
+  for (const [seat, on] of [[1, true], [2, true], [3, false]]) {
+    await apiOrThrow("POST", "/pages", {
+      parent: { type: "data_source_id", data_source_id: roster },
+      properties: { 姓名: { title: [{ text: { content: `測試${seat}` } }] }, 座號: { number: seat }, 在學: { checkbox: on } },
+    });
+  }
+  const sel = (names) => ({ select: { options: names.map((name) => ({ name })) } });
+  const inbox = await mk("📥 任務收件匣（R18 沙盒）", {
+    任務原文: { title: {} }, 狀態: sel(["待處理", "處理中", "待審", "已完成", "失敗"]),
+    任務類型: sel(["記錄"]), 路由ID: { rich_text: {} }, 執行紀錄: { rich_text: {} },
+    錯誤訊息: { rich_text: {} }, 完成時間: { date: {} }, 學年: sel(["115", "116"]),
+  });
+  const log = await mk("📝 班經與學習紀錄庫（R18 沙盒）", {
+    事件描述: { title: {} }, 學生: { relation: { data_source_id: roster, single_property: {} } },
+    事件id: { rich_text: {} }, 次數: { number: {} }, 正負向: sel(["＋", "－", "中性"]), 備註: { rich_text: {} },
+    程度: { number: {} }, 金幣影響: { number: {} }, 日期: { date: {} }, 學年: sel(["114", "115", "116"]),
+    週次: { rich_text: {} }, 類別: sel(["課堂表現", "作業", "生活指導", "人際互動", "生活技能"]),
+    科目: sel(["國語", "數學", "社會", "其他"]),
+  });
+  return { pageId: page.id, ds: { roster, inbox, log } };
+}

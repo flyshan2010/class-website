@@ -1,0 +1,42 @@
+name: R18 事件包入庫（f35）
+
+# 規格：ClassOS_v3.5_藍圖/SPEC_R18事件包入庫腳本.md
+# 目前階段＝§5 第 3 步「並行對照期」：排程只跑 compare（只讀；有差異才在收件匣建一筆待審），
+# 真正寫入紀錄庫的仍是雲端 routine——同一時間只有一邊寫（U44）。
+# **正式庫的 execute 刻意不在選單裡**：切換（§5 第 4 步）時才把排程改成 execute，並同步改雲端 prompt 與週結。
+on:
+  schedule:
+    # 平日 08:05–17:05 台北＝00:05–09:05 UTC，每小時一次（錯開 routine 的整點；GitHub cron 可能延遲 5–30 分）
+    - cron: "5 0-9 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: dry-run＝看待處理 R18 會寫幾筆／compare＝對照 routine 已寫的列／sandbox＝一次性沙盒實跑 execute（建→跑→驗→刪）
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - compare
+          - sandbox
+
+concurrency:
+  group: cm-events
+  cancel-in-progress: false
+
+jobs:
+  f35:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 規則測試（sim，不連 Notion）
+        run: node scripts/classos/sim/cm-events.mjs
+      - name: f35
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          MODE: ${{ github.event_name == 'schedule' && 'compare' || (inputs.mode == 'sandbox' && 'execute' || inputs.mode) }}
+          SANDBOX: ${{ inputs.mode == 'sandbox' && '1' || '0' }}
+        run: node scripts/classos/f35-cm-events.mjs
