@@ -174,8 +174,9 @@ async function runPending({ ds, execute }) {
 }
 
 // ───────────────────────── compare ─────────────────────────
-async function runCompare({ ds, notify, days = 7 }) {
-  const since = new Date(Date.now() - days * 864e5).toISOString();
+// from／to（yyyy-mm-dd，依事件包日期）：指定區間回溯驗收，例如第 3 週；沒給＝最近 days 天
+async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
+  const since = from ? `${from}T00:00:00+08:00` : new Date(Date.now() - days * 864e5).toISOString();
   const tasks = (await queryAll(ds.inbox, {
     filter: { and: [
       { or: [{ property: "狀態", select: { equals: "已完成" } }, { property: "狀態", select: { equals: "失敗" } }] },
@@ -189,7 +190,7 @@ async function runCompare({ ds, notify, days = 7 }) {
   const logOf = logByDate(ds.log);
   const seen = new Set(); // 跨任務：同一 id 第二次出現（重送）＝略過
   const diffs = [];
-  const tot = { tasks: tasks.length, events: 0, diff: 0, subjFilled: 0, matched: 0, failed: 0, skipped: 0 };
+  const tot = { tasks: tasks.length, inRange: 0, events: 0, diff: 0, subjFilled: 0, matched: 0, failed: 0, skipped: 0 };
 
   for (const t of tasks) {
     const p = cm.parsePacket(titleOf(t));
@@ -198,6 +199,8 @@ async function runCompare({ ds, notify, days = 7 }) {
       if (status !== "失敗") diffs.push(`任務 ${tid(t.id)}：程式判 E06，routine 狀態＝${status}`);
       continue;
     }
+    if ((from && p.body.date < from) || (to && p.body.date > to)) continue;
+    tot.inRange++;
     const actual = await logOf(p.body.date);
     for (const ev of p.body.events) {
       tot.events++;
@@ -222,8 +225,8 @@ async function runCompare({ ds, notify, days = 7 }) {
   tot.diff = diffs.length;
 
   if (diffs.length && notify) {
-    const title = `待審：R18 對照差異（${today()}）`;
-    const body = `【R18 並行對照】最近 ${days} 天 ${tot.tasks} 件／${tot.events} 筆事件，差異 ${diffs.length} 項。\n`
+    const title = from ? `待審：R18 對照差異（回溯 ${from}～${to || today()}）` : `待審：R18 對照差異（${today()}）`;
+    const body = `【R18 並行對照】${from ? `事件日期 ${from}～${to || today()}` : `最近 ${days} 天`} ${tot.inRange} 件／${tot.events} 筆事件，差異 ${diffs.length} 項。\n`
       + `（參考）routine 有填「科目」的事件：${tot.subjFilled} 筆（規格未定義此欄，切換前要決定）\n\n`
       + diffs.join("\n")
       + `\n\n判讀：先查是程式錯還是 Sonnet 錯；Sonnet 錯的另開更正列（動錢照 U63）。規格 SPEC_R18事件包入庫腳本.md §5。`;
@@ -320,8 +323,8 @@ console.log(`f35｜模式 ${MODE}${SANDBOX ? "（沙盒）" : ""}｜${today()}`)
 if (SANDBOX) {
   process.exitCode = (await runSandbox()) ? 1 : 0;
 } else if (MODE === "compare") {
-  const t = await runCompare({ ds: PROD, notify: true });
-  console.log(`對照：任務 ${t.tasks} 件／事件 ${t.events} 筆（逐欄相符 ${t.matched}／程式判失敗 ${t.failed}／重送略過 ${t.skipped}；routine 有填科目 ${t.subjFilled}）／差異 ${t.diff} 項${t.diff ? "（明細已寫入收件匣待審）" : ""}`);
+  const t = await runCompare({ ds: PROD, notify: true, from: (process.env.FROM ?? "").trim(), to: (process.env.TO ?? "").trim() });
+  console.log(`對照：任務 ${t.inRange} 件／事件 ${t.events} 筆（逐欄相符 ${t.matched}／程式判失敗 ${t.failed}／重送略過 ${t.skipped}；routine 有填科目 ${t.subjFilled}）／差異 ${t.diff} 項${t.diff ? "（明細已寫入收件匣待審）" : ""}`);
 } else {
   const t = await runPending({ ds: PROD, execute: MODE === "execute" });
   console.log(`任務 ${t.tasks} 件／入庫 ${t.write} 筆／略過 ${t.skip} 筆／失敗 ${t.fail} 筆／整件失敗 ${t.fatal} 件／退回重試 ${t.retry} 件${MODE === "dry-run" ? "（dry-run，未寫入）" : ""}`);
