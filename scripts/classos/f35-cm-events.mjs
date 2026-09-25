@@ -190,6 +190,7 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
   const logOf = logByDate(ds.log);
   const seen = new Set(); // 跨任務：同一 id 第二次出現（重送）＝略過
   const diffs = [];
+  const groups = new Map(); // 差異樣態 → 座號清單
   const tot = { tasks: tasks.length, inRange: 0, events: 0, diff: 0, subjFilled: 0, matched: 0, failed: 0, skipped: 0 };
 
   for (const t of tasks) {
@@ -219,10 +220,16 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
       if (rows.length > 1) diffs.push(`${who}：重複入庫 ${rows.length} 列`);
       const f = cm.diffRow(r.row, rows[0]);
       if (!f.length && rows.length === 1) tot.matched++;
-      if (f.length) diffs.push(`${who}：${f.map((k) => `${k} 程式「${r.row[k] ?? ""}」／routine「${rows[0][k] ?? ""}」`).join("；")}`);
+      // 同一種差異歸成一組（執行紀錄 2000 字上限，逐筆列會被截斷）；學生不同另列兩邊頁面 id 供查
+      for (const k of f) {
+        const key = k === "學生" ? `學生對應不同頁（程式 ${String(r.row.學生).replace(/-/g, "").slice(-6)}／routine ${String(rows[0].學生).slice(-6)}）`
+          : `${k}：程式「${r.row[k] ?? ""}」／routine「${rows[0][k] ?? ""}」`;
+        groups.set(key, [...(groups.get(key) ?? []), ev.seat]);
+      }
     }
   }
-  tot.diff = diffs.length;
+  for (const [k, seats] of groups) diffs.push(`×${seats.length} ${k}（座號${[...new Set(seats)].sort((x, y) => x - y).join("、")}）`);
+  tot.diff = [...groups.values()].reduce((n, v) => n + v.length, 0) + diffs.length - groups.size;
 
   if (diffs.length && notify) {
     const title = from ? `待審：R18 對照差異（回溯 ${from}～${to || today()}）` : `待審：R18 對照差異（${today()}）`;
