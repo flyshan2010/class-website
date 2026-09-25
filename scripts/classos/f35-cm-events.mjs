@@ -191,6 +191,7 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
   const seen = new Set(); // 跨任務：同一 id 第二次出現（重送）＝略過
   const diffs = [];
   const groups = new Map(); // 差異樣態 → 座號清單
+  const subjMap = new Map(); // 觀察 routine 怎麼填「科目」（規格未定義）
   const tot = { tasks: tasks.length, inRange: 0, events: 0, diff: 0, subjFilled: 0, matched: 0, failed: 0, skipped: 0 };
 
   for (const t of tasks) {
@@ -211,6 +212,7 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
       const rows = actual.get(ev.id) ?? [];
       const who = `座號${ev.seat}（${ev.id}）`;
       if (rows.some((x) => x.科目)) tot.subjFilled++;
+      if (ev.subj || rows[0]?.科目) { const k = `${ev.src}:${ev.act}｜subj「${ev.subj ?? ""}」→ 科目「${rows[0]?.科目 ?? ""}」`; subjMap.set(k, (subjMap.get(k) ?? 0) + 1); }
       if (r.action === "fail") {
         tot.failed++;
         if (rows.length) diffs.push(`${who}：程式判失敗 ${r.code} ${r.why}，但紀錄庫有 ${rows.length} 列`);
@@ -231,11 +233,12 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
   for (const [k, seats] of groups) diffs.push(`×${seats.length} ${k}（座號${[...new Set(seats)].sort((x, y) => x - y).join("、")}）`);
   tot.diff = [...groups.values()].reduce((n, v) => n + v.length, 0) + diffs.length - groups.size;
 
-  if (diffs.length && notify) {
+  if ((diffs.length || (from && subjMap.size)) && notify) {
     const title = from ? `待審：R18 對照差異（回溯 ${from}～${to || today()}）` : `待審：R18 對照差異（${today()}）`;
-    const body = `【R18 並行對照】${from ? `事件日期 ${from}～${to || today()}` : `最近 ${days} 天`} ${tot.inRange} 件／${tot.events} 筆事件，差異 ${diffs.length} 項。\n`
+    const body = `【R18 並行對照】${from ? `事件日期 ${from}～${to || today()}` : `最近 ${days} 天`} ${tot.inRange} 件／${tot.events} 筆事件，差異 ${tot.diff} 項。\n`
       + `（參考）routine 有填「科目」的事件：${tot.subjFilled} 筆（規格未定義此欄，切換前要決定）\n\n`
       + diffs.join("\n")
+      + (subjMap.size ? `\n\n（參考）科目填法：\n${[...subjMap].map(([k, n]) => `×${n} ${k}`).join("\n")}` : "")
       + `\n\n判讀：先查是程式錯還是 Sonnet 錯；Sonnet 錯的另開更正列（動錢照 U63）。規格 SPEC_R18事件包入庫腳本.md §5。`;
     const prev = (await queryAll(ds.inbox, { filter: { property: "狀態", select: { equals: "待審" } } }))
       .find((x) => titleOf(x) === title);
