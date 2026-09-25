@@ -189,7 +189,7 @@ async function runCompare({ ds, notify, days = 7 }) {
   const logOf = logByDate(ds.log);
   const seen = new Set(); // 跨任務：同一 id 第二次出現（重送）＝略過
   const diffs = [];
-  const tot = { tasks: tasks.length, events: 0, diff: 0, subjFilled: 0 };
+  const tot = { tasks: tasks.length, events: 0, diff: 0, subjFilled: 0, matched: 0, failed: 0, skipped: 0 };
 
   for (const t of tasks) {
     const p = cm.parsePacket(titleOf(t));
@@ -202,18 +202,20 @@ async function runCompare({ ds, notify, days = 7 }) {
     for (const ev of p.body.events) {
       tot.events++;
       const r = cm.planEvent(ev, { ...data, roster, existingIds: seen });
-      if (r.action === "skip") continue;
+      if (r.action === "skip") { tot.skipped++; continue; }
       seen.add(ev.id);
       const rows = actual.get(ev.id) ?? [];
       const who = `座號${ev.seat}（${ev.id}）`;
       if (rows.some((x) => x.科目)) tot.subjFilled++;
       if (r.action === "fail") {
+        tot.failed++;
         if (rows.length) diffs.push(`${who}：程式判失敗 ${r.code} ${r.why}，但紀錄庫有 ${rows.length} 列`);
         continue;
       }
       if (!rows.length) { diffs.push(`${who}：應入庫但紀錄庫沒有`); continue; }
       if (rows.length > 1) diffs.push(`${who}：重複入庫 ${rows.length} 列`);
       const f = cm.diffRow(r.row, rows[0]);
+      if (!f.length && rows.length === 1) tot.matched++;
       if (f.length) diffs.push(`${who}：${f.map((k) => `${k} 程式「${r.row[k] ?? ""}」／routine「${rows[0][k] ?? ""}」`).join("；")}`);
     }
   }
@@ -319,7 +321,7 @@ if (SANDBOX) {
   process.exitCode = (await runSandbox()) ? 1 : 0;
 } else if (MODE === "compare") {
   const t = await runCompare({ ds: PROD, notify: true });
-  console.log(`對照：任務 ${t.tasks} 件／事件 ${t.events} 筆／差異 ${t.diff} 項${t.diff ? "（明細已寫入收件匣待審）" : ""}`);
+  console.log(`對照：任務 ${t.tasks} 件／事件 ${t.events} 筆（逐欄相符 ${t.matched}／程式判失敗 ${t.failed}／重送略過 ${t.skipped}；routine 有填科目 ${t.subjFilled}）／差異 ${t.diff} 項${t.diff ? "（明細已寫入收件匣待審）" : ""}`);
 } else {
   const t = await runPending({ ds: PROD, execute: MODE === "execute" });
   console.log(`任務 ${t.tasks} 件／入庫 ${t.write} 筆／略過 ${t.skip} 筆／失敗 ${t.fail} 筆／整件失敗 ${t.fatal} 件／退回重試 ${t.retry} 件${MODE === "dry-run" ? "（dry-run，未寫入）" : ""}`);
