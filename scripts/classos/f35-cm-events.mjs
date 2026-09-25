@@ -236,7 +236,7 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
   if ((diffs.length || (from && subjMap.size)) && notify) {
     const title = from ? `待審：R18 對照差異（回溯 ${from}～${to || today()}）` : `待審：R18 對照差異（${today()}）`;
     const body = `【R18 並行對照】${from ? `事件日期 ${from}～${to || today()}` : `最近 ${days} 天`} ${tot.inRange} 件／${tot.events} 筆事件，差異 ${tot.diff} 項。\n`
-      + `（參考）routine 有填「科目」的事件：${tot.subjFilled} 筆（規格未定義此欄，切換前要決定）\n\n`
+      + `（參考）routine 有填「科目」的事件：${tot.subjFilled} 筆（科目已納入逐欄比對）\n\n`
       + diffs.join("\n")
       + (subjMap.size ? `\n\n（參考）科目填法：\n${[...subjMap].map(([k, n]) => `×${n} ${k}`).join("\n")}` : "")
       + `\n\n判讀：先查是程式錯還是 Sonnet 錯；Sonnet 錯的另開更正列（動錢照 U63）。規格 SPEC_R18事件包入庫腳本.md §5。`;

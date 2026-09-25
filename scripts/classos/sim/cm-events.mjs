@@ -104,6 +104,13 @@ const cases = [
   ["⑩ −200 level −9 → 程度空白", row(R({ rule_n: 10, kind: "bad", act_i: 0, coin: `${M}200`, level: -9 })).程度, null],
   ["⑩ −200 金幣照寫", row(R({ rule_n: 10, kind: "bad", act_i: 0, coin: `${M}200`, level: -9 })).金幣影響, -200],
 
+  // ── subj → 科目（class-report 科目分數靠它）──
+  ["tally 舉手回答 subj 國語 → 科目國語", row(T({ kind: "good", act: "舉手回答", subj: "國語" })).科目, "國語"],
+  ["rule 帶 subj 數學 → 科目數學", row(R({ rule_n: 5, kind: "bad", act_i: 0, coin: `${M}5`, level: -1, subj: "數學" })).科目, "數學"],
+  ["subj 不在選項（自然）→ 其他", row(T({ kind: "good", act: "舉手回答", subj: "自然" })).科目, "其他"],
+  ["無 subj → 科目空白", row(T({ kind: "good", act: "打掃支援" })).科目, ""],
+  ["科目空白送 select null", toNotionProps(row(T({ kind: "good", act: "打掃支援" }))).科目.select, null],
+
   // ── date → 日期／學年／週次 ──
   ["日期照 date", row(T({ date: "2026-09-10", kind: "good", act: "打掃支援" })).日期, "2026-09-10"],
   ["學年由 date 算（9 月→115）", row(T({ date: "2026-09-10", kind: "good", act: "打掃支援" })).學年, "115"],
