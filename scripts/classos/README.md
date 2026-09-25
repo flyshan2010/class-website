@@ -18,6 +18,7 @@
 | `f32-publish-week-reports.mjs` | 某一週**學習報告發布前機器檢查＋勾發布**（份數／必填欄／學年／姓名對名冊／學生檔案 relation）。**任一項不過 exit 1 整批不勾**；等第乙以下只列名單交人工 | **常用**（每週五發布） | ✅ 冪等，已勾的不重勾 |
 | `f33-price-draft.mjs` | 浮動調價**達標就寫草稿**（SPEC_班級經濟機制 §3-3、§4）：每週五接 f24 後檢查（判斷在 `lib/price.mjs` evaluate：近 4 週中位數÷上次定價 W，±15% 連續 2 週、冷卻 4 週、10/31 前只記錄、6 月不生效），每週收件匣一列「調價監測」，達標才寫「下期價格／調價生效日」＋預告公告 |
 | `f34-price-apply.mjs` | 浮動調價**生效日套用**：生效日到＋未否決 → 改價並清空兩欄；否決 → 清空＋撤公告；下期價格空白 → 不改價 | 自動（sync.yml 同步前） | ✅ 冪等，已套用的欄位已清空 |
+| `f35-cm-events.mjs` | **R18 課堂事件包入庫**（SPEC_R18事件包入庫腳本）：規則在 `lib/cm-events.mjs`（sim `sim/cm-events.mjs` 81 題）；MODE＝dry-run／compare（對照 routine 已寫的列，有差異才建待審）／execute（切換後才用）；`SANDBOX=1` 一次性沙盒實跑 | `cm-events.yml`：對照期平日每小時 compare；手動 dry-run／compare／sandbox | ✅ 冪等（事件id 防重複） |
 | `f03-backfill-year.mjs` | 回填「學年」。**同步失敗訊息就是叫人跑這支** | **常用**（護欄指定修復工具） | ✅ |
 | `f27-prune-dangling-relations.mjs` | 清死關聯：**只做 👥 學生名冊**，可 `seat=N` 單人試跑 | 常用（症狀出現時） | ✅ |
 | `f28-prune-dangling-relations-all.mjs` | 清死關聯：**全庫版**（27 個庫，含名冊） | 常用（症狀出現時） | ✅ |
