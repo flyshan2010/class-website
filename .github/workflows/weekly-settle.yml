@@ -35,7 +35,27 @@ on:
         type: string
 
 jobs:
+  # R18 事件包先清空（SPEC_R18事件包入庫腳本 §2）：收班送出的課堂事件沒入庫，金幣會算少。
+  # 與 cm-events.yml 共用 concurrency 群組，整點那一輪若還在跑就排隊，不會兩邊同時認領同一件。
+  r18-flush:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: cm-events
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: R18 事件包入庫（f35）
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          # 試算 dry-run 時這步也只算不寫
+          MODE: ${{ github.event.inputs.mode || 'execute' }}
+        run: node scripts/classos/f35-cm-events.mjs
+
   settle-preview:
+    needs: r18-flush
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
