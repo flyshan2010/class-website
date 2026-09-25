@@ -17,6 +17,7 @@ on:
           - "[常用] f03-backfill-year（回填學年，同步被護欄擋下時跑這支）"
           - "[常用] f27-prune-dangling-relations（清死關聯・只做學生名冊・可填 seat 單人試跑）"
           - "[常用] f28-prune-dangling-relations-all（清死關聯・全庫 27 個庫，含名冊）"
+          - "[一次性・2026-09-25] f36-fix-r18-misseat（更正 9/16 座號15 潔牙紀錄誤掛座號16：紀錄庫改回＋帳本退回／補扣＋常規獎勵差額）"
           - "[半常用] f21-relink-daily-plan（大批調課後重掛單元 relation）"
           - "[驗收用] f05-test-failloud（證明學年為空會擋同步）"
           - "[驗收用] f12-simulate-skill-writes（9 支 skill 學年寫入模擬）"
