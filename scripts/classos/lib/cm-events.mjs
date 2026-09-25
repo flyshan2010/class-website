@@ -78,6 +78,13 @@ export function describe(ev) {
 
 const PN = { good: "＋", bad: "－", neutral: "中性" };
 
+/**
+ * 科目（2026-09-25 回溯第 3 週補上：SPEC 原表漏了這欄，但 class-report 的國語／數學／社會分數
+ * 只撈「課堂表現且科目相符」的列，不寫就會讓課堂紀錄掉出科目分數）。
+ * routine 實寫 27/27 都是「科目＝subj」；紀錄庫選項只有國語／數學／社會／其他 → 其餘科目歸「其他」。
+ */
+export const subjectOf = (ev) => (!ev.subj ? "" : ["國語", "數學", "社會"].includes(ev.subj) ? ev.subj : "其他");
+
 /** coin 字串（可能是 U+2212 減號）→ 數字；轉不成回 null（絕不回 0）。 */
 export function coinNumber(coin) {
   const s = String(coin ?? "").trim().replace(/−/g, "-").replace(/^\+/, "");
@@ -135,6 +142,7 @@ export function planEvent(ev, ctx) {
       學年: academicYearValue(ev.date),
       週次: weekLabel(ev.date, ctx.weeks),
       類別: cat,
+      科目: subjectOf(ev),
     },
   };
 }
@@ -189,6 +197,7 @@ export function toNotionProps(row) {
     學年: { select: { name: row.學年 } },
     週次: { rich_text: rt(row.週次) },
     類別: { select: { name: row.類別 } },
+    科目: { select: row.科目 ? { name: row.科目 } : null },
   };
 }
 
@@ -213,7 +222,7 @@ export function fromNotionPage(page) {
   };
 }
 
-export const COMPARE_FIELDS = ["事件描述", "學生", "次數", "正負向", "備註", "程度", "金幣影響", "日期", "學年", "週次", "類別"];
+export const COMPARE_FIELDS = ["事件描述", "學生", "次數", "正負向", "備註", "程度", "金幣影響", "日期", "學年", "週次", "類別", "科目"];
 
 /** 逐欄比對應寫值與實際值，回傳不同的欄位名。 */
 export function diffRow(expected, actual) {
