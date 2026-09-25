@@ -22,11 +22,9 @@ export function r01Classroom(text) {
   const hit = KW.find(([, ws]) => ws.some(w => text.includes(w)));
   if (!hit) return { need: "需人工", why: "判不出量尺級數" };
   const level = hit[0];
-  const amt = text.match(/[+＋]\s*(\d+)\s*(點|幣|崑山幣|元)/);
-  const bare = text.match(/[+＋]\s*(\d+)(?!\s*(點|幣|崑山幣|元|\d))/);
-  const given = amt ? Number(amt[1]) / 5 : bare ? Number(bare[1]) : null;
-  if (given !== null && given !== level) return { need: "需人工", why: "數字和行為對不上" };
-  return { cat: "課堂表現", level, coin: level * 5 };
+  // 老師 09-25 裁定：課堂正向只看行為，句中數字／金額一律不採用（執行紀錄註明）
+  const ignoredNumber = /[+＋]\s*\d/.test(text);
+  return { cat: "課堂表現", level, coin: level * 5, ignoredNumber };
 }
 
 // ── R18 類別（SPEC §5）──
@@ -74,10 +72,10 @@ const cases = [
   ["R01：多級取最高→程度3", r01Classroom("上台講解讓全班都懂").level, 3],
   ["R01：主動畫重點→程度1", r01Classroom("社會課主動畫重點").level, 1],
   ["R01：判不出→需人工（不預設程度1）", r01Classroom("數學課表現很棒").need, "需人工"],
-  ["R01：帶動討論 +2 一致→程度2", r01Classroom("帶動討論 +2").level, 2],
-  ["R01：帶動討論 +3 不一致→需人工", r01Classroom("帶動討論 +3").need, "需人工"],
-  ["R01：舉手發表 +10點 不一致→需人工", r01Classroom("舉手發表 +10點").need, "需人工"],
-  ["R01：舉手發表 +5點 一致→程度1", r01Classroom("舉手發表 +5點").level, 1],
+  ["R01：帶動討論 +3 →不看數字，程度2", r01Classroom("帶動討論 +3").level, 2],
+  ["R01：舉手發表 +10點 →不看金額，+5", r01Classroom("舉手發表 +10點").coin, 5],
+  ["R01：句中有數字→註明未採用", r01Classroom("舉手發表 +2").ignoredNumber, true],
+  ["R01：無數字→不註明", r01Classroom("舉手發表").ignoredNumber, false],
   ["R01：協助發作業→人際互動", r01Classroom("協助發作業訂正").cat, "人際互動"],
   ["R18：⑤ good→人際互動", r18Category(5, "good"), "人際互動"],
   ["R18：⑤ bad→課堂表現", r18Category(5, "bad"), "課堂表現"],
