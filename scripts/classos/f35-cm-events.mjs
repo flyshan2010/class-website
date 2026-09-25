@@ -14,7 +14,7 @@
  *    不印座號、事件id（內含座號）、姓名、事件描述、備註（SPEC §6）。
  */
 import { readFileSync } from "node:fs";
-import { api, DS, shortId } from "./lib/notion.mjs";
+import { api, DS } from "./lib/notion.mjs";
 import * as cm from "./lib/cm-events.mjs";
 import { buildR18Sandbox, teardownSandbox } from "./lib/sandbox.mjs";
 import { academicYearValue } from "./lib/academic-year.mjs";
@@ -26,6 +26,8 @@ if (!["dry-run", "execute", "compare"].includes(MODE)) { console.error(`未知 M
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const rt = (s) => (s ? [{ type: "text", text: { content: String(s).slice(0, 2000) } }] : []);
 const titleOf = (p) => (p.properties?.任務原文?.title ?? []).map((t) => t.plain_text).join("");
+// 任務短 id 取尾 8 碼：Notion id 開頭是時間序，同一分鐘建的任務前 8 碼會相同
+const tid = (id) => String(id).replace(/-/g, "").slice(-8);
 const today = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
 
 // ── Notion 呼叫：節流＋429／5xx 重試 3 次（SPEC §7；lib/notion.mjs 只有節流）──
@@ -114,7 +116,7 @@ async function runPending({ ds, execute }) {
   });
 
   for (const t of tasks) {
-    const tag = `任務 ${shortId(t.id)}`;
+    const tag = `任務 ${tid(t.id)}`;
     try {
       if (execute) await fill(t.id, { 狀態: { select: { name: "處理中" } } }); // 認領
       if (setupErr) {
@@ -193,7 +195,7 @@ async function runCompare({ ds, notify, days = 7 }) {
     const p = cm.parsePacket(titleOf(t));
     const status = t.properties?.狀態?.select?.name;
     if (!p.ok) {
-      if (status !== "失敗") diffs.push(`任務 ${shortId(t.id)}：程式判 E06，routine 狀態＝${status}`);
+      if (status !== "失敗") diffs.push(`任務 ${tid(t.id)}：程式判 E06，routine 狀態＝${status}`);
       continue;
     }
     const actual = await logOf(p.body.date);
