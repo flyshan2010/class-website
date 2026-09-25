@@ -19,6 +19,16 @@ on:
           - dry-run
           - compare
           - sandbox
+      from:
+        description: compare 回溯起日 yyyy-mm-dd（依事件包日期；空白＝最近 7 天）
+        required: false
+        default: ""
+        type: string
+      to:
+        description: compare 回溯迄日 yyyy-mm-dd（空白＝今天）
+        required: false
+        default: ""
+        type: string
 
 concurrency:
   group: cm-events
@@ -39,4 +49,6 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           MODE: ${{ github.event_name == 'schedule' && 'compare' || (inputs.mode == 'sandbox' && 'execute' || inputs.mode) }}
           SANDBOX: ${{ inputs.mode == 'sandbox' && '1' || '0' }}
+          FROM: ${{ inputs.from }}
+          TO: ${{ inputs.to }}
         run: node scripts/classos/f35-cm-events.mjs
