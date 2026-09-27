@@ -17,6 +17,8 @@
  *   ④ 午餐工作薪水 固定崗 5 次 × 2 幣；輪值崗只有輪到那週算 5 次 × 2 幣
  *   ⑤ 班級常規獎勵 達成天數 × 1 ＋ 五天全到再 +3（例外管理：有常規未達成紀錄才扣那天）
  *   ⑥ 作業完成獎勵 本週無作業類負向紀錄、且至少 1 天有「作業完成」tally → +5（一週一筆；本週無該 tally 一律不給）
+ *   ⑧ 舉手回答計次 檢核台「舉手回答」tally＝主動發表（程度1）→ 每生每科每天一筆 +5（評分標準 v2 §2；2026-09-28 起）
+ *                  總開關 RAISE_HAND_PAY：關著時只試算、不計入合計（U44 動錢先只算不寫，老師看過再開）
  * 消費類（購物／兌換／捐款／臨時加減幣）是當天結，不在週結範圍。
  *
  * 午餐輪值輪次 =（該學期週次 −1）% 完整輪替週數 + 1，下學期從第 1 輪重新起算。
@@ -42,6 +44,9 @@ const CLEAN_PAY = 2, LUNCH_PAY = 2, ROUTINE_PAY = 1, ROUTINE_FULL = 3, SCHOOL_DA
    會變成「發了一週沒人在看的全勤獎」（四上第1週就發生：22 人全勤 +8、5 人是被不相關的
    生活指導負向紀錄扣到，兩邊都不是常規觀察的結果）。
    ▶ 開始逐日追蹤常規那一週，把這行改成 true 即可，其餘公式不用動。 */
+/* ⑧ 舉手回答計次的總開關（SPEC_學習報告評分標準v2 §2・§7-5，2026-09-28）：以前計次不發幣，改成與主動發表一致 +5。
+   動錢的新規則先只試算（U44）：false＝列出金額但不計入合計／待入帳；老師看過一兩週試算、說「開」再改 true。 */
+const RAISE_HAND_PAY = false;
 const ROUTINE_ENABLED = true;   // 2026-09-11 老師裁示：四上第2週起開始發（常規檢核台已逐日記潔牙）
 const rt = s => [{ type: "text", text: { content: String(s).slice(0, 2000) } }];
 const num = (p, k) => p.properties?.[k]?.number ?? null;
@@ -286,6 +291,33 @@ const hwGive = hwDone.size ? roster.filter(r => hwDone.has(r.seat) && !hwBad.has
 const hwNo = hwDone.size ? roster.map(r => r.seat).filter(s => !hwGive.includes(s) && !hwWb.has(s)) : [];
 const hwTotal = hwGive.length * HW_PAY;
 
+// ⑧ 舉手回答計次（評分標準 v2 §2）：tally 事件描述如「在國語課舉手回答」、金幣影響空白。
+// 每生每科每天只算一筆（09-05 拍板 #8）；同生同天同科已有**有金幣**的課堂正向紀錄（一句話記的「主動發表」）
+// ＝那筆已由 ② 發過，這裡不重複給。
+const HAND_PAY = 5;
+const dateOf = p => (p.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
+const paidClass = new Set();
+for (const l of weekLogs) {
+  if (sel(l, "類別") !== "課堂表現" || sel(l, "正負向") !== "＋" || !(num(l, "金幣影響") > 0)) continue;
+  for (const sid of relIds(l, "學生")) paidClass.add(`${sid}|${dateOf(l)}|${sel(l, "科目")}`);
+}
+const handKeys = new Set(), handBySeat = new Map();
+let handDup = 0;
+for (const l of weekLogs) {
+  if (!titleOf(l).includes("舉手回答") || num(l, "金幣影響")) continue;
+  const subj = sel(l, "科目") || (titleOf(l).match(/在(.+?)課/) || [])[1] || "";
+  for (const sid of relIds(l, "學生")) {
+    const s = seatOf.get(sid); if (!s) continue;
+    const k = `${sid}|${dateOf(l)}|${subj}`;
+    if (handKeys.has(k)) continue;
+    handKeys.add(k);
+    if (paidClass.has(k)) { handDup++; continue; }
+    handBySeat.set(s, (handBySeat.get(s) ?? 0) + HAND_PAY);
+  }
+}
+const handCalc = [...handBySeat.values()].reduce((a, b) => a + b, 0);
+const handTotal = RAISE_HAND_PAY ? handCalc : 0;
+
 // ⑦ 打掃未達標累計：同一週 ≥3 次 → 班規③ −5，一週一筆（class-bank SKILL 2026-09-06 定案）。
 // 2026-09-11 模擬驗證補進試算：原本只有 class-bank 手動週結會算，week-publish 照試算入帳就整條漏掉。
 // 已寫回紀錄庫的座號同 ⑥ 改由 ② 處理（不另設「已入帳」整項標記：那會讓新累計滿 3 次的人被一起略過）。
@@ -318,6 +350,7 @@ const paid = {
   lunch: paidOf(new RegExp(`^第${W}週午餐工作薪水`)),
   routine: paidOf(new RegExp(`^第${W}週(班級)?常規獎勵`)),
   hw: paidOf(new RegExp(`^第${W}週作業完成獎勵`)),
+  hand: paidOf(new RegExp(`^第${W}週舉手回答`)),
 };
 const mark = (p) => p.n ? `　⚠️ **已入帳 ${p.sum} 幣（${p.n} 筆），本次不重複計**` : "";
 
@@ -331,11 +364,12 @@ console.log(`　① 職務薪水　　${roster.filter(r => r.pay).sort((a, b) =>
 console.log(`　③ 打掃薪水　　${perSeat(new Map([...cleanBySeat].map(([s, n]) => [s, n * CLEAN_PAY])))}`);
 console.log(`　④ 午餐薪水　　${perSeat(new Map([...lunchBySeat].map(([s, n]) => [s, n * LUNCH_PAY])))}`);
 console.log(`　⑤ 常規獎勵　　${perSeat(routineBySeat)}`);
+console.log(`　⑧ 舉手回答　　${perSeat(handBySeat)}${RAISE_HAND_PAY ? "" : "（試算，未開）"}`);
 
-const total = salary + rewardSum + cleanTotal + lunchTotal + routineTotal + hwTotal + badTotal;
+const total = salary + rewardSum + cleanTotal + lunchTotal + routineTotal + hwTotal + badTotal + handTotal;
 // 實際還要入帳的＝扣掉已入過帳的那幾項（②本來就只算未入帳的；⑦ 已入帳者必有寫回列，已在上面排除）
 const due = (paid.job.n ? 0 : salary) + rewardSum + (paid.clean.n ? 0 : cleanTotal)
-  + (paid.lunch.n ? 0 : lunchTotal) + (paid.routine.n ? 0 : routineTotal) + (paid.hw.n ? 0 : hwTotal) + badTotal;
+  + (paid.lunch.n ? 0 : lunchTotal) + (paid.routine.n ? 0 : routineTotal) + (paid.hw.n ? 0 : hwTotal) + badTotal + (paid.hand.n ? 0 : handTotal);
 // ── 🎈 通膨體檢（2026-09-12 老師指示自動化）───────────────────────────────
 /* 為什麼要做：作業完成 +5 之類的定額不是失衡主因（占總收入約 9%），真正會讓獎勵失去意義的是
    「錢一直進、沒什麼出去」。兩週實測：總收入 5427 幣、總支出只 730 幣（12.4%），
@@ -439,6 +473,9 @@ const lines = [
   `⑦ 打掃未達標班規③　${badTotal} 幣`
     + (badFine.length ? `（${badFine.map(([s, n]) => `座號${s}（${n} 次）`).join("、")}，各 ${CLEAN_BAD_FINE}；入帳時先寫回紀錄庫）` : "（本週無人累計 ≥3 次）")
     + (badWb.size ? `｜已寫回紀錄庫、改由②入帳：座號 ${seatList(badWb)}` : ""),
+  RAISE_HAND_PAY
+    ? `⑧ 舉手回答計次　${handTotal} 幣（${handBySeat.size} 人，每生每科每天一筆 +${HAND_PAY}）${handDup ? `｜另 ${handDup} 筆同天同科已有主動發表、由②發，不重複` : ""}${mark(paid.hand)}`
+    : `⑧ 舉手回答計次　**試算 ${handCalc} 幣（${handBySeat.size} 人），尚未開啟、不計入合計**${handDup ? `｜另 ${handDup} 筆同天同科已有主動發表、由②發，不重複` : ""}（評分標準 v2 §2；老師看過說「開」才改 f24 的 RAISE_HAND_PAY）`,
   `　　　　　　　　合計 ${total} 幣`
   + (due === total ? "" : `\n　　　　　　　　**本次實際待入帳 ${due} 幣**（其餘已入帳，見上方 ⚠️）`),
   `確認無誤 → 在 Claude Code 說「週結」即入帳（**只入「待入帳」的部分**）；有問題就先改資料再說一次。`,
