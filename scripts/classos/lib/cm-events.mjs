@@ -95,7 +95,8 @@ export function coinNumber(coin) {
 /**
  * 舉手回答計次＝主動發表（學習報告評分標準 v2 §2，老師 2026-09-28 裁定）：入庫就記程度 1、+5 幣，
  * 走週結 ② 一般獎懲入帳。每生每科每天只給一筆（09-05 拍板 #8）——同天同科已有「有金幣的課堂正向」
- * （一句話記的主動發表，或先前已入庫的舉手回答）就只記次數、金幣 0。
+ * （一句話記的主動發表，或先前已入庫的舉手回答）→ **不寫入**（action "drop"）。
+ * 老師 2026-09-28 裁定：不給金幣的列不要記，學生看到 0 幣的舉手列會以為帳目有問題。
  * handKey 的「科目」用 subj 原文（自然、英語不併成「其他」）；既有列從事件描述「在X課」取，取不到才用科目欄。
  */
 export const HAND_ACT = "舉手回答", HAND_COIN = 5;
@@ -113,6 +114,7 @@ export function handPaidFrom(rows) {
 
 /**
  * 單筆事件 → 應寫值或處置。三道關卡順序不可調：防重複 → 金幣核對 → tally 不入帳（舉手回答例外，見上）。
+ * 回傳另有 { action:"drop", seat, why }＝刻意不寫（同天同科舉手已給過 +5），不算失敗、也不算已入庫。
  * ctx: { rules, weeks, roster: Map(座號→頁面id), existingIds: Set }
  * 回傳 { action:"skip" } | { action:"fail", seat, code, why } | { action:"write", seat, row }
  */
@@ -149,8 +151,8 @@ export function planEvent(ev, ctx) {
   if (ev.src === "tally" && ev.act === HAND_ACT && ev.kind === "good") {
     const k = handKey(student, ev.subj);
     const paid = ctx.handPaid ?? new Set();
-    level = 1;
-    if (!paid.has(k)) { coin = HAND_COIN; paid.add(k); }
+    if (paid.has(k)) return { action: "drop", seat, why: "同天同科已給過主動發表 +5，不另記" };
+    level = 1; coin = HAND_COIN; paid.add(k);
   }
 
   return {
@@ -193,8 +195,10 @@ export function execLog(results) {
   const n = results.filter((r) => r.action === "write").length;
   const m = results.filter((r) => r.action === "skip").length;
   const f = results.filter((r) => r.action === "fail");
+  const d = results.filter((r) => r.action === "drop").length;
   const seats = [...new Set(f.map((r) => r.seat))].sort((a, b) => a - b);
-  return `已入庫 ${n} 筆／略過 ${m} 筆（已入庫）／失敗 ${f.length} 筆` + (f.length ? `：座號${seats.join("、")}` : "");
+  return `已入庫 ${n} 筆／略過 ${m} 筆（已入庫）` + (d ? `／不記 ${d} 筆（同天同科舉手已給過 +5）` : "")
+    + `／失敗 ${f.length} 筆` + (f.length ? `：座號${seats.join("、")}` : "");
 }
 
 /** 任務狀態：全數失敗才記失敗（每一筆都失敗；有任何一筆寫入或略過就算已完成）。 */

@@ -156,8 +156,8 @@ async function runPending({ ds, execute }) {
         await fill(t.id, done(cm.taskStatus(results), cm.execLog(results), cm.failDetail(results)));
       }
       const c = (a) => results.filter((r) => r.action === a).length;
-      tot.write += c("write"); tot.skip += c("skip"); tot.fail += c("fail");
-      console.log(`${tag}：入庫 ${c("write")}／略過 ${c("skip")}／失敗 ${c("fail")}`);
+      tot.write += c("write"); tot.skip += c("skip"); tot.fail += c("fail"); tot.drop = (tot.drop ?? 0) + c("drop");
+      console.log(`${tag}：入庫 ${c("write")}／略過 ${c("skip")}／不記 ${c("drop")}（同科舉手已給過）／失敗 ${c("fail")}`);
     } catch (e) {
       if (!(e instanceof Transient)) {
         // 非暫時性錯誤：標失敗讓老師看得到，不留「處理中」殭屍，繼續下一件
@@ -209,7 +209,7 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
     for (const ev of p.body.events) {
       tot.events++;
       const r = cm.planEvent(ev, { ...data, roster, existingIds: seen });
-      if (r.action === "skip") { tot.skipped++; continue; }
+      if (r.action === "skip" || r.action === "drop") { tot.skipped++; continue; }
       seen.add(ev.id);
       const rows = actual.get(ev.id) ?? [];
       const who = `座號${ev.seat}（${ev.id}）`;
@@ -339,5 +339,5 @@ if (SANDBOX) {
   console.log(`對照：任務 ${t.inRange} 件／事件 ${t.events} 筆（逐欄相符 ${t.matched}／程式判失敗 ${t.failed}／重送略過 ${t.skipped}；routine 有填科目 ${t.subjFilled}）／差異 ${t.diff} 項${t.diff ? "（明細已寫入收件匣待審）" : ""}`);
 } else {
   const t = await runPending({ ds: PROD, execute: MODE === "execute" });
-  console.log(`任務 ${t.tasks} 件／入庫 ${t.write} 筆／略過 ${t.skip} 筆／失敗 ${t.fail} 筆／整件失敗 ${t.fatal} 件／退回重試 ${t.retry} 件${MODE === "dry-run" ? "（dry-run，未寫入）" : ""}`);
+  console.log(`任務 ${t.tasks} 件／入庫 ${t.write} 筆／略過 ${t.skip} 筆／不記 ${t.drop ?? 0} 筆／失敗 ${t.fail} 筆／整件失敗 ${t.fatal} 件／退回重試 ${t.retry} 件${MODE === "dry-run" ? "（dry-run，未寫入）" : ""}`);
 }
