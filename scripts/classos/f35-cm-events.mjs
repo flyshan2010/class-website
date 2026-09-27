@@ -86,8 +86,10 @@ function logByDate(ds) {
     if (!cache.has(date)) {
       const rows = await queryAll(ds, { filter: { property: "日期", date: { equals: date } } });
       const byId = new Map();
-      for (const p of rows) {
-        const v = cm.fromNotionPage(p);
+      const all = rows.map((p) => cm.fromNotionPage(p));
+      // 當天已發過課堂正向金幣的（學生|科目）：舉手回答每生每科每天只給一筆 +5（含一句話記的主動發表）
+      byId.handPaid = cm.handPaidFrom(all);
+      for (const v of all) {
         if (!v.事件id) continue;
         byId.set(v.事件id, [...(byId.get(v.事件id) ?? []), v]);
       }
@@ -133,7 +135,7 @@ async function runPending({ ds, execute }) {
         continue;
       }
       const existing = await logOf(p.body.date);
-      const plan = cm.planPacket(titleOf(t), { ...data, roster, existingIds: new Set(existing.keys()) });
+      const plan = cm.planPacket(titleOf(t), { ...data, roster, existingIds: new Set(existing.keys()), handPaid: existing.handPaid });
       const results = plan.results;
 
       if (execute) {
