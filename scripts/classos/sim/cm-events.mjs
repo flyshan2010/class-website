@@ -8,7 +8,7 @@
 import { readFileSync } from "node:fs";
 import {
   isR18, parsePacket, weekLabel, categoryOf, describe, coinNumber,
-  planEvent, planPacket, execLog, taskStatus, toNotionProps, diffRow,
+  planEvent, planPacket, execLog, taskStatus, toNotionProps, diffRow, handPaidFrom,
 } from "../lib/cm-events.mjs";
 
 // ── 虛構班規（結構同 data/class-rules.json；bad 的 coin 用 U+2212，level 為負數）──
@@ -79,6 +79,20 @@ const cases = [
   ["tally 正負向照 kind：bad→－", row(T({ kind: "bad", act: "打掃未達標" })).正負向, "－"],
   ["neutral → 中性", row(T({ kind: "neutral", act: "打掃缺席", note: "請假" })).正負向, "中性"],
   ["good → ＋", row(T({ kind: "good", act: "打掃支援" })).正負向, "＋"],
+  // ── 舉手回答＝主動發表（評分標準 v2 §2，老師 2026-09-28）：每生每科每天第一筆 +5／程度 1 ──
+  ["舉手回答 第一筆 +5", row(T({ kind: "good", act: "舉手回答", subj: "國語" })).金幣影響, 5],
+  ["舉手回答 程度 1", row(T({ kind: "good", act: "舉手回答", subj: "國語" })).程度, 1],
+  ["舉手回答 同包同科第二筆 金幣 0", planPacket(pack({ date: "2026-09-08", events: [
+    { seat: 1, id: "h1", src: "tally", kind: "good", act: "舉手回答", subj: "國語" },
+    { seat: 1, id: "h2", src: "tally", kind: "good", act: "舉手回答", subj: "國語" }] }), ctx()).results.map((r) => r.row.金幣影響).join(","), "5,0"],
+  ["舉手回答 同包不同科各 +5", planPacket(pack({ date: "2026-09-08", events: [
+    { seat: 1, id: "h3", src: "tally", kind: "good", act: "舉手回答", subj: "國語" },
+    { seat: 1, id: "h4", src: "tally", kind: "good", act: "舉手回答", subj: "數學" }] }), ctx()).results.map((r) => r.row.金幣影響).join(","), "5,5"],
+  ["舉手回答 當天已有一句話主動發表（同科有金幣）→ 金幣 0", planEvent(T({ kind: "good", act: "舉手回答", subj: "數學" }),
+    { ...ctx(), handPaid: handPaidFrom([{ 類別: "課堂表現", 正負向: "＋", 金幣影響: 5, 事件描述: "數學課主動發表", 科目: "數學", 學生: "pages1" }]) }).row.金幣影響, 0],
+  ["舉手回答 當天已入庫同科舉手（在數學課）→ 金幣 0", planEvent(T({ kind: "good", act: "舉手回答", subj: "數學" }),
+    { ...ctx(), handPaid: handPaidFrom([{ 類別: "課堂表現", 正負向: "＋", 金幣影響: 5, 事件描述: "在數學課舉手回答", 科目: "數學", 學生: "page-s1" }]) }).row.金幣影響, 0],
+  ["小組加分 仍不入帳", row(T({ kind: "good", act: "小組加分", subj: "數學" })).金幣影響, 0],
 
   // ── 欄位對照：seat ──
   ["seat → 名冊頁面 id", row(R({ seat: 5, rule_n: 4, kind: "good", act_i: 0, coin: "+5", level: 1 })).學生, "page-s5"],

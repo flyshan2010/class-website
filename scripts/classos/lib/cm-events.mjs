@@ -93,7 +93,26 @@ export function coinNumber(coin) {
 }
 
 /**
- * 單筆事件 → 應寫值或處置。三道關卡順序不可調：防重複 → 金幣核對 → tally 不入帳。
+ * 舉手回答計次＝主動發表（學習報告評分標準 v2 §2，老師 2026-09-28 裁定）：入庫就記程度 1、+5 幣，
+ * 走週結 ② 一般獎懲入帳。每生每科每天只給一筆（09-05 拍板 #8）——同天同科已有「有金幣的課堂正向」
+ * （一句話記的主動發表，或先前已入庫的舉手回答）就只記次數、金幣 0。
+ * handKey 的「科目」用 subj 原文（自然、英語不併成「其他」）；既有列從事件描述「在X課」取，取不到才用科目欄。
+ */
+export const HAND_ACT = "舉手回答", HAND_COIN = 5;
+export const handKey = (student, subj) => `${String(student).replace(/-/g, "")}|${subj ?? ""}`;
+/** 某天紀錄庫既有列 → 已發過課堂正向金幣的 (學生|科目) 集合。rows：fromNotionPage 的結果。 */
+export function handPaidFrom(rows) {
+  const set = new Set();
+  for (const r of rows) {
+    if (r.類別 !== "課堂表現" || r.正負向 !== "＋" || !(r.金幣影響 > 0)) continue;
+    const subj = (String(r.事件描述 ?? "").match(/在(.+?)課/) || [])[1] ?? r.科目 ?? "";
+    for (const st of String(r.學生 ?? "").split(",").filter(Boolean)) set.add(handKey(st, subj));
+  }
+  return set;
+}
+
+/**
+ * 單筆事件 → 應寫值或處置。三道關卡順序不可調：防重複 → 金幣核對 → tally 不入帳（舉手回答例外，見上）。
  * ctx: { rules, weeks, roster: Map(座號→頁面id), existingIds: Set }
  * 回傳 { action:"skip" } | { action:"fail", seat, code, why } | { action:"write", seat, row }
  */
@@ -126,6 +145,14 @@ export function planEvent(ev, ctx) {
   const cat = categoryOf(ev);
   if (!cat) return { action: "fail", seat, code: "需人工", why: "類別判不出，需人工" };
 
+  // 舉手回答＝主動發表：每生每科每天第一筆記 +5／程度 1（ctx.handPaid 由呼叫端依當天紀錄庫建立，本包內也會累加）
+  if (ev.src === "tally" && ev.act === HAND_ACT && ev.kind === "good") {
+    const k = handKey(student, ev.subj);
+    const paid = ctx.handPaid ?? new Set();
+    level = 1;
+    if (!paid.has(k)) { coin = HAND_COIN; paid.add(k); }
+  }
+
   return {
     action: "write",
     seat,
@@ -152,8 +179,9 @@ export function planPacket(text, ctx) {
   const p = parsePacket(text);
   if (!p.ok) return { fatal: "E06", results: [] };
   const seen = new Set(ctx.existingIds);
+  const handPaid = ctx.handPaid ?? new Set(); // 同包兩筆同科舉手只給一次 +5
   const results = p.body.events.map((ev) => {
-    const r = planEvent(ev, { ...ctx, existingIds: seen });
+    const r = planEvent(ev, { ...ctx, existingIds: seen, handPaid });
     if (r.action === "write") seen.add(ev.id);
     return r;
   });
