@@ -82,16 +82,18 @@ const cases = [
   // ── 舉手回答＝主動發表（評分標準 v2 §2，老師 2026-09-28）：每生每科每天第一筆 +5／程度 1 ──
   ["舉手回答 第一筆 +5", row(T({ kind: "good", act: "舉手回答", subj: "國語" })).金幣影響, 5],
   ["舉手回答 程度 1", row(T({ kind: "good", act: "舉手回答", subj: "國語" })).程度, 1],
-  ["舉手回答 同包同科第二筆 金幣 0", planPacket(pack({ date: "2026-09-08", events: [
+  ["舉手回答 同包同科第二筆 → 不記（drop）", planPacket(pack({ date: "2026-09-08", events: [
     { seat: 1, id: "h1", src: "tally", kind: "good", act: "舉手回答", subj: "國語" },
-    { seat: 1, id: "h2", src: "tally", kind: "good", act: "舉手回答", subj: "國語" }] }), ctx()).results.map((r) => r.row.金幣影響).join(","), "5,0"],
+    { seat: 1, id: "h2", src: "tally", kind: "good", act: "舉手回答", subj: "國語" }] }), ctx()).results.map((r) => r.action).join(","), "write,drop"],
   ["舉手回答 同包不同科各 +5", planPacket(pack({ date: "2026-09-08", events: [
     { seat: 1, id: "h3", src: "tally", kind: "good", act: "舉手回答", subj: "國語" },
     { seat: 1, id: "h4", src: "tally", kind: "good", act: "舉手回答", subj: "數學" }] }), ctx()).results.map((r) => r.row.金幣影響).join(","), "5,5"],
-  ["舉手回答 當天已有一句話主動發表（同科有金幣）→ 金幣 0", planEvent(T({ kind: "good", act: "舉手回答", subj: "數學" }),
-    { ...ctx(), handPaid: handPaidFrom([{ 類別: "課堂表現", 正負向: "＋", 金幣影響: 5, 事件描述: "數學課主動發表", 科目: "數學", 學生: "pages1" }]) }).row.金幣影響, 0],
-  ["舉手回答 當天已入庫同科舉手（在數學課）→ 金幣 0", planEvent(T({ kind: "good", act: "舉手回答", subj: "數學" }),
-    { ...ctx(), handPaid: handPaidFrom([{ 類別: "課堂表現", 正負向: "＋", 金幣影響: 5, 事件描述: "在數學課舉手回答", 科目: "數學", 學生: "page-s1" }]) }).row.金幣影響, 0],
+  ["舉手回答 當天已有一句話主動發表（同科有金幣）→ 不記", planEvent(T({ kind: "good", act: "舉手回答", subj: "數學" }),
+    { ...ctx(), handPaid: handPaidFrom([{ 類別: "課堂表現", 正負向: "＋", 金幣影響: 5, 事件描述: "數學課主動發表", 科目: "數學", 學生: "pages1" }]) }).action, "drop"],
+  ["舉手回答 當天已入庫同科舉手（在數學課）→ 不記", planEvent(T({ kind: "good", act: "舉手回答", subj: "數學" }),
+    { ...ctx(), handPaid: handPaidFrom([{ 類別: "課堂表現", 正負向: "＋", 金幣影響: 5, 事件描述: "在數學課舉手回答", 科目: "數學", 學生: "page-s1" }]) }).action, "drop"],
+  ["execLog 列出不記筆數", execLog([{ action: "write" }, { action: "drop" }]), "已入庫 1 筆／略過 0 筆（已入庫）／不記 1 筆（同天同科舉手已給過 +5）／失敗 0 筆"],
+  ["全部 drop 仍算已完成", taskStatus([{ action: "drop" }]), "已完成"],
   ["小組加分 仍不入帳", row(T({ kind: "good", act: "小組加分", subj: "數學" })).金幣影響, 0],
 
   // ── 欄位對照：seat ──
