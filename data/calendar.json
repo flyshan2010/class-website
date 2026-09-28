@@ -234,15 +234,6 @@
     "notes": ""
   },
   {
-    "title": "學生健康檢查",
-    "date": "2026-10-01",
-    "endDate": "",
-    "startTime": "13:40",
-    "endTime": "14:30",
-    "type": "活動",
-    "notes": "說明影片\nhttps://youtu.be/aE_xglqzdK4"
-  },
-  {
     "title": "英語單字普測",
     "date": "2026-10-02",
     "endDate": "",
@@ -300,10 +291,10 @@
     "title": "四年級健康檢查",
     "date": "2026-10-12",
     "endDate": "",
-    "startTime": "14:30",
-    "endTime": "15:10",
+    "startTime": "14:10",
+    "endTime": "15:00",
     "type": "活動",
-    "notes": ""
+    "notes": "宣導影片\nhttps://www.youtube.com/watch?v=aE_xglqzdK4&list=PLuaIIVECS6tyl0hAeAOlNRogvmNLcYceO&index=2"
   },
   {
     "title": "流感施打",
@@ -828,18 +819,18 @@
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
