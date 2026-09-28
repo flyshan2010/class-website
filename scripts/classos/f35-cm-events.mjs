@@ -235,7 +235,8 @@ async function runCompare({ ds, notify, days = 7, from = "", to = "" }) {
   for (const [k, seats] of groups) diffs.push(`×${seats.length} ${k}（座號${[...new Set(seats)].sort((x, y) => x - y).join("、")}）`);
   tot.diff = [...groups.values()].reduce((n, v) => n + v.length, 0) + diffs.length - groups.size;
 
-  if ((diffs.length || (from && subjMap.size)) && notify) {
+  // 只有差異才建待審（SPEC §10-3「0 差異不打擾」）；科目填法只當有差異時的附帶參考（2026-09-28 修：回溯 0 差異曾誤建待審）
+  if (diffs.length && notify) {
     const title = from ? `待審：R18 對照差異（回溯 ${from}～${to || today()}）` : `待審：R18 對照差異（${today()}）`;
     const body = `【R18 並行對照】${from ? `事件日期 ${from}～${to || today()}` : `最近 ${days} 天`} ${tot.inRange} 件／${tot.events} 筆事件，差異 ${tot.diff} 項。\n`
       + `（參考）routine 有填「科目」的事件：${tot.subjFilled} 筆（科目已納入逐欄比對）\n\n`
