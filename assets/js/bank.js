@@ -101,14 +101,18 @@
       return `<button class="store-buy" data-id="${App.esc(i.id)}">🛒 我要兌換</button>`;
     };
     // 「商店的價格是怎麼定的？」：SPEC_班級經濟機制 §3-5（五行，逐字）＋§3-6（好兒童章）。
-  // PRICE_W0＝基準 W₀ 給學生看的整數概數（40 或 50）；10/31 定案後由老師決定填入，
-  // 還沒填（null）時第①行改說「10 月底算好後公布」，不先寫一個會變的數字。
-  const PRICE_W0 = null;
+  // PRICE_W0＝基準 W₀ 給學生看的整數概數；PRICE_W0_FINAL＝10/31 是否已定案。
+  // 2026-09-28 老師裁定先上線：當日只讀試算 W₀＝61（第 2～4 週中位數）→ 講「約 60」並註明 10 月底定案。
+  // 10/31 後看 10/30 那列「調價監測」的基準 W₀，改這兩個值（null＝顯示「10 月底算好後公布」）。
+  const PRICE_W0 = 60;
+  const PRICE_W0_FINAL = false;
   const priceInfoSection = () => `
       <details class="grade-guide price-guide">
         <summary>🤔 商店的價格是怎麼定的？</summary>
         <ol class="price-guide-list">
-          <li>開學到 10 月底，全班平均一個人一週賺${PRICE_W0 ? `<strong>${PRICE_W0} 崑山幣</strong>` : "多少崑山幣？<strong>10 月底算好後會公布在這裡</strong>"}。</li>
+          <li>${!PRICE_W0 ? "開學到 10 月底，全班平均一個人一週賺多少崑山幣？<strong>10 月底算好後會公布在這裡</strong>。"
+            : PRICE_W0_FINAL ? `開學到 10 月底，全班平均一個人一週賺 <strong>${PRICE_W0} 崑山幣</strong>。`
+            : `開學到現在，全班平均一個人一週賺<strong>約 ${PRICE_W0} 崑山幣</strong>（10 月底定案）。`}</li>
           <li>每個星期五都看一次：<strong>最近 4 週，大家平均一週賺多少？</strong></li>
           <li>跟上次定價時比，<strong>變成 1.15 倍以上（或 0.85 倍以下），而且連續 2 週都這樣</strong>，價格就跟著變成那個倍數。<br>
             <span class="price-guide-eg">例：上次是一週 40 幣，現在變 48 幣＝1.2 倍 → 100 幣的東西變成 120 幣。</span></li>
