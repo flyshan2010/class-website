@@ -6,8 +6,12 @@ name: R18 事件包入庫（f35）
 # 週五週結（weekly-settle.yml）第一步也會先跑一次 execute，兩邊共用 concurrency 群組 cm-events，不會同時認領同一件。
 # 回滾：排程改回 compare＋雲端 prompt 貼回 07 附錄的 R18 原文（SPEC §7）。
 on:
+  # 2026-09-28 起主觸發＝代理 v2.9：收班送出（#CM-EVENTS）寫進收件匣後立刻丟 r18-submit，約 1 分鐘內入庫。
+  # 下面的整點排程降為備援——GitHub 排程在整點前後常延遲數小時或整次丟掉（9/25、9/28 實測每天 10 次只觸發 1 次）。
+  repository_dispatch:
+    types: [r18-submit]
   schedule:
-    # 平日 08:05–17:05 台北＝00:05–09:05 UTC，每小時一次（錯開 routine 的整點；GitHub cron 可能延遲 5–30 分）
+    # 備援：平日 08:05–17:05 台北＝00:05–09:05 UTC，每小時一次（錯開 routine 的整點；實測常延遲數小時或被丟掉）
     - cron: "5 0-9 * * 1-5"
   workflow_dispatch:
     inputs:
@@ -49,7 +53,7 @@ jobs:
       - name: f35
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          MODE: ${{ github.event_name == 'schedule' && 'execute' || (inputs.mode == 'sandbox' && 'execute' || inputs.mode) }}
+          MODE: ${{ (github.event_name == 'schedule' || github.event_name == 'repository_dispatch') && 'execute' || (inputs.mode == 'sandbox' && 'execute' || inputs.mode) }}
           SANDBOX: ${{ inputs.mode == 'sandbox' && '1' || '0' }}
           FROM: ${{ inputs.from }}
           TO: ${{ inputs.to }}
