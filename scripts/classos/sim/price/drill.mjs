@@ -44,9 +44,13 @@ function fresh(name, led) {
     [DS.roster]: roster, [DS.bank]: led, [DS.store]: STORE(), [DS.announcements]: [], [DS.inbox]: [] } }));
   return f;
 }
-const run = (script, today, state, mode = "execute") => execFileSync("node",
+// 基準提前定案設定（price-base.json）：①～⑬ 測預設規則＝空設定；⑭ 起用 repo 裡真正的設定檔
+const BASE_NONE = path.join(DIR, "price-base-none.json");
+writeFileSync(BASE_NONE, "{}");
+const BASE_REAL = path.join(ROOT, "scripts/classos/data/price-base.json");
+const run = (script, today, state, mode = "execute", base = BASE_NONE) => execFileSync("node",
   ["--import", path.join(HERE, "hooks.mjs"), path.join(ROOT, `scripts/classos/${script}`)],
-  { env: { ...process.env, SIM_TODAY: today, SIM_STATE: state, MODE: mode, NOTION_TOKEN: "" }, encoding: "utf8" });
+  { env: { ...process.env, SIM_TODAY: today, SIM_STATE: state, MODE: mode, NOTION_TOKEN: "", PRICE_BASE_JSON: base }, encoding: "utf8" });
 const st = f => JSON.parse(readFileSync(f, "utf8"));
 const price = (f, id) => st(f).db[DS.store].find(r => r.id === id).properties;
 const P = (f, id) => price(f, id)["價格"].number;
@@ -169,6 +173,25 @@ check("⑨R＝2 夾到 1.3：100→130", N(f, "s-a") === 130);
 f = fresh("s13", ledger(RISE));
 run("f33-price-draft.mjs", "2026-11-27", f, "dry-run");
 check("⑬dry-run 零寫入", st(f).writes.length === 0);
+
+// ⑭ 115 學年基準提前定案（老師 2026-09-28：W₀＝60、定案日 9/28；用 repo 真正的設定檔）
+// 週 W：第 2、3 週 60，第 4 週（9/21）起 80 → 10/09 M＝70（R 1.17 第 1 週）→ 10/16 M＝80（R 1.33 連續 2 週）→ 10/26 生效
+{
+  const EARLY = step(["2026-09-07", 60], ["2026-09-21", 80]);
+  f = fresh("s14", ledger(EARLY));
+  out = run("f33-price-draft.mjs", "2026-10-02", f, "execute", BASE_REAL);
+  check("⑭10/02 W₀ 用定案值 60（不再是算出來的）", /基準 W₀（2026-09-28 老師定案） W＝60/.test(out), out.split("\n")[1]);
+  check("⑭10/02 已結完不足 4 週＝數字不完整不調", /數字不完整/.test(out) && onlyInbox(f));
+  out = run("f33-price-draft.mjs", "2026-10-09", f, "execute", BASE_REAL);
+  check("⑭10/09 R＝1.17 達標第 1 週不調（監測期已結束、不是因為監測期）", /第 1 週/.test(out) && !/監測期/.test(out) && onlyInbox(f), out.split("\n")[0]);
+  out = run("f33-price-draft.mjs", "2026-10-16", f, "execute", BASE_REAL);
+  check("⑭10/16 連續 2 週 → 2026-10-26 生效（原規則要等到 11 月）", /連續 2 週達標（漲）→ 2026-10-26 生效/.test(out) && N(f, "s-a") === 130, out.split("\n")[0]);
+  // 對照：同一份帳本、不給定案設定 → W₀ 跟著監測期一起長（第 2～5 週中位數 70）、R＝1.00 不調
+  //（定案日當天含監測期的邊界：真實週次下 9/28 前湊不滿 4 週，造不出來，由 evaluate 的 today <= shadowEnd 保證）
+  const g = fresh("s14b", ledger(EARLY));
+  out = run("f33-price-draft.mjs", "2026-10-16", g);
+  check("⑭對照：沒有定案設定時 W₀ 仍在長、10/16 不調", /監測期還在長/.test(out) && /R＝1\.00/.test(out) && N(g, "s-a") === null, out.split("\n")[0]);
+}
 
 console.log(`\n總計 ${pass + failN} 項／失敗 ${failN} 項`);
 process.exit(failN ? 1 : 0);
