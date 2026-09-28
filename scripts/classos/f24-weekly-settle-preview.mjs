@@ -31,7 +31,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
-import { evaluate } from "./lib/price.mjs";
+import { evaluate, loadFixedBase } from "./lib/price.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -393,13 +393,13 @@ const spendAllRate = issuedAll ? spentAll / issuedAll : 0;
    （f33 讀得到調價公告、知道上次定價點；這裡沒讀公告，只印 M）。 */
 const ledgerRows = ledger.map(b => ({
   date: (b.properties?.["日期"]?.date?.start ?? "").slice(0, 10), amount: num(b, "金額") ?? 0, type: sel(b, "類型") }));
-const ev = evaluate({ ledgerRows, weeksFile, rosterN: roster.length, today });
+const ev = evaluate({ ledgerRows, weeksFile, rosterN: roster.length, today, fixedBase: await loadFixedBase() });
 
 const inflLines = [];
 inflLines.push(ev.M == null
   ? `📈 W（每人每週實得）　已結完的上課週還不到 4 週，暫不計算`
   : `📈 **近 4 週中位數 W＝${ev.M} 幣**／人／週（不含學期第 1 週、不含消費；本週還沒入帳不算）`
-    + `\n　　浮動價格的基準（SPEC §3-1）。f33 每週拿它跟上次定價時比：±15% 連續 2 週就調價（10/31 前只記錄），公告週內可否決。`);
+    + `\n　　浮動價格的基準（SPEC §3-1）。f33 每週拿它跟上次定價時比：±15% 連續 2 週就調價（監測期只記錄；115 學年 W₀＝60 已於 9/28 定案），公告週內可否決。`);
 inflLines.push(`🎈 通膨體檢　平均餘額 ${avgBal} 幣 ÷ 商店中位價 ${median} 幣＝**${ratio.toFixed(1)} 倍**`
   + `（門檻 ${INFL_RATIO_LIMIT}）｜本週收入 ${wkIn} 幣、支出 ${wkOut} 幣＝流出率 ${(spendRate * 100).toFixed(0)}%`);
 if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {

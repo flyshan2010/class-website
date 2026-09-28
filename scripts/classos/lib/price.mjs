@@ -5,6 +5,8 @@
  *   M＝最近 4 個已結完上課週的「週 W」中位數，跟「上次定價時的 W」比，R＝M÷W_ref。
  *   R ≥ 1.15 或 ≤ 0.85 **連續 2 週** → 調價；距上次調價（或被否決那次）生效未滿 4 週＝冷卻不調。
  *   每學年 10/31 前＝監測期只記錄；生效日落在 6–8 月不調（6 月剩下的幣改換好兒童章 100:1）。
+ *   **基準提前定案**：`scripts/classos/data/price-base.json` 有列的學年，W₀ 用那個數字、監測期到「定案日」為止
+ *   （115 學年＝60、2026-09-28，老師裁定）；沒列的學年照上面預設。
  * 判斷只有 evaluate() 這一份：f33 決定調不調、f24 印週報、drill 演練都呼叫它，不各算各的（SPEC §5-1）。
  * 捨入禁用 round()——一律 floor(x+0.5)。
  */
@@ -22,6 +24,17 @@ export const ADJUST_TIERS = ["②", "③", "⑤", "⑥"];
 export const tierAdjustable = tier => ADJUST_TIERS.includes(String(tier || "②").trim().slice(0, 1));
 
 const half = x => Math.floor(x + 0.5);
+
+/** 讀「基準提前定案」設定（{ 學年: { W0, 定案日 } }）；PRICE_BASE_JSON 可指定別的檔（演練用）。讀不到＝丟例外（fail-closed）。 */
+export async function loadFixedBase() {
+  const { readFile } = await import("node:fs/promises");
+  const f = process.env.PRICE_BASE_JSON || new URL("../data/price-base.json", import.meta.url);
+  const j = JSON.parse(await readFile(f, "utf8"));
+  for (const [y, v] of Object.entries(j)) if (!y.startsWith("_")) {
+    if (!(v?.W0 > 0) || !/^\d{4}-\d{2}-\d{2}$/.test(v?.定案日 ?? "")) throw new Error(`price-base.json 的 ${y} 學年格式錯（要有 W0>0 與 定案日 yyyy-mm-dd）`);
+  }
+  return j;
+}
 
 /** ISO 日期加天數（純日期運算，不受時區影響）。 */
 export function addDays(iso, n) {
@@ -76,13 +89,14 @@ export const effOfTitle = t => (t.startsWith(ANN_PREFIX) ? t.slice(ANN_PREFIX.le
  * anns：本學年以前的調價公告 [{ eff: "yyyy-mm-dd", vetoed: bool }]（f33 從 📣 公告標題解析）。
  * 回傳 { act, verdict, line, M, Wref, R, eff, annFrom, week }；act＝true 才寫草稿。
  */
-export function evaluate({ ledgerRows, weeksFile, rosterN, today, anns = [] }) {
+export function evaluate({ ledgerRows, weeksFile, rosterN, today, anns = [], fixedBase = {} }) {
   const all = weekList(weeksFile);
   const week = all.find(w => today >= w.起 && today < w.end) || all.find(w => w.預排日?.includes(today));
   if (!week) return { act: false, verdict: `${today} 不在任何上課週（寒暑假），不檢查`, line: "" };
 
   const yearStart = all.find(w => w.學年 === week.學年).起;
-  const shadowEnd = `${yearStart.slice(0, 4)}-${SHADOW_END}`;
+  const fx = fixedBase[week.學年];   // 基準提前定案（price-base.json）：有＝W₀ 固定、監測期到定案日
+  const shadowEnd = fx ? fx.定案日 : `${yearStart.slice(0, 4)}-${SHADOW_END}`;
   const wk = weeklyW(ledgerRows, all, rosterN);
   // 可計週＝本學年、排除每學期第 1 週（補結舊帳會灌爆平均）、已結完（在本週之前）
   const done = all.filter(w => w.學年 === week.學年 && w.週次 !== 1 && w.end <= week.起);
@@ -97,7 +111,7 @@ export function evaluate({ ledgerRows, weeksFile, rosterN, today, anns = [] }) {
   const applied = mine.filter(a => !a.vetoed && a.eff <= today).at(-1);
   const lastAny = mine.filter(a => a.eff !== eff && (a.vetoed || a.eff <= today)).at(-1);
 
-  // W_ref：上次自動調價那週算出的 M；本學年還沒調過＝基準 W₀（開學第 2 週～10/31 的週 W 中位數）
+  // W_ref：上次自動調價那週算出的 M；本學年還沒調過＝基準 W₀（有提前定案用定案值，否則開學第 2 週～10/31 的週 W 中位數）
   let Wref = null, refLabel = "";
   if (applied) {
     const calcDay = addDays(applied.eff, -10);   // 生效日＝算價週五 +10 天（下週一公告、再下週一生效）
@@ -105,6 +119,9 @@ export function evaluate({ ledgerRows, weeksFile, rosterN, today, anns = [] }) {
     const ws = cw && lastN(cw.起, WINDOW);
     Wref = ws ? medOf(ws) : null;
     refLabel = `上次定價（${applied.eff} 生效）`;
+  } else if (fx) {
+    Wref = fx.W0;
+    refLabel = `基準 W₀（${fx.定案日} 老師定案）`;
   } else {
     const ws = done.filter(w => w.起 <= shadowEnd);
     Wref = ws.length >= MIN_BASE_WEEKS ? medOf(ws) : null;

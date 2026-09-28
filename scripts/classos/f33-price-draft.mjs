@@ -3,7 +3,7 @@
  * ───────────────────────────────────────────────────────────────
  * 每週五週結試算（weekly-settle.yml）跑完 f24 之後接著跑，**每週都檢查一次**：
  *   判斷全在 lib/price.mjs 的 evaluate()（近 4 週中位數÷上次定價時的 W，±15% 連續 2 週達標，
- *   冷卻 4 週、10/31 前監測期只記錄、6 月不生效）——本檔只負責讀資料、寫草稿。
+ *   冷卻 4 週、10/31 前監測期只記錄（有提前定案的學年到定案日為止，見 data/price-base.json）、6 月不生效）——本檔只負責讀資料、寫草稿。
  *
  * 動作（預設生效、公告週內可否決；§4 開頭說明為何可作 U53 例外）：
  *   ① 不調 → 收件匣留一列「調價監測 日期」（已完成），沉默也要可查
@@ -20,7 +20,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
-import { evaluate, newPrice, tierAdjustable, announceTitle, effOfTitle, addDays, clampR, MAX_STEP, weekList, weeklyW } from "./lib/price.mjs";
+import { evaluate, newPrice, tierAdjustable, announceTitle, effOfTitle, addDays, clampR, MAX_STEP, weekList, weeklyW, loadFixedBase } from "./lib/price.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -41,7 +41,7 @@ const ledgerRows = (await queryAll(DS.bank)).map(b => ({ date: dateOf(b, "日期
 const annPages = (await queryAll(DS.announcements)).filter(p => effOfTitle(title(p, "標題")));
 const anns = annPages.map(p => ({ eff: effOfTitle(title(p, "標題")), vetoed: !!p.properties?.["否決調價"]?.checkbox }));
 
-const ev = evaluate({ ledgerRows, weeksFile, rosterN: roster.length, today, anns });
+const ev = evaluate({ ledgerRows, weeksFile, rosterN: roster.length, today, anns, fixedBase: await loadFixedBase() });
 console.log(`📈 ${today}｜${ev.verdict}\n${ev.line}`);
 if (!ev.week) process.exit(0);
 const YEAR = ev.week.學年;
