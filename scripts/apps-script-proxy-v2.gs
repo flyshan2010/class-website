@@ -1,6 +1,13 @@
 /**
- * 班網教師專區代理 v2.8（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.9（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.9 升級步驟（2026-09-28，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.9 新增：收班送出的課堂事件包（首行 #CM-EVENTS）寫進收件匣後，立刻用既有 GH_TOKEN 丟
+ *   repository_dispatch「r18-submit」→ 班網 cm-events.yml 約 1 分鐘內入庫（f35 execute）。
+ *   原因：GitHub 整點排程實測每天 10 次只觸發 1 次（9/25、9/28），事件包常要等到隔天。
+ *   觸發失敗不影響送出（收件匣已寫入），整點排程與週五週結前的補跑照舊當備援；重送同包由 f35 事件 id 擋重複。
  *
  * ── v2.8 升級步驟（2026-09-20，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）
@@ -168,7 +175,10 @@ function submitTask_(props, body) {
 
   const res = notion_(token, "pages", "post", { parent: { database_id: dbId }, properties: properties });
   if (res.code !== 200) return { ok: false, error: "寫入收件匣失敗（Notion 回應 " + res.code + "）" };
-  return { ok: true, page_url: res.data.url };
+  const out = { ok: true, page_url: res.data.url };
+  // v2.9：課堂事件包（首行 #CM-EVENTS，與 lib/cm-events.mjs 的 FINGERPRINT 一致）→ 立刻觸發入庫
+  if (text.split("\n")[0].trim().indexOf("#CM-EVENTS") === 0) out.r18_trigger = dispatch_(props, "r18-submit").ok;
+  return out;
 }
 
 /** base64 檔案 → Drive 資料夾（設「知道連結者可檢視」）→ 回傳連結
@@ -262,17 +272,26 @@ function listTasks_(props, body) {
 
 /** 觸發 GitHub Actions（repository_dispatch: sync-now） */
 function triggerSync_(props) {
+  return dispatch_(props, "sync-now");
+}
+
+/** repository_dispatch 共用：sync-now（班網同步）／r18-submit（v2.9，課堂事件包入庫） */
+function dispatch_(props, eventType) {
   const token = props.getProperty("GH_TOKEN");
   if (!token) return { ok: false, error: "尚未設定 GH_TOKEN" };
 
-  const res = UrlFetchApp.fetch("https://api.github.com/repos/" + REPO + "/dispatches", {
-    method: "post",
-    headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" },
-    payload: JSON.stringify({ event_type: "sync-now" }),
-    muteHttpExceptions: true,
-  });
-  const code = res.getResponseCode();
-  return code === 204 ? { ok: true } : { ok: false, error: "GitHub 回應 " + code + "，請確認 GH_TOKEN 權限" };
+  try {
+    const res = UrlFetchApp.fetch("https://api.github.com/repos/" + REPO + "/dispatches", {
+      method: "post",
+      headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" },
+      payload: JSON.stringify({ event_type: eventType }),
+      muteHttpExceptions: true,
+    });
+    const code = res.getResponseCode();
+    return code === 204 ? { ok: true } : { ok: false, error: "GitHub 回應 " + code + "，請確認 GH_TOKEN 權限" };
+  } catch (err) {
+    return { ok: false, error: "連不到 GitHub（" + err.message + "）" };
+  }
 }
 
 // ---------- 動作：班級商店兌換 ----------
