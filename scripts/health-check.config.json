@@ -29,12 +29,12 @@
   ],
   "_eolDocs說明": "已標註停止維護的歷史文件，mtime 落後是正常的，不列入漂移。2026-08-10 首跑時這份被誤判過一次（頁首明寫「已由 ClassOS v3.5 取代，不再更新」），是白名單的第一位住戶。",
   "fifthSyncNewerThan": {
-    "07_排程Agent_routine_prompt.md": [
+    "../class-website/docs/routine-manual.md": [
       "05_任務路由登記簿_v1.md",
       "RUNBOOK_任務調度.md"
     ]
   },
-  "_fifthSyncNewerThan說明": "第五同步義務：改了登記簿或任務調度 RUNBOOK，雲端 routine 的 prompt 正本必須跟著改。左邊的檔案比右邊任一個舊，就是欠了同步。",
+  "_fifthSyncNewerThan說明": "第五同步義務：改了登記簿或任務調度 RUNBOOK，Notion「🤖 雲端排程手冊」必須跟著改（2026-09-28 Δ10 起；班網同步會把它匯出成 docs/routine-manual.md，所以比這個備份檔的時間）。左邊的檔案比右邊任一個舊，就是欠了同步。",
   "historySections": [
     "## 版本紀錄",
     "## 裁示紀錄"

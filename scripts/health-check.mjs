@@ -193,7 +193,8 @@ async function checkBlueprintIndex() {
 }
 
 // ── C3 第五同步有沒有欠 ─────────────────────────────────────────────────
-// 改了登記簿卻沒改雲端 routine 的 prompt，排程就會照舊規則跑——而且不會有人發現。
+// 改了登記簿卻沒改 Notion 排程手冊，排程就會照舊規則跑——而且不會有人發現。
+// 2026-09-28 Δ10 起比的是手冊備份 docs/routine-manual.md（班網同步自動匯出），不是 07。
 async function checkFifthSync() {
   const dir = path.join(ROOT, cfg.blueprintDir);
   const problems = [];
@@ -207,7 +208,7 @@ async function checkFifthSync() {
     }
   }
   if (problems.length) red("藍圖", `第五同步可能沒做：${problems.join("；")}`,
-    "改 07 檔並用 RemoteTrigger 更新雲端 routine 的 prompt（作法見 07 檔頭）");
+    "改 Notion「🤖 雲端排程手冊」頁，再跑班網同步讓 docs/routine-manual.md 跟上（作法見 07 檔頭）");
   else ok("第五同步順序正確");
 }
 
