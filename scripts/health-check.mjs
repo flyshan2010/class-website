@@ -174,7 +174,7 @@ async function checkBlueprintDrift() {
   }
   if (newer.length) red("藍圖",
     `README 停在 ${new Date(readmeAt).toISOString().slice(0, 10)}，但 ${newer.length} 個檔案更新：${newer.join("、")}`,
-    "在 README 版本紀錄補一則，並更新檔頭的版本與最後更新日期");
+    "在藍圖 歷史/版本紀錄.md 最上面補一則，並更新 README 檔頭的版本與最後更新日期");
   else ok("藍圖 README 沒有落後同層文件");
 }
 
