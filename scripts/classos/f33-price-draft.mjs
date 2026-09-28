@@ -20,7 +20,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
-import { evaluate, newPrice, tierAdjustable, announceTitle, effOfTitle, addDays, clampR, MAX_STEP } from "./lib/price.mjs";
+import { evaluate, newPrice, tierAdjustable, announceTitle, effOfTitle, addDays, clampR, MAX_STEP, weekList, weeklyW } from "./lib/price.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -45,6 +45,10 @@ const ev = evaluate({ ledgerRows, weeksFile, rosterN: roster.length, today, anns
 console.log(`📈 ${today}｜${ev.verdict}\n${ev.line}`);
 if (!ev.week) process.exit(0);
 const YEAR = ev.week.學年;
+// 逐週印「週 W」（全班每人平均，無個資）：老師看得到 W₀／M 是由哪幾週組成（2026-09-28 加）
+{ const all = weekList(weeksFile), wk = weeklyW(ledgerRows, all, roster.length);
+  const shown = all.filter(w => w.學年 === YEAR && w.end <= ev.week.起);
+  console.log("逐週 W：" + (shown.map(w => `第${w.週次}週 ${Math.floor(wk.get(w.起) + 0.5)}`).join("｜") || "（尚無已結完週）")); }
 const wLine = `${ev.line}（在學 ${roster.length} 人）`;
 
 const inboxTitle = `調價監測 ${today}（自動・${YEAR} 學年）`;
