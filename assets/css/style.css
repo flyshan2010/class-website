@@ -971,6 +971,11 @@ main {
   font-size: 0.7778rem; font-weight: bold;
   background: #eef7ee; color: #2f6b3a; border: 2px dotted #a9d0ae;
 }
+/* 「商店的價格是怎麼定的？」收合說明（沿用 .grade-guide 外框） */
+.price-guide { margin: 18px 0 0; }
+.price-guide-list { margin: 0 0 10px; padding-left: 1.4em; line-height: 1.7; }
+.price-guide-list li + li { margin-top: 4px; }
+.price-guide-eg { font-size: 0.8889rem; color: var(--ink-soft); }
 .bank-tip { margin-top: 18px; text-align: center; font-size: 0.8611rem; background: #fff8e8; }
 
 /* 班級共同目標（通用集資）：資料來自 🏪 班級商店「⑥ 全班集資・共同達成」層，一列一個目標 */

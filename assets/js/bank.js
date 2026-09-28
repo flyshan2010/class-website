@@ -23,7 +23,7 @@
     "🐷 儲蓄小祕訣：先存一點點，再花剩下的，錢包才不會空空的！",
     "⭐ 崑山幣會花掉，XP 不會：XP 記錄你做過的每一件好事，是拿來解鎖職務的資格。",
     "🤔 買東西前先問自己：這是「需要」還是「想要」？需要先買，想要可以等一等。",
-    "🎯 訂一個存錢目標（例如自由閱讀券），每週看存摺離目標越來越近，超有成就感！",
+    "🎯 訂一個存錢目標（例如免午休券），每週看存摺離目標越來越近，超有成就感！",
     "💪 崑山幣是用工作和好表現賺來的，每一枚都是你努力的證明。",
     "⏳ 忍住不馬上花掉，存久一點能換到更棒的東西——這叫「延宕滿足」，是超能力喔！",
   ];
@@ -100,7 +100,24 @@
       }
       return `<button class="store-buy" data-id="${App.esc(i.id)}">🛒 我要兌換</button>`;
     };
-    const cards = tier => store.filter(i => (i.tier || "② 活動特權・消費型") === tier).map(i => `
+    // 「商店的價格是怎麼定的？」：SPEC_班級經濟機制 §3-5（五行，逐字）＋§3-6（好兒童章）。
+  // PRICE_W0＝基準 W₀ 給學生看的整數概數（40 或 50）；10/31 定案後由老師決定填入，
+  // 還沒填（null）時第①行改說「10 月底算好後公布」，不先寫一個會變的數字。
+  const PRICE_W0 = null;
+  const priceInfoSection = () => `
+      <details class="grade-guide price-guide">
+        <summary>🤔 商店的價格是怎麼定的？</summary>
+        <ol class="price-guide-list">
+          <li>開學到 10 月底，全班平均一個人一週賺${PRICE_W0 ? `<strong>${PRICE_W0} 崑山幣</strong>` : "多少崑山幣？<strong>10 月底算好後會公布在這裡</strong>"}。</li>
+          <li>每個星期五都看一次：<strong>最近 4 週，大家平均一週賺多少？</strong></li>
+          <li>跟上次定價時比，<strong>變成 1.15 倍以上（或 0.85 倍以下），而且連續 2 週都這樣</strong>，價格就跟著變成那個倍數。<br>
+            <span class="price-guide-eg">例：上次是一週 40 幣，現在變 48 幣＝1.2 倍 → 100 幣的東西變成 120 幣。</span></li>
+          <li>算出來四捨五入到 <strong>5 的倍數</strong>；一次最多變 3 成；調過之後至少 4 週不會再調。</li>
+          <li>新價格<strong>會提前一週公告</strong>；已經買到手的券不受影響。</li>
+        </ol>
+        <p class="grade-guide-note">🏅 好兒童章永遠是 <strong>100 幣換 1 個</strong>，不會跟著調。所以價格調高的時候，換章會相對變得比較划算——<strong>這是故意的</strong>：想要馬上享受，就用商店；想要留到期末，就換章。<strong>兩條路都是對的。</strong></p>
+      </details>`;
+  const cards = tier => store.filter(i => (i.tier || "② 活動特權・消費型") === tier).map(i => `
       <div class="store-card ${!awardOnly(i) && i.stock <= 0 ? "soldout" : ""}">
         <div class="store-icon">${App.esc(i.icon)}</div>
         <div class="store-name">${App.esc(i.name)}</div>
@@ -121,6 +138,7 @@
         return html ? `<p class="bank-cat-label">${label}<span class="bank-cat-hint">${hint}</span></p>
           <div class="store-grid">${html}</div>` : "";
       }).join("") : `<p class="meta">商店籌備中，敬請期待！</p>`}
+      ${store.length ? priceInfoSection() : ""}
       <div class="bank-tip card" id="bank-tip">💡 ${App.esc(TIPS[0])}</div>`;
   };
 
