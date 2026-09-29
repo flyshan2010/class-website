@@ -2626,6 +2626,37 @@
     }
   },
   {
+    "title": "數L4-2 假分數與帶分數｜假分數與帶分數互換",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "假分數換帶分數：連減同分母單位→改記成除法",
+      "除法算式的意義：商＝整數部分，餘＝分子",
+      "整數換假分數：1 等於分母個單位分數",
+      "帶分數換假分數：整數部分先化成假分數再合起來"
+    ],
+    "date": "2026-09-29",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "課本 4-2（建議 1.5 節）；教材 pp.56-59",
+    "links": {
+      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/3.review.html"
+    }
+  },
+  {
     "title": "國L5-1 月光下 第一節 字詞語詞及大意",
     "subject": "國語",
     "grade": "四上",
@@ -3640,37 +3671,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/3.review.html"
-    }
-  },
-  {
-    "title": "數L4-2 假分數與帶分數｜假分數與帶分數互換",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "假分數換帶分數：連減同分母單位→改記成除法",
-      "除法算式的意義：商＝整數部分，餘＝分子",
-      "整數換假分數：1 等於分母個單位分數",
-      "帶分數換假分數：整數部分先化成假分數再合起來"
-    ],
-    "date": "",
-    "dateEnd": "",
-    "dateAuto": false,
-    "note": "課本 4-2（建議 1.5 節）；教材 pp.56-59",
-    "links": {
-      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/3.review.html"
     }
   }
 ]
