@@ -186,3 +186,43 @@ export async function buildR18Sandbox() {
   });
   return { pageId: page.id, ds: { roster, inbox, log } };
 }
+
+// ───────────────────────────────────────────────────────────────
+// R13 沙盒（SPEC_R13作品入庫腳本 §5）：名冊＋收件匣（含附件欄）＋作品集，建→跑→驗→整頁刪除。
+// 座號 19、23 在學，7 已非在學；照片一律用虛構網址（不碰真的 Drive 檔）。
+export const R13_SANDBOX_TITLE = "🧪 R13 作品入庫沙盒";
+
+export async function buildR13Sandbox() {
+  const page = await apiOrThrow("POST", "/pages", {
+    parent: { type: "page_id", page_id: PARENT_PAGE },
+    properties: { title: { title: [{ text: { content: R13_SANDBOX_TITLE } }] } },
+  });
+  const mk = async (title, properties) => {
+    const db = await apiOrThrow("POST", "/databases", {
+      parent: { type: "page_id", page_id: page.id },
+      title: [{ text: { content: title } }],
+      initial_data_source: { properties },
+    });
+    return db.data_sources?.[0]?.id;
+  };
+  const roster = await mk("👥 學生名冊（R13 沙盒）", { 姓名: { title: {} }, 座號: { number: {} }, 在學: { checkbox: {} } });
+  for (const [seat, on] of [[19, true], [23, true], [7, false]]) {
+    await apiOrThrow("POST", "/pages", {
+      parent: { type: "data_source_id", data_source_id: roster },
+      properties: { 姓名: { title: [{ text: { content: `測試${seat}` } }] }, 座號: { number: seat }, 在學: { checkbox: on } },
+    });
+  }
+  const sel = (names) => ({ select: { options: names.map((name) => ({ name })) } });
+  const inbox = await mk("📥 任務收件匣（R13 沙盒）", {
+    任務原文: { title: {} }, 狀態: sel(["待處理", "處理中", "待審", "已完成", "失敗"]),
+    任務類型: sel(["作品"]), 路由ID: { rich_text: {} }, 執行紀錄: { rich_text: {} },
+    錯誤訊息: { rich_text: {} }, 完成時間: { date: {} }, 產出連結: { url: {} }, 附件: { files: {} },
+  });
+  const portfolio = await mk("🎨 學生作品集（R13 沙盒）", {
+    作品: { title: {} }, 日期: { date: {} }, 週次: { rich_text: {} }, 座號: { number: {} },
+    學生: { relation: { data_source_id: roster, single_property: {} } },
+    類型: sel(["國語", "數學", "社會", "自然", "美勞", "寫作", "其他"]),
+    照片: { files: {} }, 說明: { rich_text: {} }, 發布: { checkbox: {} }, 學年: sel(["115", "116", "117"]),
+  });
+  return { pageId: page.id, ds: { roster, inbox, portfolio } };
+}
