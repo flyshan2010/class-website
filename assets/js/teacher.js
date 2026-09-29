@@ -225,7 +225,7 @@
       if (!text) { msg.textContent = "請先輸入一句話"; return; }
       if (text.includes("＿")) { msg.textContent = "請把「＿」改成實際內容（例如座號）再送出"; return; }
       msg.textContent = "⏳ 送出中…";
-      const res = await api("submit_task", { text, attachment_urls: attachments.map(a => a.url) })
+      const res = await api("submit_task", { text, attachment_urls: attachments.map(a => a.url), attachment_names: attachments.map(a => a.name) })
         .catch(() => ({ ok: false, error: "連線失敗" }));
       if (res.ok) {
         ta.value = ""; attachments = []; renderAttach();
