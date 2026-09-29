@@ -1,9 +1,14 @@
 name: R13 作品入庫（f37）
 
 # 規格：ClassOS_v3.5_藍圖/SPEC_R13作品入庫腳本.md
-# 切換前（雲端 routine 手冊 R13 仍是「停待審」）只開手動觸發：dry-run／sandbox 驗收用。
-# 切換時再加 repository_dispatch（代理 r13-submit）＋整點備援排程，並把手冊 R13 改「略過」——同一時間只有一邊寫（U44）。
+# 2026-09-29 切換：代理 v2.10 送出作品後立刻丟 r13-submit（約 1 分鐘內入庫）；雲端 routine 手冊 R13 已改「略過，不認領」——同一時間只有一邊寫（U44）。
+# 整點排程只是備援（GitHub 排程常延遲或丟掉）。回滾：拿掉 repository_dispatch 與 schedule，手冊 R13 貼回停待審（SPEC §6）。
 on:
+  repository_dispatch:
+    types: [r13-submit]
+  schedule:
+    # 備援：平日 08:15–17:15 台北＝00:15–09:15 UTC（錯開 routine 整點與 f35 的 :05）
+    - cron: "15 0-9 * * 1-5"
   workflow_dispatch:
     inputs:
       mode:
