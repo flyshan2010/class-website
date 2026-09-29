@@ -1,6 +1,13 @@
 /**
- * 班網教師專區代理 v2.9（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.10（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.10 升級步驟（2026-09-29，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.10 新增（R13 作品入庫程式化，SPEC_R13作品入庫腳本.md）：
+ *   ① 收件匣「附件」改用老師上傳時的原檔名（舊版一律叫「附件1／附件2」，程式看不到檔名裡的座號）；
+ *   ② 有附件且句中有「作品／佳作」→ 寫進收件匣後立刻丟 repository_dispatch「r13-submit」→ 班網 r13-works.yml（f37）約 1 分鐘內入庫。
+ *   觸發失敗不影響送出，整點排程照舊當備援；重送由 f37 的（座號×作品×日期）防重複鍵擋。
  *
  * ── v2.9 升級步驟（2026-09-28，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -166,18 +173,21 @@ function submitTask_(props, body) {
     "來源": { select: { name: "教師專區" } },
     "學年": { select: { name: schoolYear_() } },
   };
-  const urls = (body.attachment_urls || []).filter(u => /^https?:\/\//.test(String(u)));
-  if (urls.length) {
-    properties["附件"] = {
-      files: urls.map((u, i) => ({ name: "附件" + (i + 1), type: "external", external: { url: u } })),
-    };
-  }
+  // v2.10：附件名＝原檔名（R13 依檔名座號分照片）；舊版前端沒送檔名 → 退回「附件N」
+  const names = body.attachment_names || [];
+  const files = (body.attachment_urls || [])
+    .map((u, i) => ({ url: String(u), name: sanitizeFilename_(String(names[i] || "")).slice(0, 100) }))
+    .filter(a => /^https?:\/\//.test(a.url))
+    .map((a, i) => ({ name: names.length && a.name !== "attachment" ? a.name : "附件" + (i + 1), type: "external", external: { url: a.url } }));
+  if (files.length) properties["附件"] = { files: files };
 
   const res = notion_(token, "pages", "post", { parent: { database_id: dbId }, properties: properties });
   if (res.code !== 200) return { ok: false, error: "寫入收件匣失敗（Notion 回應 " + res.code + "）" };
   const out = { ok: true, page_url: res.data.url };
   // v2.9：課堂事件包（首行 #CM-EVENTS，與 lib/cm-events.mjs 的 FINGERPRINT 一致）→ 立刻觸發入庫
   if (text.split("\n")[0].trim().indexOf("#CM-EVENTS") === 0) out.r18_trigger = dispatch_(props, "r18-submit").ok;
+  // v2.10：作品照片（與 lib/r13-works.mjs 的 isR13 一致）→ 立刻觸發 f37 入庫
+  else if (files.length && /作品|佳作/.test(text)) out.r13_trigger = dispatch_(props, "r13-submit").ok;
   return out;
 }
 
@@ -275,7 +285,7 @@ function triggerSync_(props) {
   return dispatch_(props, "sync-now");
 }
 
-/** repository_dispatch 共用：sync-now（班網同步）／r18-submit（v2.9，課堂事件包入庫） */
+/** repository_dispatch 共用：sync-now（班網同步）／r18-submit（v2.9，課堂事件包入庫）／r13-submit（v2.10，作品入庫） */
 function dispatch_(props, eventType) {
   const token = props.getProperty("GH_TOKEN");
   if (!token) return { ok: false, error: "尚未設定 GH_TOKEN" };
