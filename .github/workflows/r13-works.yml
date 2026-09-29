@@ -1,0 +1,38 @@
+name: R13 作品入庫（f37）
+
+# 規格：ClassOS_v3.5_藍圖/SPEC_R13作品入庫腳本.md
+# 切換前（雲端 routine 手冊 R13 仍是「停待審」）只開手動觸發：dry-run／sandbox 驗收用。
+# 切換時再加 repository_dispatch（代理 r13-submit）＋整點備援排程，並把手冊 R13 改「略過」——同一時間只有一邊寫（U44）。
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: dry-run＝只算不寫／execute＝立刻入庫待處理的 R13／sandbox＝一次性沙盒實跑（建→跑→驗→刪）
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - execute
+          - sandbox
+
+concurrency:
+  group: r13-works
+  cancel-in-progress: false
+
+jobs:
+  f37:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 規則測試（sim，不連 Notion）
+        run: node scripts/classos/sim/r13-works.mjs
+      - name: f37
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          MODE: ${{ (github.event_name == 'schedule' || github.event_name == 'repository_dispatch') && 'execute' || (inputs.mode == 'sandbox' && 'execute' || inputs.mode) }}
+          SANDBOX: ${{ inputs.mode == 'sandbox' && '1' || '0' }}
+        run: node scripts/classos/f37-r13-works.mjs
