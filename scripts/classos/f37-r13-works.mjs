@@ -169,7 +169,7 @@ async function runSandbox() {
     properties: { 任務原文: { title: rt(text) }, 狀態: { select: { name: "待處理" } }, ...(files ? { 附件: { files } } : {}) } });
   try {
     const A = await newTask("19 23 教師節繪畫比賽作品", [file("20260929-140437_23教師節繪畫比賽.jpg"), file("20260929-140428_19教師節繪畫比賽.jpg")]);
-    const B = await newTask("座號19和23的合作海報", [file("20260929-150000_合照.jpg")]);
+    const B = await newTask("座號19和23的合作海報作品", [file("20260929-150000_合照.jpg")]);
     const C = await newTask("19 23 書法作品", [file("附件1"), file("附件2")]);
     const D = await newTask("座號7 作品 水彩", [file("20260929-150100_7水彩.jpg")]);
     const E = await newTask("座號19 數學小考 +1");                     // 沒附件：不是 R13，不可動
@@ -197,7 +197,7 @@ async function runSandbox() {
     ok("A 發布勾", pick(19, "教師節繪畫比賽作品").pub, true);
     ok("A 學年", pick(23, "教師節繪畫比賽作品").year, "115");
     ok("A 學生 relation", pick(23, "教師節繪畫比賽作品").rel, 1);
-    ok("B 合作作品兩人共用一張", [pick(19, "合作海報").photos, pick(23, "合作海報").photos],
+    ok("B 合作作品兩人共用一張", [pick(19, "合作海報作品").photos, pick(23, "合作海報作品").photos],
       [["20260929-150000_合照.jpg"], ["20260929-150000_合照.jpg"]]);
 
     const st = async (id) => (await must("GET", `/pages/${id}`)).properties;
