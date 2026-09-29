@@ -2233,7 +2233,7 @@
     "points": [
       "全課四節統整地圖、課文三段結構與四個科學事實（45億歲／坑洞成因／38萬公里／阿提米絲2027）；第五課〈月光下〉與本課連續性文本對讀（文學的月亮 vs 科學的月球、兩課骨架對照）；主旨「又遠又近」回扣；寫作任務「我的登月計畫書」——審題、計畫書與作文的差別、選材、五段骨架（目標／準備／步驟／困難與辦法／期待）與檢核四要。"
     ],
-    "date": "2026-10-08",
+    "date": "2026-10-07",
     "dateEnd": "",
     "dateAuto": true,
     "note": "2026-08-16 完成五段網頁＋紙本。網頁：教學16頁／練習10／複習8／前測4題+討論框／模擬評量10選+6填，五個網址皆 HTTP 200。實測：1600×900 clone 展開量測逐頁無溢出（teach 857／practice 857／review 857），揭露一次一個、整頁攤開不洩答（data-after-answer 僅作答後現）、480px 無橫捲、最小字級 24px、外部資源 0。紙本：2a/2b/2c 差異化各 docx+pdf、評量六合一（學生卷／教師含答案卷／解析尺規／審題檢核表／配分答案卡／雙向細目表，配分 60+20+20=100，15 題）。與線上模擬評量為平行題本，已逐題比對無重複題（素養寫作改為「我的班級圖書角改造計畫書」，避免與挑戰題學習單的登月計畫書同題）。",
@@ -2265,7 +2265,7 @@
       "整公里減複名數：先想成幾公里 0 公尺再退位",
       "素養應用：路線圖、里程表的加減與目標達成判斷"
     ],
-    "date": "2026-10-08",
+    "date": "2026-10-07",
     "dateEnd": "2026-10-12",
     "dateAuto": true,
     "note": "課本 5-3（建議 1.5 節）＋練習園地(五) 0.5 節；教材 pp.74-77",
@@ -2297,7 +2297,7 @@
       "兩組短語：受到無數的隕石撞擊／科學揭開了月球的真相",
       "造句：傳說、揭開"
     ],
-    "date": "2026-10-07",
+    "date": "2026-10-06",
     "dateEnd": "",
     "dateAuto": true,
     "note": "翰林四上國語第六課「又遠又近的月亮」第 3 節。4 節共用同一份原教材 PDF。\n\n2026-08-16 產出五份網頁並上線：前測 4 題＋提問框、教學頁 16 頁、練習頁 10 頁、複習頁 8 頁（含修辭翻牌）、線上模擬評量選擇 10＋填答 6。依老師 2026-08-16 裁示，「記敘 vs 說明」維持在本節（形式深究），未上移到第二節。\n\n實測：1600×900 逐頁無溢出（teach 877、practice 892（p1 修辭配對頁原 960，已改 2×2 排列＋chip 降字級）、review 794）；揭露序列 0→1→2→3 一次一個、出完才換頁且無位移；「整頁攤開」不洩答（HIDDEN-OK）、作答後答案帶才現（SHOWN-OK）；五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養寫作 1×20＝100）。答案分布 C A D B A C D B C D、雙向細目表題數合計＝15 題。\n\n平行題本檢查（本節特殊）：首次拉出 16 處重疊，逐一檢視後換掉 3 題真重複（相同錯誤選項「就算…因而…」、相同短語仿寫題、相同句式的說明定義題）；殘餘重疊盡為課文原句（月球已經四十五億歲了、嫦娥是怎樣到月亮的呢）與課本術語（短語結構名、關聯詞）——形式深究必然反覆分析同一批句子，不屬同題。\n\n第五段成果回流待實際教學後登記。",
@@ -2329,7 +2329,7 @@
       "長度比較三策略：找基準量、換單名數、換複名數",
       "比較先看公里數，公里數相同再比公尺數"
     ],
-    "date": "2026-10-07",
+    "date": "2026-10-06",
     "dateEnd": "",
     "dateAuto": true,
     "note": "課本 5-2（建議 1.5 節）；教材 pp.71-73",
@@ -2340,38 +2340,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-2-長度的換算與比較/3.review.html"
-    }
-  },
-  {
-    "title": "國L6-2 又遠又近的月亮 第二節 內容理解",
-    "subject": "國語",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "課文結構：尋找資料（第1段）→ 相關知識（第2、3段）→ 探尋結果（第4段）",
-      "讀新聞抓四件事：誰、做什麼、什麼時候、為什麼（阿提米絲二號登月計畫）",
-      "月球知識：45 億歲、無大氣保護故隕石撞出坑洞、平均 38 萬公里（騎單車三年）",
-      "閱讀策略：提取訊息（課文找得到）vs 推論訊息（順線索再想一步）",
-      "延伸知識：登月時間軸 1969 → 1972 → 中斷五十多年 → 2027 阿提米絲二號"
-    ],
-    "date": "2026-10-06",
-    "dateEnd": "",
-    "dateAuto": true,
-    "note": "翰林四上國語第六課「又遠又近的月亮」第 2 節。4 節共用同一份原教材 PDF。\n\n2026-08-16 產出五份網頁並上線：前測 5 題＋提問框、教學頁 15 頁、練習頁 10 頁、複習頁 8 頁、線上模擬評量選擇 10＋填答 6。老師裁示已落實：阿提米絲計畫現況獨立一頁，以 inline SVG 橫向時間軸呈現（1969 首次登月 → 1972 最後一次載人 → 虛線段表示中斷五十多年 → 2027 阿提米絲二號），未用 AI 生圖（老師裁定：資訊單純、學生容易理解）。\n\n實測：1600×900 逐頁無溢出（teach 最高 892、practice 894（p2 原 1324 已改 2×2 排列）、review 847）；揭露序列 0→1→2→3→4→5 一次一個、出完才換頁且無位移；「整頁攤開」不洩答、作答後答案帶才現；480px 無橫向捲動、最小字 24px；五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100）。已程式驗證：紙本與 4.exam／3.review／2.practice／0.pretest 四份網頁最長共同片段皆 <10 字（首次拉出 1 題句式雷同已換題）；答案分布 C A D B A C B D C B、配分加總＝100、雙向細目表題數合計＝15 題。\n\n第五段成果回流待實際教學後登記。",
-    "links": {
-      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/3.review.html"
     }
   },
   {
@@ -2439,6 +2407,38 @@
     }
   },
   {
+    "title": "國L6-2 又遠又近的月亮 第二節 內容理解",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "課文結構：尋找資料（第1段）→ 相關知識（第2、3段）→ 探尋結果（第4段）",
+      "讀新聞抓四件事：誰、做什麼、什麼時候、為什麼（阿提米絲二號登月計畫）",
+      "月球知識：45 億歲、無大氣保護故隕石撞出坑洞、平均 38 萬公里（騎單車三年）",
+      "閱讀策略：提取訊息（課文找得到）vs 推論訊息（順線索再想一步）",
+      "延伸知識：登月時間軸 1969 → 1972 → 中斷五十多年 → 2027 阿提米絲二號"
+    ],
+    "date": "2026-10-05",
+    "dateEnd": "",
+    "dateAuto": true,
+    "note": "翰林四上國語第六課「又遠又近的月亮」第 2 節。4 節共用同一份原教材 PDF。\n\n2026-08-16 產出五份網頁並上線：前測 5 題＋提問框、教學頁 15 頁、練習頁 10 頁、複習頁 8 頁、線上模擬評量選擇 10＋填答 6。老師裁示已落實：阿提米絲計畫現況獨立一頁，以 inline SVG 橫向時間軸呈現（1969 首次登月 → 1972 最後一次載人 → 虛線段表示中斷五十多年 → 2027 阿提米絲二號），未用 AI 生圖（老師裁定：資訊單純、學生容易理解）。\n\n實測：1600×900 逐頁無溢出（teach 最高 892、practice 894（p2 原 1324 已改 2×2 排列）、review 847）；揭露序列 0→1→2→3→4→5 一次一個、出完才換頁且無位移；「整頁攤開」不洩答、作答後答案帶才現；480px 無橫向捲動、最小字 24px；五個網址皆 HTTP 200。\n\n紙本同步產出：差異化 2a／2b／2c（docx＋pdf）、評量六合一 6 檔（選擇 10×6＋填充 4×5＋素養問答 1×20＝100）。已程式驗證：紙本與 4.exam／3.review／2.practice／0.pretest 四份網頁最長共同片段皆 <10 字（首次拉出 1 題句式雷同已換題）；答案分布 C A D B A C B D C B、配分加總＝100、雙向細目表題數合計＝15 題。\n\n第五段成果回流待實際教學後登記。",
+    "links": {
+      "material": "https://drive.google.com/file/d/15JA4tcexdYJaVcs7ZlT1plbkkiuw5kfu/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-國語-國L6-2-內容理解/3.review.html"
+    }
+  },
+  {
     "title": "數L5-1 公里｜認識公里",
     "subject": "數學",
     "grade": "四上",
@@ -2468,37 +2468,6 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L5-1-認識公里/3.review.html"
-    }
-  },
-  {
-    "title": "數L4-4 假分數與帶分數｜認識分數數線",
-    "subject": "數學",
-    "grade": "四上",
-    "version": "翰林",
-    "status": "進行中",
-    "stages": [
-      "起始評估",
-      "課程教學",
-      "差異化指導",
-      "學習評量"
-    ],
-    "points": [
-      "數線上的數表示位置：從 0 到該點的長度",
-      "分數數線：把 0 到 1 等分，用單位分數接排標記",
-      "大於 1 的位置可用假分數或帶分數兩種記法",
-      "數線上越往右越大，越往左越小"
-    ],
-    "date": "2026-10-02",
-    "dateEnd": "",
-    "dateAuto": true,
-    "note": "課本 4-4（建議 1 節）＋練習園地(四) 0.5 節；教材 pp.62-65",
-    "links": {
-      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/3.review.html"
     }
   },
   {
@@ -2533,7 +2502,7 @@
     }
   },
   {
-    "title": "數L4-3 假分數與帶分數｜分數的大小比較",
+    "title": "數L4-4 假分數與帶分數｜認識分數數線",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -2545,22 +2514,22 @@
       "學習評量"
     ],
     "points": [
-      "帶分數比大小：先比整數部分，相同再比分數部分",
-      "帶分數與假分數比較：先換成同一種形式再比",
-      "用 <、=、> 記錄兩數大小關係",
-      "素養題：找出介於兩數之間的分數"
+      "數線上的數表示位置：從 0 到該點的長度",
+      "分數數線：把 0 到 1 等分，用單位分數接排標記",
+      "大於 1 的位置可用假分數或帶分數兩種記法",
+      "數線上越往右越大，越往左越小"
     ],
     "date": "2026-10-01",
-    "dateEnd": "",
+    "dateEnd": "2026-10-02",
     "dateAuto": true,
-    "note": "課本 4-3（建議 1 節）；教材 pp.60-61",
+    "note": "課本 4-4（建議 1 節）＋練習園地(四) 0.5 節；教材 pp.62-65",
     "links": {
       "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/3.review.html"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-4-認識分數數線/3.review.html"
     }
   },
   {
@@ -2595,7 +2564,7 @@
     }
   },
   {
-    "title": "數L4-2 假分數與帶分數｜假分數與帶分數互換",
+    "title": "數L4-3 假分數與帶分數｜分數的大小比較",
     "subject": "數學",
     "grade": "四上",
     "version": "翰林",
@@ -2607,22 +2576,22 @@
       "學習評量"
     ],
     "points": [
-      "假分數換帶分數：連減同分母單位→改記成除法",
-      "除法算式的意義：商＝整數部分，餘＝分子",
-      "整數換假分數：1 等於分母個單位分數",
-      "帶分數換假分數：整數部分先化成假分數再合起來"
+      "帶分數比大小：先比整數部分，相同再比分數部分",
+      "帶分數與假分數比較：先換成同一種形式再比",
+      "用 <、=、> 記錄兩數大小關係",
+      "素養題：找出介於兩數之間的分數"
     ],
     "date": "2026-09-30",
     "dateEnd": "",
     "dateAuto": true,
-    "note": "課本 4-2（建議 1.5 節）；教材 pp.56-59",
+    "note": "課本 4-3（建議 1 節）；教材 pp.60-61",
     "links": {
       "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
-      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/0.pretest.html",
-      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/1.teach.html",
-      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/2.practice.html",
-      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/4.exam.html",
-      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/3.review.html"
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-3-分數的大小比較/3.review.html"
     }
   },
   {
@@ -3671,6 +3640,37 @@
       "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/2.practice.html",
       "exam": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/4.exam.html",
       "review": "https://flyshan2010.github.io/class-website/lessons/4上-社會-社1-1-家鄉在哪裡/3.review.html"
+    }
+  },
+  {
+    "title": "數L4-2 假分數與帶分數｜假分數與帶分數互換",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "進行中",
+    "stages": [
+      "起始評估",
+      "課程教學",
+      "差異化指導",
+      "學習評量"
+    ],
+    "points": [
+      "假分數換帶分數：連減同分母單位→改記成除法",
+      "除法算式的意義：商＝整數部分，餘＝分子",
+      "整數換假分數：1 等於分母個單位分數",
+      "帶分數換假分數：整數部分先化成假分數再合起來"
+    ],
+    "date": "",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "課本 4-2（建議 1.5 節）；教材 pp.56-59",
+    "links": {
+      "material": "https://drive.google.com/file/d/10X5EaegyWVK9MIY57_birKaSzuYWLDvE/view?usp=drivesdk",
+      "pretest": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/0.pretest.html",
+      "site": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/1.teach.html",
+      "differentiated": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/2.practice.html",
+      "exam": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/4.exam.html",
+      "review": "https://flyshan2010.github.io/class-website/lessons/4上-數學-數L4-2-假分數與帶分數互換/3.review.html"
     }
   }
 ]

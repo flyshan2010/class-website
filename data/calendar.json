@@ -246,8 +246,8 @@
     "title": "戶外教育行前講習",
     "date": "2026-10-05",
     "endDate": "",
-    "startTime": "08:00",
-    "endTime": "08:40",
+    "startTime": "08:10",
+    "endTime": "08:50",
     "type": "活動",
     "notes": ""
   },
@@ -819,18 +819,18 @@
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
