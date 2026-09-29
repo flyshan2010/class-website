@@ -61,9 +61,9 @@
   },
   "economy": {
     "totals": {
-      "supply": 7534,
-      "txCount": 1373,
-      "spend": 2171
+      "supply": 7494,
+      "txCount": 1377,
+      "spend": 2291
     },
     "weeks": [
       {
@@ -109,6 +109,17 @@
         "spend": 845,
         "spendCount": 13,
         "adjust": 0
+      },
+      {
+        "week": 5,
+        "label": "四上第5週(9/28-10/2)",
+        "salary": 0,
+        "reward": 0,
+        "penalty": 0,
+        "interest": 0,
+        "spend": 120,
+        "spendCount": 3,
+        "adjust": 80
       }
     ]
   }
