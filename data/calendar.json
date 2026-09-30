@@ -414,7 +414,16 @@
     "notes": ""
   },
   {
-    "title": "英語巡迴1(要跟自然師調課)",
+    "title": "自然課（GO與1120第三節自然調）",
+    "date": "2026-11-19",
+    "endDate": "",
+    "startTime": "15:20",
+    "endTime": "16:00",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "英語巡迴1(自然課與1119GO調)",
     "date": "2026-11-20",
     "endDate": "",
     "startTime": "10:30",
@@ -819,18 +828,18 @@
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
