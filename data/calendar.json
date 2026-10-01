@@ -240,7 +240,7 @@
     "startTime": "08:05",
     "endTime": "08:35",
     "type": "活動",
-    "notes": ""
+    "notes": "405"
   },
   {
     "title": "戶外教育行前講習",
@@ -828,18 +828,18 @@
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
