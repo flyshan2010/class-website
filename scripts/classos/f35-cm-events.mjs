@@ -147,9 +147,10 @@ async function runPending({ ds, execute }) {
             Object.assign(r, { action: "fail", code: "寫入被拒", why: `HTTP ${w.status}` });
             continue;
           }
-          // 逐筆回讀：事件id／學年／金幣影響（不符＝記失敗，不自動刪列，交老師判斷）
+          // 逐筆回讀：事件id／學年／金幣影響／作業科目（不符＝記失敗，不自動刪列，交老師判斷）
           const back = cm.fromNotionPage(await must("GET", `/pages/${w.json.id}`));
           const bad = ["事件id", "學年", "金幣影響"].filter((k) => back[k] !== r.row[k]);
+          if (cm.diffRow({ 作業科目: r.row.作業科目 }, { 作業科目: back.作業科目 }).includes("作業科目")) bad.push("作業科目");
           if (bad.length) Object.assign(r, { action: "fail", code: "回讀不符", why: `${bad.join("、")}（列已寫入，請人工確認）` });
           existing.set(r.row.事件id, [back]);
         }

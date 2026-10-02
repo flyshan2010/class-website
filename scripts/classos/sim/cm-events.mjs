@@ -9,6 +9,7 @@ import { readFileSync } from "node:fs";
 import {
   isR18, parsePacket, weekLabel, categoryOf, describe, coinNumber,
   planEvent, planPacket, execLog, taskStatus, toNotionProps, diffRow, handPaidFrom,
+  hwSubjectsOf, hwSubjectsFor,
 } from "../lib/cm-events.mjs";
 
 // ── 虛構班規（結構同 data/class-rules.json；bad 的 coin 用 U+2212，level 為負數）──
@@ -173,6 +174,30 @@ const cases = [
 
   // ── 正式班規檔：每張卡的好／壞行為都判得出類別（班規新增第 11 條時這題會先紅）──
   ["data/class-rules.json 每張卡都有類別", realRules.cards.every((c) => categoryOf({ src: "rule", rule_n: c.n, kind: "good" }) && categoryOf({ src: "rule", rule_n: c.n, kind: "bad" })), true],
+
+  // ── 作業科目（2026-10-02 方案 A：不拆列、不改 id／描述／金幣，只多寫多選欄）──
+  ["作業科目：單份數練", hwSubjectsOf("數練 3-1 認識量角器 P.13（10-01 派）").join(), "數學"],
+  ["作業科目：多份混合 → 固定順序去重", hwSubjectsOf("數練 3-1 P.13（10-01 派）、國習 L5 P.30-31（09-29 派）、數習 P.40-41（09-30 派）").join(), "國語,數學"],
+  ["作業科目：舊格式甲乙本＋預習國", hwSubjectsOf("乙本 L2 P.3-13、預習國 L2").join(), "國語"],
+  ["作業科目：縮寫後沒空格", hwSubjectsOf("社習P2-3").join(), "社會"],
+  ["作業科目：統整園地＝數學", hwSubjectsOf("統整園地(4) P.46-47").join(), "數學"],
+  ["作業科目：複習卷全名", hwSubjectsOf("國語複習卷 1 張、社會 複習卷 1 張、數卷 1 張").join(), "國語,數學,社會"],
+  ["作業科目：判不出 → 需人工（不猜）", hwSubjectsOf("【定期評量】").join(), "需人工"],
+  ["作業科目：一份判得出一份判不出 → 兩個都標", hwSubjectsOf("國習 L5、P.32").join(), "國語,需人工"],
+  ["作業科目：空備註 → 需人工", hwSubjectsOf("").join(), "需人工"],
+  ["作業科目：非作業類 → 空", hwSubjectsFor({ category: "生活技能", tool: "homework", note: "數習" }).length, 0],
+  ["作業科目：其他工具的作業列 → 用科目", hwSubjectsFor({ category: "作業", tool: "board", note: "", subject: "數學" }).join(), "數學"],
+  ["作業科目：其他工具無科目 → 需人工", hwSubjectsFor({ category: "作業", tool: "board", note: "" }).join(), "需人工"],
+  ["作業完成 tally：作業科目三科", row(T({ tool: "homework", id: "hw1", kind: "good", act: "作業完成", count: 5, note: "國習 L5 P.30-31（09-29 派）、數習 P.40-41（09-30 派）、社習 2-2 P.16（09-29 派）" })).作業科目.join(), "國語,數學,社會"],
+  ["作業完成 tally：事件描述仍逐字＝作業完成（f24 ⑥ 靠它撈）", row(T({ tool: "homework", id: "hw1", kind: "good", act: "作業完成", note: "數習 P.40-41" })).事件描述, "作業完成"],
+  ["作業完成 tally：科目欄仍空（不進科目分數）", row(T({ tool: "homework", id: "hw1", kind: "good", act: "作業完成", note: "數習 P.40-41" })).科目, ""],
+  ["班規④ 兩科合併一列：金幣仍只扣一次", row(R({ tool: "homework", id: "hw2", rule_n: 4, kind: "bad", act_i: 0, act: "作業沒交", coin: `${M}5`, level: -1, count: 2, note: "數習 P.40-41（09-30 派）、社練 4回 P.8-9（09-29 派）" })).金幣影響, -5],
+  ["班規④ 兩科合併一列：作業科目兩科", row(R({ tool: "homework", id: "hw2", rule_n: 4, kind: "bad", act_i: 0, act: "作業沒交", coin: `${M}5`, level: -1, count: 2, note: "數習 P.40-41（09-30 派）、社練 4回 P.8-9（09-29 派）" })).作業科目.join(), "數學,社會"],
+  ["班規④：事件描述不帶科目括號", row(R({ tool: "homework", id: "hw2", rule_n: 4, kind: "bad", act_i: 0, act: "作業沒交", coin: `${M}5`, level: -1, note: "數習" })).事件描述, "作業沒交"],
+  ["toNotionProps：作業科目寫多選", JSON.stringify(toNotionProps({ ...row(T({ tool: "homework", id: "hw1", kind: "good", act: "作業完成", note: "數習、國習" })), 學生: "x" }).作業科目), JSON.stringify({ multi_select: [{ name: "國語" }, { name: "數學" }] })],
+  ["toNotionProps：非作業列寫空多選", JSON.stringify(toNotionProps({ ...row(T({ id: "c", kind: "good", act: "打掃支援" })), 學生: "x" }).作業科目), JSON.stringify({ multi_select: [] })],
+  ["對照：作業科目順序不同不算差異", diffRow({ 作業科目: ["數學", "國語"] }, { 作業科目: ["國語", "數學"] }).includes("作業科目"), false],
+  ["對照：作業科目少一科 → 抓到", diffRow({ 作業科目: ["數學", "國語"] }, { 作業科目: ["國語"] }).includes("作業科目"), true],
 
   // ── 對照（compare 模式）──
   ["對照：完全相同 → 0 差異", diffRow(row(T({ id: "c", kind: "good", act: "打掃支援" })), { ...row(T({ id: "c", kind: "good", act: "打掃支援" })) }).length, 0],
