@@ -366,9 +366,6 @@ const median = prices.length
 const avgBal = roster.length ? Math.floor(balAll / roster.length + 0.5) : 0;
 const ratio = median ? avgBal / median : 0;
 const spendRate = wkIn ? wkOut / wkIn : 0;
-const hot = storeRows
-  .filter(p => (num(p, "價格") ?? 0) >= median)
-  .map(p => `${(p.properties?.["品項"]?.title ?? []).map(t => t.plain_text).join("")} ${num(p, "價格")}`);
 /* 集資目標的「再開一個」參考條件（原為第一個目標的啟用條件）：
    兌換過的學生 ≥ 80% 或 兌換總額 ≥ 發出總額 50%。
    ⚠️ 2026-09-19 起這不再是「能不能開集資」的閘門——第一個目標（一節自由活動時間）
@@ -405,11 +402,8 @@ inflLines.push(`🎈 通膨體檢　平均餘額 ${avgBal} 幣 ÷ 商店中位�
 if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {
   inflLines.push(`　⚠️ **過線了**${ratio > INFL_RATIO_LIMIT ? "（餘額太厚：什麼都買得起，特權就不特別了）" : ""}`
     + `${wkIn > 0 && spendRate < INFL_SPEND_FLOOR ? "（流出率太低：錢只進不出）" : ""}`);
-  inflLines.push(`　建議三選一（都不必改公式，動商店就好）：`);
-  inflLines.push(`　　① **提高高階特權比重**：現在 ≥ 中位價的品項 ${hot.length} 項──${hot.slice(0, 6).join("、")}${hot.length > 6 ? "…" : ""}。加 1～2 項 150–200 幣的（要存好幾週才換得到），讓存錢重新有目標`);
-  inflLines.push(`　　② **開消耗管道**：集資目標捐款（🏦 帳本類型＝消費、事由「集資-{商店 ⑥ 層那一列的名稱}」，例「集資-一節自由活動時間」），把個人餘額變成全班的東西`);
-  inflLines.push(`　　③ **熱門特權調價**：一直有人換的那幾張往上調 10–20 幣（改 🏪 商店「價格」即可，已發出的券不受影響）`);
-  inflLines.push(`　　※ 不建議的做法：減少薪水或獎勵金——那會讓「做事有回報」這件事變得不可靠，比通膨更傷`);
+  // 2026-10-03：原「建議三選一」處方已與定案衝突（加高階特權作廢 2026-09-19；調價改由 f33 浮動價格 2026-09-24；集資受啟用條件管制 2026-09-12）
+  inflLines.push(`　→ 過線不需手動處理：調價交給每週「調價監測」自動判斷（SPEC_班級經濟機制 §3），存款累積有期末 100:1 好兒童章出口`);
 } else {
   inflLines.push(`　✅ 在合理範圍，不必調整。`);
 }
