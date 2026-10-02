@@ -1954,4 +1954,13 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
   .fin-xp .xp-next { font-size: 8px; margin-top: 1px; }
   .grade-guide-hint { font-size: 9px; margin: 1px 0; }
   .grade-guide { display: none; }
+  /* 每週報告（2026-10-03 老師要求）：左欄壓縮後概覽卡右側空出來 → 雷達圖與等第卡放大填滿；
+     底部四格（亮點／目標／SEL／家長協助）排成同一列。期末總報告與作文批改不套用。 */
+  .report-sheet:not(.report-term):not(.report-essay) .report-overview { flex-wrap: nowrap; justify-content: center; gap: 28px; }
+  .report-sheet:not(.report-term):not(.report-essay) .report-radar { width: 210px; }
+  .report-sheet:not(.report-term):not(.report-essay) .report-grades { gap: 8px; grid-template-columns: repeat(2, 110px); }
+  .report-sheet:not(.report-term):not(.report-essay) .grade-chip { padding: 4px 8px; }
+  .report-sheet:not(.report-term):not(.report-essay) .grade-chip .k { font-size: 11px; }
+  .report-sheet:not(.report-term):not(.report-essay) .grade-chip .v { font-size: 20px; }
+  .report-sheet:not(.report-term):not(.report-essay) .report-bottom { grid-template-columns: repeat(4, 1fr); }
 }
