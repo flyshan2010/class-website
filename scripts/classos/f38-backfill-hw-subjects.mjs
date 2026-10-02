@@ -8,7 +8,9 @@
  *
  * 只寫「作業科目」一欄，不碰金幣影響、次數、事件描述、科目——週結與評分完全不受影響。
  * 略過：已有作業科目的列（重跑不覆寫）、週結寫回列（第N週作業完成獎勵：入帳彙總，不是當天作業）。
- * 判不出（備註空、作業名沒有可辨識的縮寫、老師一句話的作業列沒填科目）→ 寫「需人工」，不猜（U53）。
+ * 判不出的作業名 → 寫「需人工」，不猜（U53）。
+ * **完全沒有依據**（空備註、老師一句話的作業列沒填科目：第 1–2 週與開學前）→ **留空不寫**、只列筆數——
+ *   那幾週報告早已發布，標一整片「需人工」只會變成沒人處理的雜訊；留空＝報告端不歸任何科（不會多給個人一句）。
  *
  * MODE=dry-run（預設，只查不寫）／execute。WEEK_LABEL 可只跑一週（逐字等於週次標籤），留空＝全部。
  * ⚠️ PUBLIC repo：只印週次、座號、筆數與作業名（作業名是聯絡簿公開內容），不印事件描述、姓名、頁面 id。
@@ -41,7 +43,7 @@ const rows = pages.map((p) => ({ id: p.id, page: p, r: fromNotionPage(p) }))
 console.log(`紀錄庫 類別＝作業 ${pages.length} 列${ONLY_WEEK ? `，本次範圍 ${rows.length} 列` : ""}`);
 
 const byWeek = new Map();
-const W = (w) => byWeek.get(w) ?? byWeek.set(w, { all: 0, settle: 0, done: 0, todo: 0, combo: new Map(), manual: 0 }).get(w);
+const W = (w) => byWeek.get(w) ?? byWeek.set(w, { all: 0, settle: 0, done: 0, blank: 0, none: 0, todo: 0, combo: new Map(), manual: 0 }).get(w);
 const unknownItems = new Map();   // 判不出的作業名 → 次數
 const manualOther = [];           // 非作業清點的需人工列（只記週次＋日期＋座號）
 const todo = [];
@@ -53,19 +55,19 @@ for (const { id, r } of rows) {
   if (r.作業科目.length) { w.done++; continue; }
   const tool = r.事件id.split("-")[0];   // 事件id＝<工具>-<日期>-s<座號>-<特徵>；一句話紀錄沒有事件id
   const subjects = hwSubjectsFor({ category: "作業", tool, note: r.備註, subject: r.科目 });
+  if (!String(r.備註 ?? "").trim() && !r.科目) {   // 完全沒有依據 → 留空
+    w.blank++;
+    if (tool !== "homework") manualOther.push(`${r.週次 || "（無週次）"} ${r.日期} 座號${r.學生.split(",").filter(Boolean).map((s) => seatOf.get(s) ?? "?").join("、")}`);
+    continue;
+  }
+  if (!subjects.length) { w.none++; continue; }   // 只有聯絡簿：不屬任何科，維持空白
   w.todo++;
   const k = subjects.join("、");
   w.combo.set(k, (w.combo.get(k) ?? 0) + 1);
   if (subjects.includes(HW_MANUAL)) {
     w.manual++;
-    if (tool === "homework") {
-      for (const it of String(r.備註 ?? "").split("、").map((x) => x.trim()).filter(Boolean)) {
-        if (!hwSubjectOfItem(it)) unknownItems.set(it, (unknownItems.get(it) ?? 0) + 1);
-      }
-      if (!String(r.備註 ?? "").trim()) unknownItems.set("（空備註）", (unknownItems.get("（空備註）") ?? 0) + 1);
-    } else {
-      const seats = r.學生.split(",").filter(Boolean).map((s) => seatOf.get(s) ?? "?");
-      manualOther.push(`${r.週次 || "（無週次）"} ${r.日期} 座號${seats.join("、")}`);
+    for (const it of String(r.備註 ?? "").split("、").map((x) => x.trim()).filter(Boolean)) {
+      if (hwSubjectOfItem(it) === null) unknownItems.set(it, (unknownItems.get(it) ?? 0) + 1);
     }
   }
   todo.push({ id, subjects });
@@ -73,14 +75,14 @@ for (const { id, r } of rows) {
 
 for (const [w, s] of [...byWeek.entries()].sort()) {
   const combos = [...s.combo.entries()].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k}×${n}`).join("　");
-  console.log(`\n▸ ${w}：作業列 ${s.all}｜週結寫回略過 ${s.settle}｜已有作業科目 ${s.done}｜要回填 ${s.todo}（需人工 ${s.manual}）`);
+  console.log(`\n▸ ${w}：作業列 ${s.all}｜週結寫回略過 ${s.settle}｜已有作業科目 ${s.done}｜無依據留空 ${s.blank}｜只有聯絡簿 ${s.none}｜要回填 ${s.todo}（需人工 ${s.manual}）`);
   if (combos) console.log(`   ${combos}`);
 }
 if (unknownItems.size) {
   console.log(`\n判不出科目的作業名（作業清點）：`);
   for (const [it, n] of [...unknownItems.entries()].sort((a, b) => b[1] - a[1])) console.log(`   ${it}　×${n}`);
 }
-if (manualOther.length) console.log(`\n非作業清點、也沒填科目的作業列（需人工）：\n   ${manualOther.join("\n   ")}`);
+if (manualOther.length) console.log(`\n非作業清點、沒備註也沒填科目的作業列（留空，報告端不歸科）：\n   ${manualOther.join("\n   ")}`);
 
 const total = todo.length, manual = todo.filter((t) => t.subjects.includes(HW_MANUAL)).length;
 console.log(`\n合計要回填 ${total} 列（其中需人工 ${manual} 列）`);
