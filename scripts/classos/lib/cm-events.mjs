@@ -92,23 +92,28 @@ export const subjectOf = (ev) => (!ev.subj ? "" : ["國語", "數學", "社會"]
  *   與事件描述（f24 逐字比對「作業完成」會撈不到，⑥ 全班不給）。
  * 判法：備註＝作業名＋（MM-DD 派），多份以「、」串接 → 每一份看開頭縮寫（RULE_聯絡簿作業排程.md）。
  *   任何一份判不出就加「需人工」（U53：不猜）；「統整園地」是數學習作的單元名。
+ *   「聯絡簿」天天都在作業清單裡但不屬任何科 → 不計科目；國數社以外的科（考自然U1）→ 其他（與科目欄同口徑）。
+ *   開頭可帶「考」（考自然U1）。f38 回填第 1–5 週實測（run 37025801239）判不出的只有這兩種與空備註。
  */
 export const HW_MANUAL = "需人工";
 const HW_PREFIX = [
-  ["國語", /^(國習|國練|國作|國甲|國乙|國卷|甲本|乙本|預習國|國語)/],
-  ["數學", /^(數習|數練|數卷|數學|統整園地)/],
-  ["社會", /^(社習|社練|社卷|社會)/],
+  ["國語", /^考?(國習|國練|國作|國甲|國乙|國卷|甲本|乙本|預習國|國語)/],
+  ["數學", /^考?(數習|數練|數卷|數學|統整園地)/],
+  ["社會", /^考?(社習|社練|社卷|社會)/],
+  ["其他", /^考?(自然|英語|英文)/],
+  ["", /^聯絡簿/],   // 不屬任何科：不計、也不算判不出
 ];
 const HW_ORDER = ["國語", "數學", "社會", "其他", HW_MANUAL];
 const hwOrder = (set) => HW_ORDER.filter((s) => set.has(s));
 
-/** 單份作業名 → 科目；判不出回 null。 */
+/** 單份作業名 → 科目；不屬任何科（聯絡簿）回 ""；判不出回 null。 */
 export const hwSubjectOfItem = (name) => (HW_PREFIX.find(([, re]) => re.test(String(name ?? "").trim())) ?? [null])[0];
 
 /** 作業清點的備註（可能多份）→ 科目陣列（固定順序、去重）；空備註或有一份判不出 → 含「需人工」。 */
 export function hwSubjectsOf(note) {
   const items = String(note ?? "").split("、").map((x) => x.trim()).filter(Boolean);
   const set = new Set(items.length ? items.map((x) => hwSubjectOfItem(x) ?? HW_MANUAL) : [HW_MANUAL]);
+  set.delete("");   // 只有聯絡簿＝不屬任何科 → 空陣列
   return hwOrder(set);
 }
 
