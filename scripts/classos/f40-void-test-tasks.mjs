@@ -14,7 +14,7 @@ import { queryAll, api, isExecute, DS } from "./lib/notion.mjs";
 const EXECUTE = isExecute();
 const SHORT = ["631bc87a", "745c1195", "48b25cf8", "75dc97d5", "98a38b82"];
 const PREFIX = "【待刪】";
-const sid = (id) => id.replace(/-/g, "").slice(0, 8);
+const sid = (id) => id.replace(/-/g, "").slice(-8);   // 與 f35 執行紀錄的任務短碼同一取法（末 8 碼）
 const title = (p) => (p.properties?.任務原文?.title ?? []).map((t) => t.plain_text).join("");
 const status = (p) => p.properties?.狀態?.select?.name ?? "";
 
