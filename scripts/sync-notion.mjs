@@ -777,8 +777,23 @@ async function guardProposalLeak() {
 
 const SEL_ABILITIES = ["自我覺察", "自我管理", "社會覺察", "人際技巧", "負責任決策"];
 
+// 學習報告「本週課程重點」（全班共同，2026-10-02 老師裁定）：正本在 📰 班級週報 每週一列的「課程重點-國語／數學／社會」，
+// 不論週報發布與否都讀（課程內容本身無個資；只會出現在已勾發布的學習報告裡）。老師改週報那一格＝全班報告一起改。
+// 週報的週次是國字（四上第五週），報告期間是數字（四上第5週）→ 用「學期前綴＋週數」對齊。
+const weekKey = s => { const m = String(s || "").match(/(\S{2})第/); return m ? `${m[1]}|${periodWeek(s)}` : null; };
+async function courseFocusByWeek() {
+  const out = {};
+  for (const r of (await queryDataSource(DS.weekly)).map(props)) {
+    const k = weekKey(r["週次"]);
+    const f = Object.fromEntries(["國語", "數學", "社會"].map(s => [s, String(r[`課程重點-${s}`] || "").trim()]).filter(([, v]) => v));
+    if (k && Object.keys(f).length) out[k] = f;
+  }
+  return out;
+}
+
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
+  const focusByWeek = await courseFocusByWeek();
   const finance = await bankFinanceBySeat();
   const works = await portfolioBySeat();
   const proposals = await proposalsBySeat();
@@ -842,6 +857,7 @@ async function syncReports() {
         radar: Object.fromEntries(SUBJECTS.map(s => [s, Number(r[`${s}分數`]) || 0])),
         grades: { "內容評量": r["內容評量"] ?? r["考試成績"], "作業成績": r["作業成績"], "上課參與": r["上課參與"], "生活常規": r["生活常規"] },
         subjects: SUBJECTS.map(s => ({ name: s, state: r[`${s}狀態`], advice: r[`${s}建議`] })),
+        courseFocus: (r["報告類型"] || "每週") === "每週" ? (focusByWeek[weekKey(r["期間"])] || null) : null,
         examSummary: r["考試成績摘要"],
         highlights: r["學生亮點"],
         shortGoal: r["短期目標"],

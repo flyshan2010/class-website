@@ -439,6 +439,22 @@
 
         ${Object.values(p.grades).some(v => v) ? gradeGuide() : ""}
 
+        ${(!isTerm && p.courseFocus) ? `
+        <div class="report-box report-focus" style="--bc:#10AC84">
+          <span class="report-badge" style="--bc:#10AC84">📚 本週課程重點（全班共同）</span>
+          <div class="report-subjects report-focus-grid">
+            ${["國語", "數學", "社會"].filter(s => p.courseFocus[s]).map(s => {
+              // 「本週學〈…〉：重點…」→ 第一個冒號前粗體當標題（2026-10-02 範本定版）
+              const t = String(p.courseFocus[s]), i = t.indexOf("：");
+              return `
+            <div class="report-subject" style="--sc:${SUBJ_COLORS[s]}">
+              <div class="head">${SUBJ_EMOJI[s]} ${s}</div>
+              ${i > 0 ? `<p><strong>${App.esc(t.slice(0, i))}</strong></p><p>${App.esc(t.slice(i + 1))}</p>` : `<p>${App.esc(t)}</p>`}
+            </div>`;
+            }).join("")}
+          </div>
+        </div>` : ""}
+
         <span class="report-badge" style="--bc:#FF9F43">${isTerm ? "各科學期總評與建議" : "各科詳細狀況與建議"}</span>
         <div class="report-subjects">
           ${(() => {
