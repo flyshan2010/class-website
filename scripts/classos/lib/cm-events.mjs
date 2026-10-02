@@ -85,6 +85,43 @@ const PN = { good: "＋", bad: "－", neutral: "中性" };
  */
 export const subjectOf = (ev) => (!ev.subj ? "" : ["國語", "數學", "社會"].includes(ev.subj) ? ev.subj : "其他");
 
+/**
+ * 作業科目（2026-10-02 老師裁定方案 A）：作業類紀錄另寫多選欄「作業科目」，**不拆列、不改 id、不動事件描述與金幣**。
+ * 為什麼不拆列：班規④「同一人同一天多份未交合併一列、只扣一次 −5」是定案規則，f29 依「每列 金幣影響」入帳、
+ *   學習報告作業分數負向每列扣一次——拆成一科一列會變成一天最多 −15；tally 加 subj 也會改掉 sig／id（重送不再略過）
+ *   與事件描述（f24 逐字比對「作業完成」會撈不到，⑥ 全班不給）。
+ * 判法：備註＝作業名＋（MM-DD 派），多份以「、」串接 → 每一份看開頭縮寫（RULE_聯絡簿作業排程.md）。
+ *   任何一份判不出就加「需人工」（U53：不猜）；「統整園地」是數學習作的單元名。
+ */
+export const HW_MANUAL = "需人工";
+const HW_PREFIX = [
+  ["國語", /^(國習|國練|國作|國甲|國乙|國卷|甲本|乙本|預習國|國語)/],
+  ["數學", /^(數習|數練|數卷|數學|統整園地)/],
+  ["社會", /^(社習|社練|社卷|社會)/],
+];
+const HW_ORDER = ["國語", "數學", "社會", "其他", HW_MANUAL];
+const hwOrder = (set) => HW_ORDER.filter((s) => set.has(s));
+
+/** 單份作業名 → 科目；判不出回 null。 */
+export const hwSubjectOfItem = (name) => (HW_PREFIX.find(([, re]) => re.test(String(name ?? "").trim())) ?? [null])[0];
+
+/** 作業清點的備註（可能多份）→ 科目陣列（固定順序、去重）；空備註或有一份判不出 → 含「需人工」。 */
+export function hwSubjectsOf(note) {
+  const items = String(note ?? "").split("、").map((x) => x.trim()).filter(Boolean);
+  const set = new Set(items.length ? items.map((x) => hwSubjectOfItem(x) ?? HW_MANUAL) : [HW_MANUAL]);
+  return hwOrder(set);
+}
+
+/**
+ * 一筆事件／紀錄的作業科目。只有類別＝作業才有值：
+ *   作業清點（tool＝homework）→ 從備註判；其他工具或老師一句話的作業列 → 用科目欄；都沒有 → 需人工。
+ */
+export function hwSubjectsFor({ category, tool, note, subject }) {
+  if (category !== "作業") return [];
+  if (tool === "homework") return hwSubjectsOf(note);
+  return subject ? [subject] : [HW_MANUAL];
+}
+
 /** coin 字串（可能是 U+2212 減號）→ 數字；轉不成回 null（絕不回 0）。 */
 export function coinNumber(coin) {
   const s = String(coin ?? "").trim().replace(/−/g, "-").replace(/^\+/, "");
@@ -172,6 +209,7 @@ export function planEvent(ev, ctx) {
       週次: weekLabel(ev.date, ctx.weeks),
       類別: cat,
       科目: subjectOf(ev),
+      作業科目: hwSubjectsFor({ category: cat, tool: ev.tool, note: ev.note, subject: subjectOf(ev) }),
     },
   };
 }
@@ -230,6 +268,7 @@ export function toNotionProps(row) {
     週次: { rich_text: rt(row.週次) },
     類別: { select: { name: row.類別 } },
     科目: { select: row.科目 ? { name: row.科目 } : null },
+    作業科目: { multi_select: (row.作業科目 ?? []).map((name) => ({ name })) },
   };
 }
 
@@ -251,13 +290,16 @@ export function fromNotionPage(page) {
     週次: text(p.週次),
     類別: p.類別?.select?.name ?? "",
     科目: p.科目?.select?.name ?? "",
+    作業科目: (p.作業科目?.multi_select ?? []).map((o) => o.name),
   };
 }
 
-export const COMPARE_FIELDS = ["事件描述", "學生", "次數", "正負向", "備註", "程度", "金幣影響", "日期", "學年", "週次", "類別", "科目"];
+export const COMPARE_FIELDS = ["事件描述", "學生", "次數", "正負向", "備註", "程度", "金幣影響", "日期", "學年", "週次", "類別", "科目", "作業科目"];
 
 /** 逐欄比對應寫值與實際值，回傳不同的欄位名。 */
 export function diffRow(expected, actual) {
-  const norm = (k, v) => (k === "學生" ? String(v ?? "").replace(/-/g, "") : v ?? (k === "程度" ? null : ""));
+  const norm = (k, v) => (k === "學生" ? String(v ?? "").replace(/-/g, "")
+    : Array.isArray(v) ? [...v].sort().join("、")   // 多選欄（作業科目）：順序不算差異
+    : v ?? (k === "程度" ? null : ""));
   return COMPARE_FIELDS.filter((k) => norm(k, expected[k]) !== norm(k, actual[k]));
 }
