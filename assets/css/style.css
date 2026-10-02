@@ -828,12 +828,17 @@ main {
   margin: 0 -12px 8px; padding: 6px 12px; font-weight: bold; text-align: center;
   background: color-mix(in srgb, var(--sc) 30%, #fff);
 }
+/* 本週課程重點（全班共同，2026-10-02）：概覽下方、各科上方；三科並排 */
+.report-focus { margin-bottom: 14px; }
+.report-focus-grid { grid-template-columns: repeat(3, 1fr); margin-bottom: 0; }
+.report-focus-grid .report-subject p { margin: 4px 0; }
 .report-bottom { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
 .report-box { border: 2px solid color-mix(in srgb, var(--bc) 40%, #fff); border-radius: 14px; padding: 10px 14px; font-size: 0.8333rem; }
 .report-footnote { text-align: center; color: var(--ink-soft); font-size: 0.7222rem; margin-top: 12px; }
 @media (max-width: 760px) {
   .report-top { grid-template-columns: 1fr; }
   .report-subjects { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .report-focus-grid { grid-template-columns: 1fr; }
 }
 
 /* 列印：全部內容壓在一張 A4 橫式（landscape）內，不溢出到第二頁。
@@ -873,6 +878,12 @@ main {
   .grade-chip .k { font-size: 10px; }
   .grade-chip .v { font-size: 14px; }
   .report-subjects { grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 3px; }
+  .report-focus-grid { grid-template-columns: repeat(3, 1fr); margin-bottom: 0; }
+  .report-focus { margin-bottom: 3px; }
+  /* 列印省高度：標題與內文接成一段，字級比各科卡再小一級 */
+  .report-focus-grid .report-subject { font-size: 8.5px; line-height: 1.25; }
+  .report-focus-grid .report-subject p { display: inline; margin: 0; }
+  .report-focus-grid .report-subject p + p::before { content: "："; }
   .report-subject { font-size: 9.5px; line-height: 1.28; padding: 0 5px 3px; }
   .report-subject p { margin: 1px 0; }
   .report-subject .head { margin: 0 -5px 2px; padding: 2px 5px; font-size: 10px; }
