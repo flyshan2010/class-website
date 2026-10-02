@@ -1935,3 +1935,23 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 .proposal-report { border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 6px; }
 .proposal-report:first-of-type { border-top: none; }
 .proposal-report p { margin: 4px 0; }
+
+/* 列印：理財與 XP 面板壓縮（2026-10-03）。
+   這段必須放在檔尾——上方 @media print 對 .report-finance／.fin-xp 的設定，
+   會被後面才宣告的同權重螢幕樣式蓋掉，左欄因此撐到約 15cm、整份報告被切成兩頁。 */
+@media print {
+  .report-finance { margin-top: 2px; gap: 0; }
+  .report-finance .fin-bal, .report-finance .fin-rate { font-size: 9.5px; }
+  .report-finance .fin-row { font-size: 8.5px; gap: 6px; }
+  .report-finance .fin-note, .fin-xp .xp-hint { display: none; }
+  .fin-xp { margin-top: 2px; padding: 2px 4px; border-width: 1px; border-radius: 8px; }
+  .fin-xp .xp-head { gap: 4px; }
+  .fin-xp .xp-title, .fin-xp .xp-num, .fin-xp .xp-num strong { font-size: 9.5px; }
+  .fin-xp .xp-bar { height: 5px; margin: 2px 0; }
+  .fin-xp .xp-split { gap: 4px; font-size: 8px; flex-wrap: wrap; }
+  .fin-xp .xp-split small { font-size: 7.5px; margin-left: 2px; }
+  .fin-xp .xp-split .dot { width: 6px; height: 6px; margin-right: 2px; }
+  .fin-xp .xp-next { font-size: 8px; margin-top: 1px; }
+  .grade-guide-hint { font-size: 9px; margin: 1px 0; }
+  .grade-guide { display: none; }
+}
