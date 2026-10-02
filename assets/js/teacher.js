@@ -256,6 +256,19 @@
       if (tool === "homework" && e.src === "rule" && e.rule_n === 4 && HW_ACT[e.act_i]) return HW_ACT[e.act_i];
       return e.act;
     };
+    // 作業科目（2026-10-03 老師要求「看得到科目才能確認輸入」）：直接載入 R18 入庫用的**同一支**判斷
+    // （scripts/classos/lib/cm-events.mjs），不另抄一份——顯示與紀錄庫寫入不可能判得不一樣。載不到就只是不顯示科目。
+    let HW = null;
+    const hwReady = import("../../scripts/classos/lib/cm-events.mjs").then(m => { HW = m; }).catch(() => {});
+    const hwLabel = e => {
+      if (!HW) return "";
+      const subs = HW.hwSubjectsOf(e.note), ok = subs.filter(s => s !== HW.HW_MANUAL);
+      if (subs.includes(HW.HW_MANUAL)) {
+        const unknown = String(e.note || "").split("、").map(x => x.trim()).filter(x => x && HW.hwSubjectOfItem(x) === null);
+        return (ok.length ? ok.join("、") + "　" : "") + "⚠ 科目判不出：" + (unknown.join("、") || "（沒有作業名）");
+      }
+      return ok.length ? ok.join("、") : "不分科";
+    };
     const cmView = pack => {
       const evs = pack.events || [];
       const by = {};
@@ -268,6 +281,7 @@
                     (acts.length > 3 ? ` 等 ${acts.length} 種` : "");
       const rows = evs.map(e => {
         const bits = [`座號 ${e.seat}`, cmAct(e, pack.tool)];
+        if (pack.tool === "homework") { const h = hwLabel({ note: e.note ?? "" }); if (h) bits.push(h); }
         if (e.period) bits.push(e.period);
         if (e.count > 1) bits.push(`${e.count} 次`);
         if (e.coin !== undefined && e.coin !== "") bits.push(`${e.coin} 幣`);
@@ -294,6 +308,7 @@
     };
     const loadTasks = async () => {
       const box = document.getElementById("task-list");
+      await hwReady;
       const res = await api("list_tasks", { limit: 20 }).catch(() => ({ ok: false }));
       if (!res.ok) { box.innerHTML = `<p class="empty-hint">載入失敗：${App.esc(res.error || "連線問題")}</p>`; return; }
       if (!res.tasks.length) { box.innerHTML = '<p class="empty-hint">目前沒有任務</p>'; return; }
