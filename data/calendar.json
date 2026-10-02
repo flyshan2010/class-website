@@ -294,16 +294,7 @@
     "startTime": "14:10",
     "endTime": "15:00",
     "type": "活動",
-    "notes": "宣導影片\nhttps://www.youtube.com/watch?v=aE_xglqzdK4&list=PLuaIIVECS6tyl0hAeAOlNRogvmNLcYceO&index=2"
-  },
-  {
-    "title": "流感施打",
-    "date": "2026-10-13",
-    "endDate": "",
-    "startTime": "",
-    "endTime": "",
-    "type": "活動",
-    "notes": ""
+    "notes": "宣導影片\nhttps://www.youtube.com/watch?v=aE_xglqzdK4&list=PLuaIIVECS6tyl0hAeAOlNRogvmNLcYceO&index=2\n\n 健檢當天\n👕穿著方便檢查的服裝。\n👟 當天若穿制服班服，可穿著運動褲，方便健康檢查。"
   },
   {
     "title": "實體升旗",
@@ -313,6 +304,15 @@
     "endTime": "08:35",
     "type": "活動",
     "notes": ""
+  },
+  {
+    "title": "流感施打",
+    "date": "2026-10-13",
+    "endDate": "",
+    "startTime": "08:30",
+    "endTime": "11:30",
+    "type": "活動",
+    "notes": "📅 日期：10 月 13 日（二）\n🕣 時間：上午 8：30 開始\n🔢 施打順序：高年級 ➡️ 低年級 ➡️ 中年級"
   },
   {
     "title": "線上升旗",
@@ -828,18 +828,18 @@
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
