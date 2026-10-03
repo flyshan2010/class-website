@@ -11,6 +11,8 @@
  *   「未訂正」永遠不算請假造成。
  * 家長句（老師 2026-10-03）：缺交／未訂正到報告當下仍沒補完（補交追蹤點「完成」才會留「作業補交完成」）→ 家長「作業未補完」；
  *   補完了就只留科目提醒句。作業名讀不出（一句話記錄沒有作業清單）＝判不出是否補完 → 當作未補完（fail-closed）。
+ * 其他科（自然／英語）請假未補完：老師用一句話任務記「請假期間<科>作業未補完」（類別作業、中性、0 幣）→ 家長「請假未補完:<科>」；
+ *   程式不自己從清點推其他科（2026-10-03）。寫的是國數社就併進該科請假句。
  * 永遠只讀。WEEK_LABEL＝週次標籤（逐字）。⚠️ PUBLIC repo：只印學生頁面 id 片段與判定代碼，不印姓名、座號、內容。
  */
 import { queryAll, DS, propText } from "./lib/notion.mjs";
@@ -69,7 +71,13 @@ for (const st of roster) {
     if (!subs.length) continue;   // 作業科目空白／其他科：不歸科，只看上一行的家長句
     for (const k of subs) if (!o[k].rem.includes(kind)) o[k].rem.push(kind);
   }
-  // ③ 請假未補完
+  // ③ 請假未補完（老師一句話記的，其他科只靠這條）
+  for (const p of wk) if (rel(p).includes(s) && propText(p, "類別") === "作業") {
+    const m = propText(p, "事件描述").match(/請假期間(.+?)作業未補完/); if (!m) continue;
+    for (const k of m[1].split(/[、，,和及]/).map((x) => x.trim().replace(/^英文$/, "英語")).filter(Boolean)) {
+      if (SUBJ.includes(k)) o[k].leave = true; else if (!o.家長.includes(`請假未補完:${k}`)) o.家長.push(`請假未補完:${k}`);
+    }
+  }
   for (const it of affected.values()) if (!mineKeys.has(it.key)) { const k = hwSubjectOfItem(it.name); if (SUBJ.includes(k)) o[k].leave = true; }   // 其他科已在 items() 排除；判不出科（作業科目標需人工）不猜
   out[sid(s)] = o;
 }
