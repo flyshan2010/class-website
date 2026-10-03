@@ -7,7 +7,7 @@
  * 請假規則：紀錄庫備註含「請假」的打掃／午餐缺席列＝請假日；
  *   打掃在上午（老師 2026-10-03）：只有午餐缺席＝下午請假→算當天派的作業；只有打掃缺席＝上午請假→算當天要收的；
  *   兩者都有＝全天→兩種都算。聯絡簿一律不算。
- *   受影響作業之後的作業清點有出現＝補完（當作沒有負向）；沒出現＝請假未補完（請假句，不用「負責」句）。
+ *   受影響作業之後的作業清點（含「作業補交完成」）有出現＝補完（當作沒有負向）；沒出現＝請假未補完（請假句，不用「負責」句）。
  *   「未訂正」永遠不算請假造成。
  * 永遠只讀。WEEK_LABEL＝週次標籤（逐字）。⚠️ PUBLIC repo：只印學生頁面 id 片段與判定代碼，不印姓名、座號、內容。
  */
@@ -50,7 +50,7 @@ for (const st of roster) {
     if (e.other && day(p) === d) affected.set(it.key, it);          // 上午不在（打掃缺席，打掃在上午）：當天要收的
   }
   // 有交的證據：作業完成清點，或被記「未訂正」（有交才會被要求訂正）
-  const handed = [...wk, ...next].filter((p) => rel(p).includes(s) && propText(p, "類別") === "作業" && (propText(p, "事件描述") === "作業完成" || propText(p, "事件描述").includes("訂正")));
+  const handed = [...wk, ...next].filter((p) => rel(p).includes(s) && propText(p, "類別") === "作業" && (["作業完成", "作業補交完成"].includes(propText(p, "事件描述")) || propText(p, "事件描述").includes("訂正")));
   const mineKeys = new Set(handed.flatMap((p) => items(propText(p, "備註")).map((i) => i.key)));
   // ② 作業負向
   for (const p of wk) if (rel(p).includes(s) && propText(p, "類別") === "作業" && propText(p, "正負向") === "－") {
