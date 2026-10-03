@@ -55,7 +55,8 @@ for (const { s, d } of [...L.values()].sort((a, b) => a.d.localeCompare(b.d))) {
     if (!ok) miss++;
     console.log(`   ${ok ? "✅ 有交/補完" : "⬜ 清點查無"}　${it.name}（${it.sent} 派）${sentThatDay.has(it.key) ? "〔請假日派〕" : ""}${dueThatDay.has(it.key) ? "〔請假日收〕" : ""}`);
   }
-  for (const p of myNeg) console.log(`   ⚠️ 負向紀錄 ${day(p)}「${propText(p, "事件描述")}」作業科目=${propText(p, "作業科目") || "空"}`);
+  for (const p of myNeg) console.log(`   ⚠️ 負向紀錄 ${day(p)}「${propText(p, "事件描述")}」作業科目=${propText(p, "作業科目") || "空"}　備註=${propText(p, "備註")}　建立=${p.created_time}　id尾=${propText(p, "事件id").replace(/-s\d+-/, "-sX-")}`);
+  for (const p of leave.filter((q) => rel(q).includes(s) && day(q) === d)) console.log(`   📋 請假依據：${propText(p, "事件描述")}（備註：${propText(p, "備註")}）`);
   const branch = !myNeg.length && !miss ? "一般情況（無提醒）"
     : miss ? "請假未補完 →「本週請假期間的作業，記得找時間補完喔！」"
     : "請假但已補完 → 當作沒有負向（無提醒）";
