@@ -26,7 +26,7 @@ const day = (p) => p.properties?.日期?.date?.start ?? "";
 const mmdd = (iso) => iso.slice(5, 7) + "-" + iso.slice(8, 10);
 const items = (note) => String(note || "").split("、").map((s) => s.trim()).map((s) => {
   const m = s.match(/^(.*?)（(\d\d-\d\d) 派）$/); return m ? { key: `${m[1]}|${m[2]}`, name: m[1], sent: m[2] } : null;
-}).filter(Boolean).filter((i) => hwSubjectOfItem(i.name) !== "");   // 聯絡簿不算
+}).filter(Boolean).filter((i) => !["", "其他"].includes(hwSubjectOfItem(i.name)));   // 聯絡簿不算；自然／英語等其他科老師用一句話任務處理（2026-10-03），報告不管
 
 const all = await queryAll(DS.log, { filter: { property: "週次", rich_text: { contains: `第${n}週` } } });
 const next = await queryAll(DS.log, { filter: { property: "週次", rich_text: { contains: `第${n + 1}週` } } });
@@ -60,6 +60,8 @@ for (const st of roster) {
   for (const p of wk) if (rel(p).includes(s) && propText(p, "類別") === "作業" && propText(p, "正負向") === "－") {
     const t = propText(p, "事件描述"); const kind = t.includes("沒交") || t.includes("缺交") ? "缺交" : t.includes("訂正") ? "未訂正" : null;
     if (!kind) continue;
+    const hs = (p.properties?.作業科目?.multi_select ?? []).map((x) => x.name);
+    if (hs.length && hs.every((x) => x === "其他")) continue;   // 只有其他科：老師用一句話任務處理
     const its = items(propText(p, "備註"));
     if (kind === "缺交" && its.length && its.every((i) => affected.has(i.key))) continue;   // 請假造成：交給 ③ 判補完
     if ((!its.length || its.some((i) => !madeUp.has(i.key))) && !o.家長.includes("作業未補完")) o.家長.push("作業未補完");
@@ -68,7 +70,7 @@ for (const st of roster) {
     for (const k of subs) if (!o[k].rem.includes(kind)) o[k].rem.push(kind);
   }
   // ③ 請假未補完
-  for (const it of affected.values()) if (!mineKeys.has(it.key)) { const k = hwSubjectOfItem(it.name); if (SUBJ.includes(k)) o[k].leave = true; else { if (!o.家長.includes("請假未補完")) o.家長.push("請假未補完"); } }
+  for (const it of affected.values()) if (!mineKeys.has(it.key)) { const k = hwSubjectOfItem(it.name); if (SUBJ.includes(k)) o[k].leave = true; }   // 其他科已在 items() 排除；判不出科（作業科目標需人工）不猜
   out[sid(s)] = o;
 }
 const brief = Object.entries(out).map(([k, o]) => `${k} ` + SUBJ.map((s) => `${s[0]}${o[s].n}${o[s].rem.map((r) => r[0]).join("")}${o[s].leave ? "假" : ""}`).join(" ") + (o.家長.length ? ` 家長:${o.家長.join("/")}` : "")).join("\n");
