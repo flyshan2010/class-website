@@ -150,6 +150,8 @@ const cases = [
   ["⑦ → 生活指導", categoryOf({ src: "rule", rule_n: 7, kind: "bad" }), "生活指導"],
   ["⑩ → 生活指導", categoryOf({ src: "rule", rule_n: 10, kind: "bad" }), "生活指導"],
   ["班規 ⑪ → 判不出", categoryOf({ src: "rule", rule_n: 11, kind: "bad" }), null],
+  ["作業補交完成 tally → 作業（class-manager 補交追蹤，2026-10-03）", categoryOf({ src: "tally", act: "作業補交完成", kind: "good" }), "作業"],
+  ["只寫「補交完成」→ 判不出（名稱必含「作業」）", categoryOf({ src: "tally", act: "補交完成", kind: "good" }), null],
 
   // ── 類別：tally ──
   ["打掃未達標 → 生活技能", categoryOf({ src: "tally", act: "打掃未達標" }), "生活技能"],
@@ -194,6 +196,7 @@ const cases = [
   ["作業科目：非作業類 → 空", hwSubjectsFor({ category: "生活技能", tool: "homework", note: "數習" }).length, 0],
   ["作業科目：其他工具的作業列 → 用科目", hwSubjectsFor({ category: "作業", tool: "board", note: "", subject: "數學" }).join(), "數學"],
   ["作業科目：其他工具無科目 → 需人工", hwSubjectsFor({ category: "作業", tool: "board", note: "" }).join(), "需人工"],
+  ["作業科目：補交完成依備註判科", hwSubjectsFor({ category: "作業", tool: "homework", note: "國練 L5 P.21-25（10-01 派）" }).join(), "國語"],
   ["作業完成 tally：作業科目三科", row(T({ tool: "homework", id: "hw1", kind: "good", act: "作業完成", count: 5, note: "國習 L5 P.30-31（09-29 派）、數習 P.40-41（09-30 派）、社習 2-2 P.16（09-29 派）" })).作業科目.join(), "國語,數學,社會"],
   ["作業完成 tally：事件描述仍逐字＝作業完成（f24 ⑥ 靠它撈）", row(T({ tool: "homework", id: "hw1", kind: "good", act: "作業完成", note: "數習 P.40-41" })).事件描述, "作業完成"],
   ["作業完成 tally：科目欄仍空（不進科目分數）", row(T({ tool: "homework", id: "hw1", kind: "good", act: "作業完成", note: "數習 P.40-41" })).科目, ""],
