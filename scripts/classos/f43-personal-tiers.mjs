@@ -48,7 +48,9 @@ for (const st of roster) {
     if (it.sent === mmdd(d)) affected.set(it.key, it);
     if (e.other && day(p) === d) affected.set(it.key, it);   // 全天假：當天要收的也算
   }
-  const mineKeys = new Set(done.filter((p) => rel(p).includes(s)).flatMap((p) => items(propText(p, "備註")).map((i) => i.key)));
+  // 有交的證據：作業完成清點，或被記「未訂正」（有交才會被要求訂正）
+  const handed = [...wk, ...next].filter((p) => rel(p).includes(s) && propText(p, "類別") === "作業" && (propText(p, "事件描述") === "作業完成" || propText(p, "事件描述").includes("訂正")));
+  const mineKeys = new Set(handed.flatMap((p) => items(propText(p, "備註")).map((i) => i.key)));
   // ② 作業負向
   for (const p of wk) if (rel(p).includes(s) && propText(p, "類別") === "作業" && propText(p, "正負向") === "－") {
     const t = propText(p, "事件描述"); const kind = t.includes("沒交") || t.includes("缺交") ? "缺交" : t.includes("訂正") ? "未訂正" : null;
