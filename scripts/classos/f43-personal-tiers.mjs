@@ -9,6 +9,8 @@
  *   兩者都有＝全天→兩種都算。聯絡簿一律不算。
  *   受影響作業之後的作業清點（含「作業補交完成」）有出現＝補完（當作沒有負向）；沒出現＝請假未補完（請假句，不用「負責」句）。
  *   「未訂正」永遠不算請假造成。
+ * 家長句（老師 2026-10-03）：缺交／未訂正到報告當下仍沒補完（補交追蹤點「完成」才會留「作業補交完成」）→ 家長「作業未補完」；
+ *   補完了就只留科目提醒句。作業名讀不出（一句話記錄沒有作業清單）＝判不出是否補完 → 當作未補完（fail-closed）。
  * 永遠只讀。WEEK_LABEL＝週次標籤（逐字）。⚠️ PUBLIC repo：只印學生頁面 id 片段與判定代碼，不印姓名、座號、內容。
  */
 import { queryAll, DS, propText } from "./lib/notion.mjs";
@@ -52,18 +54,21 @@ for (const st of roster) {
   // 有交的證據：作業完成清點，或被記「未訂正」（有交才會被要求訂正）
   const handed = [...wk, ...next].filter((p) => rel(p).includes(s) && propText(p, "類別") === "作業" && (["作業完成", "作業補交完成"].includes(propText(p, "事件描述")) || propText(p, "事件描述").includes("訂正")));
   const mineKeys = new Set(handed.flatMap((p) => items(propText(p, "備註")).map((i) => i.key)));
+  const madeUp = new Set([...wk, ...next].filter((p) => rel(p).includes(s) && propText(p, "事件描述") === "作業補交完成")
+    .flatMap((p) => items(propText(p, "備註")).map((i) => i.key)));
   // ② 作業負向
   for (const p of wk) if (rel(p).includes(s) && propText(p, "類別") === "作業" && propText(p, "正負向") === "－") {
     const t = propText(p, "事件描述"); const kind = t.includes("沒交") || t.includes("缺交") ? "缺交" : t.includes("訂正") ? "未訂正" : null;
     if (!kind) continue;
     const its = items(propText(p, "備註"));
     if (kind === "缺交" && its.length && its.every((i) => affected.has(i.key))) continue;   // 請假造成：交給 ③ 判補完
+    if ((!its.length || its.some((i) => !madeUp.has(i.key))) && !o.家長.includes("作業未補完")) o.家長.push("作業未補完");
     const subs = (p.properties?.作業科目?.multi_select ?? []).map((x) => x.name).filter((x) => SUBJ.includes(x));
-    if (!subs.length) { if (!o.家長.includes(kind)) o.家長.push(kind); continue; }
+    if (!subs.length) continue;   // 作業科目空白／其他科：不歸科，只看上一行的家長句
     for (const k of subs) if (!o[k].rem.includes(kind)) o[k].rem.push(kind);
   }
   // ③ 請假未補完
-  for (const it of affected.values()) if (!mineKeys.has(it.key)) { const k = hwSubjectOfItem(it.name); if (SUBJ.includes(k)) o[k].leave = true; else o.家長.push("請假未補完"); }
+  for (const it of affected.values()) if (!mineKeys.has(it.key)) { const k = hwSubjectOfItem(it.name); if (SUBJ.includes(k)) o[k].leave = true; else { if (!o.家長.includes("請假未補完")) o.家長.push("請假未補完"); } }
   out[sid(s)] = o;
 }
 const brief = Object.entries(out).map(([k, o]) => `${k} ` + SUBJ.map((s) => `${s[0]}${o[s].n}${o[s].rem.map((r) => r[0]).join("")}${o[s].leave ? "假" : ""}`).join(" ") + (o.家長.length ? ` 家長:${o.家長.join("/")}` : "")).join("\n");
