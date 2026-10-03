@@ -4,8 +4,9 @@
  * 輸出每位學生、每科：①級距＝該科當週＋向紀錄「次數」加總（1／2／3+，0＝鼓勵＋問重點）
  *   ②作業提醒種類（缺交／未訂正，依作業科目歸科；無科目→歸「家長協助建議」）③請假未補完。
  * 句子本身（各週重點題目）由 class-report 依週報課程重點寫；本程式只決定「每格用哪一種」，結果由輸入決定（U72）。
- * 請假規則：紀錄庫備註含「請假」的打掃／午餐缺席列＝請假日；兩者都有＝全天、只有午餐缺席＝半天（早上有到校）。
- *   受影響作業＝請假日派的作業（全天、半天都算）＋請假日要收的作業（只有全天）；聯絡簿一律不算。
+ * 請假規則：紀錄庫備註含「請假」的打掃／午餐缺席列＝請假日；
+ *   打掃在上午（老師 2026-10-03）：只有午餐缺席＝下午請假→算當天派的作業；只有打掃缺席＝上午請假→算當天要收的；
+ *   兩者都有＝全天→兩種都算。聯絡簿一律不算。
  *   受影響作業之後的作業清點有出現＝補完（當作沒有負向）；沒出現＝請假未補完（請假句，不用「負責」句）。
  *   「未訂正」永遠不算請假造成。
  * 永遠只讀。WEEK_LABEL＝週次標籤（逐字）。⚠️ PUBLIC repo：只印學生頁面 id 片段與判定代碼，不印姓名、座號、內容。
@@ -45,8 +46,8 @@ for (const st of roster) {
   }
   const affected = new Map();
   for (const [d, e] of lv) for (const p of done) for (const it of items(propText(p, "備註"))) {
-    if (it.sent === mmdd(d)) affected.set(it.key, it);
-    if (e.other && day(p) === d) affected.set(it.key, it);   // 全天假：當天要收的也算
+    if (e.lunch && it.sent === mmdd(d)) affected.set(it.key, it);   // 下午不在（午餐缺席）：當天派的
+    if (e.other && day(p) === d) affected.set(it.key, it);          // 上午不在（打掃缺席，打掃在上午）：當天要收的
   }
   // 有交的證據：作業完成清點，或被記「未訂正」（有交才會被要求訂正）
   const handed = [...wk, ...next].filter((p) => rel(p).includes(s) && propText(p, "類別") === "作業" && (propText(p, "事件描述") === "作業完成" || propText(p, "事件描述").includes("訂正")));
