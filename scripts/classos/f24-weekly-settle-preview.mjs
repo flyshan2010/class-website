@@ -366,23 +366,9 @@ const median = prices.length
 const avgBal = roster.length ? Math.floor(balAll / roster.length + 0.5) : 0;
 const ratio = median ? avgBal / median : 0;
 const spendRate = wkIn ? wkOut / wkIn : 0;
-/* 集資目標的「再開一個」參考條件（原為第一個目標的啟用條件）：
-   兌換過的學生 ≥ 80% 或 兌換總額 ≥ 發出總額 50%。
-   ⚠️ 2026-09-19 起這不再是「能不能開集資」的閘門——第一個目標（一節自由活動時間）
-   已由老師裁示提前開啟，本區塊降為「要不要再加一個目標」的參考指標。
-   條件是數字，就該由機器盯——不然「等使用量上來再開」會變成沒人記得的一句話。 */
-const GOAL_USER_RATE = 0.8, GOAL_SPEND_RATE = 0.5;
-const spenders = new Set();
-let spentAll = 0, issuedAll = 0;
-for (const b of ledger) {
-  const amt = num(b, "金額") ?? 0;
-  if (amt > 0) { issuedAll += amt; continue; }
-  if (sel(b, "類型") !== "消費") continue;   // 懲罰金不算「花掉」，那是扣款
-  spentAll += -amt;
-  for (const sid of relIds(b, "學生")) { const s2 = seatOf.get(sid); if (s2) spenders.add(s2); }
-}
-const userRate = roster.length ? spenders.size / roster.length : 0;
-const spendAllRate = issuedAll ? spentAll / issuedAll : 0;
+/* 2026-10-04 廢止：原「🎯 共同目標啟用條件」（兌換過的學生 ≥80% 或兌換總額 ≥ 發出總額 50%）。
+   老師 2026-10-04 確認第二個集資目標＝期末夢幻餐點（🏪 商店 ⑥ 層已建列，11/09 自動上架），
+   兩個目標都已排定，不再需要「要不要再開一個」的提醒；集資一律由商店 ⑥ 層驅動（SPEC_班級經濟機制 §2）。 */
 
 // ── 📈 W：全班每人平均每週實得金幣（SPEC_班級經濟機制 §3-1）───────────────
 /* 算法正本在 lib/price.mjs 的 evaluate()（f33 決定調不調也呼叫同一支），這裡只負責印「近 4 週中位數」。
@@ -407,12 +393,6 @@ if (ratio > INFL_RATIO_LIMIT || (wkIn > 0 && spendRate < INFL_SPEND_FLOOR)) {
 } else {
   inflLines.push(`　✅ 在合理範圍，不必調整。`);
 }
-inflLines.push(`🎯 共同目標啟用條件　兌換過的學生 ${spenders.size}/${roster.length}＝${(userRate * 100).toFixed(0)}%（門檻 80%）`
-  + `｜兌換總額 ${spentAll} ÷ 發出總額 ${issuedAll}＝${(spendAllRate * 100).toFixed(0)}%（門檻 50%）`
-  + (userRate >= GOAL_USER_RATE || spendAllRate >= GOAL_SPEND_RATE
-    ? `
-　🔔 **有一項達標了**——可以討論再開一個集資目標（🏪 商店加一列、層級選「⑥ 全班集資・共同達成」即可，不改程式）`
-    : `　→ 還沒到，先讓學生熟悉兌換系統（老師 2026-09-12 裁定）`));
 
 const lines = [
   `【${WEEK} 週結試算】試算於 ${today}，**尚未入帳**`,
