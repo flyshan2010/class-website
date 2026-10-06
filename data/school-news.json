@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-10-06T02:46:29.846Z",
+  "fetchedAt": "2026-10-06T08:57:55.282Z",
   "items": [
+    {
+      "date": "2026-10-06",
+      "title": "115學年度第2學期非學校型態實驗教育申請作業",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=929&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-10-06",
+      "title": "教育部國民及學前教育署規劃出版之「國民中學補強課程模組教學資源手冊〈國中國語文中小銜接課程模組〉」與「國小數學學習疑難與有效教學示例〈中年級篇〉」，教材已公布上網，鼓勵教師參考使用。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=928&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-10-06",
       "title": "115學年度上學期班親會建議事項回復",
@@ -44,21 +56,9 @@
       "dept": "學務處"
     },
     {
-      "date": "2026-10-02",
-      "title": "財團法人現代婦女教育基金會為協助受暴家庭遠離家暴傷害，近期舉辦「2026守護幸福分享愛」募款活動。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=911&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
       "date": "2026-09-23",
       "title": "115學年度上學期書法班錄取名單",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=818&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-09-06",
-      "title": "115學年度第一學期獎學金申請資訊",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=710&type=news&from_op=school_department_show",
       "dept": "教務處"
     }
   ]
