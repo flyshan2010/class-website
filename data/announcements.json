@@ -199,20 +199,6 @@
     "auto": "school"
   },
   {
-    "id": "s202609231f5omw9",
-    "title": "115學年度上學期書法班錄取名單",
-    "content": "發布單位：教務處",
-    "date": "2026-09-23",
-    "endDate": "",
-    "expiry": "2026-10-23",
-    "source": "學校",
-    "category": "公告",
-    "pinned": false,
-    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=818&type=news&from_op=school_department_show",
-    "images": [],
-    "auto": "school"
-  },
-  {
     "id": "nd7390959b040",
     "title": "🏪 班級商店調價預告：9/25（五）起生效",
     "content": "有幾樣特權券，老師當初的價格定得太便宜了——只要存一兩個星期就換得到，換到的時候就沒那麼特別了。所以這次要把它們調回應該有的價格。\n\n【9/25（五）起的新價格】\n・免打掃一次券　60 → 120 幣\n・自由選位一日券　95 → 120 幣\n・免午休券　100 → 120 幣\n・好朋友同桌午餐券　70 → 90 幣\n・減半抄寫作業券　150 → 155 幣\n・班級自由閱讀券　下架（跟免午休券做的事情一樣，合併成一張）\n\n【三件要知道的事】\n① 這個星期（到 9/25 為止）還是舊價格，想用舊價換的要把握。\n② 已經換到手、還沒用的券完全不受影響，照樣可以用。\n③ 這次不是因為大家賺太多，就只是「本來定得太便宜」。以後如果價格再變動，老師會另外說明理由。\n\n有問題隨時來問老師。",
@@ -313,6 +299,20 @@
       "data/uploads/e7893da4bc7d-1.jpg"
     ],
     "files": []
+  },
+  {
+    "id": "s20260906yr86s5",
+    "title": "115學年度第一學期獎學金申請資訊",
+    "content": "發布單位：教務處",
+    "date": "2026-09-06",
+    "endDate": "",
+    "expiry": "2026-10-06",
+    "source": "學校",
+    "category": "公告",
+    "pinned": false,
+    "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=710&type=news&from_op=school_department_show",
+    "images": [],
+    "auto": "school"
   },
   {
     "id": "nff732bb72c05",
