@@ -16,8 +16,13 @@ on:
   # 等於週結試算與健檢都要老師自己記得跑。機器做得到的事不該綁在「電腦有沒有開」。
   # 收件匣由雲端 routine 平日每小時清（最後一輪 14:00），14:00 算時第 1 支也已先清過一輪；
   # f24 冪等，本機排程若也跑只會刷新同一筆待審，不會疊第二張單子。
+  #
+  # 🗓️ 2026-10-06 老師裁定：收尾改在「每週最後一個上課日」，不再寫死週五（第6週 10/9 放假、10/8 才是最後一天）。
+  # cron 因此改成週一～週五都觸發，由第一個 job `gate` 跑 scripts/classos/closing-day.mjs 判斷：
+  # 不是收尾日 → 後面的 job 全部略過（幾秒結束）；判不出 → gate 失敗亮紅燈，不默默略過。
+  # 手動 Run workflow（workflow_dispatch）不經閘門，照常跑。
   schedule:
-    - cron: "0 6 * * 5"
+    - cron: "0 6 * * 1-5"
   workflow_dispatch:
     inputs:
       mode:
@@ -35,9 +40,24 @@ on:
         type: string
 
 jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      closing: ${{ steps.g.outputs.closing }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 今天是不是本週最後一個上課日
+        id: g
+        run: node scripts/classos/closing-day.mjs
+
   # R18 事件包先清空（SPEC_R18事件包入庫腳本 §2）：收班送出的課堂事件沒入庫，金幣會算少。
   # 與 cm-events.yml 共用 concurrency 群組，整點那一輪若還在跑就排隊，不會兩邊同時認領同一件。
   r18-flush:
+    needs: gate
+    if: ${{ github.event_name != 'schedule' || needs.gate.outputs.closing == 'yes' }}
     runs-on: ubuntu-latest
     concurrency:
       group: cm-events

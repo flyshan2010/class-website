@@ -22,6 +22,7 @@
  */
 import { queryAll, api, isExecute, DS, forEachThrottled } from "./lib/notion.mjs";
 import { readFile } from "node:fs/promises";
+import { weekInfo } from "./lib/school-days.mjs";
 
 const WEEK = String(process.env.WEEK_LABEL || "").trim();
 if (!WEEK) {
@@ -58,7 +59,17 @@ if (!hit) {
   console.error(`❌ weeks.json 找不到這個週次標籤（要逐字相同）：${WEEK}`);
   process.exit(1);
 }
-const DATE = hit.上課迄;
+// 2026-10-06：weeks.json 的「上課迄」一律是週五（不看放假），第6週會記成放假的 10/9。
+// 改由行事曆（data/daily-plan.json）取該週最後一個上課日；同一份資料也給出本週工作天數，
+// 供下面事由文字回推「幾天＋全勤」（f24 自 2026-10-06 起依工作天數計，不再寫死 5 天）。
+const plan = JSON.parse(await readFile(new URL("../../data/daily-plan.json", import.meta.url), "utf8"));
+const wk = weekInfo(plan, hit.起, { from: hit.起, to: hit.迄 });
+if (!wk.known || !wk.closingDay) {
+  console.error(`❌ data/daily-plan.json 沒有 ${WEEK} 的上課日，定不出帳列日期，需人工（先同步班網再跑）。`);
+  process.exit(1);
+}
+const DATE = wk.closingDay;
+const WORK_DAYS = wk.workDays.length;
 console.log(`🎯 週次 ${WEEK}｜帳列日期 ${DATE}｜學年 ${yearOf(DATE)}｜模式 ${isExecute() ? "execute（會寫入）" : "dry-run（只列不寫）"}`);
 
 // ── 名冊：座號 → { id, 職務 } ───────────────────────────────────
@@ -93,13 +104,14 @@ console.log(`🏦 帳本 ${bank.length} 列｜本週薪水類已入帳 ${booked.
 // ── 組出待建帳列（事由的括號說明由金額回推，只是顯示文字）────────
 /* 打掃／午餐固定 2 幣一次；常規獎勵＝每天 1 幣，全勤再 +3（f24 的 ROUTINE_PAY／ROUTINE_FULL）。
    回推只影響事由那行字，金額一律原封使用 payload，不重算。 */
-const PER_TIME = 2, SCHOOL_DAYS = 5, ROUTINE_FULL = 3;
+const PER_TIME = 2, ROUTINE_FULL = 3;
 const subjectOf = (kind, seat, amt) => {
   if (kind === "job")     return `第${TERM_NO}週薪水（${bySeat.get(seat)?.job || "未填職務"}）`;
   if (kind === "clean")   return `第${TERM_NO}週打掃薪水（${amt / PER_TIME} 次 × ${PER_TIME} 幣）`;
   if (kind === "lunch")   return `第${TERM_NO}週午餐工作薪水（${amt / PER_TIME} 次 × ${PER_TIME} 幣）`;
-  const days = amt > SCHOOL_DAYS ? amt - ROUTINE_FULL : amt;
-  return `第${TERM_NO}週班級常規獎勵（${days} 天 × 1 幣${days === SCHOOL_DAYS ? `＋全勤 ${ROUTINE_FULL} 幣` : ""}）`;
+  // 全勤＝WORK_DAYS＋3，一定大於 WORK_DAYS；沒全勤最多 WORK_DAYS−1 → 用「金額 > 工作天數」分辨不會混淆
+  const days = amt > WORK_DAYS ? amt - ROUTINE_FULL : amt;
+  return `第${TERM_NO}週班級常規獎勵（${days} 天 × 1 幣${days === WORK_DAYS ? `＋全勤 ${ROUTINE_FULL} 幣` : ""}）`;
 };
 
 const creates = [];
