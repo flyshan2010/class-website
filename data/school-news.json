@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-10-06T17:34:36.941Z",
+  "fetchedAt": "2026-10-07T02:10:57.497Z",
   "items": [
+    {
+      "date": "2026-10-07",
+      "title": "財團法人金車文教基金會第十六屆「愛讓世界轉動 兒少公益行動徵選」活動資訊",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=933&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-10-06",
       "title": "115學年度第2學期非學校型態實驗教育申請作業",
@@ -54,12 +60,6 @@
       "title": "有關大橋國民中學辦理「116學年度音樂（管樂）藝才班招生說明會」，懇請貴校惠予協助公告周知",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=918&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-09-06",
-      "title": "115學年度第一學期獎學金申請資訊",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=710&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
