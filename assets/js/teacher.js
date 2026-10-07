@@ -250,7 +250,7 @@
     // 整串照抄會讓老師以為當天真的有複習卷沒交（2026-09-09、09-17 老師回報）。
     // 作業清點依狀態對到固定短名；其他工具保留原名（括號內的「、」不能切，如「衝突動口（罵人、挑釁）」）。
     // 只改顯示——JSON 與寫進紀錄庫的 act 原封不動，週結比對不受影響。
-    const HW_ACT = { 0: "作業缺交", 1: "作業潦草／未訂正" };
+    const HW_ACT = { 0: "作業缺交", 1: "未訂正" };
     const cmAct = (e, tool) => {
       if (!e.act) return "（未填行為）";
       if (tool === "homework" && e.src === "rule" && e.rule_n === 4 && HW_ACT[e.act_i]) return HW_ACT[e.act_i];
