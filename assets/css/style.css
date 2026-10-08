@@ -652,6 +652,19 @@ main {
   position: absolute; top: 14px; right: 20px;
   font-size: 1.8889rem; color: #fff; background: none; border: none; cursor: pointer;
 }
+.lightbox .nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 52px; height: 72px; border: none; border-radius: 14px;
+  background: rgba(255,255,255,.16); color: #fff; font-size: 2.4rem; line-height: 1; cursor: pointer;
+}
+.lightbox .nav:hover { background: rgba(255,255,255,.3); }
+.lightbox .nav.prev { left: 12px; }
+.lightbox .nav.next { right: 12px; }
+.lightbox .counter {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  color: #fff; font-size: 0.8889rem; background: rgba(0,0,0,.5); padding: 4px 12px; border-radius: 999px;
+}
+@media (max-width: 600px) { .lightbox { padding: 8px; } .lightbox .nav { width: 40px; height: 56px; font-size: 1.9rem; } }
 
 /* ===== 日課表 ===== */
 .schedule-table { width: 100%; border-collapse: separate; border-spacing: 6px; table-layout: fixed; }

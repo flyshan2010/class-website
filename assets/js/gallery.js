@@ -3,12 +3,46 @@
   const albums = await App.fetchJSON("data/gallery.json").catch(() => []);
   const main = document.getElementById("main");
 
-  const openLightbox = src => {
+  // 燈箱：左右鍵／螢幕兩側箭頭／手機左右滑 切換上下張，Esc 或點黑底關閉
+  const openLightbox = (list, start) => {
+    let i = start;
     const box = document.createElement("div");
     box.className = "lightbox";
-    box.innerHTML = `<button class="close" aria-label="關閉">×</button><img src="${App.esc(src)}" alt="" />`;
-    box.onclick = () => box.remove();
+    box.innerHTML = `<button class="close" aria-label="關閉">×</button>
+      <button class="nav prev" aria-label="上一張">‹</button>
+      <img alt="" />
+      <button class="nav next" aria-label="下一張">›</button>
+      <div class="counter" aria-live="polite"></div>`;
+    const img = box.querySelector("img");
+    const counter = box.querySelector(".counter");
+    const show = n => {
+      i = (n + list.length) % list.length;
+      img.src = list[i];
+      counter.textContent = `${i + 1} / ${list.length}`;
+      new Image().src = list[(i + 1) % list.length]; // 先載下一張，滑過去不必等
+    };
+    const close = () => { document.removeEventListener("keydown", onKey); box.remove(); };
+    const onKey = e => {
+      if (e.key === "ArrowLeft") show(i - 1);
+      else if (e.key === "ArrowRight") show(i + 1);
+      else if (e.key === "Escape") close();
+    };
+    box.querySelector(".prev").onclick = e => { e.stopPropagation(); show(i - 1); };
+    box.querySelector(".next").onclick = e => { e.stopPropagation(); show(i + 1); };
+    img.onclick = e => e.stopPropagation();
+    box.onclick = close;
+    let x0 = null;
+    box.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+    box.addEventListener("touchend", e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) > 50) show(dx < 0 ? i + 1 : i - 1);
+    });
+    document.addEventListener("keydown", onKey);
+    if (list.length < 2) box.querySelectorAll(".nav, .counter").forEach(el => el.remove());
     document.body.appendChild(box);
+    show(i);
   };
 
   const showAlbum = idx => {
@@ -21,7 +55,8 @@
       </div>
       ${!(a.photos || []).length ? '<p class="empty-hint">照片同步中，稍後再來看看！</p>' : ""}`;
     document.getElementById("back").onclick = e => { e.preventDefault(); showList(); };
-    main.querySelectorAll(".photo-grid img").forEach(img => img.onclick = () => openLightbox(img.dataset.full));
+    const fulls = (a.photos || []).map(p => p.full || p.thumb);
+    main.querySelectorAll(".photo-grid img").forEach((img, n) => img.onclick = () => openLightbox(fulls, n));
   };
 
   const showList = () => {
