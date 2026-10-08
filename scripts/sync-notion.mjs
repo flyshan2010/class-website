@@ -366,7 +366,8 @@ async function syncGalleryIndex() {
     .map(r => ({
       title: r["活動名稱"],
       date: r["日期"].start,
-      folderUrl: r["Drive資料夾"],
+      // 2026-10-08 欄位改名「相簿連結」（Drive 資料夾或 Google 相簿分享連結都可以）；舊名留著相容
+      folderUrl: r["相簿連結"] || r["Drive資料夾"],
     }))
     .sort((a, b) => b.date.localeCompare(a.date));
   await save("gallery-index.json", rows);

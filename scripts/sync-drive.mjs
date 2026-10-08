@@ -4,10 +4,12 @@
  * 用 Drive API key 列出各公開資料夾的照片，組出縮圖清單。
  * 用法：DRIVE_API_KEY=xxx node scripts/sync-drive.mjs
  * 沒有 DRIVE_API_KEY 時：保留相簿清單但照片為空（班網仍可顯示 Drive 連結）。
+ * 2026-10-08 起「相簿連結」也可貼 Google 相簿的分享連結（不需要金鑰，解析見 lib/google-photos.mjs）。
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { isGooglePhotosUrl, normalizeShareUrl, fetchSharedAlbum } from "./lib/google-photos.mjs";
 
 const KEY = process.env.DRIVE_API_KEY;
 const DATA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "data");
@@ -47,18 +49,36 @@ async function listPhotos(folderId) {
 }
 
 const index = JSON.parse(await readFile(path.join(DATA_DIR, "gallery-index.json"), "utf8"));
+// 上一次的結果：Google 相簿抓不到（斷線、Google 改版）時沿用，不把已上線的相簿洗成空的。
+const previous = await readFile(path.join(DATA_DIR, "gallery.json"), "utf8").then(JSON.parse).catch(() => []);
 const albums = [];
+let failed = 0;
 for (const album of index) {
-  const folderId = folderIdFrom(album.folderUrl);
-  const photos = KEY && folderId ? await listPhotos(folderId) : [];
+  const isGP = isGooglePhotosUrl(album.folderUrl);
+  const folderUrl = isGP ? normalizeShareUrl(album.folderUrl) : album.folderUrl || "";
+  let photos = [];
+  if (isGP) {
+    try { photos = await fetchSharedAlbum(folderUrl); }
+    catch (e) { console.warn(`⚠️ Google 相簿「${album.title}」讀取失敗（${e.message}）`); }
+    if (!photos.length) {
+      failed++;
+      photos = previous.find(a => a.folderUrl === folderUrl)?.photos || [];
+      console.warn(`⚠️ Google 相簿「${album.title}」解析到 0 張，沿用上次的 ${photos.length} 張（連結失效，或 Google 改了頁面格式）`);
+    }
+  } else {
+    const folderId = folderIdFrom(album.folderUrl);
+    photos = KEY && folderId ? await listPhotos(folderId) : [];
+  }
   albums.push({
     title: album.title,
     date: album.date,
-    folderUrl: album.folderUrl || "",
+    folderUrl,
+    source: isGP ? "google-photos" : "drive",
     cover: photos[0]?.thumb || "",
     photos,
   });
   console.log(`📷 ${album.title}：${photos.length} 張`);
 }
+if (failed) console.warn(`⚠️ 共 ${failed} 本 Google 相簿這次沒抓到新照片`);
 await writeFile(path.join(DATA_DIR, "gallery.json"), JSON.stringify(albums, null, 2) + "\n", "utf8");
 console.log("🎉 相簿同步完成");

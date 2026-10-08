@@ -15,7 +15,7 @@
     const a = albums[idx];
     main.innerHTML = `
       <h2 class="page-title"><span class="dot"></span>🖼️ ${App.esc(a.title)} <span class="meta">${App.fmtDate(a.date)}</span></h2>
-      <p><a href="#" id="back">← 回相簿列表</a>${a.folderUrl ? `　<a href="${App.esc(a.folderUrl)}" target="_blank" rel="noopener">在 Google Drive 開啟 ↗</a>` : ""}</p>
+      <p><a href="#" id="back">← 回相簿列表</a>${a.folderUrl ? `　<a href="${App.esc(a.folderUrl)}" target="_blank" rel="noopener">在 ${a.source === "google-photos" ? "Google 相簿" : "Google Drive"} 開啟 ↗</a>` : ""}</p>
       <div class="photo-grid" style="margin-top:12px">
         ${(a.photos || []).map(p => `<img src="${App.esc(p.thumb)}" data-full="${App.esc(p.full || p.thumb)}" alt="${App.esc(a.title)}照片" loading="lazy" />`).join("")}
       </div>
