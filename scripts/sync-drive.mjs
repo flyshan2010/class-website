@@ -81,4 +81,18 @@ for (const album of index) {
 }
 if (failed) console.warn(`⚠️ 共 ${failed} 本 Google 相簿這次沒抓到新照片`);
 await writeFile(path.join(DATA_DIR, "gallery.json"), JSON.stringify(albums, null, 2) + "\n", "utf8");
+
+// 導覽列的「活動相簿」跟著本次結果走。sync-notion.mjs 的 applyAutoHiddenNav 跑在本檔之前，
+// 看到的是上一次的 gallery.json——不在這裡補，第一本相簿上線當次首頁有相簿、導覽列卻沒有（2026-10-08 實際發生）。
+{
+  const cfgPath = path.join(DATA_DIR, "site-config.json");
+  const cfg = JSON.parse(await readFile(cfgPath, "utf8"));
+  const nav = (cfg.nav ?? []).find(n => n.id === "gallery");
+  const shouldHide = albums.length === 0;
+  if (nav && Boolean(nav.autoHidden) !== shouldHide) {
+    if (shouldHide) nav.autoHidden = true; else delete nav.autoHidden;
+    await writeFile(cfgPath, JSON.stringify(cfg, null, 2) + "\n", "utf8");
+    console.log(`🙈 導覽列「活動相簿」→ ${shouldHide ? "收起" : "重新出現"}`);
+  }
+}
 console.log("🎉 相簿同步完成");
