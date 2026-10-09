@@ -15,6 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { queryAll, getSchema, DS } from "../lib/notion.mjs";
+import { weekInfo } from "../lib/school-days.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(HERE, "../../..");
@@ -47,6 +48,11 @@ const END = `${Number(wk.起.slice(0, 4)) + (Number(m[1]) < Number(wk.起.slice(
 const YEAR = yearOf(END);
 const days = Array.from({ length: 5 }, (_, i) => { const d = new Date(`${wk.起}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + i); return d.toISOString().slice(0, 10); });
 console.log(`📅 ${LABEL}｜寫回日期 ${END}｜學年 ${YEAR}`);
+// 情境日必須是「工作日」：f24 對放假、校外活動日不發也不扣 ⑤／③（2026-10-09 四上第6週 10/8 戶外教學，
+// 寫死「週一起算第 4 天」造成假 ❌）。工作日不足時取最後一個工作日。
+const workDays = weekInfo(JSON.parse(await readFile(path.join(ROOT, "data", "daily-plan.json"), "utf8")), wk.起, { from: wk.起, to: wk.迄 }).workDays;
+if (!workDays.length) { console.log("本週沒有工作日，不驗收"); process.exit(0); }
+const wd = i => workDays[Math.min(i, workDays.length - 1)];
 
 const roster = (await queryAll(DS.roster)).filter(p => p.properties?.["在學"]?.checkbox)
   .map(p => ({ id: p.id, seat: num(p, "座號") })).filter(r => Number.isFinite(r.seat));
@@ -68,8 +74,8 @@ const titleOf = p => anyText(p, "事件描述");
 // ── 1 檢核台事件 → R18 紀錄列 ─────────────────────────────────
 console.log("\n== 1 檢核台事件照 R18 規則入庫 ==");
 const has = (s, title, d) => weekLogs.some(p => titleOf(p) === title && dateOf(p, "日期") === d && mine(p, s));
-const A = cleaners.find(s => !has(s, "打掃缺席", days[2]));
-const B = roster.map(r => r.seat).find(s => s !== A && !has(s, "常規未達成", days[3]));
+const A = cleaners.find(s => !has(s, "打掃缺席", wd(2)));
+const B = roster.map(r => r.seat).find(s => s !== A && !has(s, "常規未達成", wd(3)));
 const C = cleaners.find(s => s !== A && s !== B && !weekLogs.some(p => titleOf(p) === "打掃未達標" && mine(p, s)));
 const i7a = (card(7)?.bad ?? []).findIndex(a => a.act === "輪到的工作或幹部職務沒做完");
 const i7b = (card(7)?.bad ?? []).findIndex(a => a.act === "午餐後沒潔牙，也沒有補刷");
@@ -77,13 +83,13 @@ check(i7a >= 0 && i7b >= 0, `班規⑦ 兩行都在 class-rules.json（act_i ${i
 const ruleEv = (seat, date, i, period, tool) => ({ tool, date, seat, src: "rule", rule_n: 7, kind: "bad", act_i: i,
   act: card(7).bad[i].act, coin: card(7).bad[i].coin, level: card(7).bad[i].level, period });
 const events = [
-  { tool: "cleanup", date: days[2], seat: A, src: "tally", kind: "neutral", act: "打掃缺席", period: "環境晨掃", note: "無故" },
-  ruleEv(A, days[2], i7a, "環境晨掃", "cleanup"),
-  { tool: "teeth", date: days[3], seat: B, src: "tally", kind: "bad", act: "常規未達成", period: "午餐潔牙", note: "沒潔牙，未補做" },
-  ruleEv(B, days[3], i7b, "午餐潔牙", "teeth"),
+  { tool: "cleanup", date: wd(2), seat: A, src: "tally", kind: "neutral", act: "打掃缺席", period: "環境晨掃", note: "無故" },
+  ruleEv(A, wd(2), i7a, "環境晨掃", "cleanup"),
+  { tool: "teeth", date: wd(3), seat: B, src: "tally", kind: "bad", act: "常規未達成", period: "午餐潔牙", note: "沒潔牙，未補做" },
+  ruleEv(B, wd(3), i7b, "午餐潔牙", "teeth"),
   ...[0, 1, 2].map(i => ({ tool: "cleanup", date: days[i], seat: C, src: "tally", kind: "bad", act: "打掃未達標", period: "環境晨掃" })),
 ];
-console.log(`情境：座號 ${A} 無故沒打掃（${days[2]}）、座號 ${B} 沒潔牙也沒補做（${days[3]}）、座號 ${C} 本週 3 次打掃未達標`);
+console.log(`情境：座號 ${A} 無故沒打掃（${wd(2)}）、座號 ${B} 沒潔牙也沒補做（${wd(3)}）、座號 ${C} 本週 3 次打掃未達標`);
 const RULE_CAT = { 1: "生活指導", 2: "人際互動", 3: "生活技能", 4: "作業", 5: "課堂表現", 6: "生活指導", 7: "生活指導", 8: "人際互動", 9: "課堂表現", 10: "生活指導" };
 function r18(ev) {
   let coin = 0, level = null, title = ev.act;
