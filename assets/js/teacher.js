@@ -101,7 +101,7 @@
 
       <section class="card" id="sec-task" style="--accent:#FF9F43">
         <h2>💬 一句話交辦</h2>
-        <p class="meta">寫一句話（例：「座號12 數學小考粗心 -1」），系統約 30 分內處理；也可先按快速鍵帶入範本。</p>
+        <p class="meta">寫一句話（例：「座號12 數學小考粗心 -1」），系統約 1 小時內處理；也可先按快速鍵帶入範本。</p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">
           ${quickKeys.map((k, i) => `<button class="badge qk-btn" data-i="${i}" style="cursor:pointer;border:none;font-size:.95em;padding:6px 10px">${App.esc(k.label)}</button>`).join("")}
         </div>
@@ -229,7 +229,7 @@
         .catch(() => ({ ok: false, error: "連線失敗" }));
       if (res.ok) {
         ta.value = ""; attachments = []; renderAttach();
-        msg.textContent = "✅ 已收到，約 30 分內處理。可在下方任務狀態追蹤。";
+        msg.textContent = "✅ 已收到，約 1 小時內處理。可在下方任務狀態追蹤。";
         loadTasks();
       } else msg.textContent = `❌ ${res.error || "送出失敗"}`;
     });
