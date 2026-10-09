@@ -1,6 +1,14 @@
 /**
- * 班網教師專區代理 v2.10（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.11（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.11 升級步驟（2026-10-09，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.11 新增（班級管理系統檢核台跨電腦同步，class-manager/docs/設計計畫_跨電腦同步與每週統計.md §2）：
+ *   ① sync_pair（驗教師口令）→ 回「裝置憑證」（首次自動產生，存指令碼屬性 SYNC_SECRET）；
+ *   ② state_get／state_put（只驗裝置憑證、不驗口令）→ 讀寫檢核台狀態副本（指令碼屬性 CMS_*，只含座號與狀態、無姓名）。
+ *   憑證只能讀寫 SYNC_KEYS 白名單裡的檢核台狀態，不能加扣幣、不能送任務；
+ *   外洩或要全部重新配對時：專案設定 → 指令碼屬性 → 刪掉 SYNC_SECRET（各電腦回教師專區輸入口令即重新配對）。
  *
  * ── v2.10 升級步驟（2026-09-29，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -119,6 +127,10 @@ function doPost(e) {
     if (body.action === "proposal_save") return out_(proposalWrite_(props, body, false));
     if (body.action === "proposal_submit") return out_(proposalWrite_(props, body, true));
 
+    // 檢核台同步（v2.11）：只驗裝置憑證，不驗教師口令（投影頁沒有口令可用）
+    if (body.action === "state_get") return out_(stateGet_(props, body));
+    if (body.action === "state_put") return out_(statePut_(props, body));
+
     const pw = props.getProperty("PASSWORD");
     if (!pw) return out_({ ok: false, error: "尚未設定指令碼屬性 PASSWORD" });
     if ((body.pw || "") !== pw) return out_({ ok: false, error: "口令錯誤" });
@@ -139,6 +151,7 @@ function doPost(e) {
       case "proposal_list":          return out_(proposalList_(props, body));
       case "proposal_review_plan":   return out_(proposalReviewPlan_(props, body));
       case "proposal_review_result": return out_(proposalReviewResult_(props, body));
+      case "sync_pair":    return out_(syncPair_(props));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -1581,6 +1594,102 @@ function sanitizeFilename_(name) {
 function stampName_(name) {
   const ts = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyyMMdd-HHmmss");
   return ts + "_" + name;
+}
+
+// ---------- 動作：檢核台跨電腦同步（v2.11） ----------
+// 班級管理系統（class-manager）把 localStorage 裡的檢核台狀態存一份副本在指令碼屬性，換電腦時跟著走。
+// 每個鍵一筆中繼 CMS_M_<短名>＝{rev 版次, at 時間, dev 哪台, n 分片數}，值切片存 CMS_V_<短名>_<i>。
+// 版次不合就拒收（兩台都改過），由前端問老師用哪一份——這裡絕不自動覆蓋。
+
+// 白名單：憑證只碰得到這幾個鍵（與 class-manager/assets/js/sync.js 的 KEYS 一致）
+const SYNC_KEYS = [
+  "classManager.events.v1", "classManager.homework.v3", "classManager.routine.v2",
+  "classManager.seats.v2", "classManager.groups.v1", "classManager.board.v1", "classManager.stats.v1"
+];
+const SYNC_CHUNK = 2500;   // 每片字元數：中文 3 bytes → 最多 7.5KB，低於指令碼屬性單值 9KB 上限
+const SYNC_MAX = 120000;   // 單鍵字元上限（指令碼屬性總量 500KB）
+
+function syncShort_(key) { return key.replace("classManager.", "").replace(/[^A-Za-z0-9]/g, "_"); }
+
+/** 口令通過後配對：回裝置憑證（沒有就產生一組） */
+function syncPair_(props) {
+  let secret = props.getProperty("SYNC_SECRET");
+  if (!secret) {
+    secret = (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, "");
+    props.setProperty("SYNC_SECRET", secret);
+  }
+  return { ok: true, secret: secret };
+}
+
+function syncAuth_(props, body) {
+  const secret = props.getProperty("SYNC_SECRET");
+  if (!secret || String(body.secret || "") !== secret) {
+    return { ok: false, unpaired: true, error: "這台電腦的同步憑證已失效，請到教師專區輸入口令重新配對" };
+  }
+  return null;
+}
+
+function syncMeta_(all, key) {
+  try { return JSON.parse(all["CMS_M_" + syncShort_(key)] || "null"); } catch (err) { return null; }
+}
+
+/** 讀：回每個鍵的 {rev, at, dev}；版次和前端手上的（have）不同才附值 v */
+function stateGet_(props, body) {
+  const bad = syncAuth_(props, body);
+  if (bad) return bad;
+  const all = props.getProperties();
+  const have = body.have || {};
+  const items = {};
+  SYNC_KEYS.forEach(function (key) {
+    const m = syncMeta_(all, key);
+    if (!m) return;
+    const it = { rev: m.rev, at: m.at, dev: m.dev };
+    if (Number(have[key]) !== m.rev) {
+      let v = "";
+      for (let i = 0; i < m.n; i++) v += all["CMS_V_" + syncShort_(key) + "_" + i] || "";
+      it.v = v;
+    }
+    items[key] = it;
+  });
+  return { ok: true, items: items };
+}
+
+/** 寫：items=[{k, v, base}]；base＝前端上次看到的版次，和現況不同就拒收（conflict），其餘鍵照寫 */
+function statePut_(props, body) {
+  const bad = syncAuth_(props, body);
+  if (bad) return bad;
+  const list = Array.isArray(body.items) ? body.items : [];
+  const dev = String(body.dev || "").slice(0, 40);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    const all = props.getProperties();
+    const results = {};
+    list.forEach(function (item) {
+      const key = String(item.k || "");
+      if (SYNC_KEYS.indexOf(key) < 0) { results[key] = { ok: false, error: "不支援的資料" }; return; }
+      const v = typeof item.v === "string" ? item.v : "";
+      if (v.length > SYNC_MAX) { results[key] = { ok: false, error: "資料太大，沒有同步" }; return; }
+      const cur = syncMeta_(all, key);
+      const curRev = cur ? cur.rev : 0;
+      if ((Number(item.base) || 0) !== curRev) {
+        results[key] = { ok: false, conflict: true, rev: curRev, at: cur ? cur.at : "", dev: cur ? cur.dev : "" };
+        return;
+      }
+      const short = syncShort_(key);
+      const n = Math.ceil(v.length / SYNC_CHUNK);
+      const write = {};
+      for (let i = 0; i < n; i++) write["CMS_V_" + short + "_" + i] = v.substr(i * SYNC_CHUNK, SYNC_CHUNK);
+      const meta = { rev: curRev + 1, at: new Date().toISOString(), dev: dev, n: n };
+      write["CMS_M_" + short] = JSON.stringify(meta);   // 值與中繼同一次寫入
+      props.setProperties(write);
+      for (let j = n; j < (cur ? cur.n : 0); j++) props.deleteProperty("CMS_V_" + short + "_" + j);   // 變短時清掉舊分片
+      results[key] = { ok: true, rev: meta.rev, at: meta.at };
+    });
+    return { ok: true, results: results };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function out_(obj) {
