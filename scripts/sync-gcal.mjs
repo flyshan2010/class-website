@@ -10,6 +10,7 @@
 import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { scrubSeatLists } from "./scrub-seat-lists.mjs";
 
 const ICS_URL = "https://calendar.google.com/calendar/ical/classroom107689580550779751075%40group.calendar.google.com/public/basic.ics";
 const DATA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "data");
@@ -21,6 +22,14 @@ const WINDOW_FWD_MONTHS = 18;
 // notes 上限。舊版 200 字會把句子攔腰切斷（含把 HTML 標籤切成半個），
 // 放寬到 600 字，前端再做「展開全文」摺疊。
 const NOTES_MAX = 600;
+
+// 公開輸出護欄：說明欄裡像座號清單的整行不寫進班網（規則與測試在 scrub-seat-lists.mjs）。
+// 日誌只記哪個事件被擋，不印被擋的內容。
+const publicNotes = r => {
+  const { text, dropped } = scrubSeatLists(r.notes);
+  if (dropped) console.warn(`⚠️ 行事曆「${r.title}」說明欄有 ${dropped} 行疑似座號清單，已略過不公開（請到 Google 日曆刪掉）`);
+  return text;
+};
 
 const typeOf = title =>
   /考|評量|測驗/.test(title) ? "考試" :
@@ -207,7 +216,7 @@ try {
       startTime: timeOf(r.start),                                        // 空＝全天事件
       endTime: endP && isoOf(endP) === isoOf(r.start) ? timeOf(endP) : "", // 只在同一天結束時標結束時刻
       type: typeOf(r.title),
-      notes: r.notes.slice(0, NOTES_MAX),
+      notes: publicNotes(r).slice(0, NOTES_MAX),
     };
   });
 
