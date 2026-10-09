@@ -203,6 +203,9 @@ async function checkFifthSync() {
     if (tAt === null) { skipped.push(`C3 第五同步（讀不到 ${target}）`); return; }
     for (const s of sources) {
       const sAt = await mtime(path.join(dir, s));
+      // 已逐次確認「這次改動不影響排程手冊」的來源檔：確認日（含）以前的改動不算欠
+      const ack = cfg.fifthSyncAcknowledged?.[s];
+      if (sAt !== null && ack && new Date(sAt).toISOString().slice(0, 10) <= ack) continue;
       if (sAt !== null && sAt > tAt)
         problems.push(`${s}（${new Date(sAt).toISOString().slice(0, 10)}）比 ${target}（${new Date(tAt).toISOString().slice(0, 10)}）新`);
     }
