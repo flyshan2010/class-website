@@ -13,9 +13,11 @@
  *                   (b) 前後 NEAR 字元內有同一位學生的姓名或座號（座號 N、N 號、seat: N）
  *                   (c) LIST_SPAN 字元內出現 LIST_MIN 個以上不同的查詢碼（名單型）
  *       弱命中＝不擋：其餘。只印「弱命中 N 處」；明細由每週系統健檢在本機用 pii-gate.py 看
- *   ・查詢碼前後緊鄰英數字或連字號的不算（雜湊、UUID、日期裡的片段）
- *     例外：「座號-查詢碼」寫法（前面是 1–2 位數字加連字號，再往前不是英數字或連字號，如 01-7391）照算；
- *     那個數字是同一位學生的座號＝強命中 (b)，不是就照一般的查詢碼分級（成名單才擋）
+ *   ・查詢碼前後緊鄰英數字的不算；緊鄰連字號、而連字號另一邊是英數字或連字號的也不算（雜湊、UUID、日期裡的片段）
+ *     連字號的例外有兩種，前後都適用：
+ *       ① 連字號另一邊是 1–2 位數字、再過去不是英數字或連字號（01-7391、7391-01）照算；
+ *          那個數字是同一位學生的座號＝強命中 (b)，不是就照一般的查詢碼分級（成名單才擋）
+ *       ② 連字號另一邊不是半形英數字也不是連字號（小明-7391、7391-甲、全形數字、行首行尾）照算，一般分級
  *   ・.json 檔出現名為「查詢碼」的欄位就擋，不看值
  *   ・二進位檔（前 8000 位元組含 NUL，與 git 同一判法）只比對檔名
  *   ・文字檔一律當 UTF-8：這裡只掃同步腳本自己產的 JSON 與 Markdown。
@@ -82,8 +84,12 @@ export function buildNeedles(rows) {
   }
   if (!enrolled) throw new Error("名冊沒有任何在學學生，名冊格式可能變了");
   const alt = [...codes.keys()].sort((a, b) => b.length - a.length).join("|");
-  // 第 1 組＝「座號-查詢碼」寫法的座號（沒有就是 undefined），第 2 組＝查詢碼
-  return { names, codes, codeRe: new RegExp(`(?<![0-9A-Za-z-])(?:([0-9]{1,2})-)?(${alt})(?![0-9A-Za-z-])`, "g"), count };
+  // 第 1 組＝「座號-查詢碼」的座號、第 2 組＝查詢碼、第 3 組＝「查詢碼-座號」的座號（沒有就是 undefined）
+  // 左邊：不緊鄰英數字或連字號（可帶「座號-」），或緊鄰的連字號前面不是英數字或連字號
+  // 右邊：不緊鄰英數字或連字號，或「-座號」後面不是英數字或連字號，或緊鄰的連字號後面不是英數字或連字號
+  const codeRe = new RegExp(`(?:(?<![0-9A-Za-z-])(?:([0-9]{1,2})-)?|(?<=-)(?<![0-9A-Za-z-]-))(${alt})`
+    + `(?:(?![0-9A-Za-z-])|(?=-([0-9]{1,2})(?![0-9A-Za-z-]))|(?=-(?![0-9A-Za-z-])))`, "g");
+  return { names, codes, codeRe, count };
 }
 
 /** 與 git 相同的判法：前 8000 位元組含 NUL 就當二進位檔。 */
@@ -102,7 +108,7 @@ export function classify(text, nd, isJson = false) {
     for (let i = text.indexOf(name); i !== -1; i = text.indexOf(name, i + 1)) block.push({ pos: i, seat, kind: "姓名" });
   }
   const occ = [...text.matchAll(nd.codeRe)].map(m => (
-    { start: m.index + m[0].length - m[2].length, end: m.index + m[0].length, code: m[2], pre: m[1] }));
+    { start: m.index + m[0].length - m[2].length, end: m.index + m[0].length, code: m[2], seats: [m[1], m[3]] }));
   const listed = new Set();
   occ.forEach((o, i) => {
     const kinds = new Set();
@@ -116,7 +122,7 @@ export function classify(text, nd, isJson = false) {
     let why;
     if (KEYWORDS.some(w => ctx.includes(w))) why = WHY_KEYWORD;
     else if (owners.some(w => (w.name.length >= 2 && ctx.includes(w.name)) || (w.seatRe && w.seatRe.test(ctx))
-      || (o.pre && /^[0-9]+$/.test(w.seat) && Number(w.seat) === Number(o.pre)))) why = WHY_OWNER;
+      || (/^[0-9]+$/.test(w.seat) && o.seats.some(s => s && Number(s) === Number(w.seat))))) why = WHY_OWNER;
     else if (listed.has(k)) why = WHY_LIST;
     else { weak++; return; }
     block.push({ pos: o.start, seat: owners.map(w => w.seat).join("／"), kind: "查詢碼", why });
