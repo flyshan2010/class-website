@@ -87,13 +87,16 @@ for (const b of bad) console.log(`   ❌ ${b}`);
 
 // 對照表（也是舊值存檔：execute 前把這段存下來，退回時逐字對得回去）
 console.log("\n===F44-MAP-BEGIN===");
-console.log(JSON.stringify(all.map(({ title, field, from, to }) => ({ 單元: title, 欄位: field, 改前: from, 改後: to }))));
+for (const { title, field, from, to } of all) console.log(JSON.stringify({ 單元: title, 欄位: field, 改前: from, 改後: to }));   // 一行一筆：整包一行會超過管線緩衝被截斷
 console.log("===F44-MAP-END===");
 
-if (!EXECUTE) { console.log("\n🔍 DRY-RUN：未寫入。確認對照表後改 MODE=execute。"); process.exit(0); }
-if (bad.length) { console.log("\n❌ 目標網址有異常，整批不寫。"); process.exit(1); }
-if (!total) { console.log("\n沒有要改的網址。"); process.exit(0); }
+// 不用 process.exit：輸出還在管線裡就結束會掉行（2026-10-10 dry-run 實測對照表整段不見）
+if (!EXECUTE) console.log("\n🔍 DRY-RUN：未寫入。確認對照表後改 MODE=execute。");
+else if (bad.length) { console.log("\n❌ 目標網址有異常，整批不寫。"); process.exitCode = 1; }
+else if (!total) console.log("\n沒有要改的網址。");
+else await write();
 
+async function write() {
 const res = await forEachThrottled(todo, async (t) => {
   const w = await api("PATCH", `/pages/${t.id}`, { properties: Object.fromEntries(t.changes.map((c) => [c.field, { url: c.to }])) });
   if (!w.ok) return { ok: false, why: `${t.title}｜HTTP ${w.status}` };
@@ -105,3 +108,4 @@ const written = res.ok.reduce((n, o) => n + (o.r?.n ?? 0), 0);
 console.log(`\n✅ 寫入並回讀相符 ${res.ok.length} 個單元、${written} 個網址｜失敗 ${res.fail.length} 個單元`);
 for (const f of res.fail) console.log(`   ❌ ${f.r?.why ?? `${f.item?.title}｜${f.error}`}`);
 process.exitCode = res.fail.length || written !== total ? 1 : 0;
+}
