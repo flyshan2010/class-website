@@ -17,6 +17,7 @@
  */
 import { queryAll, DS, propText } from "./lib/notion.mjs";
 import { hwSubjectOfItem } from "./lib/cm-events.mjs";
+import { toNotices } from "./lib/f43-notices.mjs";
 
 const WEEK = (process.env.WEEK_LABEL ?? "").trim();
 if (!WEEK) { console.log("❌ 需填 week（週次標籤）"); process.exit(1); }
@@ -84,3 +85,6 @@ for (const st of roster) {
 const brief = Object.entries(out).map(([k, o]) => `${k} ` + SUBJ.map((s) => `${s[0]}${o[s].n}${o[s].rem.map((r) => r[0]).join("")}${o[s].leave ? "假" : ""}`).join(" ") + (o.家長.length ? ` 家長:${o.家長.join("/")}` : "")).join("\n");
 console.log(`f43｜${WEEK}｜代碼：科目首字＋次數，後綴 缺＝缺交、未＝未訂正、假＝請假未補完\n${brief}`);
 console.log("F43JSON " + JSON.stringify(out));
+// 雲端排程讀不到 Actions 日誌（下載網域被擋），同一份 JSON 另切段寫成 notice 註記，可經 api.github.com 讀回（2026-10-10）。
+// 內容與上一行相同（只有頁面 id 片段與判定代碼）；讀取端＝classos-private 的 personal-tiers.mjs parseAnnotations。
+if (process.env.GITHUB_ACTIONS) for (const l of toNotices(JSON.stringify(out))) console.log(l);
