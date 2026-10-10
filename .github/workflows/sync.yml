@@ -24,7 +24,11 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # ref: main＝取「開始跑當下」的最新版。不寫的話取的是「觸發當下」的版本，
+      # 排隊等前一輪跑完才開始的那一輪會拿到舊版，提交後推送被拒（2026-10-10 實測）。
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-node@v4
         with:
