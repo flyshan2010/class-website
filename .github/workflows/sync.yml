@@ -13,6 +13,13 @@ on:
 permissions:
   contents: write
 
+# 防並行（老師 2026-10-10 裁定）：同一時間只跑一輪。連按或排程撞在一起時，後來的排隊等前一輪跑完再跑，
+# 不會兩輪同時提交、其中一輪推送被拒（2026-10-10 連按三次有兩次失敗）。排隊中的只留最新一輪，較早排隊的會被取消——
+# 每一輪都是整份重抓，留最新的就夠。不可改成 cancel-in-progress: true（會砍掉正在提交的那一輪）。
+concurrency:
+  group: sync-notion
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
