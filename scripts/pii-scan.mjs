@@ -14,8 +14,12 @@
  *                   (c) LIST_SPAN 字元內出現 LIST_MIN 個以上不同的查詢碼（名單型）
  *       弱命中＝不擋：其餘。只印「弱命中 N 處」；明細由每週系統健檢在本機用 pii-gate.py 看
  *   ・查詢碼前後緊鄰英數字或連字號的不算（雜湊、UUID、日期裡的片段）
+ *     例外：「座號-查詢碼」寫法（前面是 1–2 位數字加連字號，再往前不是英數字或連字號，如 01-7391）照算；
+ *     那個數字是同一位學生的座號＝強命中 (b)，不是就照一般的查詢碼分級（成名單才擋）
  *   ・.json 檔出現名為「查詢碼」的欄位就擋，不看值
  *   ・二進位檔（前 8000 位元組含 NUL，與 git 同一判法）只比對檔名
+ *   ・文字檔一律當 UTF-8：這裡只掃同步腳本自己產的 JSON 與 Markdown。
+ *     本機 pii-gate.py 另外會解 UTF-16 與 Big5（老師手動放進 repo 的 CSV），這邊沒有那一段
  *
  * Actions 紀錄是公開的：強命中只印檔名、行號、座號，不印姓名與查詢碼；
  * 弱命中的資料已經上站，連檔名、行號、座號都不印（印了等於公告哪個數字是查詢碼）。
@@ -51,7 +55,7 @@ function seatRegex(seat) {
 
 /**
  * 名冊列 → 比對清單 { names: [{ name, seat }], codes: Map(查詢碼 → [{ seat, name, seatRe }]), codeRe, count }。
- * 名冊內容不對就丟錯（訊息只帶座號）。
+ * 名冊內容不對就丟錯（訊息只帶座號）。姓名、查詢碼各自對在學人數把關：在學生缺任一項就不放行。
  */
 export function buildNeedles(rows) {
   const names = [];
@@ -63,7 +67,9 @@ export function buildNeedles(rows) {
     const code = String(r["查詢碼"] ?? "").trim();
     if (r["在學"]) {
       enrolled++;
-      if (!name) throw new Error(`名冊座號 ${seat} 沒有姓名，名冊格式可能變了`);
+      // 兩個字的姓名不當比對字串，但算「有姓名」
+      if (name.length < 2) throw new Error(`名冊座號 ${seat} 沒有姓名，名冊格式可能變了`);
+      if (code.length < MIN_LEN) throw new Error(`名冊座號 ${seat} 沒有查詢碼，欄位名稱或型別可能變了`);
     }
     // 已轉出的學生也比對：姓名與舊查詢碼一樣不該公開
     if (name.length >= MIN_LEN) { names.push({ name, seat }); count++; }
@@ -75,10 +81,9 @@ export function buildNeedles(rows) {
     }
   }
   if (!enrolled) throw new Error("名冊沒有任何在學學生，名冊格式可能變了");
-  if (!codes.size) throw new Error("名冊讀不到任何查詢碼，欄位名稱或型別可能變了");
-  if (count < enrolled) throw new Error(`在學 ${enrolled} 人但只取得 ${count} 個比對字串，名冊格式可能變了`);
   const alt = [...codes.keys()].sort((a, b) => b.length - a.length).join("|");
-  return { names, codes, codeRe: new RegExp(`(?<![0-9A-Za-z-])(${alt})(?![0-9A-Za-z-])`, "g"), count };
+  // 第 1 組＝「座號-查詢碼」寫法的座號（沒有就是 undefined），第 2 組＝查詢碼
+  return { names, codes, codeRe: new RegExp(`(?<![0-9A-Za-z-])(?:([0-9]{1,2})-)?(${alt})(?![0-9A-Za-z-])`, "g"), count };
 }
 
 /** 與 git 相同的判法：前 8000 位元組含 NUL 就當二進位檔。 */
@@ -96,7 +101,8 @@ export function classify(text, nd, isJson = false) {
   for (const { name, seat } of nd.names) {
     for (let i = text.indexOf(name); i !== -1; i = text.indexOf(name, i + 1)) block.push({ pos: i, seat, kind: "姓名" });
   }
-  const occ = [...text.matchAll(nd.codeRe)].map(m => ({ start: m.index, end: m.index + m[0].length, code: m[1] }));
+  const occ = [...text.matchAll(nd.codeRe)].map(m => (
+    { start: m.index + m[0].length - m[2].length, end: m.index + m[0].length, code: m[2], pre: m[1] }));
   const listed = new Set();
   occ.forEach((o, i) => {
     const kinds = new Set();
@@ -109,7 +115,8 @@ export function classify(text, nd, isJson = false) {
     const owners = nd.codes.get(o.code);
     let why;
     if (KEYWORDS.some(w => ctx.includes(w))) why = WHY_KEYWORD;
-    else if (owners.some(w => (w.name.length >= 2 && ctx.includes(w.name)) || (w.seatRe && w.seatRe.test(ctx)))) why = WHY_OWNER;
+    else if (owners.some(w => (w.name.length >= 2 && ctx.includes(w.name)) || (w.seatRe && w.seatRe.test(ctx))
+      || (o.pre && /^[0-9]+$/.test(w.seat) && Number(w.seat) === Number(o.pre)))) why = WHY_OWNER;
     else if (listed.has(k)) why = WHY_LIST;
     else { weak++; return; }
     block.push({ pos: o.start, seat: owners.map(w => w.seat).join("／"), kind: "查詢碼", why });
