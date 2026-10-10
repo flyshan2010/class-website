@@ -74,7 +74,8 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: node scripts/export-routine-manual.mjs
 
-      # 提交前個資掃描：這次要提交的文字檔裡出現名冊姓名或查詢碼 → 整次同步失敗、不提交。
+      # 提交前個資掃描：這次要提交的文字檔裡出現名冊姓名或查詢碼強命中 → 整次同步失敗、不提交。
+      # 查詢碼弱命中（孤零零的同值數字）不擋，只印數量；規則見 scripts/pii-scan.mjs 檔頭。
       # 不可加 continue-on-error；讀不到名冊也算失敗（無法確認＝不放行）。
       - name: 提交前個資掃描
         env:
