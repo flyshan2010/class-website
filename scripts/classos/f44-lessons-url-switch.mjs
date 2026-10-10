@@ -10,6 +10,7 @@
  * 護欄：
  *   - 只處理 url 型別的欄位；欄位不存在或型別不是 url → 列「需人工」不寫（不猜格式）。
  *   - 新址先逐一實測 HTTP 200，**有任何一個不是 200 就整批不寫**（寧可不切，不可切到壞連結）。
+ *     例外（老師 2026-10-10 裁定）：改前的網址本來就不是 200（早已失效的舊列）→ 該單元整個跳過、列「需人工」，不擋其他單元。
  *   - 寫入後逐頁回讀比對；寫入成功≠內容正確。
  *   - 其他欄位（備註等）若含舊址只列筆數、不改。
  *
@@ -37,7 +38,7 @@ for (const f of FIELDS) {
 const urlFields = FIELDS.filter((f) => schema[f]?.type === "url");
 
 const pages = await queryAll(DS.lessons);
-const todo = [];     // { id, title, changes: [{ field, from, to }] }
+const found = [];    // { id, title, changes: [{ field, from, to }] }
 const tally = { from: 0, to: 0, drive: 0, other: 0, empty: 0 };
 const otherHits = new Map();   // 非連結欄含舊址：欄位名 → 筆數
 
@@ -57,13 +58,13 @@ for (const p of pages) {
     const text = prop.type === "url" ? (prop.url ?? "") : (propText(p, name) ?? "");
     if (text.includes(FROM)) otherHits.set(name, (otherHits.get(name) ?? 0) + 1);
   }
-  if (changes.length) todo.push({ id: p.id, title, changes });
+  if (changes.length) found.push({ id: p.id, title, changes });
 }
 
-const total = todo.reduce((n, t) => n + t.changes.length, 0);
+const hits = found.reduce((n, t) => n + t.changes.length, 0);
 console.log(`\n教學單元 ${pages.length} 列｜連結欄 ${urlFields.length} 個`);
 console.log(`   要改 ${tally.from}｜已是目標前綴 ${tally.to}｜Drive 連結（不動）${tally.drive}｜其他 ${tally.other}｜空白 ${tally.empty}`);
-console.log(`   涉及 ${todo.length} 個單元、${total} 個網址`);
+console.log(`   涉及 ${found.length} 個單元、${hits} 個網址`);
 for (const [name, n] of otherHits) console.log(`   ℹ️ 非連結欄「${name}」有 ${n} 列含來源前綴（本任務不改）`);
 if (manual.length) {
   console.log(`\n⚠️ 需人工 ${manual.length} 項：`);
@@ -71,19 +72,30 @@ if (manual.length) {
 }
 
 // 目標網址逐一實測（8 路並行），任何一個不是 200 就整批不寫
-const all = todo.flatMap((t) => t.changes.map((c) => ({ title: t.title, ...c })));
-const bad = [];
+const checks = found.flatMap((t) => t.changes.map((c) => ({ title: t.title, ...c })));
+const bad = [], dead = [];
 let cursor = 0;
 await Promise.all(Array.from({ length: 8 }, async () => {
-  while (cursor < all.length) {
-    const c = all[cursor++];
+  while (cursor < checks.length) {
+    const c = checks[cursor++];
     let status = 0;
     try { status = (await fetch(c.to, { method: "HEAD", redirect: "manual" })).status; } catch { /* 連不上＝0 */ }
-    if (status !== 200) bad.push(`${status}｜${c.title}｜${c.field}｜${c.to}`);
+    if (status !== 200) {
+      let src = 0;
+      try { src = (await fetch(c.from, { method: "HEAD", redirect: "manual" })).status; } catch { /* 連不上＝0 */ }
+      (src === 200 ? bad : dead).push({ ...c, status, src });
+    }
   }
 }));
-console.log(`\n目標網址實測：${all.length - bad.length} 個 200｜${bad.length} 個異常`);
-for (const b of bad) console.log(`   ❌ ${b}`);
+// 改前就失效的單元整個跳過（一個單元只要有一格是這種，就整列留給人看）
+const skip = new Set(dead.map((d) => d.title));
+const todo = found.filter((t) => !skip.has(t.title));
+const all = todo.flatMap((t) => t.changes.map((c) => ({ title: t.title, ...c })));
+const total = all.length;
+console.log(`\n目標網址實測：${checks.length - bad.length - dead.length} 個 200｜${bad.length} 個異常｜${dead.length} 個改前就失效`);
+for (const b of bad) console.log(`   ❌ ${b.status}｜${b.title}｜${b.field}｜${b.to}`);
+for (const d of dead) console.log(`   ⚠️ 需人工（改前 ${d.src}、改後 ${d.status}，整個單元跳過）｜${d.title}｜${d.field}｜${d.from}`);
+console.log(`本次要改 ${todo.length} 個單元、${total} 個網址${skip.size ? `（跳過 ${skip.size} 個單元）` : ""}`);
 
 // 對照表（也是舊值存檔：execute 前把這段存下來，退回時逐字對得回去）
 console.log("\n===F44-MAP-BEGIN===");
