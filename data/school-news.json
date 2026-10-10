@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-10-09T17:42:03.951Z",
+  "fetchedAt": "2026-10-10T02:11:42.579Z",
   "items": [
+    {
+      "date": "2026-10-10",
+      "title": "本市115學年度「北極星家長論壇」十二年國教總綱宣 講活動,請家長踴躍參加。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=958&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-10-08",
       "title": "本市115年度「深耕學校家庭教育學生主題創作徵選活動」獲獎名單",
@@ -54,12 +60,6 @@
       "title": "「Sowal語你爭霸！115年原住民族語線上遊戲電競賽」，賽事總獎金高達新臺幣29萬1,000元，並設有指導老師獎金，歡迎組隊報名參賽。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=942&type=news&from_op=school_department_show",
       "dept": "教務處"
-    },
-    {
-      "date": "2026-10-07",
-      "title": "財政部南區國稅局新營分局辦理「AI稅雲端 漫畫Show起來」之租稅AI四格漫畫徵件活動",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=940&type=news&from_op=school_department_show",
-      "dept": "學務處"
     }
   ]
 }
