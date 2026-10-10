@@ -20,6 +20,7 @@ on:
           - "[常用・只讀] f43-personal-tiers（學習報告各科個人一句：級距／作業提醒／請假判定，需填 week）"
           - "[驗收用・只讀] f42-sim-leave-homework（請假×作業缺交提醒判斷模擬，第4–5週）"
           - "[驗收用・只讀] f41-verify-report-hashes（第1–4週報告個人句寫入逐字比對）"
+          - "[一次性・2026-10-10] f44-lessons-url-switch（教學單元 580 個網址由班網改指向公開教材庫；payload 填 revert＝退回）"
           - "[一次性・已完成 10/3] f40-void-test-tasks（5 個試跑任務已標【待刪】；重跑會因已帶【待刪】而停止）"
           - "[一次性・已完成 10/3] f39-void-test-rows（3 列測試紀錄已失效；重跑會因已帶【待刪】而停止）"
           - "[一次性・已完成 10/2] f38-backfill-hw-subjects（回填作業科目；已寫 332 列，重跑只會 0 筆）"
@@ -87,7 +88,7 @@ on:
         default: ""
         type: string
       payload:
-        description: 「僅 f31」座號→金額 JSON，如 {"job":{"1":25},"clean":{},"lunch":{},"routine":{}}（金額抄自 f24 試算的「薪水類逐人明細」）
+        description: 「f44」填 revert＝退回舊址；「f31」座號→金額 JSON，如 {"job":{"1":25},"clean":{},"lunch":{},"routine":{}}（金額抄自 f24 試算的「薪水類逐人明細」）
         required: false
         default: ""
         type: string
