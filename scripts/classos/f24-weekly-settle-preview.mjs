@@ -34,6 +34,7 @@ import { fileURLToPath } from "node:url";
 import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
 import { evaluate, loadFixedBase } from "./lib/price.mjs";
 import { weekInfo } from "./lib/school-days.mjs";
+import { oncePerDay, pairsOfPage } from "./lib/once-per-day.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -150,12 +151,16 @@ for (const b of ledger) {
 const weekLogs = (await queryAll(DS.log)).filter(p => txt(p, "週次") === WEEK);
 const logs = weekLogs.filter(p => num(p, "金幣影響"));
 let rewardN = 0, rewardSum = 0, oldN = 0, oldSum = 0;
+// 同生同日同科舉手只算一筆（2026-10-11 老師裁定；判斷正本 lib/once-per-day.mjs，入帳 f29 引用同一支，試算與入帳才對得上）
+const once = oncePerDay(weekLogs.flatMap(pairsOfPage), settled);
+let onceN = 0, onceSum = 0;
 const dueBySeat = new Map(); // 待入帳的座號 → 金額小計（只印座號與金額，供老師抽查）
 for (const l of logs) {
   const amt = num(l, "金幣影響");
   const desc = (l.properties?.["事件描述"]?.title ?? []).map(t => t.plain_text).join("").slice(0, 12);
   for (const sid of relIds(l, "學生")) {
     if (settled.has(`${l.id}|${sid}`)) continue;
+    if (once.skip.has(`${l.id}|${sid}`)) { onceN++; onceSum += amt; continue; } // 重複舉手：不計入待入帳，下方標紅
     const k = `${sid}|${amt}|${desc}`;
     const left = altPaid.get(k) ?? 0;
     if (left > 0) { altPaid.set(k, left - 1); oldN++; oldSum += amt; continue; } // 舊帳：已發過，只是沒掛 relation
@@ -164,6 +169,13 @@ for (const l of logs) {
     if (seatDue) dueBySeat.set(seatDue, (dueBySeat.get(seatDue) ?? 0) + amt);
   }
 }
+
+const onceWho = rows => rows.map(r => `座號${seatOf.get(r.stuId) ?? "?"} ${Number(r.date.slice(5, 7))}/${Number(r.date.slice(8, 10))} ${r.subject}`).join("、");
+const onceOver = once.groups.flatMap(g => g.overpaid);
+const onceNote =
+  (onceN ? `\n　　🔴 同日同科舉手重複 ${onceN} 筆／${onceSum} 幣：**不入帳**（每生每科每天只算一筆）——${onceWho(once.groups.flatMap(g => g.unpaid))}` : "")
+  + (onceOver.length ? `\n　　🔴 另有 ${onceOver.length} 筆重複舉手**已入帳**（${onceWho(onceOver)}），錢已發出，**需人工補扣**` : "")
+  + (once.manual.length ? `\n　　⚠️ ${once.manual.length} 筆舉手的科目或日期判不出，未去重、照常計入，需人工確認` : "");
 
 // ③④ 工作分配 ───────────────────────────────────────────────────
 const duties = (await queryAll(DS.duties)).filter(p => p.properties?.["顯示"]?.checkbox);
@@ -420,7 +432,7 @@ const lines = [
     dueBySeat.size ? `
 　　待入帳明細：${[...dueBySeat.entries()].sort((a, b) => a[0] - b[0]).map(([s2, v]) => `座號${s2} ${v >= 0 ? "+" : ""}${v}`).join("、")}` : ""}${
     oldN ? `
-　　ℹ️ 另有 ${oldN} 筆／${oldSum} 幣是**舊帳**：帳本本週已有同學生、同金額、同事由的列，只是沒掛紀錄庫 relation（早期逐筆入帳的批次）——**已排除，不重複發**` : ""}`,
+　　ℹ️ 另有 ${oldN} 筆／${oldSum} 幣是**舊帳**：帳本本週已有同學生、同金額、同事由的列，只是沒掛紀錄庫 relation（早期逐筆入帳的批次）——**已排除，不重複發**` : ""}${onceNote}`,
   `③ 打掃薪水　　　${cleanTotal} 幣（${cleanTimes} 次 × ${CLEAN_PAY}＝${[...cleanShares.values()].reduce((a, b) => a + b, 0)} 份×${WORK_DAYS} 天 ＋ 支援 ${supportTimes} − 缺席 ${absentTimes} − 未達標 ${badTimes} − 免打掃券 ${freeTimes}${freeDup ? `（另 ${freeDup} 次同日已記缺席，不重扣）` : ""}）${noClean.length ? `｜無掃區：座號 ${noClean.join("、")}` : ""}${mark(paid.clean)}`,
   `④ 午餐工作薪水　${lunchTotal} 幣（${lunchTimes} 次 × ${LUNCH_PAY}＝固定崗 ${fixedLunch.size} 人＋第 ${round} 輪輪值 ${rotSeats.join("、")}，支援 ${sumMap(lunchSup)} − 缺席 ${sumMap(lunchAbs)}）${mark(paid.lunch)}`,
   ROUTINE_ENABLED

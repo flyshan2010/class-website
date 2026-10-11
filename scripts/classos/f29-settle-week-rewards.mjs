@@ -23,6 +23,7 @@
  * ⚠️ 本 repo 為 PUBLIC，Actions log 公開可讀——只印座號與金額，不印姓名與事件描述。
  */
 import { queryAll, api, isExecute, DS, forEachThrottled } from "./lib/notion.mjs";
+import { oncePerDay, pairsOfPage } from "./lib/once-per-day.mjs";
 
 const WEEK = String(process.env.WEEK_LABEL || "").trim();
 if (!WEEK) {
@@ -59,7 +60,8 @@ for (const b of bank) {
 console.log(`🏦 帳本 ${bank.length} 列｜已入帳鍵 ${booked.size} 組`);
 
 // ── 紀錄庫：該週、金幣影響≠0 ────────────────────────────────────
-const logs = (await queryAll(DS.log))
+const logPages = await queryAll(DS.log);
+const logs = logPages
   .map(p => ({
     id: p.id,
     date: p.properties?.["日期"]?.date?.start ?? "",
@@ -72,15 +74,22 @@ const logs = (await queryAll(DS.log))
   .sort((a, b) => a.date.localeCompare(b.date));
 console.log(`📝 ${WEEK} 金幣影響≠0 的紀錄 ${logs.length} 列（展開前）`);
 
+// ── 同生同日同科舉手只算一筆（2026-10-11 老師裁定；判斷正本 lib/once-per-day.mjs，f24 試算引用同一支）──
+// 防重複鍵（紀錄id×學生id）擋的是「同一列入兩次」，擋不到「兩列講同一件事」。這裡只決定不入帳，不改紀錄庫。
+const weekText = p => (p.properties?.["週次"]?.rich_text ?? []).map(t => t.plain_text).join("");
+const once = oncePerDay(logPages.filter(p => weekText(p) === WEEK).flatMap(pairsOfPage), booked);
+const onceTag = r => r.eid || `（無事件id ${String(r.logId).slice(-4)}）`;
+
 // ── 逐筆展開成帳列 ──────────────────────────────────────────────
 const creates = [];
-let skipDup = 0, skipOff = 0, skipNoDate = 0, zeroed = 0;
+let skipDup = 0, skipOff = 0, skipNoDate = 0, zeroed = 0, skipOnce = 0, skipOnceCoin = 0;
 for (const g of logs) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(g.date)) { skipNoDate += g.students.length; continue; } // 日期是學年／週次的依據，空的不猜
   for (const sid of g.students) {
     const seat = seatOf.get(sid);
     if (seat === undefined) { skipOff++; continue; }        // 非在學（轉出／模擬列）
     if (booked.has(`${g.id}|${sid}`)) { skipDup++; continue; }
+    if (once.skip.has(`${g.id}|${sid}`)) { skipOnce++; skipOnceCoin += Math.round(g.coin); continue; } // 同日同科重複舉手，不入帳
     let amt = Math.round(g.coin);
     let desc = g.desc;
     if (amt < 0) {
@@ -109,6 +118,16 @@ const bySeat = new Map();
 for (const c of creates) bySeat.set(c.seat, (bySeat.get(c.seat) ?? 0) + c.amt);
 const sum = creates.reduce((n, c) => n + c.amt, 0);
 console.log(`\n📊 待入帳 ${creates.length} 筆／${sum} 幣｜已入帳略過 ${skipDup} 筆｜非在學略過 ${skipOff} 筆｜無日期略過 ${skipNoDate} 筆｜扣至歸零 ${zeroed} 筆`);
+{
+  const over = once.groups.flatMap(g => g.overpaid);
+  console.log(`🔁 同日同科舉手重複 ${once.groups.length} 組｜不入帳 ${skipOnce} 筆／${skipOnceCoin} 幣｜已重複入帳 ${over.length} 筆／${over.reduce((n, r) => n + r.coin, 0)} 幣（需人工補扣，程式不動）｜判不出 ${once.manual.length} 筆（未去重、照常入帳，需人工）`);
+  for (const g of once.groups) {
+    console.log(`   座號${seatOf.get(g.stuId) ?? "?"} ${g.date} ${g.subject}｜留 ${onceTag(g.keep)}`
+      + (g.unpaid.length ? `｜不入帳 ${g.unpaid.map(onceTag).join("、")}` : "")
+      + (g.overpaid.length ? `｜已重複入帳 ${g.overpaid.map(onceTag).join("、")}` : ""));
+  }
+  for (const r of once.manual) console.log(`   判不出：座號${seatOf.get(r.stuId) ?? "?"} ${r.date || "（無日期）"} ${r.subject || "（科目空白）"}｜${onceTag(r)}`);
+}
 console.log(`   明細：${[...bySeat.entries()].sort((a, b) => a[0] - b[0]).map(([s, v]) => `座號${s} ${v >= 0 ? "+" : ""}${v}`).join("、") || "（無）"}`);
 
 if (!creates.length) { console.log("\n✅ 沒有要補的，結束。"); process.exit(0); }

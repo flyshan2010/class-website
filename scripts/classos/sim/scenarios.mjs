@@ -11,6 +11,11 @@
  *       → ⑥ 全額待入帳、⑦ −5
  *   S4  S5 ＋「寫回紀錄庫後、建帳前中斷」：③ 與 3 位 ④ 已有紀錄列但沒帳列
  *       → ② 接手這 4 筆、⑥／⑦ 排除這幾位，「本次實際待入帳」應與 S5 相同（沒有重複算）
+ *   S6  同生同日同科舉手重複（2026-10-11，lib/once-per-day.mjs）：三位各兩筆「課堂表現＋程度1＋5 幣」同日同科
+ *       甲＝兩筆都沒入帳 → 留先建立的、後一筆不入帳；乙＝後一筆已入帳 → 留已入帳的、先建立那筆不入帳；
+ *       丙＝兩筆都已入帳 → 列「需人工補扣」，程式不動。
+ *       → 現行 f24／f29：② 比 S0 多 1 筆／+5、不入帳 2 筆／10 幣、已重複入帳 1 筆；修正前 f24：多 3 筆／+15、沒有紅字
+ *   F24_TODAY（與 f24 同一個環境變數）：把「今天」指到某一週，週末或回溯也能跑。
  *
  * ⚠️ PUBLIC repo：只印座號與日期。
  */
@@ -35,12 +40,14 @@ const T = s => [{ plain_text: s, text: { content: s } }];
 let seq = 0;
 const fakeId = () => `00000000-5151-4000-8000-${String(++seq).padStart(12, "0")}`;
 
-const logPage = ({ title, week, sid, date, cat, sign, coin = 0, level = null, count = 1 }) => ({
+const logPage = ({ title, week, sid, date, cat, sign, coin = 0, level = null, count = 1, subject = null, eid = "", created = "" }) => ({
   id: fakeId(),
+  created_time: created,
   properties: {
     事件描述: { title: T(title) }, 週次: { rich_text: T(week) }, 學生: { relation: [{ id: sid }] },
     日期: { date: { start: date } }, 類別: { select: { name: cat } }, 正負向: { select: { name: sign } },
     金幣影響: { number: coin }, 程度: { number: level }, 次數: { number: count },
+    科目: { select: subject ? { name: subject } : null }, 事件id: { rich_text: T(eid) },
   },
 });
 const ledgerPage = ({ reason, date, amount, sid, logId }) => ({
@@ -61,7 +68,8 @@ const redeemPage = ({ seat, date }) => ({
 async function build() {
   const out = { log: [], bank: [], redeem: [], dropBank: null };
   if (SC === "S0") return out;
-  const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
+  const today = /^\d{4}-\d{2}-\d{2}$/.test(process.env.F24_TODAY || "") ? process.env.F24_TODAY
+    : new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Taipei" });
   const weeks = JSON.parse(await readFile(path.join(ROOT, "data", "weeks.json"), "utf8"));
   let wk = null;
   for (const t of weeks.學期 ?? []) {
@@ -88,6 +96,25 @@ async function build() {
   const dateOf = p => (p.properties?.["日期"]?.date?.start ?? "").slice(0, 10);
   // 與 f24 ⑤ 同一條判準：那天是否已經算「常規沒達成」
   const missOn = (seat, day) => weekLogs.some(p => mine(p, seat) && dateOf(p) === day && titleOf(p) === "常規未達成");
+
+  if (SC === "S6") {
+    const SUBJ = "國語", day = days[0];
+    const capped = p => sel(p, "類別") === "課堂表現" && sel(p, "正負向") === "＋" && num(p, "程度") === 1 && (num(p, "金幣影響") ?? 0) > 0;
+    // 挑當天該科還沒有舉手列的三位，真資料才不會混進同一組
+    const pick = roster.map(r => r.seat).sort((a, b) => a - b)
+      .filter(s => !weekLogs.some(p => capped(p) && mine(p, s) && dateOf(p) === day && sel(p, "科目") === SUBJ)).slice(0, 3);
+    if (pick.length < 3) throw new Error("S6：找不到三位當天該科沒有舉手列的學生");
+    const two = (seat, n) => ["a", "b"].map((x, i) => logPage({
+      title: `（模擬）座號${seat} ${SUBJ}課主動舉手發表`, week: wk.標籤, sid: idOf.get(seat), date: day, cat: "課堂表現", sign: "＋",
+      coin: 5, level: 1, subject: SUBJ, eid: `SIM-${n}${x}`, created: `${day}T0${i + 1}:00:00.000Z` }));
+    const [a1, a2] = two(pick[0], 1), [b1, b2] = two(pick[1], 2), [c1, c2] = two(pick[2], 3);
+    out.log.push(a1, a2, b1, b2, c1, c2);
+    for (const [r, seat] of [[b2, pick[1]], [c1, pick[2]], [c2, pick[2]]]) {
+      out.bank.push(ledgerPage({ reason: titleOf(r), date: day, amount: 5, sid: idOf.get(seat), logId: r.id }));
+    }
+    console.log(`🧪 情境 S6：${day} ${SUBJ} 各兩筆舉手——座號 ${pick[0]} 都沒入帳（應留 SIM-1a）、座號 ${pick[1]} 後一筆已入帳（應留 SIM-2b）、座號 ${pick[2]} 兩筆都已入帳（應列需人工補扣 SIM-3b）`);
+    return out;
+  }
 
   let X = null, D = null;
   for (const s of cleaners) {
