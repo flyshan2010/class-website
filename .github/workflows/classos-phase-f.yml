@@ -18,6 +18,7 @@ on:
           - "[常用] f27-prune-dangling-relations（清死關聯・只做學生名冊・可填 seat 單人試跑）"
           - "[常用] f28-prune-dangling-relations-all（清死關聯・全庫 27 個庫，含名冊）"
           - "[常用・只讀] f43-personal-tiers（學習報告各科個人一句：級距／作業提醒／請假判定，需填 week）"
+          - "[驗收用・只讀] f46-plus-one-audit（學習報告 +1 盡本分亮點句：程式判資格 vs 正式報告，需填 week）"
           - "[驗收用・只讀] f42-sim-leave-homework（請假×作業缺交提醒判斷模擬，第4–5週）"
           - "[驗收用・只讀] f41-verify-report-hashes（第1–4週報告個人句寫入逐字比對）"
           - "[一次性・2026-10-10] f45-lessons-body-links（教學單元頁面內文的教材連結改指向公開教材庫；payload 填 revert＝退回）"
