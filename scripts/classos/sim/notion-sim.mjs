@@ -6,6 +6,7 @@ import { inject } from "./scenarios.mjs";
 
 export const DS = real.DS;
 export const isExecute = () => false;
+export const forEachThrottled = real.forEachThrottled; // f29 匯入用；dry-run 走不到寫入，真要寫也會被下面的 api 拋錯擋下
 
 export async function queryAll(dsId, body = {}) {
   return inject(dsId, await real.queryAll(dsId, body));

@@ -5,6 +5,22 @@ name: 週結模擬驗證（只讀）
 # 情境說明見 scripts/classos/sim/scenarios.mjs。
 on:
   workflow_dispatch:
+    inputs:
+      week:
+        description: 只跑「同日同科舉手只算一筆」演練時填週次標籤（如 四上第6週(10/5-10/9)）；留空＝跑原本的 S0–S5
+        required: false
+        default: ""
+        type: string
+      as_of:
+        description: 把哪一天當「今天」（YYYY-MM-DD，須落在上面那一週；週末或回溯時必填）
+        required: false
+        default: ""
+        type: string
+      restore:
+        description: 該週已人工更正的事件 id（逗號分隔）；記憶體還原成修正前當對照組
+        required: false
+        default: ""
+        type: string
 
 jobs:
   sim:
@@ -12,6 +28,7 @@ jobs:
     env:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
       MODE: dry-run
+      F24_TODAY: ${{ inputs.as_of }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,10 +37,13 @@ jobs:
         with:
           node-version: "20"
       - name: 對照組：取出「⑤排除寫回列」修正前的 f24
+        if: inputs.week == ''
         run: git show a7009812~1:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-prefix-old.mjs
       - name: 資料分析
+        if: inputs.week == ''
         run: node scripts/classos/sim/week-analysis.mjs
       - name: f24 情境
+        if: inputs.week == ''
         run: |
           for s in S0 S1 S2 S3 S5 S4; do
             echo "########## 情境 $s（現行 f24）"
@@ -31,3 +51,20 @@ jobs:
           done
           echo "########## 情境 S3（修正前 f24，對照）"
           SIM_SCENARIO=S3 node --import ./scripts/classos/sim/hooks.mjs scripts/classos/f24-prefix-old.mjs
+      # 2026-10-11 同生同日同科舉手只算一筆（lib/once-per-day.mjs）：正式 f24／f29 本體＋模擬層，全程只讀
+      - name: 同日同科舉手只算一筆（S6 情境＋該週真資料）
+        if: inputs.week != ''
+        env:
+          WEEK_LABEL: ${{ inputs.week }}
+          SIM_RESTORE: ${{ inputs.restore }}
+        run: |
+          node --test scripts/classos/lib/once-per-day.test.mjs
+          git show 81bb3a77:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-once-old.mjs
+          H="--import ./scripts/classos/sim/hooks.mjs"
+          # 每段都整庫重讀，連跑會被 Notion 限流（429，lib 沒有重試）→ 段與段之間停一下
+          echo "########## f24 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f24-weekly-settle-preview.mjs
+          sleep 45; echo "########## f24 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f24-weekly-settle-preview.mjs
+          sleep 45; echo "########## f24 S6（接去重前，對照）";    SIM_SCENARIO=S6 node $H scripts/classos/f24-once-old.mjs
+          sleep 45; echo "########## f29 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f29-settle-week-rewards.mjs
+          sleep 45; echo "########## f29 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f29-settle-week-rewards.mjs
+          sleep 45; echo "########## 該週真資料：現況 vs 記憶體還原"; node scripts/classos/sim/once-per-day.mjs
