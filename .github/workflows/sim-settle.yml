@@ -61,9 +61,10 @@ jobs:
           node --test scripts/classos/lib/once-per-day.test.mjs
           git show 81bb3a77:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-once-old.mjs
           H="--import ./scripts/classos/sim/hooks.mjs"
+          # 每段都整庫重讀，連跑會被 Notion 限流（429，lib 沒有重試）→ 段與段之間停一下
           echo "########## f24 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f24-weekly-settle-preview.mjs
-          echo "########## f24 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f24-weekly-settle-preview.mjs
-          echo "########## f24 S6（接去重前，對照）";    SIM_SCENARIO=S6 node $H scripts/classos/f24-once-old.mjs
-          echo "########## f29 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f29-settle-week-rewards.mjs
-          echo "########## f29 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f29-settle-week-rewards.mjs
-          echo "########## 該週真資料：現況 vs 記憶體還原"; node scripts/classos/sim/once-per-day.mjs
+          sleep 45; echo "########## f24 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f24-weekly-settle-preview.mjs
+          sleep 45; echo "########## f24 S6（接去重前，對照）";    SIM_SCENARIO=S6 node $H scripts/classos/f24-once-old.mjs
+          sleep 45; echo "########## f29 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f29-settle-week-rewards.mjs
+          sleep 45; echo "########## f29 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f29-settle-week-rewards.mjs
+          sleep 45; echo "########## 該週真資料：現況 vs 記憶體還原"; node scripts/classos/sim/once-per-day.mjs
