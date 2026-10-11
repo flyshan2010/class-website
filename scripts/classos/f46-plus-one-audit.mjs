@@ -4,7 +4,7 @@
  * 背景：第 6 週影子試跑照 class-report SKILL 字面給了 9 位，正式報告只給 2 位——先用程式照規則算一次，看差在哪。
  * 規則（class-report SKILL「+1 盡本分亮點句」）：
  *   資格＝本週沒有課堂負向、沒有亮點類紀錄、沒有課堂正向（量尺 +2 以上＝課堂表現正向）。
- *   開頭依序取第一個成立：①上週有課堂負向、本週沒有 ②本週「作業完成」天數＝本週上課天數
+ *   開頭依序取第一個成立：①上週有課堂負向、本週沒有 ②該生「作業完成」天數＝本週有清點作業的天數（老師 2026-10-11 裁定）
  *   ③本週有其他類正向紀錄 ④以上皆非。
  * 永遠只讀（只 import queryAll）。WEEK_LABEL＝週次標籤（逐字）。
  * ⚠️ PUBLIC repo：只印座號與判定代碼，不印姓名、事件描述與報告內文。
@@ -36,6 +36,7 @@ const logs = await queryAll(DS.log);
 const of = (label, sid) => logs.filter(p => txt(p, "週次") === label && rel(p, "學生").includes(sid));
 const clsNeg = p => sel(p, "類別") === "課堂表現" && sel(p, "正負向") === "－";
 const clsPos = p => sel(p, "類別") === "課堂表現" && sel(p, "正負向") === "＋";
+const CHECK_DAYS = new Set(logs.filter(p => txt(p, "週次") === WEEK && txt(p, "事件描述") === "作業完成").map(day)).size; // 本週有清點作業的天數
 const isHw = p => txt(p, "事件描述") === "作業完成" || /作業完成獎勵$/.test(txt(p, "事件描述"));
 
 const reports = (await queryAll(DS.reports)).filter(p => txt(p, "期間") === WEEK && sel(p, "報告類型") === "每週");
@@ -43,7 +44,7 @@ const repOf = new Map(reports.map(p => [num(p, "座號"), txt(p, "學生亮點")
 const openOf = t => !t.includes("遵守上課規則、專心聽講") ? "－"
   : t.includes("比上週更穩了") ? "①" : t.includes("作業天天交齊") ? "②" : t.includes("上課也都能") ? "③" : "④";
 
-console.log(`🎯 ${WEEK}｜上一週 ${PREV || "（無）"}｜本週上課 ${SCHOOL_DAYS} 天｜在學 ${roster.length} 人｜每週報告 ${reports.length} 份`);
+console.log(`🎯 ${WEEK}｜上一週 ${PREV || "（無）"}｜本週上課 ${SCHOOL_DAYS} 天、清點作業 ${CHECK_DAYS} 天｜在學 ${roster.length} 人｜每週報告 ${reports.length} 份`);
 console.log("座號｜程式判資格（不給原因：負＝課堂負向 亮＝亮點類 正＝課堂正向）｜程式判開頭｜正式報告開頭（－＝沒有這句）｜是否一致");
 let should = 0, got = 0, miss = [], extra = [], diffOpen = [];
 for (const r of roster) {
@@ -53,7 +54,7 @@ for (const r of roster) {
   const hwDays = new Set(cur.filter(p => txt(p, "事件描述") === "作業完成").map(day)).size;
   const want = !ok ? "－"
     : PREV && of(PREV, r.id).some(clsNeg) ? "①"
-    : SCHOOL_DAYS > 0 && hwDays >= SCHOOL_DAYS ? "②"
+    : CHECK_DAYS > 0 && hwDays >= CHECK_DAYS ? "②"
     : cur.some(p => sel(p, "正負向") === "＋" && sel(p, "類別") !== "課堂表現" && !isHw(p)) ? "③" : "④";
   const has = repOf.has(r.seat) ? openOf(repOf.get(r.seat)) : "無報告";
   if (ok) should++;
