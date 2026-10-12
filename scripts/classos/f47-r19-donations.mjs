@@ -191,16 +191,17 @@ async function runSandbox() {
     const C = await newTask("座號7 捐 5 幣");                         // 非在學 → 失敗
     const D = await newTask("19 捐 10 幣給沙盒目標乙");               // 未到開放期間 → 失敗
     const E = await newTask("座號19 數學小考 +1");                    // 不是捐款：不可動
-    const F = await newTask("座號23 捐 10 幣");                       // 餘額剛好 → 入帳
     const r1 = await runPending({ ds, execute: true });
-    ok("第一輪：捐款任務數", r1.tasks, 5);
-    ok("第一輪：入帳", r1.rows, 2);
+    ok("第一輪：捐款任務數", r1.tasks, 4);
+    ok("第一輪：入帳", r1.rows, 1);
     ok("第一輪：失敗", r1.fail, 3);
 
     const A2 = await newTask("19捐50幣");                             // 重送：同日同額 → 待審，不重扣
     const G = await newTask("座號19 捐 60 幣");                       // 入帳後餘額只剩 50 → 失敗
+    const F = await newTask("座號23 捐 10 幣");                       // 餘額剛好 → 入帳
+    // ⚠️ 同一輪的任務彼此不可互相影響結果：Notion 建立時間只到分鐘，同分鐘的處理順序不保證。
     const r2 = await runPending({ ds, execute: true });
-    ok("第二輪：入帳", r2.rows, 0);
+    ok("第二輪：入帳", r2.rows, 1);
     ok("第二輪：待審（重送）", r2.review, 1);
     ok("第二輪：失敗（餘額已被第一輪扣過）", r2.fail, 1);
 
