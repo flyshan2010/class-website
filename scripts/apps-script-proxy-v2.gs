@@ -1,6 +1,13 @@
 /**
- * 班網教師專區代理 v2.11（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.12（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.12 升級步驟（2026-10-12，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.12 新增（集資捐款一句話入帳，SPEC_班級經濟機制.md §2-2b）：
+ *   沒有附件、且「捐／捐款／集資」後面直接接數字的句子（例「座號25 捐 50 幣」）→ 寫進收件匣後立刻丟
+ *   repository_dispatch「r19-submit」→ 班網 r19-donations.yml（f47）約 1 分鐘內入帳。
+ *   觸發失敗不影響送出，整點排程照舊當備援；重送由 f47 的「同人同目標同日同額 → 待審」擋，不會重複扣幣。
  *
  * ── v2.11 升級步驟（2026-10-09，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -201,6 +208,8 @@ function submitTask_(props, body) {
   if (text.split("\n")[0].trim().indexOf("#CM-EVENTS") === 0) out.r18_trigger = dispatch_(props, "r18-submit").ok;
   // v2.10：作品照片（與 lib/r13-works.mjs 的 isR13 一致）→ 立刻觸發 f37 入庫
   else if (files.length && /作品|佳作/.test(text)) out.r13_trigger = dispatch_(props, "r13-submit").ok;
+  // v2.12：集資捐款（與 lib/r19-donations.mjs 的 isDonation 一致）→ 立刻觸發 f47 入帳
+  else if (!files.length && isDonationText_(text)) out.r19_trigger = dispatch_(props, "r19-submit").ok;
   return out;
 }
 
@@ -293,12 +302,19 @@ function listTasks_(props, body) {
   return { ok: true, tasks: tasks };
 }
 
+/** 集資捐款句判定（v2.12）：不是「記錄」開頭，且「捐／捐款／集資」後面直接接數字。與 lib/r19-donations.mjs isDonation 同一條規則。 */
+function isDonationText_(text) {
+  const t = String(text || "").normalize("NFKC").trim();
+  if (t.indexOf("#CM-EVENTS") === 0 || /^記[錄録]/.test(t)) return false;
+  return /(?:捐款?|集資)\s*\d/.test(t);
+}
+
 /** 觸發 GitHub Actions（repository_dispatch: sync-now） */
 function triggerSync_(props) {
   return dispatch_(props, "sync-now");
 }
 
-/** repository_dispatch 共用：sync-now（班網同步）／r18-submit（v2.9，課堂事件包入庫）／r13-submit（v2.10，作品入庫） */
+/** repository_dispatch 共用：sync-now（班網同步）／r18-submit（v2.9，課堂事件包入庫）／r19-submit（v2.12，集資捐款入帳）／r13-submit（v2.10，作品入庫） */
 function dispatch_(props, eventType) {
   const token = props.getProperty("GH_TOKEN");
   if (!token) return { ok: false, error: "尚未設定 GH_TOKEN" };
