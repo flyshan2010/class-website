@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-10-12T02:10:51.208Z",
+  "fetchedAt": "2026-10-12T09:17:34.855Z",
   "items": [
+    {
+      "date": "2026-10-12",
+      "title": "國立高雄科技大學辦理「2027 WINNING 新加坡教育 旅行計劃」，國立高雄科技大學，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=960&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-10-12",
       "title": "有關本市辦理115 學年度資優學生家長親職教育講座，請轉知家長及教師踴躍報名參加。",
@@ -53,12 +59,6 @@
       "date": "2026-10-07",
       "title": "「115年臺南市數位學習家長宣講活動」",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=941&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-07",
-      "title": "「115和氣大愛文教基金會第三屆全國書法比賽」",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=943&type=news&from_op=school_department_show",
       "dept": "教務處"
     }
   ]
