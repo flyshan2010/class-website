@@ -12,6 +12,7 @@ import { tmpdir } from "node:os";
 import { webcrypto as crypto } from "node:crypto";
 import { uniqueMaskNames } from "./lib/mask-name.mjs";
 import { buildDutyData } from "./lib/build-duties.mjs";
+import { GOAL_TIER, backersNeededOf, inWindow, goalPrefix, tallyGoal } from "./lib/class-goal.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -946,7 +947,7 @@ const todayTaipei = () =>
 function openWindow(r, today = todayTaipei()) {
   const from = (r["開放期間"]?.start || "").slice(0, 10);
   const to = (r["開放期間"]?.end || "").slice(0, 10);
-  const open = (!from || from <= today) && (!to || today <= to);
+  const open = inWindow(from, to, today);
   return { open, from, to };
 }
 
@@ -1009,11 +1010,7 @@ async function syncStore() {
 //
 // 隱私：只輸出總額與「幾個人捐過」，不出姓名、座號、也不出誰捐多少——
 // 公開頁列出個別捐款金額，等於把「誰家比較有餘裕」攤在班網上。
-const GOAL_TIER = "⑥ 全班集資・共同達成";
-// 參與門檻＝在學人數的 3/4，**無條件捨去**：27 人 → 20 人。
-// 捨去不是進位——老師在 SPEC §2-3 明寫「27 人 → 20 人」（27×3/4＝20.25，進位會變 21）。
-// 門檻是「讓人人進得來」的設計，取捨有疑義時往寬的那邊走。
-const GOAL_THRESHOLD_RATIO = 3 / 4;
+// GOAL_TIER、參與門檻（在學人數 3/4 無條件捨去）、輪數累計都在 lib/class-goal.mjs（與捐款入帳程式 f47 共用同一份）。
 
 async function syncClassGoal() {
   const items = (await queryDataSource(DS.store)).map(props)
@@ -1023,7 +1020,7 @@ async function syncClassGoal() {
 
   const enrolled = (await queryDataSource(DS.roster)).map(props)
     .filter(r => r["在學"] && r["座號"] !== "").length;
-  const backersNeeded = Math.max(1, Math.floor(enrolled * GOAL_THRESHOLD_RATIO));
+  const backersNeeded = backersNeededOf(enrolled);
 
   const txRows = (await queryDataSource(DS.bank)).map(props)
     .filter(r => r["學生"]?.length && r["金額"] !== "" && (r["類型"] || "") === "消費");
@@ -1032,36 +1029,27 @@ async function syncClassGoal() {
     const name = String(it["品項"]).trim();
     const target = Math.round(Number(it["價格"]) || 0);
     const limit = Math.max(1, Math.round(Number(it["庫存"]) || 1));
-    const prefix = `集資-${name}`;
+    const prefix = goalPrefix(name);
     // 事由以「集資-{名稱}」開頭才算這一列的捐款。**名稱一旦有捐款就不可改**——
     // 事由靠名稱對帳，改名會靜默斷掉（SPEC §2-4 護欄 1、U58）。
     const mine = txRows
       .filter(t => String(t["事由"] || "").trim().startsWith(prefix))
       .sort((a, b) => String(a["日期"]?.start || "").localeCompare(String(b["日期"]?.start || "")));
 
-    let rounds = 0, pool = 0, lastDate = "";
-    let backers = new Set();
-    for (const t of mine) {
-      pool += Math.abs(Math.round(Number(t["金額"]) || 0));
-      // distinct 學生，不是筆數——同一人捐三次只算一人（U41 同一個病）
-      backers.add(t["學生"][0]);
-      const d = t["日期"]?.start || "";
-      if (d > lastDate) lastDate = d;
-      if (target > 0 && rounds < limit && pool >= target && backers.size >= backersNeeded) {
-        rounds++; pool = 0; backers = new Set();
-      }
-    }
+    const t = tallyGoal(
+      mine.map(x => ({ amount: x["金額"], student: x["學生"][0], date: x["日期"]?.start || "" })),
+      { target, limit, backersNeeded });
     return {
       name, target,
       note: it["說明"] || "",
       icon: it["圖示"] || "🎯",
-      raised: pool,
-      backers: backers.size,
+      raised: t.raised,
+      backers: t.backers,
       backersNeeded,
-      roundsDone: rounds,
+      roundsDone: t.roundsDone,
       roundsLimit: limit,
-      closed: rounds >= limit,
-      lastDate,
+      closed: t.closed,
+      lastDate: t.lastDate,
     };
   });
 

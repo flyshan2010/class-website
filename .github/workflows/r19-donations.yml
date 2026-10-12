@@ -1,0 +1,60 @@
+name: R19 集資捐款入帳（f47）
+
+# 規格：ClassOS_v3.5_藍圖/SPEC_班級經濟機制.md §2-6（2026-10-12 老師裁定：一句話任務「座號N 捐 N 幣」直接入帳）。
+# 代理 v2.12 送出捐款句後立刻丟 r19-submit（約 1 分鐘內入帳）；雲端 routine 手冊 R19 是「略過，不認領」——同一時間只有一邊寫（U44）。
+# 整點排程只是備援（GitHub 排程常延遲或丟掉）。回滾：拿掉 repository_dispatch 與 schedule，手冊 R19 那一列改回「停待審」。
+on:
+  repository_dispatch:
+    types: [r19-submit]
+  schedule:
+    # 備援：平日 08:25–17:25 台北＝00:25–09:25 UTC（錯開 routine 整點、f35 的 :05、f37 的 :15）
+    - cron: "25 0-9 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: dry-run＝只算不寫／execute＝立刻處理待處理的捐款任務／sandbox＝一次性沙盒實跑（建→跑→驗→刪）
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - execute
+          - sandbox
+      task_status:
+        description: 只給 dry-run 用：改撈哪個狀態的任務來演練（預設 待處理）
+        required: false
+        default: 待處理
+
+permissions:
+  contents: read
+  actions: write   # 入帳後觸發 sync.yml 更新班網集資進度條
+
+concurrency:
+  group: r19-donations
+  cancel-in-progress: false
+
+jobs:
+  f47:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 規則測試（sim，不連 Notion）
+        run: node scripts/classos/sim/r19-donations.mjs
+      - name: f47
+        id: f47
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          MODE: ${{ (github.event_name == 'schedule' || github.event_name == 'repository_dispatch') && 'execute' || (inputs.mode == 'sandbox' && 'execute' || inputs.mode) }}
+          SANDBOX: ${{ inputs.mode == 'sandbox' && '1' || '0' }}
+          TASK_STATUS: ${{ inputs.task_status }}
+        run: node scripts/classos/f47-r19-donations.mjs
+      - name: 有入帳 → 更新班網（集資進度條）
+        if: steps.f47.outputs.wrote != '' && steps.f47.outputs.wrote != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sync.yml --ref main

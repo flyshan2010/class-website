@@ -226,3 +226,55 @@ export async function buildR13Sandbox() {
   });
   return { pageId: page.id, ds: { roster, inbox, portfolio } };
 }
+
+// ───────────────────────────────────────────────────────────────
+// R19 沙盒（集資捐款入帳，f47）：名冊＋收件匣＋帳本＋商店，建→跑→驗→整頁刪除。
+// 座號 19、23 在學，7 已非在學；帳本先放兩筆薪水當餘額；商店兩個 ⑥ 層目標（一個開放、一個未到開放期間）。
+export const R19_SANDBOX_TITLE = "🧪 R19 捐款入帳沙盒";
+
+export async function buildR19Sandbox() {
+  const page = await apiOrThrow("POST", "/pages", {
+    parent: { type: "page_id", page_id: PARENT_PAGE },
+    properties: { title: { title: [{ text: { content: R19_SANDBOX_TITLE } }] } },
+  });
+  const mk = async (title, properties) => {
+    const db = await apiOrThrow("POST", "/databases", {
+      parent: { type: "page_id", page_id: page.id },
+      title: [{ text: { content: title } }],
+      initial_data_source: { properties },
+    });
+    return db.data_sources?.[0]?.id;
+  };
+  const add = (ds, properties) => apiOrThrow("POST", "/pages", { parent: { type: "data_source_id", data_source_id: ds }, properties });
+  const t = (s) => [{ text: { content: s } }];
+  const sel = (names) => ({ select: { options: names.map((name) => ({ name })) } });
+
+  const roster = await mk("👥 學生名冊（R19 沙盒）", { 姓名: { title: {} }, 座號: { number: {} }, 在學: { checkbox: {} } });
+  const ids = {};
+  for (const [seat, on] of [[19, true], [23, true], [7, false]]) {
+    ids[seat] = (await add(roster, { 姓名: { title: t(`測試${seat}`) }, 座號: { number: seat }, 在學: { checkbox: on } })).id;
+  }
+  const inbox = await mk("📥 任務收件匣（R19 沙盒）", {
+    任務原文: { title: {} }, 狀態: sel(["待處理", "處理中", "待審", "已完成", "失敗"]),
+    任務類型: sel(["記帳"]), 路由ID: { rich_text: {} }, 執行紀錄: { rich_text: {} },
+    錯誤訊息: { rich_text: {} }, 完成時間: { date: {} }, 產出連結: { url: {} }, 附件: { files: {} },
+  });
+  const bank = await mk("🏦 班級銀行帳本（R19 沙盒）", {
+    事由: { title: {} }, 日期: { date: {} }, 週次: { rich_text: {} },
+    學生: { relation: { data_source_id: roster, single_property: {} } },
+    類型: sel(["薪水", "獎勵金", "懲罰金", "消費", "調整"]), 金額: { number: {} }, 學年: sel(["115", "116", "117"]),
+  });
+  for (const [seat, amount] of [[19, 100], [23, 10]]) {
+    await add(bank, { 事由: { title: t("沙盒薪水") }, 日期: { date: { start: "2026-09-01" } }, 學生: { relation: [{ id: ids[seat] }] },
+      類型: { select: { name: "薪水" } }, 金額: { number: amount }, 學年: { select: { name: "115" } } });
+  }
+  const store = await mk("🏪 班級商店（R19 沙盒）", {
+    品項: { title: {} }, 層級: sel(["② 活動特權・消費型", "⑥ 全班集資・共同達成"]),
+    價格: { number: {} }, 庫存: { number: {} }, 上架: { checkbox: {} }, 開放期間: { date: {} },
+  });
+  const goal = (name, extra = {}) => add(store, { 品項: { title: t(name) }, 層級: { select: { name: "⑥ 全班集資・共同達成" } },
+    價格: { number: 500 }, 庫存: { number: 1 }, 上架: { checkbox: true }, ...extra });
+  await goal("沙盒目標甲");
+  await goal("沙盒目標乙", { 開放期間: { date: { start: "2099-01-01" } } });
+  return { pageId: page.id, ds: { roster, inbox, bank, store } };
+}
