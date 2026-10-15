@@ -325,18 +325,28 @@
       ? `<img class="avatar-img" src="${report.avatar}" alt="頭貼" />`
       : `<div class="avatar">🧑‍🎓</div>`;
 
-    // 週次多時用下拉選單，少時用按鈕。作文批改列以「✍️ 題目」標示，與週次區別
+    // 先分類再選期別（2026-10-15 老師要求）：「📊 學習報告」＝每週＋期末總報告、「✍️ 作文」＝作文批改。
+    // 兩類都有才顯示分類鈕；類內筆數多時用下拉選單，少時用按鈕。作文以「✍️ 題目」標示。
+    const catOf = x => x.reportType === "作文批改" ? "essay" : "report";
+    const cat = catOf(p);
+    const idxs = cat2 => report.periods.map((x, i) => catOf(x) === cat2 ? i : -1).filter(i => i >= 0);
+    const inCat = idxs(cat);
+    const catCount = { report: idxs("report").length, essay: idxs("essay").length };
     const tabLabel = x => x.reportType === "作文批改"
       ? `✍️ ${x.essay?.title || x.period}` : x.period;
-    const periodPicker = report.periods.length > 5
-      ? `<select id="report-period">${report.periods.map((x, i) =>
-          `<option value="${i}" ${i === periodIdx ? "selected" : ""}>${App.esc(tabLabel(x))}</option>`).join("")}</select>`
-      : `<div class="report-tabs">${report.periods.map((x, i) =>
-          `<button class="${i === periodIdx ? "active" : ""}" data-i="${i}">${App.esc(tabLabel(x))}</button>`).join("")}</div>`;
+    const catTabs = catCount.report && catCount.essay
+      ? `<div class="report-cats" role="tablist">${[["report", "📊 學習報告"], ["essay", "✍️ 作文"]].map(([k, t]) =>
+          `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "active" : ""}" data-cat="${k}">${t}<small>${catCount[k]}</small></button>`).join("")}</div>`
+      : "";
+    const periodPicker = catTabs + (inCat.length > 5
+      ? `<select id="report-period">${inCat.map(i =>
+          `<option value="${i}" ${i === periodIdx ? "selected" : ""}>${App.esc(tabLabel(report.periods[i]))}</option>`).join("")}</select>`
+      : `<div class="report-tabs">${inCat.map(i =>
+          `<button class="${i === periodIdx ? "active" : ""}" data-i="${i}">${App.esc(tabLabel(report.periods[i]))}</button>`).join("")}</div>`);
 
     const toolbar = `
       <div class="report-toolbar no-print">
-        ${periodPicker}
+        <div class="report-pickers">${periodPicker}</div>
         <div class="report-actions">
           <button id="report-anon" class="report-tool ${anon ? "on" : ""}">🕶️ 去識別化${anon ? "：開" : ""}</button>
           <button id="report-print" class="report-tool">🖨️ 列印報告</button>
@@ -558,6 +568,9 @@
     hydrateWorks(main);
     main.querySelectorAll(".report-tabs button").forEach(b =>
       b.onclick = () => showReport(report, Number(b.dataset.i), anon));
+    // 切換分類＝開該類最新一筆
+    main.querySelectorAll(".report-cats button").forEach(b =>
+      b.onclick = () => { const l = idxs(b.dataset.cat); if (l.length) showReport(report, l[l.length - 1], anon); });
     const sel = document.getElementById("report-period");
     if (sel) sel.onchange = () => showReport(report, Number(sel.value), anon);
     document.getElementById("report-anon").onclick = () => showReport(report, periodIdx, !anon);

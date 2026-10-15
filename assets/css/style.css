@@ -757,6 +757,11 @@ main {
 .report-error { color: var(--pink); margin-top: 10px; }
 .report-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 12px; }
 .report-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.report-pickers { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.report-cats { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--line); }
+.report-cats button { font: inherit; font-size: 0.8889rem; font-weight: 700; padding: 6px 14px; border: 0; border-radius: 999px; background: transparent; color: var(--ink, inherit); cursor: pointer; }
+.report-cats button.active { background: var(--card); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.report-cats small { margin-left: 6px; font-size: 0.75rem; opacity: .65; }
 .report-tabs button {
   font: inherit; font-size: 0.8611rem; padding: 6px 18px;
   border-radius: 999px; border: 2px solid var(--line); background: var(--card); cursor: pointer;
