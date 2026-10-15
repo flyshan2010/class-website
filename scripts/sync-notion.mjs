@@ -851,6 +851,7 @@ async function syncReports() {
             .map(l => l.split("｜").map(c => c.trim())).filter(c => c.length >= 2),
           finalWords: r["作文_老師的話"] || "",
           sample: r["作文_修改範文"] || "",
+          original: r["作文_原文"] || "",          // 學生原文（AI 辨識，[？疑似：X]＝辨識不清）
           pdf: r["作文_PDF連結"] || "",
         },
       } : {

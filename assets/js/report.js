@@ -391,6 +391,7 @@
 
         ${block("#5F27CD", "💬 老師的話", e.finalWords)}
         ${block("#10AC84", "✨ 老師的魔法潤飾（修改範文）", e.sample)}
+        ${block("#8395A7", "📝 附錄：作文原文（AI 辨識手寫稿，以原稿為準）", e.original)}
 
         ${e.pdf ? `
         <p class="meta no-print" style="margin-top:12px">
