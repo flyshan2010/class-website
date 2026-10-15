@@ -412,6 +412,10 @@
               ${e.photos.length > 1 ? `<figcaption class="meta">第 ${i + 1} 頁</figcaption>` : ""}
             </figure>`).join("")}
           </div>
+        </div>` : anon && (e.photos || []).length ? `
+        <div class="report-box essay-photos no-print" style="--bc:#8395A7">
+          <span class="report-badge" style="--bc:#8395A7">📷 附錄：作文原稿照片</span>
+          <p class="meta">原稿照片上有手寫的姓名與座號，<strong>去識別化時不顯示</strong>（列印時也不印出）。按上方「🕶️ 去識別化：開」關閉後即可查看。</p>
         </div>` : ""}
 
         ${e.pdf ? `
