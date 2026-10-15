@@ -868,6 +868,9 @@ main {
 .work-item { margin: 0; }
 .work-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; border: 1px solid #eee; }
 .work-item figcaption { margin-top: 4px; }
+/* 作文原稿照片：要看得清楚手寫字，整張顯示不裁切（點圖可開原尺寸） */
+.essay-photos .work-grid { grid-template-columns: 1fr; }
+.essay-photos .work-img { aspect-ratio: auto; object-fit: contain; background: #fafafa; }
 .work-empty { margin: 4px 0 0; }
 
 @media print {

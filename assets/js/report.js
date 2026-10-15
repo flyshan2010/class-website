@@ -402,6 +402,17 @@
         ${block("#5F27CD", "💬 老師的話", e.finalWords)}
         ${block("#10AC84", "✨ 老師的魔法潤飾（修改範文）", e.sample)}
         ${block("#8395A7", "📝 附錄：作文原文（AI 辨識手寫稿，以原稿為準）", e.original)}
+        ${!anon && (e.photos || []).length ? `
+        <div class="report-box essay-photos no-print" style="--bc:#8395A7">
+          <span class="report-badge" style="--bc:#8395A7">📷 附錄：作文原稿照片（可對照上方原文）</span>
+          <div class="work-grid">${e.photos.map((u, i) => `
+            <figure class="work-item"><a target="_blank" rel="noopener">
+              <img class="work-img" data-enc="${App.esc(u.enc)}" data-k="${App.esc(u.k)}" data-iv="${App.esc(u.iv)}"
+                   data-type="${App.esc(u.type)}" alt="作文原稿第 ${i + 1} 頁" /></a>
+              ${e.photos.length > 1 ? `<figcaption class="meta">第 ${i + 1} 頁</figcaption>` : ""}
+            </figure>`).join("")}
+          </div>
+        </div>` : ""}
 
         ${e.pdf ? `
         <p class="meta no-print" style="margin-top:12px">

@@ -681,6 +681,19 @@ async function saveEncryptedWork(url, pageId, i) {
   }
 }
 
+// ✍️ 作文原稿照片（2026-10-15 老師要求，便於對照 AI 辨識的原文）：與作品照片同一套 AES 加密，
+//    存 data/report-works/<頁id末12碼>-e<序>.bin，金鑰只寫進該生加密報告。必須在 portfolioBySeat() 清空資料夾之後呼叫。
+async function essayPhotos(r) {
+  const out = [];
+  let i = 0;
+  for (const f of r["作文_原稿"] || []) {
+    if (!f.url) continue;
+    const w = await saveEncryptedWork(f.url, r._id, `e${i++}`);
+    if (w) out.push(w);
+  }
+  return out;
+}
+
 async function portfolioBySeat() {
   if (!DS.portfolio) return {};
   rmSync(WORKS_DIR, { recursive: true, force: true });
@@ -852,6 +865,7 @@ async function syncReports() {
           finalWords: r["作文_老師的話"] || "",
           sample: r["作文_修改範文"] || "",
           original: r["作文_原文"] || "",          // 學生原文（AI 辨識，[？疑似：X]＝辨識不清）
+          photos: await essayPhotos(r),            // 原稿照片（加密，去識別化時前端不顯示）
           pdf: r["作文_PDF連結"] || "",
         },
       } : {
