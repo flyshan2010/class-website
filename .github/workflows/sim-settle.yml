@@ -21,6 +21,11 @@ on:
         required: false
         default: ""
         type: string
+      cutoff:
+        description: 只跑「已入帳就不建待審」演練時填（ISO 時間，如 2026-10-16T06:32:00Z）；搭配 as_of
+        required: false
+        default: ""
+        type: string
 
 jobs:
   sim:
@@ -37,13 +42,13 @@ jobs:
         with:
           node-version: "20"
       - name: 對照組：取出「⑤排除寫回列」修正前的 f24
-        if: inputs.week == ''
+        if: inputs.week == '' && inputs.cutoff == ''
         run: git show a7009812~1:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-prefix-old.mjs
       - name: 資料分析
-        if: inputs.week == ''
+        if: inputs.week == '' && inputs.cutoff == ''
         run: node scripts/classos/sim/week-analysis.mjs
       - name: f24 情境
-        if: inputs.week == ''
+        if: inputs.week == '' && inputs.cutoff == ''
         run: |
           for s in S0 S1 S2 S3 S5 S4; do
             echo "########## 情境 $s（現行 f24）"
@@ -68,3 +73,13 @@ jobs:
           sleep 45; echo "########## f29 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f29-settle-week-rewards.mjs
           sleep 45; echo "########## f29 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f29-settle-week-rewards.mjs
           sleep 45; echo "########## 該週真資料：現況 vs 記憶體還原"; node scripts/classos/sim/once-per-day.mjs
+      # 2026-10-16 週結已入帳就不建待審（lib/settle-inbox.mjs）：正式 f24 本體＋模擬層，全程只讀
+      - name: 已入帳不建待審（S0 現況 vs S7 回到 cutoff 當時）
+        if: inputs.cutoff != ''
+        env:
+          SIM_CUTOFF: ${{ inputs.cutoff }}
+        run: |
+          node --test scripts/classos/lib/settle-inbox.test.mjs
+          H="--import ./scripts/classos/sim/hooks.mjs"
+          echo "########## f24 S0（現況）";                 SIM_SCENARIO=S0 node $H scripts/classos/f24-weekly-settle-preview.mjs
+          sleep 45; echo "########## f24 S7（回到 $SIM_CUTOFF）"; SIM_SCENARIO=S7 node $H scripts/classos/f24-weekly-settle-preview.mjs

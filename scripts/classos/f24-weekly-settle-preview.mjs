@@ -35,6 +35,7 @@ import { queryAll, api, updatePage, isExecute, DS } from "./lib/notion.mjs";
 import { evaluate, loadFixedBase } from "./lib/price.mjs";
 import { weekInfo } from "./lib/school-days.mjs";
 import { oncePerDay, pairsOfPage } from "./lib/once-per-day.mjs";
+import { settleInboxDecision } from "./lib/settle-inbox.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJSON = async f => JSON.parse(await readFile(path.join(ROOT, "data", f), "utf8"));
@@ -451,6 +452,18 @@ const lines = [
 ];
 console.log("\n" + lines.join("\n"));
 
+// 要不要建待審（老師 2026-10-16 裁定）：全部已入帳的週不再多建一張單子；判斷只吃上面已算好的已入帳偵測（U83）
+const inbox = settleInboxDecision({
+  formula: {
+    job: { total: salary, paidN: paid.job.n }, clean: { total: cleanTotal, paidN: paid.clean.n },
+    lunch: { total: lunchTotal, paidN: paid.lunch.n }, routine: { total: routineTotal, paidN: paid.routine.n },
+    hw: { total: hwTotal, paidN: paid.hw.n },
+  },
+  rewardN, badN: badFine.length,
+  ledgerHits: Object.values(paid).reduce((a, p) => a + p.n, 0) + bkWeekRel,
+});
+console.log(`\n📮 收件匣：${inbox.create ? "會建立／刷新待審" : "不建待審"}——${inbox.reason}`);
+
 if (!isExecute()) { console.log("\n🔍 dry-run：未建立待審任務（要建請用 mode=execute）"); process.exit(0); }
 
 // ── 寫入收件匣（狀態＝待審；不碰帳本）──────────────────────────────
@@ -466,6 +479,12 @@ if (prev) {
   });
   if (!u.ok) { console.error(`❌ 刷新待審任務失敗：${u.status} ${u.json?.message ?? ""}`); process.exit(1); }
   console.log(`\n♻️ 已刷新收件匣既有的待審試算（合計 ${total} 幣）`);
+  process.exit(0);
+}
+
+if (!inbox.create) {
+  console.log(`\n⏭️ 本週已入帳，略過建立待審（${inbox.reason}）`);
+  console.log(`::notice title=週結試算::${WEEK} 本週已入帳，略過建立待審`);
   process.exit(0);
 }
 

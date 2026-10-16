@@ -15,6 +15,9 @@
  *       甲＝兩筆都沒入帳 → 留先建立的、後一筆不入帳；乙＝後一筆已入帳 → 留已入帳的、先建立那筆不入帳；
  *       丙＝兩筆都已入帳 → 列「需人工補扣」，程式不動。
  *       → 現行 f24／f29：② 比 S0 多 1 筆／+5、不入帳 2 筆／10 幣、已重複入帳 1 筆；修正前 f24：多 3 筆／+15、沒有紅字
+ *   S7  回到某個時間點（2026-10-16，週結已入帳就不建待審）：隱藏 SIM_CUTOFF（ISO 時間）之後才建立的紀錄列與帳列，
+ *       重現「當時」的資料狀態——例：四上第7週 cutoff 2026-10-16T06:32:00Z＝14:32 那輪（未入帳）
+ *       → 合計應與當時 run 相同（1318），「📮 收件匣」應為「會建立」；同週 S0（現況、已入帳）應為「不建待審」
  *   F24_TODAY（與 f24 同一個環境變數）：把「今天」指到某一週，週末或回溯也能跑。
  *
  * ⚠️ PUBLIC repo：只印座號與日期。
@@ -171,6 +174,16 @@ let ctx = null;
 export async function inject(dsId, rows) {
   const file = process.env.SIM_INJECT_FILE;
   if (!file && SC === "S0") return rows;
+  if (SC === "S7") {
+    const cut = process.env.SIM_CUTOFF ?? "";
+    if (!/^\d{4}-\d{2}-\d{2}T/.test(cut)) throw new Error("S7 需要 SIM_CUTOFF（ISO 時間，如 2026-10-16T06:32:00Z）");
+    if (dsId === DS.log || dsId === DS.bank) {
+      const kept = rows.filter(p => !(p.created_time && p.created_time > cut));
+      console.log(`🧪 情境 S7：${dsId === DS.log ? "紀錄庫" : "帳本"}隱藏 ${cut} 之後建立的 ${rows.length - kept.length} 列`);
+      return kept;
+    }
+    return rows;
+  }
   ctx ??= file
     ? readFile(file, "utf8").then(t => {
         const j = JSON.parse(t);
