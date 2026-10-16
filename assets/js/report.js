@@ -19,6 +19,9 @@
         ${msg ? `<p class="report-error">${msg}</p>` : ""}
         <p class="meta" style="margin-top:10px">🔒 報告內容經加密保護，只有輸入正確查詢碼才能看到；查詢碼請向老師索取，不要外流。</p>
       </div>`;
+    // 教師儀表板「點座號」連過來（report.html#seat=N）：只預填座號，查詢碼仍要自己輸入
+    const pre = (location.hash.match(/^#seat=(\d{1,2})$/) || [])[1];
+    if (pre) { document.getElementById("rp-seat").value = pre; document.getElementById("rp-code").focus(); }
     document.getElementById("report-form").addEventListener("submit", async e => {
       e.preventDefault();
       const seat = document.getElementById("rp-seat").value.trim();

@@ -80,6 +80,7 @@
       { icon: "🖥️", label: "班級工作台", href: "https://crimson-wind-7a22.changsheng0612.workers.dev/", color: "#5F27CD", ext: true },
       { icon: "🚀", label: "教學駕駛艙", href: "cockpit.html", color: "#54A0FF" },
       { icon: "🌅", label: "Morning Launch", href: "morning-launch.html", color: "#FF9F43" },
+      { icon: "📊", label: "全班儀表板", href: "#sec-dash", color: "#2a78d6" },
       { icon: "💬", label: "一句話交辦", href: "#sec-task", color: "#FF9F43" },
       { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
       { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },
@@ -98,6 +99,15 @@
           </a>`).join("")}
       </aside>
       <div class="teacher-main">
+
+      <section class="card" id="sec-dash" style="--accent:#2a78d6">
+        <details id="dash-details">
+          <summary class="dash-summary"><h2>📊 全班學習儀表板</h2><span class="meta">（預設收合，點開才顯示；只顯示座號）</span></summary>
+          <div class="dash-head"><span class="meta">本週報告、需要關注、紀錄與作文進度</span>
+            <label class="meta">週次 <select id="dash-week" hidden></select></label></div>
+          <div id="dash-body"></div>
+        </details>
+      </section>
 
       <section class="card" id="sec-task" style="--accent:#FF9F43">
         <h2>💬 一句話交辦</h2>
@@ -174,6 +184,9 @@
 
       </div>
       </div>`;
+
+    // 📊 全班學習儀表板（assets/js/teacher-dash.js）：預設收合，展開才解密載入
+    if (window.TeacherDash) window.TeacherDash.mount();
 
     // 快速鍵：帶入範本，游標停在「＿」處
     const ta = document.getElementById("task-text");

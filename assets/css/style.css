@@ -2019,3 +2019,29 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
   .dash-row { grid-template-columns: 1fr; }
   .dash-multiples { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ===== 教師專區「📊 全班學習儀表板」（BR 線 P2）：預設收合 ===== */
+#sec-dash details > summary { cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+#sec-dash details > summary::-webkit-details-marker { display: none; }
+#sec-dash details > summary h2 { margin: 0; }
+#sec-dash details > summary h2::before { content: "▸ "; color: var(--ink-soft); }
+#sec-dash details[open] > summary h2::before { content: "▾ "; }
+#sec-dash details[open] > summary { margin-bottom: 10px; }
+#sec-dash .dash-head select { font: inherit; padding: 4px 8px; border-radius: 10px; border: 1px solid var(--line); }
+.heat { display: grid; grid-template-columns: 3.4em repeat(5, minmax(0, 1fr)); gap: 2px; font-size: 12px; }
+.heat .hd { text-align: center; color: var(--ink-soft); padding-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.heat .rl { color: var(--ink-soft); display: flex; align-items: center; border: 0; background: none; font: inherit; padding: 0; cursor: pointer; text-align: left; }
+.heat .rl:hover, .heat .rl.on { color: #2a78d6; text-decoration: underline; }
+.heat .cell { height: 20px; border-radius: 3px; }
+.heat .cell:hover { outline: 2px solid var(--ink); }
+.nodata { background: repeating-linear-gradient(45deg, #e5e2da 0 4px, #fff 4px 8px) !important; display: inline-block; height: 10px; border-radius: 2px; }
+.heat .cell.nodata { height: 20px; display: block; }
+.ramp { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--ink-soft); margin-top: 8px; flex-wrap: wrap; }
+.ramp span { width: 22px; height: 10px; border-radius: 2px; display: inline-block; }
+.watch { list-style: none; padding: 0; margin: 0; font-size: .9rem; max-height: 420px; overflow-y: auto; }
+.watch li { padding: 5px 0; border-bottom: 1px solid var(--line); }
+.watch li:last-child { border-bottom: 0; }
+.wtag { font-size: .75rem; padding: 0 8px; border-radius: 999px; background: #f3f1ea; border-left: 4px solid var(--c, #ccc); }
+.progress { height: 12px; background: #f3f1ea; border-radius: 6px; overflow: hidden; display: flex; gap: 2px; }
+.progress span { display: block; height: 100%; }
+.dash-seat h4 { overflow: hidden; }
