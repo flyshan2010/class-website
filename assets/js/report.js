@@ -111,7 +111,8 @@
       </div>
     </details>`;
   const SUBJ_EMOJI = { "國語": "📖", "數學": "🔢", "社會": "🌏", "人際互動": "🙌", "生活技能": "🎒" };
-  const SUBJ_COLORS = { "國語": "#FF6B81", "數學": "#54A0FF", "社會": "#FECA57", "人際互動": "#FF9F43", "生活技能": "#1DD1A1" };
+  // 五向度配色＝方案 A（2026-10-16 老師裁定；五色兩兩可分，紅綠色弱另靠期末曲線線尾標名輔助）
+  const SUBJ_COLORS = { "國語": "#c2185b", "數學": "#2a78d6", "社會": "#eda100", "人際互動": "#e8590c", "生活技能": "#1baf7a" };
 
   // 理財表現：依儲蓄率給一句正向、可行動的收支觀察（金融教育）
   const financeNote = fin => {
@@ -262,7 +263,7 @@
     if (weeks.length < 2)
       return `<p class="meta" style="padding:16px">本學期週報資料不足，無法繪製成長曲線（至少需 2 週）。</p>`;
     const dims = ["國語", "數學", "社會", "人際互動", "生活技能"];
-    const W = 560, H = 165, padL = 26, padR = 10, padT = 10, padB = 24, n = weeks.length;
+    const W = 560, H = 165, padL = 26, padR = 72, padT = 10, padB = 24, n = weeks.length;
     const x = i => padL + (W - padL - padR) * (n === 1 ? 0.5 : i / (n - 1));
     const y = v => padT + (H - padT - padB) * (1 - (Math.max(1, Math.min(5, v)) - 1) / 4);
     const grid = [1, 2, 3, 4, 5].map(v =>
@@ -278,9 +279,14 @@
       const dots = weeks.map((w, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(w.radar[d] || 3).toFixed(1)}" r="2.5" fill="${col}" />`).join("");
       return `<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" />${dots}`;
     }).join("");
+    // 線尾直接標名（色覺輔助）：依末值排序，相鄰標籤至少相隔 14px 避免重疊
+    const ends = dims.map(d => ({ d, yy: y(weeks[n - 1].radar[d] || 3) })).sort((a, b) => a.yy - b.yy);
+    ends.forEach((e, i) => { if (i && e.yy - ends[i - 1].yy < 14) e.yy = ends[i - 1].yy + 14; });
+    const endLabels = ends.map(e =>
+      `<text x="${(x(n - 1) + 8).toFixed(1)}" y="${(e.yy + 4).toFixed(1)}" font-size="12" fill="#2d3436">${e.d}</text>`).join("");
     const legend = dims.map(d =>
       `<span class="growth-leg"><i style="background:${SUBJ_COLORS[d]}"></i>${SUBJ_EMOJI[d] || ""}${d}</span>`).join("");
-    return `<div class="growth-wrap"><svg viewBox="0 0 ${W} ${H}" class="growth-svg" role="img" aria-label="五向度逐週成長曲線">${grid}${lines}${xlabels}</svg><div class="growth-legend">${legend}</div></div>`;
+    return `<div class="growth-wrap"><svg viewBox="0 0 ${W} ${H}" class="growth-svg" role="img" aria-label="五向度逐週成長曲線">${grid}${lines}${endLabels}${xlabels}</svg><div class="growth-legend">${legend}</div></div>`;
   };
 
   // 預設開啟「最後一筆非作文批改」的報告（週報/期末總報告）；全部都是作文時才顯示作文。
@@ -312,6 +318,78 @@
           </div>`).join("")}
           ${anon ? "" : `<p class="meta no-print"><a href="proposal.html">✏️ 到「創造提案」頁繼續填寫或看進度</a></p>`}
         </div>`;
+  };
+
+  // 📊 學習總覽（儀表板）：放在報告單上方，只用報告物件既有欄位，不需新資料。
+  // 只在「每週／期末」分類顯示；作文分類不顯示。列印時隱藏（報告單照舊印 A4）。
+  const DASH_DIMS = ["國語", "數學", "社會", "人際互動", "生活技能"];
+  const dashSpark = (vals, col, labels) => {
+    const W = 200, H = 64, pad = 6, n = vals.length;
+    if (n < 2) return "";
+    const x = i => pad + i * (W - pad * 2) / (n - 1), y = v => H - pad - (Math.max(1, Math.min(5, v)) - 1) / 4 * (H - pad * 2);
+    const pts = vals.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="dash-spark" role="img" aria-label="逐週分數">
+      <line x1="${pad}" x2="${W - pad}" y1="${y(3)}" y2="${y(3)}" stroke="#e6e2d6" stroke-dasharray="3 3"/>
+      <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle cx="${x(n - 1)}" cy="${y(vals[n - 1])}" r="4" fill="${col}" stroke="#fff" stroke-width="2"/>
+      ${vals.map((v, i) => `<rect x="${x(i) - 12}" y="0" width="24" height="${H}" fill="transparent"><title>第 ${App.esc(labels[i])} 週：${v} 分</title></rect>`).join("")}
+    </svg>`;
+  };
+  const dashDelta = (now, prev) => {
+    if (prev == null) return `<span class="dash-delta flat">—</span>`;
+    const d = Math.floor((now - prev) * 10 + 0.5) / 10;
+    if (d === 0) return `<span class="dash-delta flat">● 持平</span>`;
+    return d > 0 ? `<span class="dash-delta up">▲ ${d} 比上週</span>` : `<span class="dash-delta down">▼ ${-d} 比上週</span>`;
+  };
+  const dashOverview = (report, periodIdx) => {
+    const p = report.periods[periodIdx];
+    if (p.reportType === "作文批改") return "";
+    // 到「目前選的這一期」為止的每週列（往回看歷史週時，圖表也跟著停在那一週）
+    const weeks = report.periods.slice(0, periodIdx + 1).filter(x => x.reportType === "每週" && x.radar);
+    const cur = weeks[weeks.length - 1], prev = weeks[weeks.length - 2];
+    const wk = x => (String(x.period).match(/第(.+?)週/) || [, "?"])[1];
+    const essays = report.periods.filter(x => x.reportType === "作文批改");
+    const lastEssay = essays[essays.length - 1];
+    const hiN = App.lines(p.highlights).length, hiPrev = prev ? App.lines(prev.highlights).length : null;
+    const fin = report.finance;
+    const kpi = (icon, k, v, unit, note) => `
+      <div class="dash-kpi"><div class="k">${icon} ${k}</div><div class="v">${v}<small> ${unit}</small></div>${note}</div>`;
+    const kpis = [
+      kpi("🌟", "本週亮點", hiN, "則", hiPrev == null ? "" : dashDelta(hiN, hiPrev)),
+      fin ? kpi("🏦", "崑山幣存款", fin.balance, "幣", `<span class="dash-delta flat">儲蓄率 ${fin.savingsRate ?? "—"}%</span>`) : "",
+      kpi("📝", "內容評量", App.esc(p.grades?.["內容評量"] || "—"), "", `<span class="dash-delta flat">作業 ${App.esc(p.grades?.["作業成績"] || "—")}・參與 ${App.esc(p.grades?.["上課參與"] || "—")}</span>`),
+      lastEssay ? kpi("✍️", "最新作文", App.esc(lastEssay.essay.grade || "—"), "", `<span class="dash-delta flat">〈${App.esc(lastEssay.essay.title)}〉${App.esc(App.fmtDateShort(lastEssay.period))}</span>`) : "",
+    ].join("");
+    const multiples = cur ? DASH_DIMS.map(d => {
+      const vals = weeks.map(w => w.radar[d] || 3);
+      return `<div class="dash-sm"><div class="dash-sm-name"><i style="background:${SUBJ_COLORS[d]}"></i>${d}</div>
+        <div class="dash-sm-now">${cur.radar[d]}</div>${dashDelta(cur.radar[d], prev?.radar[d])}
+        ${dashSpark(vals, SUBJ_COLORS[d], weeks.map(wk))}</div>`;
+    }).join("") : "";
+    // 最近動態：最新在上，點了直接切到那一期
+    const feed = report.periods.map((x, i) => ({ x, i })).reverse().slice(0, 5).map(({ x, i }) => {
+      const t = x.reportType === "作文批改" ? `✍️ 作文〈${App.esc(x.essay.title)}〉${App.esc(x.essay.grade)}`
+        : x.reportType === "期末總報告" ? "🌟 學期總報告" : `📊 第 ${App.esc(wk(x))} 週學習報告`;
+      // 期末總報告的「期間」不一定含「第N週」，固定顯示「期末」
+      const when = x.reportType === "作文批改" ? App.fmtDateShort(x.period) : x.reportType === "期末總報告" ? "期末" : `第${wk(x)}週`;
+      return `<li${i === periodIdx ? ' class="on"' : ""}><span class="when">${App.esc(when)}</span><span>${t}</span>
+        <button type="button" class="dash-go" data-i="${i}">${i === periodIdx ? "正在看" : "打開 →"}</button></li>`;
+    }).join("");
+    return `
+      <section class="dash no-print" aria-label="學習總覽">
+        <div class="dash-head"><h3>📊 學習總覽</h3><span class="meta">到 ${App.esc(p.period)} 為止・下方是本期完整報告</span></div>
+        <div class="dash-kpis">${kpis}</div>
+        <div class="dash-row">
+          <div class="dash-card">
+            <h4>五向度逐週變化 <small>1–5 分；滑過看每週分數</small></h4>
+            <div class="dash-multiples">${multiples || '<p class="meta">累積 2 週以上才會出現趨勢圖。</p>'}</div>
+          </div>
+          <div class="dash-card">
+            <h4>最近動態</h4>
+            <ul class="dash-feed">${feed}</ul>
+          </div>
+        </div>
+      </section>`;
   };
 
   function showReport(report, periodIdx = defaultIdx(report.periods), anon = false) {
@@ -427,7 +505,7 @@
       </div>`;
     };
 
-    main.innerHTML = toolbar + (isEssay ? essaySheet() : `
+    main.innerHTML = toolbar + (isEssay ? essaySheet() : dashOverview(report, periodIdx) + `
       <div class="report-sheet${isTerm ? " report-term" : ""}">
         <h2 class="report-title">${isTerm ? "🌟 學期學習總報告 🌟" : "✨ 學生學習分析報告 ✨"}</h2>
 
@@ -583,6 +661,7 @@
     hydrateWorks(main);
     main.querySelectorAll(".report-tabs button").forEach(b =>
       b.onclick = () => showReport(report, Number(b.dataset.i), anon));
+    main.querySelectorAll(".dash-go").forEach(b => b.onclick = () => showReport(report, Number(b.dataset.i), anon));
     // 切換分類＝開該類最新一筆
     main.querySelectorAll(".report-cats button").forEach(b =>
       b.onclick = () => { const l = idxs(b.dataset.cat); if (l.length) showReport(report, l[l.length - 1], anon); });

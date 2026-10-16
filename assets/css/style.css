@@ -1985,3 +1985,37 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
   .report-sheet:not(.report-term):not(.report-essay) .grade-chip .v { font-size: 20px; }
   .report-sheet:not(.report-term):not(.report-essay) .report-bottom { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ===== 學習報告：📊 學習總覽（儀表板，BR 線 P1・2026-10-16）=====
+   放在報告單上方，列印時以 .no-print 隱藏；五向度色來自 report.js SUBJ_COLORS。 */
+.dash { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; margin: 0 auto 18px; max-width: 900px; }
+.dash-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.dash-head h3 { margin: 0; font-size: 1.15rem; }
+.dash-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.dash-kpi { background: var(--bg); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+.dash-kpi .k { font-size: .85rem; color: var(--ink-soft); }
+.dash-kpi .v { font-size: 1.7rem; font-weight: 700; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.dash-kpi .v small { font-size: .85rem; font-weight: normal; color: var(--ink-soft); }
+.dash-delta { font-size: .8rem; font-variant-numeric: tabular-nums; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-delta.up { color: #1b7f4d; } .dash-delta.down { color: #b3261e; } .dash-delta.flat { color: #8a8f98; }
+.dash-row { display: grid; grid-template-columns: 1.7fr 1fr; gap: 12px; margin-top: 12px; }
+.dash-card { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; min-width: 0; }
+.dash-card h4 { margin: 0 0 8px; font-size: 1rem; }
+.dash-card h4 small { font-weight: normal; color: #8a8f98; margin-left: 4px; }
+.dash-multiples { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.dash-sm-name { font-size: .9rem; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.dash-sm-name i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.dash-sm-now { font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.dash-spark { width: 100%; height: 64px; display: block; overflow: visible; }
+.dash-feed { list-style: none; margin: 0; padding: 0; }
+.dash-feed li { display: grid; grid-template-columns: 4.2em 1fr auto; gap: 6px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.dash-feed li:last-child { border-bottom: 0; }
+.dash-feed li.on { font-weight: 700; }
+.dash-feed .when { color: #8a8f98; font-variant-numeric: tabular-nums; font-size: .8rem; }
+.dash-go { border: 0; background: none; color: #2a78d6; cursor: pointer; font: inherit; font-size: .85rem; padding: 0; white-space: nowrap; }
+.dash-feed li.on .dash-go { color: #8a8f98; cursor: default; }
+@media (max-width: 760px) {
+  .dash-kpis { grid-template-columns: repeat(2, 1fr); }
+  .dash-row { grid-template-columns: 1fr; }
+  .dash-multiples { grid-template-columns: repeat(3, 1fr); }
+}
