@@ -52,6 +52,8 @@ jobs:
       - name: 同步 Notion 資料
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          # 教師專區全班儀表板加密用（老師自己 gh secret set；沒設＝略過產檔，不擋同步）
+          TEACHER_DASH_PW: ${{ secrets.TEACHER_DASH_PW }}
         run: node scripts/sync-notion.mjs
 
       # 崑山校網是 TANet 主機，對 GitHub（Azure）機房 IP 不一定通得到。

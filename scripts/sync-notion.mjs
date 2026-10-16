@@ -47,6 +47,7 @@ const DS = {
   routines: "effc4788-5a86-4349-aa02-60f982a0c10e", // 🕗 作息與常規（一日作息＋上課常規）
   dailyPlan: "81515593-4d79-4b09-84a5-709628d7b58e", // 📅 每日課程進度（一列＝一個上課日；老師調課改這裡）
   proposals: "35cb027e-1465-47a2-ad91-e66fb5e83c7a", // 🧪 創造提案（學生線上填；只進加密學習報告，公開檔零洩漏）
+  log: "eb529fa1-59e5-45ef-bfb4-79fc30de79e4", // 📝 班經與學習紀錄庫（只給教師儀表板數筆數，內容不輸出）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -939,6 +940,93 @@ async function syncReports() {
   console.log(`✅ reports/（${Object.keys(bySeat).length} 位學生，已加密）`);
 }
 
+// ── 📊 教師專區「全班學習儀表板」彙總檔（BR 線 P2，老師 2026-10-16 定案）──
+// 隱私：只放座號、不放姓名／查詢碼；整份用教師口令 AES-GCM 加密（與學生報告同一支 encryptReport，
+//       金鑰材料＝「teacher:口令」），口令只放 GitHub secret TEACHER_DASH_PW，不進 repo。
+// 沒設 secret → 略過產檔（不中止同步），前端顯示「尚未設定」。
+// 資料：📊 學習報告（含未勾發布的草稿，供發布進度用）＋ 📝 紀錄庫（只數筆數）＋ data/weeks.json（週次日期）。
+// 「需要關注」不在這裡算：前端用 assets/js/learning-watch.js（唯一一份規則，U83）依選的週次即時判斷。
+async function syncTeacherDashboard() {
+  const PW = String(process.env.TEACHER_DASH_PW || "").trim();
+  if (!PW) { console.warn("⚠️ teacher-dashboard：未設定 TEACHER_DASH_PW，略過全班儀表板彙總檔"); return; }
+  const DIMS = ["國語", "數學", "社會", "人際互動", "生活技能"];
+  const seats = (await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && r["座號"] !== "").map(r => Number(r["座號"]))
+    .filter(Number.isFinite).sort((a, b) => a - b);
+  const rows = (await queryDataSource(DS.reports)).map(props).filter(r => r["座號"] !== "");
+
+  // 週次：只取「每週」報告出現過的週（學期前綴＋週數），上學期在前
+  const termOf = s => (String(s || "").match(/(\S{2})第/) || [])[1] || "";
+  const wkId = s => { const t = termOf(s), n = periodWeek(s); return t && n < 9998 ? `${t}|${n}` : null; };
+  const weekly = rows.filter(r => (r["報告類型"] || "每週") === "每週" && wkId(r["期間"]))
+    .sort((a, b) => a._created.localeCompare(b._created));
+  const ids = [...new Set(weekly.map(r => wkId(r["期間"])))].sort((a, b) => {
+    const [ta, na] = a.split("|"), [tb, nb] = b.split("|");
+    return (ta.includes("下") - tb.includes("下")) || ta.localeCompare(tb) || Number(na) - Number(nb);
+  });
+  let weeksFile = null;
+  try { weeksFile = JSON.parse(await readFile(path.join(DATA_DIR, "weeks.json"), "utf8")); } catch { /* 沒有就不算紀錄筆數 */ }
+  const range = id => {
+    const [t, n] = id.split("|");
+    const w = (weeksFile?.學期 || []).find(x => x.學期名稱 === t)?.週?.find(x => x.週次 === Number(n));
+    return w ? { from: w.起, to: w.迄 } : null;
+  };
+  const weeks = ids.map(id => ({ label: id.replace("|", "第") + "週", ...(range(id) || {}) }));
+
+  // 每生每週：已發布優先，否則取最新草稿（weekly 已依建立時間遞增）
+  const pick = {};
+  for (const r of weekly) {
+    const seat = Number(r["座號"]), wi = ids.indexOf(wkId(r["期間"]));
+    const cur = (pick[seat] ||= [])[wi];
+    if (cur && cur["發布"] && !r["發布"]) continue;
+    pick[seat][wi] = r;
+  }
+  const num = v => (v === "" || v == null || Number(v) === 0 ? null : Number(v));
+  const scores = {}, status = {};
+  for (const seat of seats) {
+    const list = pick[seat] || [];
+    scores[seat] = Object.fromEntries(DIMS.map(d => [d, ids.map((_, i) => list[i] ? num(list[i][`${d}分數`]) : null)]));
+    status[seat] = ids.map((_, i) => !list[i] ? "尚未產生" : list[i]["發布"] ? "已發布" : "待勾發布");
+  }
+
+  // 紀錄筆數：紀錄庫現行學年，依「日期」落在哪一週的起迄（含）計數；週次日期查不到＝null（前端顯示「—」）
+  let records = ids.map(() => null);
+  if (weeksFile && weeks.some(w => w.from)) {
+    const logRows = [];
+    let cursor;
+    do {
+      const body = { page_size: 100, ...(cursor ? { start_cursor: cursor } : {}),
+        ...(CURRENT_YEAR ? { filter: { property: "學年", select: { equals: CURRENT_YEAR } } } : {}) };
+      const res = await fetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(`Notion API ${res.status}（紀錄庫）：${await res.text()}`);
+      const json = await res.json();
+      logRows.push(...json.results.map(p => p.properties?.["日期"]?.date?.start?.slice(0, 10) || ""));
+      cursor = json.has_more ? json.next_cursor : undefined;
+    } while (cursor);
+    records = weeks.map(w => w.from ? logRows.filter(d => d && d >= w.from && d <= w.to).length : null);
+  }
+
+  // 作文：最近一次題目（期間＝批改日期，字典序＝時間序）批了幾位
+  const essays = rows.filter(r => r["報告類型"] === "作文批改" && seats.includes(Number(r["座號"])));
+  let essay = null;
+  if (essays.length) {
+    const last = essays.reduce((m, r) => String(r["期間"] || "") > String(m["期間"] || "") ? r : m);
+    const title = last["作文_題目"] || "";
+    const same = essays.filter(r => (r["作文_題目"] || "") === title);
+    essay = { title, date: String(last["期間"] || ""), graded: new Set(same.map(r => Number(r["座號"]))).size,
+      published: new Set(same.filter(r => r["發布"]).map(r => Number(r["座號"]))).size };
+  }
+
+  const plain = { v: 1, generatedAt: new Date().toISOString(), seats, dims: DIMS, weeks, scores, status, records, essay };
+  const payload = await encryptReport(plain, PW, "teacher");
+  await writeFile(path.join(DATA_DIR, "teacher-dashboard.json"), JSON.stringify(payload) + "\n", "utf8");
+  console.log(`✅ teacher-dashboard.json（${seats.length} 位、${weeks.length} 週，已用教師口令加密）`);
+}
+
 // ── 班級商店（公開櫥窗，無個資）──
 // 商店四層架構（2026-08-14，獎勵制度 V3）：
 //   ① 社會性・免費即時　② 活動特權・消費型　③ 職務公會・解鎖型　④ 創造沙盒・系統演化
@@ -1489,6 +1577,7 @@ await Promise.all([
   syncSchedule(),
   syncSettings(),
   syncReports(),
+  syncTeacherDashboard(),
   syncStore(),
   syncBank(),
   syncClassGoal(),
