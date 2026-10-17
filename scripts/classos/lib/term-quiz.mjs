@@ -109,10 +109,12 @@ export function summarize(quizzes) {
   return { subjects, others, manual };
 }
 
-/** 其他科寫進學期成績庫「備註」的一句（無其他科回空字串）。 */
+/** 其他科寫進學期成績庫「備註」的一句（無其他科回空字串）。
+ *  科目「其他」看不出是什麼考試，標成「其他（評量名稱）」並依名稱分開平均（2026-10-17：英語普測）。 */
+export const othersLabel = (o) => (o.subject === "其他" && o.name ? `其他（${o.name}）` : o.subject);
 export function othersNote(others) {
   const by = {};
-  for (const o of others) if (!o.absent) (by[o.subject] ??= []).push(o.score);
+  for (const o of others) if (!o.absent) (by[othersLabel(o)] ??= []).push(o.score);
   const parts = Object.entries(by).map(([s, a]) => `${s} ${roundHalfUp(a.reduce((x, y) => x + y, 0) / a.length)}（${a.length} 次）`);
   return parts.length ? `其他科平時考平均：${parts.join("、")}` : "";
 }

@@ -81,3 +81,11 @@ test("複習建議：挑跌最多的科、點名最近幾次評量", () => {
   assert.equal(reviewTip(up.subjects, "期末"), "國語最近進步了，保持目前的複習節奏。");
   assert.equal(reviewTip(summarize([]).subjects), "");
 });
+
+test("備註：科目「其他」標出評量名稱，同名合併、不同名分開", () => {
+  const o = (subject, name, score, absent = false) => ({ date: "2026-10-02", subject, name, score, absent });
+  assert.equal(othersNote([o("其他", "英語普測", 87), o("健康", "健康小考", 90)]),
+    "其他科平時考平均：其他（英語普測） 87（1 次）、健康 90（1 次）");
+  assert.equal(othersNote([o("其他", "英語普測", 80), o("其他", "英語普測", 91), o("其他", "自然小考", 70), o("其他", "英語普測", null, true)]),
+    "其他科平時考平均：其他（英語普測） 86（2 次）、其他（自然小考） 70（1 次）");
+});
