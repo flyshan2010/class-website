@@ -458,7 +458,7 @@
           <span class="report-badge" style="--bc:#8395A7">每次評量明細</span>
           ${QUIZ_SUBJ.map(detail).join("")}
           ${q.others?.length ? `<div class="quiz-subj" style="color:#6b7280">其他科目（參考，不算入平考）</div>
-            <table class="quiz-table"><tbody>${q.others.map(o => `<tr><td>${md(o.date)}</td><td>${App.esc(o.subject)}　${App.esc(o.name)}</td>
+            <table class="quiz-table"><tbody>${q.others.map(o => `<tr><td>${md(o.date)}</td><td>${o.subject === "其他" ? App.esc(o.name) : `${App.esc(o.subject)}　${App.esc(o.name)}`}</td>
               <td class="n">${o.absent ? `缺考 <span class="quiz-badge">不計入</span>` : o.score}</td></tr>`).join("")}</tbody></table>` : ""}
         </div>
 
