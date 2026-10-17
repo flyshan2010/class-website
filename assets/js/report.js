@@ -395,9 +395,92 @@
       </section>`;
   };
 
+  // 📈 平時評量分頁（BT 線，老師 2026-10-17 定案；版面照「平時評量分頁範本」）：
+  // 資料是 sync 端算好的 report.quiz（規則正本 scripts/classos/lib/term-quiz.mjs），前端只畫、不重算。
+  // 只看孩子自己：不放全班平均、不排名。顏色＝教學 DS 國語／數學 accent、社會 accent-2（與數學藍拉開）。
+  const QUIZ_SUBJ = [["國語", "#B23A2E"], ["數學", "#1F5FA8"], ["社會", "#6B4423"]];
+  const QUIZ_IDX = -1; // 平時評量不是一個期別，用 -1 代表這個分頁
+  const md = iso => { const [, m, d] = String(iso).split("-"); return `${Number(m)}/${Number(d)}`; };
+  function quizChart(q) {
+    const pts = QUIZ_SUBJ.map(([s, c]) => ({ s, c, items: (q.subjects[s]?.items || []).filter(x => !x.absent) }));
+    const dates = [...new Set(pts.flatMap(p => p.items.map(x => x.date)))].sort();
+    if (!dates.length) return "";
+    const all = pts.flatMap(p => p.items.map(x => x.score));
+    const lo = Math.min(60, Math.floor(Math.min(...all) / 10) * 10);
+    const W = 640, H = 260, L = 40, R = 610, T = 20, B = 220;
+    const x = d => dates.length === 1 ? (L + R) / 2 : L + 20 + (R - L - 40) * dates.indexOf(d) / (dates.length - 1);
+    const y = v => B - (B - T) * (v - lo) / (100 - lo);
+    const ticks = []; for (let v = lo; v <= 100; v += 10) ticks.push(v);
+    const every = Math.ceil(dates.length / 8);
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="國語、數學、社會平時考分數折線圖" class="quiz-chart">
+      ${ticks.map(v => `<line x1="${L}" y1="${y(v)}" x2="${R + 15}" y2="${y(v)}" stroke="#eef0f3"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="#6b7280">${v}</text>`).join("")}
+      ${dates.map((d, i) => i % every ? "" : `<text x="${x(d)}" y="${B + 24}" text-anchor="middle" font-size="11" fill="#6b7280">${md(d)}</text>`).join("")}
+      ${pts.map(p => p.items.length ? `
+        <polyline fill="none" stroke="${p.c}" stroke-width="2.5" points="${p.items.map(it => `${x(it.date)},${y(it.score)}`).join(" ")}"/>
+        ${p.items.map(it => `<circle cx="${x(it.date)}" cy="${y(it.score)}" r="4" fill="${p.c}"><title>${App.esc(p.s)} ${md(it.date)} ${App.esc(it.name)} ${it.score}</title></circle>`).join("")}` : "").join("")}
+    </svg>
+    <div class="quiz-legend">${QUIZ_SUBJ.map(([s, c]) => `<span><i style="background:${c}"></i>${s}</span>`).join("")}</div>`;
+  }
+  function quizSheet(report, seatText) {
+    const q = report.quiz;
+    const trend = t => !t ? `<span class="quiz-flat">還不到 2 次，先看不出走勢</span>`
+      : `近 ${t.k} 次比前 ${t.k} 次 ${t.delta >= 3 ? `<span class="quiz-up">▲ ${t.delta}</span>` : t.delta <= -3 ? `<span class="quiz-down">▼ ${Math.abs(t.delta)}</span>` : `<span class="quiz-flat">— ${Math.abs(t.delta)}</span>`}`;
+    const kpi = ([s, c]) => {
+      const v = q.subjects[s] || {};
+      return `<div class="quiz-kpi" style="--c:${c}"><div class="h">${s}</div>
+        <div class="big">${v.avg ?? "—"}</div>
+        <div class="s">${v.n ? `考了 ${v.n} 次・最近一次 ${v.latest}` : "這段期間還沒有平時考"}${v.absent ? `・缺考 ${v.absent} 次（不計入）` : ""}</div>
+        <div class="s">${v.n ? trend(v.trend) : ""}</div></div>`;
+    };
+    const rows = items => items.map(it => `<tr><td>${md(it.date)}</td><td>${App.esc(it.name)}</td>
+      <td class="n">${it.absent ? `缺考 <span class="quiz-badge">不計入</span>` : it.score}</td></tr>`).join("");
+    const detail = ([s, c]) => {
+      const v = q.subjects[s];
+      return v?.items?.length ? `<div class="quiz-subj" style="color:${c}">${s}（平均 ${v.avg ?? "—"}）</div>
+        <table class="quiz-table"><thead><tr><th>日期</th><th>評量</th><th class="n">分數</th></tr></thead><tbody>${rows(v.items)}</tbody></table>` : "";
+    };
+    const exam = q.stage === "期末" ? "期末考" : "期中考";
+    return `
+      <div class="report-sheet report-quiz">
+        <h2 class="report-title">📈 平時評量表現 📈</h2>
+        <p class="quiz-sub">${App.esc(q.term)}・${exam}前（${md(q.from)}～${md(q.to)}）・座號 ${seatText}　｜　更新到${App.esc(q.updated.label)}（${md(q.updated.date)}）</p>
+        <div class="quiz-kpis">${QUIZ_SUBJ.map(kpi).join("")}</div>
+        ${q.prevAvg ? `<p class="quiz-muted">期中考前平時考平均：${QUIZ_SUBJ.map(([s]) => `${s} ${q.prevAvg[s] ?? "—"}`).join("／")}</p>` : ""}
+
+        <div class="report-box quiz-box" style="--bc:#54A0FF">
+          <span class="report-badge" style="--bc:#54A0FF">各科分數走勢（每個點是一次平時考）</span>
+          ${quizChart(q)}
+          ${q.tip ? `<div class="quiz-tip">💡 複習建議：${App.esc(q.tip)}</div>` : ""}
+          <p class="quiz-muted">只看孩子自己的進步，不放全班平均、不排名。</p>
+        </div>
+
+        <div class="report-box quiz-box" style="--bc:#8395A7">
+          <span class="report-badge" style="--bc:#8395A7">每次評量明細</span>
+          ${QUIZ_SUBJ.map(detail).join("")}
+          ${q.others?.length ? `<div class="quiz-subj" style="color:#6b7280">其他科目（參考，不算入平考）</div>
+            <table class="quiz-table"><tbody>${q.others.map(o => `<tr><td>${md(o.date)}</td><td>${App.esc(o.subject)}　${App.esc(o.name)}</td>
+              <td class="n">${o.absent ? `缺考 <span class="quiz-badge">不計入</span>` : o.score}</td></tr>`).join("")}</tbody></table>` : ""}
+        </div>
+
+        <div class="report-box quiz-box" style="--bc:#10AC84">
+          <span class="report-badge" style="--bc:#10AC84">平時成績怎麼算</span>
+          <table class="quiz-calc">
+            <tr><td>課堂表現（日常）</td><td>20%</td></tr>
+            <tr><td>作業表現</td><td>10%</td></tr>
+            <tr><td>平時考（＝上面國／數／社各科平均，四捨五入取整數，缺考不計入）</td><td>20%</td></tr>
+            <tr><td><b>平時成績小計</b></td><td><b>50%</b></td></tr>
+            <tr><td>定期評量（期中／期末考）</td><td>50%</td></tr>
+          </table>
+          <p class="quiz-muted">${exam}後老師確認平時考平均，才寫進學期成績；這裡只顯示到目前為止、已發布週次的平時考。</p>
+        </div>
+      </div>`;
+  }
+
   function showReport(report, periodIdx = defaultIdx(report.periods), anon = false) {
     document.body.classList.add("report-open");
-    const p = report.periods[periodIdx];
+    const isQuiz = periodIdx === QUIZ_IDX && !!report.quiz;
+    if (periodIdx === QUIZ_IDX && !isQuiz) periodIdx = defaultIdx(report.periods);
+    const p = isQuiz ? {} : report.periods[periodIdx];
     const isTerm = p.reportType === "期末總報告";
     const isEssay = p.reportType === "作文批改";
     const displayName = anon ? maskName(report.name) : report.name;
@@ -408,15 +491,19 @@
 
     // 先分類再選期別（2026-10-15 老師要求）：「📊 學習報告」＝每週＋期末總報告、「✍️ 作文」＝作文批改。
     // 兩類都有才顯示分類鈕；類內筆數多時用下拉選單，少時用按鈕。作文以「✍️ 題目」標示。
+    // 2026-10-17 加第三類「📈 平時評量」（report.quiz，不是期別、只有一頁）。
     const catOf = x => x.reportType === "作文批改" ? "essay" : "report";
-    const cat = catOf(p);
-    const idxs = cat2 => report.periods.map((x, i) => catOf(x) === cat2 ? i : -1).filter(i => i >= 0);
-    const inCat = idxs(cat);
-    const catCount = { report: idxs("report").length, essay: idxs("essay").length };
+    const cat = isQuiz ? "quiz" : catOf(p);
+    const idxs = cat2 => cat2 === "quiz" ? (report.quiz ? [QUIZ_IDX] : [])
+      : report.periods.map((x, i) => catOf(x) === cat2 ? i : -1).filter(i => i >= 0);
+    const inCat = isQuiz ? [] : idxs(cat);
+    const quizN = report.quiz ? QUIZ_SUBJ.reduce((a, [s]) => a + (report.quiz.subjects[s]?.items?.length || 0), 0) : 0;
+    const catCount = { report: idxs("report").length, essay: idxs("essay").length, quiz: quizN };
     const tabLabel = x => x.reportType === "作文批改"
       ? `✍️ ${x.essay?.title || x.period}` : x.period;
-    const catTabs = catCount.report && catCount.essay
-      ? `<div class="report-cats" role="tablist">${[["report", "📊 學習報告"], ["essay", "✍️ 作文"]].map(([k, t]) =>
+    const catList = [["report", "📊 學習報告"], ["essay", "✍️ 作文"], ["quiz", "📈 平時評量"]].filter(([k]) => catCount[k]);
+    const catTabs = catList.length >= 2
+      ? `<div class="report-cats" role="tablist">${catList.map(([k, t]) =>
           `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "active" : ""}" data-cat="${k}">${t}<small>${catCount[k]}</small></button>`).join("")}</div>`
       : "";
     const periodPicker = catTabs + (inCat.length > 5
@@ -508,7 +595,7 @@
       </div>`;
     };
 
-    main.innerHTML = toolbar + (isEssay ? essaySheet() : dashOverview(report, periodIdx) + `
+    main.innerHTML = toolbar + (isQuiz ? quizSheet(report, seatText) : isEssay ? essaySheet() : dashOverview(report, periodIdx) + `
       <div class="report-sheet${isTerm ? " report-term" : ""}">
         <h2 class="report-title">${isTerm ? "🌟 學期學習總報告 🌟" : "✨ 學生學習分析報告 ✨"}</h2>
 

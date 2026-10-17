@@ -13,6 +13,7 @@ import { webcrypto as crypto } from "node:crypto";
 import { uniqueMaskNames } from "./lib/mask-name.mjs";
 import { buildDutyData } from "./lib/build-duties.mjs";
 import { GOAL_TIER, backersNeededOf, inWindow, goalPrefix, tallyGoal } from "./lib/class-goal.mjs";
+import { quizRange, toQuiz, inRange, summarize, reviewTip } from "./classos/lib/term-quiz.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -807,6 +808,79 @@ async function courseFocusByWeek() {
   return out;
 }
 
+// ── 📈 平時評量（BT 線，老師 2026-10-17 定案）：每生國數社平時考，只隨該生加密報告發布 ──
+// 規則正本 scripts/classos/lib/term-quiz.mjs（與 f48／f49 算平考同一支，U83）。
+// 「只顯示已發布週次」：每位學生以自己已勾發布的最後一份每週報告那週的「迄」為截止日，之後的平時考不放；
+// 跟週五發布一起上線。沒有已發布每週報告或範圍內沒有平時考 → 不放（前端不顯示這個分類）。
+// 不放全班平均、不排名；不進任何公開 data/*.json。
+async function quizBySeat(roster, bySeat) {
+  let weeksFile, calendar;
+  try {
+    weeksFile = JSON.parse(await readFile(path.join(DATA_DIR, "weeks.json"), "utf8"));
+    calendar = JSON.parse(await readFile(path.join(DATA_DIR, "calendar.json"), "utf8"));
+  } catch { console.warn("⚠️ 平時評量：讀不到 weeks.json／calendar.json，略過"); return {}; }
+  const recs = [];
+  let cursor;
+  do {
+    const filter = { and: [{ property: "類別", select: { equals: "評量" } },
+      ...(CURRENT_YEAR ? [{ property: "學年", select: { equals: CURRENT_YEAR } }] : [])] };
+    const res = await fetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
+      body: JSON.stringify({ page_size: 100, filter, ...(cursor ? { start_cursor: cursor } : {}) }),
+    });
+    if (!res.ok) throw new Error(`Notion API ${res.status}（紀錄庫評量）：${await res.text()}`);
+    const json = await res.json();
+    recs.push(...json.results.map(props));
+    cursor = json.has_more ? json.next_cursor : undefined;
+  } while (cursor);
+  const seatOfId = new Map(roster.map(r => [r._id, Number(r["座號"])]));
+  const quizzesOf = new Map();
+  for (const r of recs) {
+    const q = toQuiz({ date: r["日期"]?.start, category: r["類別"], subject: r["科目"], score: r["分數"], name: r["評量名稱"], desc: r["事件描述"] });
+    if (!q || q.manual) continue;
+    for (const id of r["學生"] || []) {
+      const seat = seatOfId.get(id);
+      if (seat != null) (quizzesOf.get(seat) || quizzesOf.set(seat, []).get(seat)).push(q);
+    }
+  }
+  const weekOf = period => {
+    const t = (String(period || "").match(/(\S{2})第/) || [])[1], n = periodWeek(period);
+    const term = (weeksFile.學期 || []).find(x => x.學期名稱 === t);
+    const w = term?.週?.find(x => x.週次 === n);
+    return w ? { term, w } : null;
+  };
+  const out = {};
+  for (const s of Object.values(bySeat)) {
+    const pub = s.periods.filter(p => p.reportType === "每週").map(p => weekOf(p.period)).filter(Boolean)
+      .sort((a, b) => a.w.迄.localeCompare(b.w.迄));
+    const last = pub[pub.length - 1];
+    if (!last) continue;
+    const termLabel = `${last.term.學年}${last.term.學期}`;
+    const mid = quizRange(calendar, weeksFile, termLabel, "期中");
+    const fin = quizRange(calendar, weeksFile, termLabel, "期末");
+    if (mid.error) continue;
+    const cutoff = last.w.迄;
+    const stage = !fin.error && cutoff >= fin.from ? "期末" : "期中";
+    const r = stage === "期末" ? fin : mid;
+    const to = cutoff < r.to ? cutoff : r.to;
+    const mine = quizzesOf.get(s.seat) || [];
+    const cur = mine.filter(q => inRange(q, { from: r.from, to }));
+    const sum = summarize(cur);
+    if (!cur.length) continue;
+    const shownTo = [to, last.w.上課迄].filter(Boolean).sort()[0]; // 畫面寫到最後一個上課日（週五），篩選仍含週末
+    const prev = stage === "期末" ? summarize(mine.filter(q => inRange(q, mid))).subjects : null;
+    out[s.seat] = {
+      term: last.term.學期名稱, termLabel, stage, from: r.from, to: shownTo,
+      updated: { label: `第 ${last.w.週次} 週`, date: last.w.上課迄 || last.w.迄 },
+      subjects: sum.subjects, others: sum.others, tip: reviewTip(sum.subjects, stage),
+      prevAvg: prev ? Object.fromEntries(Object.entries(prev).map(([k, v]) => [k, v.avg])) : null,
+    };
+  }
+  console.log(`  ↳ 平時評量：紀錄庫評量 ${recs.length} 筆，${Object.keys(out).length} 位學生有分頁`);
+  return out;
+}
+
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
   const focusByWeek = await courseFocusByWeek();
@@ -915,6 +989,8 @@ async function syncReports() {
     }
   }
 
+  const quiz = await quizBySeat(roster, bySeat);
+
   const dir = path.join(DATA_DIR, "reports");
   await rm(dir, { recursive: true, force: true });
   await mkdir(dir, { recursive: true });
@@ -930,7 +1006,7 @@ async function syncReports() {
     } : null;
     const payload = await encryptReport(
       { name: s.name, seat: s.seat, avatar: s.avatar, balance: f ? f.balance : null, finance: fin, periods: s.periods,
-        proposals: proposals[s.seat] || [] }, s.code, s.seat);
+        proposals: proposals[s.seat] || [], quiz: quiz[s.seat] || null }, s.code, s.seat);
     await writeFile(path.join(dir, `${s.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
   // 只公開「哪些座號有報告」，不含任何個資
