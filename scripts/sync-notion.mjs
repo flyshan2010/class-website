@@ -14,6 +14,7 @@ import { uniqueMaskNames } from "./lib/mask-name.mjs";
 import { buildDutyData } from "./lib/build-duties.mjs";
 import { GOAL_TIER, backersNeededOf, inWindow, goalPrefix, tallyGoal } from "./lib/class-goal.mjs";
 import { quizRange, toQuiz, inRange, summarize, reviewTip } from "./classos/lib/term-quiz.mjs";
+import { matchExam, analyze, reportItem } from "./classos/lib/quiz-errors.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -49,6 +50,7 @@ const DS = {
   dailyPlan: "81515593-4d79-4b09-84a5-709628d7b58e", // 📅 每日課程進度（一列＝一個上課日；老師調課改這裡）
   proposals: "35cb027e-1465-47a2-ad91-e66fb5e83c7a", // 🧪 創造提案（學生線上填；只進加密學習報告，公開檔零洩漏）
   log: "eb529fa1-59e5-45ef-bfb4-79fc30de79e4", // 📝 班經與學習紀錄庫（只給教師儀表板數筆數，內容不輸出）
+  quizExams: "51c1c08f-78b4-4352-85f6-e45fb7361c2a", // 📝 平時卷（含答案；只算錯題分析進加密報告，開放日前不輸出答案）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -60,7 +62,7 @@ const DS = {
 //        班網維持上一版正常內容，不會被半殘資料覆蓋。
 const YEAR_FIELD = "學年";
 // 需按學年過濾的庫
-const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem", "dailyPlan", "proposals"].map(k => DS[k]));
+const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem", "dailyPlan", "proposals", "quizExams"].map(k => DS[k]));
 // 有「學年」欄但**刻意不過濾**：教材是跨學年資產，過濾掉會讓升學年後既有課程頁全部消失
 const YEAR_EXEMPT = new Set([DS.lessons]);
 const DS_NAME = Object.fromEntries(Object.entries(DS).map(([k, v]) => [v, k]));
@@ -839,6 +841,7 @@ async function quizBySeat(roster, bySeat) {
   for (const r of recs) {
     const q = toQuiz({ date: r["日期"]?.start, category: r["類別"], subject: r["科目"], score: r["分數"], name: r["評量名稱"], desc: r["事件描述"] });
     if (!q || q.manual) continue;
+    q.errors = String(r["錯題"] || "").trim(); // BY 線：錯題碼（錯題表登記的平時卷才有）
     for (const id of r["學生"] || []) {
       const seat = seatOfId.get(id);
       if (seat != null) (quizzesOf.get(seat) || quizzesOf.set(seat, []).get(seat)).push(q);
@@ -850,6 +853,9 @@ async function quizBySeat(roster, bySeat) {
     const w = term?.週?.find(x => x.週次 === n);
     return w ? { term, w } : null;
   };
+  const exams = await quizExams();
+  const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10); // 臺灣日期（開放日閘門）
+  const manual = [];
   const out = {};
   for (const s of Object.values(bySeat)) {
     const pub = s.periods.filter(p => p.reportType === "每週").map(p => weekOf(p.period)).filter(Boolean)
@@ -875,9 +881,45 @@ async function quizBySeat(roster, bySeat) {
       updated: { label: `第 ${last.w.週次} 週`, date: last.w.上課迄 || last.w.迄 },
       subjects: sum.subjects, others: sum.others, tip: reviewTip(sum.subjects, stage),
       prevAvg: prev ? Object.fromEntries(Object.entries(prev).map(([k, v]) => [k, v.avg])) : null,
+      analysis: cur.filter(q => q.errors && !q.absent).map(q => {
+        const e = matchExam(exams, q);
+        if (!e) { manual.push(`${q.subject}「${q.name}」對不到📝平時卷`); return null; }
+        const res = analyze(e.exam, q.errors, q.score);
+        if (res.manual) { manual.push(`${q.subject}「${q.name}」${res.manual}`); return null; }
+        return reportItem({ subject: q.subject, name: q.name, date: q.date, open: e.open, paper: e.paper,
+          review: e.review ? { label: "觀念複習", href: e.review } : null }, res, today);
+      }).filter(Boolean).sort((a, b) => a.date.localeCompare(b.date)),
     };
   }
   console.log(`  ↳ 平時評量：紀錄庫評量 ${recs.length} 筆，${Object.keys(out).length} 位學生有分頁`);
+  // 公開 repo 的 Actions log 看得到：只印卷名與原因，不印座號與分數
+  if (manual.length) console.warn(`⚠️ 錯題分析需人工 ${manual.length} 筆（該生該卷不出分析）：\n    ${[...new Set(manual)].join("\n    ")}`);
+  return out;
+}
+
+// ── 🔍 錯題分析的卷（BY 線，老師 2026-10-18 裁定）：讀「📝 平時卷」庫，題目結構與答案在頁面內文第一個 json 程式碼框。
+// 只在記憶體裡用，不寫進任何 data/*.json；讀不到（整合未授權、JSON 壞掉）就略過該卷，不讓整個同步失敗。
+async function quizExams() {
+  let rows;
+  try { rows = await queryDataSource(DS.quizExams); }
+  catch (e) { console.warn(`⚠️ 讀不到📝平時卷庫，本次不出錯題分析：${String(e.message).slice(0, 120)}`); return []; }
+  const out = [];
+  for (const page of rows) {
+    const r = props(page);
+    try {
+      const res = await fetch(`https://api.notion.com/v1/blocks/${page.id}/children?page_size=100`, {
+        headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03" },
+      });
+      if (!res.ok) throw new Error(`Notion API ${res.status}`);
+      const code = (await res.json()).results.find(b => b.type === "code");
+      if (!code) throw new Error("頁面內文沒有 json 程式碼框");
+      const exam = JSON.parse(code.code.rich_text.map(t => t.plain_text).join(""));
+      if (exam.format !== "quiz-exam/1") throw new Error("format 不是 quiz-exam/1");
+      out.push({ id: r["卷id"], subject: r["科目"], name: r["名稱"], open: r["解答開放日"]?.start?.slice(0, 10) || "",
+        paper: r["試卷連結"] || "", review: r["觀念複習連結"] || "", exam });
+    } catch (e) { console.warn(`⚠️ 📝平時卷「${r["卷id"]}」略過：${e.message}`); }
+  }
+  console.log(`  ↳ 📝平時卷：${out.length} 份`);
   return out;
 }
 
