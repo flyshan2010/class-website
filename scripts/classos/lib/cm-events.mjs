@@ -53,7 +53,9 @@ export function findRuleAct(rules, ruleN, kind, actI) {
 
 const RULE_CAT = { 1: "生活指導", 2: "人際互動", 3: "生活技能", 4: "作業", 6: "生活指導", 7: "生活指導", 8: "人際互動", 9: "課堂表現", 10: "生活指導" };
 
-/** 類別；判不出回 null（呼叫端記失敗「類別判不出，需人工」，不寫入）。 */
+/** 類別；判不出回 null（呼叫端記失敗「類別判不出，需人工」，不寫入）。
+ *  作業清點的 tally 一律含「作業」→ 類別＝作業：作業完成／作業補交完成／作業批改完成（good）／作業批改要訂正（neutral＝中性，
+ *  2026-10-18 BX 線：結算時已交、之後批改的結果，0 幣、不進學習報告正負向）；學期作業換分讀這些描述（lib/term-daily-hw.mjs HW_STATUS）。 */
 export function categoryOf(ev) {
   if (ev.src === "rule") {
     if (Number(ev.rule_n) === 5) return ev.kind === "good" ? "人際互動" : "課堂表現";

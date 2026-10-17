@@ -19,6 +19,8 @@ on:
           - "[常用] f28-prune-dangling-relations-all（清死關聯・全庫 27 個庫，含名冊）"
           - "[常用] f48-term-quiz-preview（試算平考：國數社平時考平均，payload 填 115上期中；execute＝收件匣建待審，不寫成績庫）"
           - "[常用] f49-term-quiz-apply（寫入平考到學期成績庫，payload 填 115上期中 <f48 指紋>；老師確認待審後才 execute）"
+          - "[常用] f50-term-daily-hw-preview（試算日常＋作業：國數社日常、作業換分，payload 填 115上期中；execute＝收件匣建待審，不寫成績庫）"
+          - "[常用] f51-term-daily-hw-apply（寫入日常＋作業到學期成績庫，payload 填 115上期中 <f50 指紋>；老師確認待審後才 execute）"
           - "[常用・只讀] f43-personal-tiers（學習報告各科個人一句：級距／作業提醒／請假判定，需填 week）"
           - "[驗收用・只讀] f46-plus-one-audit（學習報告 +1 盡本分亮點句：程式判資格 vs 正式報告，需填 week）"
           - "[驗收用・只讀] f42-sim-leave-homework（請假×作業缺交提醒判斷模擬，第4–5週）"
@@ -92,7 +94,7 @@ on:
         default: ""
         type: string
       payload:
-        description: 「f48」填 115上期中／115上期末；「f49」再加 f48 指紋，如 115上期中 a1b2c3d4；「f44／f45」填 revert＝退回舊址；「f31」座號→金額 JSON，如 {"job":{"1":25},"clean":{},"lunch":{},"routine":{}}（金額抄自 f24 試算的「薪水類逐人明細」）
+        description: 「f48／f50」填 115上期中／115上期末；「f49／f51」再加 f48／f50 指紋，如 115上期中 a1b2c3d4；「f44／f45」填 revert＝退回舊址；「f31」座號→金額 JSON，如 {"job":{"1":25},"clean":{},"lunch":{},"routine":{}}（金額抄自 f24 試算的「薪水類逐人明細」）
         required: false
         default: ""
         type: string
