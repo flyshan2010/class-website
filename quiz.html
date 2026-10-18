@@ -106,7 +106,7 @@ fetch('data/reports/index.json?t=' + Date.now(), { cache: 'no-cache' }).then(fun
 function start() {
 (function (SEATS) {
 /* ── 考卷資料：不放在網頁裡（班網與本站是公開 repo，學年統一開放日前試卷與答案都不能公開）──
-   考卷檔（.json）放在雲端硬碟 class-manager/private/exams/（已 gitignore），用上方「📂 匯入考卷」讀進這台電腦。
+   考卷檔（.json）放在雲端硬碟 class-website/private/exams/（已 gitignore），用上方「📂 匯入考卷」讀進這台電腦。
    每題：[題號, 配分, 答案, 知識點代號]；部分給分＝點同一格會依序 扣滿分 → 扣少一點 → … → 扣1分 → 取消。 */
 var EXKEY = 'quizErrors.exams.v1';
 var EXAMS = (function () { try { var a = JSON.parse(localStorage.getItem(EXKEY)); return Array.isArray(a) ? a : []; } catch (e) { return []; } })();
@@ -179,7 +179,7 @@ function toast(t) { var e = document.getElementById('toast'); e.textContent = t;
 /* ── 畫面 ── */
 var main = document.getElementById('main');
 function paint() {
-  if (!EXAMS.length) { main.innerHTML = '<div class="card">這台電腦還沒有考卷。按上方「📂 匯入考卷」，選雲端硬碟 <b>班級事務/class-manager/private/exams/</b> 裡的考卷檔（可一次選多份）。<div class="hint">考卷檔由 Claude「建錯題表」產生；不放在網站上，學年開放日前試卷與答案都不會公開。</div></div>'; return; }
+  if (!EXAMS.length) { main.innerHTML = '<div class="card">這台電腦還沒有考卷。按上方「📂 匯入考卷」，選雲端硬碟 <b>班級事務/class-website/private/exams/</b> 裡的考卷檔（可一次選多份）。<div class="hint">考卷檔由 Claude「建錯題表」產生；不放在網站上，學年開放日前試卷與答案都不會公開。</div></div>'; return; }
   document.querySelectorAll('#modes button').forEach(function (b) { b.classList.toggle('on', b.dataset.m === S.mode); });
   if (totalPts() !== 100) { main.innerHTML = '<div class="card lv-bad">⚠️ 這份卷配分合計 ' + totalPts() + ' 分，不是 100，請先核對題目資料。</div>'; return; }
   if (S.mode === 'seat') paintSeat(); else if (S.mode === 'q') paintQ(); else paintReport();
