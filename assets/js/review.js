@@ -56,9 +56,9 @@
     const id = decodeURIComponent(location.hash.slice(1));
     const el = id && document.getElementById(id);
     if (!el) return;
-    el.scrollIntoView({ block: "start" });
+    el.scrollIntoView({ block: "start", behavior: "instant" }); // 全站 scroll-behavior:smooth，跳卡片不要慢慢滑
     el.classList.add("rc-hit"); setTimeout(() => el.classList.remove("rc-hit"), 2400);
   };
-  jump();
+  requestAnimationFrame(jump);
   window.addEventListener("hashchange", jump);
 })();
