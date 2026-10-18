@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { itemCode, parseErrorCode, flatItems, termOf, matchExam, analyze, reportItem } from "./quiz-errors.mjs";
+import { itemCode, parseErrorCode, flatItems, termOf, matchExam, analyze, reportItem, cardHref, missingCards } from "./quiz-errors.mjs";
 
 // 示意卷（不是真卷：真卷含答案，不進公開 repo）。總分 100。
 const EXAM = {
@@ -75,18 +75,36 @@ test("建議最多 5 類", () => {
   assert.equal(r.tips.length, 5);
 });
 
-test("解答開放日閘門：未到或沒填 → 輸出裡完全沒有錯題明細、答案、試卷連結", () => {
-  const res = analyze(EXAM, "一1", 98);
+test("公開規則：錯題明細發布即公開；正確答案與試卷連結到開放日才輸出（資料端剝掉）", () => {
+  const res = analyze(EXAM, "一1,二3(-1)", 97);
   const meta = { subject: "社會", name: "L9平時卷", date: "2026-10-14", open: "2026-11-06", paper: "https://drive.example/x", review: { label: "觀念複習", href: "https://x" } };
   const before = reportItem(meta, res, "2026-11-05");
   assert.equal(before.unlocked, false);
-  assert.ok(!("wrong" in before) && !("paper" in before));
-  assert.ok(!JSON.stringify(before).includes("drive.example"));
-  assert.ok(!JSON.stringify(before).includes("○"), "答案不可出現在輸出");
+  assert.deepEqual(before.wrong.map((w) => [w.label, w.tag, w.lost]), [["一、是非題 1", "地形", 2], ["二、選擇題 3", "地圖", 1]]);
+  assert.ok(before.wrong.every((w) => !("ans" in w)), "開放日前錯題沒有 ans 欄");
+  assert.ok(!("paper" in before));
+  const s = JSON.stringify(before);
+  assert.ok(!s.includes("drive.example"));
+  assert.ok(!s.includes('"○"') && !s.includes('"4"'), "答案不可出現在輸出");
   const none = reportItem({ ...meta, open: "" }, res, "2099-01-01");
-  assert.equal(none.unlocked, false); assert.ok(!("wrong" in none));
+  assert.equal(none.unlocked, false); assert.ok(none.wrong.every((w) => !("ans" in w)) && !("paper" in none));
   const after = reportItem(meta, res, "2026-11-06");
   assert.equal(after.unlocked, true);
-  assert.equal(after.wrong[0].ans, "○");
+  assert.deepEqual(after.wrong.map((w) => w.ans), ["○", "4"]);
   assert.equal(after.paper, "https://drive.example/x");
+  assert.deepEqual(reportItem(meta, analyze(EXAM, "無", 100), "2026-11-06").wrong, [], "全對沒有錯題");
+});
+
+test("觀念複習卡連結：同科目、卡名一字不差才連；對不到列進需人工", () => {
+  assert.equal(cardHref("社會", "地圖要素（圖名・方向標・圖例・比例尺）"),
+    `review.html?s=${encodeURIComponent("社會")}#${encodeURIComponent("地圖要素（圖名・方向標・圖例・比例尺）")}`);
+  const res = analyze(EXAM, "一1,三1地形①,三8彷", 67);
+  const has = (s, n) => s === "社會" && n === "地形";
+  const it = reportItem({ subject: "社會", name: "L9平時卷", date: "2026-10-14", open: "" }, res, "2026-10-20", has);
+  assert.deepEqual(it.tips.map((t) => [t.name, t.card]), [["地形", cardHref("社會", "地形")], ["氣候", null]]);
+  assert.deepEqual(it.wrong.map((w) => w.card), [cardHref("社會", "地形"), cardHref("社會", "地形"), null]);
+  assert.deepEqual(missingCards(it), ["氣候"]);
+  const other = reportItem({ subject: "國語", name: "x", date: "2026-10-14", open: "" }, res, "2026-10-20", has);
+  assert.ok(other.tips.every((t) => t.card === null), "別科同名卡不算");
+  assert.equal(reportItem({ subject: "社會", name: "x", date: "2026-10-14", open: "" }, res, "2026-10-20").tips[0].card, null, "沒給卡片清單＝都不連");
 });

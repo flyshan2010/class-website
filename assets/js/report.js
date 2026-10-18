@@ -421,38 +421,41 @@
     </svg>
     <div class="quiz-legend">${QUIZ_SUBJ.map(([s, c]) => `<span><i style="background:${c}"></i>${s}</span>`).join("")}</div>`;
   }
-  // 🔍 錯題分析與複習建議（BY 線，老師 2026-10-18 確認範本 class-manager/private/學習報告錯題分析_範本.html）：
+  // 🔍 錯題分析與複習建議（BY 線，老師 2026-10-18 定案範本 ClassOS_v3.5_藍圖/觀念複習卡與錯題公開_範本.html）：
   // sync 端算好 report.quiz.analysis（規則正本 scripts/classos/lib/quiz-errors.mjs），前端只畫。
-  // 解答開放日前 sync 根本不放錯題明細／答案／試卷連結，這裡只顯示鎖頭說明。
+  // 錯題明細發布即公開、預設展開；正確答案（ans）與試卷連結開放日前 sync 根本不放，這裡只顯示鎖頭說明。
+  // 每條建議與每道錯題連到「📚 觀念複習卡」（card；對不到卡＝null，不放連結）。
   const QUIZ_COLOR = Object.fromEntries(QUIZ_SUBJ);
   const httpsOnly = u => /^https:\/\//.test(String(u || "")) ? App.esc(u) : "";
+  const cardOnly = u => /^review\.html\?s=[^"<>\s]+$/.test(String(u || "")) ? App.esc(u) : "";
+  const cardLink = (u, text) => cardOnly(u) ? `<a href="${cardOnly(u)}" target="_blank" rel="noopener">${text}</a>` : "";
   const rateColor = r => r < 60 ? "#D63031" : r < 80 ? "#E67E22" : "#10AC84";
   function quizAnalysis(list) {
     if (!list?.length) return "";
     const one = e => {
-      const rv = e.review && httpsOnly(e.review.href)
-        ? `　👉 <a href="${httpsOnly(e.review.href)}" target="_blank" rel="noopener">${App.esc(e.review.label || "觀念複習")}</a>` : "";
       const kp = e.kp.map(k => `<div class="qa-kn">${App.esc(k.name)}</div>
         <div class="qa-bar"><i style="width:${k.rate}%;background:${rateColor(k.rate)}"></i></div><div class="qa-pct">${k.rate}%</div>`).join("");
-      const tips = e.tips.length ? e.tips.map(t => `<div class="qa-tip"><b>💡 ${App.esc(t.name)}</b>：${App.esc(t.tip)}${rv}</div>`).join("")
+      const tips = e.tips.length ? e.tips.map(t => `<div class="qa-tip"><b>💡 ${App.esc(t.name)}</b>：${App.esc(t.tip)}${t.card && cardOnly(t.card) ? `　👉 ${cardLink(t.card, "複習卡")}` : ""}</div>`).join("")
         : `<div class="qa-tip"><span class="qa-good">各知識點都很穩定 👍</span>　把錯的題目訂正一次就好。</div>`;
-      const paper = e.paper && httpsOnly(e.paper) ? `　📄 <a href="${httpsOnly(e.paper)}" target="_blank" rel="noopener">打開試卷</a>` : "";
-      const detail = !e.unlocked
-        ? `<div class="qa-lock">🔒 錯題明細與正確答案，${e.open ? `會在開放日（${md(e.open)}）後出現在這裡。` : "老師公布開放日後才會出現在這裡。"}</div>`
-        : !e.wrong?.length ? `<div class="qa-lock">這份卷全對，沒有錯題 🎉${paper}</div>`
-        : `<details class="qa-wrong"><summary>看我錯的題目與正確答案（${e.wrong.length} 題）</summary>${paper ? `<div class="quiz-muted">${paper}</div>` : ""}
-          <table class="quiz-table"><thead><tr><th>題目</th><th>知識點</th><th class="n">扣分</th><th>正確答案</th></tr></thead><tbody>
-          ${e.wrong.map(w => `<tr><td>${App.esc(w.label)}</td><td><span class="quiz-badge">${App.esc(w.tag)}</span></td><td class="n">−${w.lost}</td><td>${App.esc(w.ans)}</td></tr>`).join("")}
-          </tbody></table></details>`;
+      const whole = e.review && httpsOnly(e.review.href)
+        ? `<div class="quiz-muted">📖 <a href="${httpsOnly(e.review.href)}" target="_blank" rel="noopener">${App.esc(e.review.label || "整課觀念複習")}</a></div>` : "";
+      const paper = e.unlocked && e.paper && httpsOnly(e.paper) ? `<div class="quiz-muted">📄 <a href="${httpsOnly(e.paper)}" target="_blank" rel="noopener">打開試卷</a></div>` : "";
+      const lock = e.unlocked ? "" : `<div class="qa-lock">🔒 正確答案與試卷，${e.open ? `${md(e.open)}（解答開放日）起出現在這裡。` : "老師公布解答開放日後才會出現在這裡。"}</div>`;
+      const showAns = e.unlocked && (e.wrong || []).some(w => "ans" in w);
+      const wrong = !e.wrong?.length ? `<div class="qa-lock">這份卷全對，沒有錯題 🎉</div>${paper}`
+        : `<details class="qa-wrong" open><summary>我錯的題目${showAns ? "與正確答案" : ""}（${e.wrong.length} 題）</summary>${paper}
+          <div class="qa-tbl"><table class="quiz-table"><thead><tr><th>題目</th><th>知識點</th><th class="n">扣分</th>${showAns ? "<th>正確答案</th>" : ""}<th>複習</th></tr></thead><tbody>
+          ${e.wrong.map(w => `<tr><td>${App.esc(w.label)}</td><td><span class="quiz-badge">${App.esc(w.tag)}</span></td><td class="n">−${w.lost}</td>${showAns ? `<td>${App.esc(w.ans ?? "")}</td>` : ""}<td>${cardLink(w.card, "卡片") || "—"}</td></tr>`).join("")}
+          </tbody></table></div></details>`;
       return `<div class="qa-exam" style="--c:${QUIZ_COLOR[e.subject] || "#6b7280"}">
         <div class="qa-h"><b>${App.esc(e.subject)}・${App.esc(e.name)}</b><span class="quiz-muted">${md(e.date)}</span><span class="qa-score">${e.score}</span><span class="quiz-muted">分</span></div>
-        <div class="quiz-muted">各知識點得分率</div><div class="qa-kp">${kp}</div>${tips}${detail}</div>`;
+        <div class="quiz-muted">各知識點得分率</div><div class="qa-kp">${kp}</div>${tips}${whole}${wrong}${e.wrong?.length ? lock : ""}</div>`;
     };
     return `<div class="report-box quiz-box" style="--bc:#E17055">
       <span class="report-badge" style="--bc:#E17055">🔍 錯題分析與複習建議</span>
       <p class="quiz-muted">每次平時卷改完，就會看到自己哪些地方要加強。只看自己，不放全班平均、不排名。</p>
       ${list.map(one).join("")}
-      <p class="quiz-muted">得分率＝這一類題目拿到的分數 ÷ 這一類的總分。綠色 80% 以上、橘色 60–79%、紅色低於 60%。複習建議依需要加強的程度排序，最多列 5 類。每份卷的錯題明細與答案，到該卷自己的開放日才出現。</p>
+      <p class="quiz-muted">得分率＝這一類題目拿到的分數 ÷ 這一類的總分。綠色 80% 以上、橘色 60–79%、紅色低於 60%。複習建議依需要加強的程度排序，最多列 5 類。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷，到該卷自己的解答開放日才出現。</p>
     </div>`;
   }
   function quizSheet(report, seatText) {

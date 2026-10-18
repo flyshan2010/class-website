@@ -8,7 +8,10 @@
  *   - 知識點得分率＝這一類拿到的分 ÷ 這一類總分，四捨五入取整數百分比（Math.floor(x+0.5)）。
  *   - 複習建議＝扣分 ≥ 2 且得分率 < 80% 的類，依得分率低→高（同率扣分多的先）排序，最多 5 類（與錯題表同一條件）。
  *   - 判不出就不畫（fail-closed）：錯題碼對不到題目、扣分超過配分、算出來的分數≠紀錄庫分數 → 這份卷不出分析，回 manual 交老師看。
- *   - 解答開放日：今天 ≥ 該卷開放日才帶錯題明細、正確答案、試卷連結；未到（或沒填）就完全不放進輸出。
+ *   - 公開規則（老師 2026-10-18 定案）：錯題明細（題號、知識點、扣分）報告發布即公開；
+ *     正確答案（ans）與試卷連結只在今天 ≥ 該卷解答開放日才輸出，未到（或沒填）就從資料端剝掉，不靠前端藏。
+ *   - 觀念複習卡：每條建議與每道錯題連到「📚 觀念複習卡」同科目、卡名＝知識點名一字不差的上架卡；
+ *     對不到卡就不放連結（card:null），由 sync 列進「需人工」。
  * 純函式、不讀檔、不連 Notion。
  */
 
@@ -108,19 +111,27 @@ export function analyze(exam, code, score) {
   return { score: calc, kp: kp.map((k) => ({ name: k.name, rate: k.rate })), tips, wrong };
 }
 
+/** 觀念複習卡網址（班網 review.html：每科一頁，#卡名 直接跳到該張卡）。 */
+export const cardHref = (subject, name) => `review.html?s=${encodeURIComponent(subject)}#${encodeURIComponent(name)}`;
+
 /**
- * 組成報告用的一份卷（解答開放日閘門在這裡，未到就不放錯題明細／答案／試卷連結）。
+ * 組成報告用的一份卷。
  * meta：{ subject, name, date, open, paper, review }（open＝解答開放日 YYYY-MM-DD 或空）
+ * hasCard(subject, name)：該知識點有沒有上架的觀念複習卡。
+ * 錯題明細一律輸出；ans 與 paper 只在開放日（含）起才輸出——閘門在這裡，不在前端。
  */
-export function reportItem(meta, result, today) {
+export function reportItem(meta, result, today, hasCard = () => false) {
   const unlocked = !!meta.open && today >= meta.open;
+  const card = (name) => (hasCard(meta.subject, name) ? cardHref(meta.subject, name) : null);
   const out = {
     subject: meta.subject, name: meta.name, date: meta.date, score: result.score,
-    kp: result.kp, tips: result.tips, review: meta.review || null, open: meta.open || null, unlocked,
+    kp: result.kp, tips: result.tips.map((t) => ({ ...t, card: card(t.name) })),
+    wrong: result.wrong.map((w) => ({ label: w.label, lost: w.lost, tag: w.tag, card: card(w.tag), ...(unlocked ? { ans: w.ans } : {}) })),
+    review: meta.review || null, open: meta.open || null, unlocked,
   };
-  if (unlocked) {
-    out.wrong = result.wrong;
-    out.paper = meta.paper || null;
-  }
+  if (unlocked) out.paper = meta.paper || null;
   return out;
 }
+
+/** 這份卷裡對不到觀念複習卡的知識點（給 sync 列「需人工」）。 */
+export const missingCards = (item) => [...new Set([...item.tips, ...item.wrong].filter((x) => !x.card).map((x) => x.name ?? x.tag))];

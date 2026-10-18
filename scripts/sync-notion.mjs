@@ -14,7 +14,7 @@ import { uniqueMaskNames } from "./lib/mask-name.mjs";
 import { buildDutyData } from "./lib/build-duties.mjs";
 import { GOAL_TIER, backersNeededOf, inWindow, goalPrefix, tallyGoal } from "./lib/class-goal.mjs";
 import { quizRange, toQuiz, inRange, summarize, reviewTip } from "./classos/lib/term-quiz.mjs";
-import { matchExam, analyze, reportItem } from "./classos/lib/quiz-errors.mjs";
+import { matchExam, analyze, reportItem, missingCards } from "./classos/lib/quiz-errors.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -51,6 +51,7 @@ const DS = {
   proposals: "35cb027e-1465-47a2-ad91-e66fb5e83c7a", // 🧪 創造提案（學生線上填；只進加密學習報告，公開檔零洩漏）
   log: "eb529fa1-59e5-45ef-bfb4-79fc30de79e4", // 📝 班經與學習紀錄庫（只給教師儀表板數筆數，內容不輸出）
   quizExams: "51c1c08f-78b4-4352-85f6-e45fb7361c2a", // 📝 平時卷（含答案；只算錯題分析進加密報告，開放日前不輸出答案）
+  reviewCards: "74bfc789-192e-425e-b7c6-477033bec302", // 📚 觀念複習卡（一列＝一個知識點；只有「上架」輸出到公開 data/review-cards.json）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -64,7 +65,7 @@ const YEAR_FIELD = "學年";
 // 需按學年過濾的庫
 const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem", "dailyPlan", "proposals", "quizExams"].map(k => DS[k]));
 // 有「學年」欄但**刻意不過濾**：教材是跨學年資產，過濾掉會讓升學年後既有課程頁全部消失
-const YEAR_EXEMPT = new Set([DS.lessons]);
+const YEAR_EXEMPT = new Set([DS.lessons, DS.reviewCards]);
 const DS_NAME = Object.fromEntries(Object.entries(DS).map(([k, v]) => [v, k]));
 
 let CURRENT_YEAR = null;        // 例：'115'
@@ -854,6 +855,8 @@ async function quizBySeat(roster, bySeat) {
     return w ? { term, w } : null;
   };
   const exams = await quizExams();
+  const cards = await reviewCards();
+  const hasCard = (subject, name) => cards.some(c => c.subject === subject && c.name === name);
   const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10); // 臺灣日期（開放日閘門）
   const manual = [];
   const out = {};
@@ -886,8 +889,10 @@ async function quizBySeat(roster, bySeat) {
         if (!e) { manual.push(`${q.subject}「${q.name}」對不到📝平時卷`); return null; }
         const res = analyze(e.exam, q.errors, q.score);
         if (res.manual) { manual.push(`${q.subject}「${q.name}」${res.manual}`); return null; }
-        return reportItem({ subject: q.subject, name: q.name, date: q.date, open: e.open, paper: e.paper,
-          review: e.review ? { label: "觀念複習", href: e.review } : null }, res, today);
+        const item = reportItem({ subject: q.subject, name: q.name, date: q.date, open: e.open, paper: e.paper,
+          review: e.review ? { label: "整課觀念複習", href: e.review } : null }, res, today, hasCard);
+        for (const k of missingCards(item)) manual.push(`${q.subject}「${k}」沒有上架的📚觀念複習卡（報告不放連結）`);
+        return item;
       }).filter(Boolean).sort((a, b) => a.date.localeCompare(b.date)),
     };
   }
@@ -921,6 +926,79 @@ async function quizExams() {
   }
   console.log(`  ↳ 📝平時卷：${out.length} 份`);
   return out;
+}
+
+// ── 📚 觀念複習卡（BY 線，老師 2026-10-18 定案範本 ClassOS_v3.5_藍圖/觀念複習卡與錯題公開_範本.html）──
+// 一列＝一個知識點；卡名＝平時卷知識點名稱一字不差（報告靠它配對連結）。只讀「狀態＝上架」。
+// 內文三段（重點整理／例題示範／自我檢查，答案放摺疊）原樣轉成 rich text 片段，前端 review.html 畫。
+// 無個資、不含平時卷原題，公開輸出 data/review-cards.json。卡片是跨學年資產：學年只檢查漏填、不過濾。
+const REVIEW_SUBJECTS = ["國語", "數學", "社會"];
+let _reviewCards;
+function reviewCards() { return (_reviewCards ||= loadReviewCards()); }
+async function blockChildren(id) {
+  const out = [];
+  let cursor;
+  do {
+    const res = await fetch(`https://api.notion.com/v1/blocks/${id}/children?page_size=100${cursor ? `&start_cursor=${cursor}` : ""}`, {
+      headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03" },
+    });
+    if (!res.ok) throw new Error(`Notion API ${res.status}`);
+    const json = await res.json();
+    out.push(...json.results);
+    cursor = json.has_more ? json.next_cursor : undefined;
+  } while (cursor);
+  return out;
+}
+// rich text → [[文字, 1＝粗體]]，相鄰同樣式併成一段
+const rtSegs = arr => (arr || []).reduce((acc, t) => {
+  const b = t.annotations?.bold ? 1 : 0, last = acc[acc.length - 1];
+  if (last && (last[1] || 0) === b) last[0] += t.plain_text; else acc.push(b ? [t.plain_text, 1] : [t.plain_text]);
+  return acc;
+}, []);
+async function cardBlocks(id, depth = 0) {
+  const out = [];
+  for (const b of await blockChildren(id)) {
+    const rt = b[b.type]?.rich_text;
+    const kids = b.has_children && depth < 2 ? await cardBlocks(b.id, depth + 1) : [];
+    if (/^heading_[123]$/.test(b.type)) out.push({ h: rtSegs(rt).map(x => x[0]).join("").trim() });
+    else if (b.type === "paragraph") { if (rtSegs(rt).length) out.push({ p: rtSegs(rt) }); out.push(...kids); }
+    else if (b.type === "bulleted_list_item") out.push({ ul: rtSegs(rt), ...(kids.length ? { kids } : {}) });
+    else if (b.type === "numbered_list_item") out.push({ ol: rtSegs(rt), ...(kids.length ? { kids } : {}) });
+    else if (b.type === "toggle") out.push({ toggle: rtSegs(rt), kids });
+    else if (b.type === "quote" || b.type === "callout") out.push({ p: rtSegs(rt) }, ...kids);
+  }
+  return out;
+}
+async function loadReviewCards() {
+  let rows;
+  try { rows = await queryDataSource(DS.reviewCards); }
+  catch (e) { console.warn(`⚠️ 讀不到📚觀念複習卡庫，本次不出複習卡：${String(e.message).slice(0, 120)}`); return []; }
+  const byKey = new Map();
+  for (const page of rows) {
+    const r = props(page);
+    const name = String(r["卡名"] || "").trim();
+    if (r["狀態"] !== "上架" || !name || !REVIEW_SUBJECTS.includes(r["科目"])) continue;
+    try {
+      const blocks = await cardBlocks(page.id);
+      const sections = [];
+      for (const b of blocks) {
+        if (b.h != null) sections.push({ title: b.h, blocks: [] });
+        else (sections[sections.length - 1] || sections[sections.push({ title: "", blocks: [] }) - 1]).blocks.push(b);
+      }
+      const card = { subject: r["科目"], name, year: yearOf(page), term: r["年級學期"] || "", lessons: r["相關課次"] || [],
+        href: /^https:\/\//.test(r["教學頁連結"] || "") ? r["教學頁連結"] : "", sections };
+      const key = `${card.subject}｜${name}`;
+      const prev = byKey.get(key);
+      if (prev) console.warn(`⚠️ 📚觀念複習卡「${card.subject}・${name}」有兩張上架，取學年較新的一張`);
+      if (!prev || String(card.year) > String(prev.year)) byKey.set(key, card);
+    } catch (e) { console.warn(`⚠️ 📚觀念複習卡「${name}」略過：${e.message}`); }
+  }
+  return [...byKey.values()].sort((a, b) => REVIEW_SUBJECTS.indexOf(a.subject) - REVIEW_SUBJECTS.indexOf(b.subject)
+    || String(a.lessons[0] || "").localeCompare(String(b.lessons[0] || ""), "zh-Hant", { numeric: true }) || a.name.localeCompare(b.name, "zh-Hant"));
+}
+async function syncReviewCards() {
+  const cards = await reviewCards();
+  await save("review-cards.json", { subjects: REVIEW_SUBJECTS.filter(s => cards.some(c => c.subject === s)), cards });
 }
 
 async function syncReports() {
@@ -1695,6 +1773,7 @@ await Promise.all([
   syncSchedule(),
   syncSettings(),
   syncReports(),
+  syncReviewCards(),
   syncTeacherDashboard(),
   syncStore(),
   syncBank(),
