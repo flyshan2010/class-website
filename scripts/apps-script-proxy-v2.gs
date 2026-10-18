@@ -1,6 +1,14 @@
 /**
- * 班網教師專區代理 v2.12（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.13（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.13 升級步驟（2026-10-18，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.13 新增（班網錯題紀錄表上雲端，BY 線）：
+ *   ① SYNC_KEYS 多一個「quizErrors.draft.v1」（錯題登記，只有座號與扣分、無姓名）→ 已配對的電腦自動跨電腦同步；
+ *   ② quiz_exams（驗教師口令）→ 讀 Notion「📝 平時卷」各頁內文的考卷 JSON（含答案，只回給輸入口令的老師），
+ *      錯題表不必再從雲端硬碟匯入考卷檔；同時回指令碼屬性目前用量（usage，字元數，上限約 500KB）。
+ *   若回「讀不到📝平時卷」：Notion 打開該資料庫 → ⋯ → 連線 → 加入代理用的整合。
  *
  * ── v2.12 升級步驟（2026-10-12，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -159,6 +167,7 @@ function doPost(e) {
       case "proposal_review_plan":   return out_(proposalReviewPlan_(props, body));
       case "proposal_review_result": return out_(proposalReviewResult_(props, body));
       case "sync_pair":    return out_(syncPair_(props));
+      case "quiz_exams":   return out_(quizExams_(props));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -1620,12 +1629,42 @@ function stampName_(name) {
 // 白名單：憑證只碰得到這幾個鍵（與 class-manager/assets/js/sync.js 的 KEYS 一致）
 const SYNC_KEYS = [
   "classManager.events.v1", "classManager.homework.v3", "classManager.routine.v2",
-  "classManager.seats.v2", "classManager.groups.v1", "classManager.board.v1", "classManager.stats.v1"
+  "classManager.seats.v2", "classManager.groups.v1", "classManager.board.v1", "classManager.stats.v1",
+  "quizErrors.draft.v1"   // v2.13 班網錯題紀錄表的登記（座號＋扣分）
 ];
 const SYNC_CHUNK = 2500;   // 每片字元數：中文 3 bytes → 最多 7.5KB，低於指令碼屬性單值 9KB 上限
 const SYNC_MAX = 120000;   // 單鍵字元上限（指令碼屬性總量 500KB）
 
 function syncShort_(key) { return key.replace("classManager.", "").replace(/[^A-Za-z0-9]/g, "_"); }
+
+/** v2.13 錯題紀錄表的考卷：讀「📝 平時卷」每頁內文第一個 json 程式碼框（format quiz-exam/1）。
+ *  佔位列（還沒建錯題表、內文沒有考卷）只列在 skipped，不算錯。含答案 → 只在口令通過後回傳。 */
+const DS_QUIZ = "51c1c08f-78b4-4352-85f6-e45fb7361c2a"; // 📝 平時卷（錯題分析用・含答案勿公開）
+function quizExams_(props) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const q = queryDS_(token, DS_QUIZ, { page_size: 100 });
+  if (q.code !== 200) return { ok: false, error: "讀不到📝平時卷（Notion 資料庫要加入代理用的整合）：HTTP " + q.code + " " + String((q.data || {}).message || "").slice(0, 100) };
+  const rows = q.data.results || [];
+  const exams = [], skipped = [];
+  rows.forEach(function (page) {
+    const title = ((page.properties["卷id"] || {}).title || []).map(function (x) { return x.plain_text; }).join("");
+    try {
+      const r = notionV_(token, "blocks/" + page.id + "/children?page_size=100", "get", null, NOTION_VERSION_DS);
+      if (r.code !== 200) throw new Error("HTTP " + r.code);
+      const kids = r.data.results || [];
+      const code = kids.filter(function (b) { return b.type === "code"; })[0];
+      if (!code) { skipped.push(title); return; }
+      const e = JSON.parse(code.code.rich_text.map(function (x) { return x.plain_text; }).join(""));
+      if (e.format !== "quiz-exam/1") { skipped.push(title); return; }
+      exams.push(e);
+    } catch (err) { skipped.push(title + "（" + String(err.message || err).slice(0, 60) + "）"); }
+  });
+  const all = props.getProperties();
+  let usage = 0;
+  Object.keys(all).forEach(function (k) { usage += k.length + String(all[k]).length; });
+  return { ok: true, exams: exams, skipped: skipped, usage: usage };
+}
 
 /** 口令通過後配對：回裝置憑證（沒有就產生一組） */
 function syncPair_(props) {

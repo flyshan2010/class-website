@@ -7,8 +7,10 @@
 <title>錯題紀錄表｜教師專區</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>" />
 <style>
-/* 錯題紀錄表（2026-10-18 上線；同日老師指示從班級管理系統搬到班網教師專區）：只用座號；登記只存在這台電腦（quizErrors.draft.v1），
-   不送任何資料——成績靠「複製成績」貼給 AI 記錄。考卷檔不進 repo（公開），由老師從雲端硬碟 class-manager/private/exams/ 匯入這台電腦（quizErrors.exams.v1）。
+/* 錯題紀錄表（2026-10-18 上線；同日老師指示從班級管理系統搬到班網教師專區）：只用座號。
+   登記（quizErrors.draft.v1）本機為正本、跨電腦同步走班級管理的 sync.js（代理 v2.13 起，已配對的電腦自動同步；老師 2026-10-18 指示上雲端）；
+   成績仍靠「複製成績」貼給 AI 記錄。考卷不進 repo（公開）：開頁時用教師口令向代理 quiz_exams 讀 Notion「📝 平時卷」，
+   讀不到才用這台電腦上次的快取（quizErrors.exams.v1）；「匯入考卷檔」只當備用。
    班網與班級管理同源（flyshan2010.github.io），兩個 localStorage 鍵沿用，搬家前匯入的考卷與登記不必重來。 */
 [hidden]{display:none!important}
 :root{
@@ -71,6 +73,8 @@ textarea{width:100%;min-height:150px;background:var(--surface-2);color:var(--ink
 .scroll{overflow-x:auto}
 @media (max-width:640px){ .qs{grid-template-columns:repeat(auto-fill,minmax(78px,1fr))} th,td{padding:5px 4px} }
 </style>
+<!-- 跨電腦同步（與班級管理同源同一支，KEYS 含 quizErrors.draft.v1）；要在任何寫入之前載入才攔得到 -->
+<script src="/class-manager/assets/js/sync.js?v=20261018-5"></script>
 </head>
 <body>
 <header>
@@ -78,8 +82,9 @@ textarea{width:100%;min-height:150px;background:var(--surface-2);color:var(--ink
     <h1>📝 平時卷錯題紀錄表 <a href="teacher.html" style="font-size:13px;color:var(--mute);margin-left:8px">← 回教師專區</a></h1>
     <div class="row">
       <label>考卷 <select id="exam"></select></label>
-      <button type="button" id="imp">📂 匯入考卷</button><input type="file" id="impf" accept=".json,application/json" multiple hidden>
+      <button type="button" id="imp" title="Notion 讀不到時才用">📂 匯入考卷檔（備用）</button><input type="file" id="impf" accept=".json,application/json" multiple hidden>
       <span class="hint" id="n"></span>
+      <span class="hint" id="cloud"></span>
       <span class="tabs row" id="modes">
         <button data-m="seat">👤 依學生登記</button>
         <button data-m="q">❓ 依題目登記</button>
@@ -314,12 +319,16 @@ function paintReport() {
     return '座號' + s + ' ' + ex.subj + ' ' + ex.name + ' ' + score(s) + '分 ' + errCode(s);
   }).filter(Boolean);
   h += '<h2>④ 成績（複製後貼給 AI「記錄：」即入紀錄庫平時考）</h2><div class="card"><textarea id="out" readonly>' + esc(lines.join('\n')) + '</textarea>' +
-       '<div class="row" style="margin-top:8px"><button id="copy" class="on">複製成績</button><button id="json">下載完整登記（JSON）</button>' +
+       '<div class="row" style="margin-top:8px"><button id="copy" class="on">複製成績</button><button id="json">下載完整登記（JSON）</button><button id="done" class="ghost">🧹 已記錄完，清掉這份卷的登記</button>' +
        '<span class="hint">分數＝100 − 錯題扣分；請和考卷上的分數對一次。「錯:」後面是錯題碼（大題序＋題號），學生加密報告用它算知識點得分率。</span></div></div>';
   main.innerHTML = h;
   document.getElementById('copy').onclick = function () {
     var t = document.getElementById('out'); t.select();
     (navigator.clipboard ? navigator.clipboard.writeText(t.value) : Promise.reject()).then(function () { toast('已複製 ' + lines.length + ' 行'); }, function () { document.execCommand('copy'); toast('已複製'); });
+  };
+  document.getElementById('done').onclick = function () {
+    if (!confirm('成績已經貼給 AI 記錄進紀錄庫了嗎？\n清掉後，這份卷在所有電腦上的登記都會刪除（雲端空間有限，記錄完就清）。')) return;
+    delete S.data[S.exam]; save(); paint(); toast('已清掉「' + ex.title + '」的登記');
   };
   document.getElementById('json').onclick = function () {
     var blob = new Blob([JSON.stringify({ exam: ex.id, seats: SEATS, data: D(), exportedAt: new Date().toISOString() }, null, 2)], { type: 'application/json' });
@@ -346,6 +355,31 @@ function fillSel() {
   sel.value = S.exam;
 }
 fillSel();
+/* 考卷從 Notion「📝 平時卷」讀（代理 quiz_exams，要教師口令）；讀到就更新快取，讀不到沿用快取。 */
+var cloudEl = document.getElementById('cloud');
+function syncText() {
+  var C = window.CMSync;
+  if (!C) return '☁ 同步程式沒載入（只存這台）';
+  return C.paired() ? '☁ 已開啟跨電腦同步' : '☁ 這台還沒配對：<a href="/class-manager/teacher.html" style="color:var(--accent)">到班級管理教師專區輸入口令</a>後就會同步';
+}
+function showCloud(msg) { cloudEl.innerHTML = (msg ? esc(msg) + '　' : '') + syncText(); }
+showCloud('考卷讀取中…');
+fetch('data/site-config.json?t=' + Date.now(), { cache: 'no-cache' }).then(function (r) { return r.json(); })
+  .then(function (c) {
+    return fetch(c.updateProxyUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'quiz_exams', pw: sessionStorage.getItem('teacherPw') || '' }) });
+  }).then(function (r) { return r.json(); })
+  .then(function (res) {
+    if (!res || !res.ok) throw new Error((res && res.error) || '代理沒有回應');
+    var got = (res.exams || []).filter(function (e) { return !validExam(e); });
+    if (!got.length) throw new Error('📝 平時卷裡還沒有建好的考卷');
+    var ids = got.map(function (e) { return e.id; });
+    EXAMS = EXAMS.filter(function (e) { return ids.indexOf(e.id) < 0; }).concat(got);   // Notion 為準；只在本機匯入的保留
+    saveExams(); fillSel(); paint();
+    showCloud('考卷 ' + got.length + ' 份（Notion）' + (res.usage ? '・雲端已用 ' + Math.round(res.usage / 1000) + 'K／約 500K' : ''));
+  }).catch(function (e) {
+    showCloud('⚠️ 讀不到 Notion 考卷（' + String(e.message || e).slice(0, 60) + '），先用這台上次的 ' + EXAMS.length + ' 份');
+  });
 var impf = document.getElementById('impf');
 document.getElementById('imp').onclick = function () { impf.value = ''; impf.click(); };
 impf.onchange = function () {
