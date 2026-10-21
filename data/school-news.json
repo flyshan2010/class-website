@@ -1,6 +1,30 @@
 {
-  "fetchedAt": "2026-10-21T01:24:52.268Z",
+  "fetchedAt": "2026-10-21T13:23:28.527Z",
   "items": [
+    {
+      "date": "2026-10-21",
+      "title": "教育部辦理「2026自主學習節」，詳如說明，鼓勵教師踴躍報名參加。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1000&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-10-21",
+      "title": "社團法人台灣翻轉未來創新協會辦理「2027教育創新100」徵件募集活動，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=999&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-10-21",
+      "title": "轉知國教署辦理115年度選送中小學教師出國入班觀課計畫成果發表會，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=998&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-10-21",
+      "title": "衛生福利部臺南醫院健康管理中心「115-116年臺南市政府/臺南市議會健檢套裝」健康檢查專案",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=6&zone_id=0&page_id=53&content_id=996&type=news&from_op=school_department_show",
+      "dept": "人事室"
+    },
     {
       "date": "2026-10-20",
       "title": "「臺南市115學年度國民小學AI融入課室英語應用種子講師培訓計畫」，詳如說明。",
@@ -30,36 +54,6 @@
       "title": "財團法人信誼基金會舉辦【王意中心理師／不吼不叫的溝通心法：化解對立反抗，讀懂孩子的行為語言】免費親職講座",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=988&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-10-16",
-      "title": "115年度科學教育「和你一起玩科學」親子營計畫，請各校踴躍報名參加。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=980&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-16",
-      "title": "重申學校辦理赴陸教育交流活動應注意事項、落實填報登錄平臺事宜及陸方實施出入境管制新規定，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=979&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-16",
-      "title": "臺灣探究與實作教育學會辦理「2027寒假國小國中醫學科學營」活動，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=978&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-16",
-      "title": "歡迎同學報名公共電視兒少節目「下課花路米-前進太空系列」舉辦之徵選活動，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=977&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-16",
-      "title": "10月餐前5分鐘主題小測驗已上傳至臺南市學校午餐教育資訊網，另公布9月得獎名單。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=976&type=news&from_op=school_department_show",
-      "dept": "學務處"
     }
   ]
 }
