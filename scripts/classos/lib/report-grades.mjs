@@ -59,9 +59,13 @@ function byDay(recs, days) {
 // ── 4-1 上課參與 ──
 const TALLY = ["舉手回答", "小組加分", "小組扣分"]; // 檢核台計次，類別可能沒標課堂表現
 const HELP = ["協助發作業", "協助老師"];          // 老師 09-25：幫忙歸人際互動
+// 課堂作答（R18 assess 列，如「國L7-2 課堂作答：小考 4/5・課中 1/2」；SPEC_單節課簡報v4 §6.4）。
+// 老師 2026-10-22 裁定：＋ 照一般課堂表現進每日量尺（當天 +2）；－ 只扣該科分數 0.5，不進量尺、不數乙丙門檻。
+const ASSESS = "課堂作答";
 export function classroomRecords(recs) {
   return norm(recs).filter(r => (r.category === "課堂表現" || has(r, TALLY)) && !has(r, HELP) && r.pn)
-    .filter(r => !(r.pn === "－" && r.desc.includes("小組扣分"))); // 小組扣分不算個人負向
+    .filter(r => !(r.pn === "－" && r.desc.includes("小組扣分")))  // 小組扣分不算個人負向
+    .filter(r => !(r.pn === "－" && r.desc.includes(ASSESS)));     // 課堂作答答錯不扣量尺、不數乙丙
 }
 export function participation(recs, days) {
   const rs = classroomRecords(recs);

@@ -125,3 +125,12 @@ test("gradeStudent：沒有紀錄＝四個甲、生活技能 3", () => {
   const g = gradeStudent([], D);
   assert.deepEqual([g.上課參與, g.作業成績, g.生活常規, g.內容評量, g.生活技能分數], ["甲", "甲", "甲", "甲", 3]);
 });
+
+test("4-1 課堂作答：＋ 照常進量尺，－ 不扣量尺、不數乙丙（老師 2026-10-22）", () => {
+  const ans = (d, pn) => R(d, "課堂表現", pn, 1, "國L7-2 課堂作答：小考 4/5・課中 1/2", { subject: "國語" });
+  const wrong5 = D.map(d => ans(d, "－"));
+  assert.deepEqual([participation(wrong5, D).score, participation(wrong5, D).grade], [5, "甲"]); // 一週 5 筆答錯仍不是乙
+  assert.equal(participation([...D.map(hand), ...wrong5], D).grade, "特優");                      // 答錯不壓掉舉手
+  assert.equal(participation([ans(MON, "＋")], D).score, 6);                                     // 答對當天 +2
+  assert.equal(participation([...wrong5, talk(MON), talk(TUE), talk(WED), talk(THU), talk(FRI)], D).grade, "乙"); // 真班規照數
+});
