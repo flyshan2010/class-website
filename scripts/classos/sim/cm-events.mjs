@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import {
   isR18, parsePacket, weekLabel, categoryOf, describe, coinNumber,
   planEvent, planPacket, execLog, taskStatus, toNotionProps, diffRow, handPaidFrom,
-  hwSubjectsOf, hwSubjectsFor,
+  hwSubjectsOf, hwSubjectsFor, assessKind, parseAssessR, fromNotionPage, COMPARE_FIELDS,
 } from "../lib/cm-events.mjs";
 
 // ── 虛構班規（結構同 data/class-rules.json；bad 的 coin 用 U+2212，level 為負數）──
@@ -35,6 +35,10 @@ const ctx = (ids = []) => ({ rules, weeks, roster, existingIds: new Set(ids) });
 const ev = (o) => ({ tool: "board", date: "2026-09-08", seat: 1, id: `t-${Math.random()}`, ...o });
 const R = (o) => ev({ src: "rule", ...o });
 const T = (o) => ev({ src: "tally", ...o });
+// 課堂作答（SPEC_單節課簡報v4 §4.3）：tool assess、每生每節 1 筆
+const A = (o) => ev({ tool: "assess", src: "assess", act: "課堂作答", subj: "國語", lesson: "國L7-2", kind: "good",
+  r: "Q1:提取:O,Q2:大意:O,Q3:推論:X,Q4:提取:O,Q5:大意:O,C1:推論:O,C2:提取:N", ...o });
+const Ar = (o) => planEvent(A(o), ctx());
 const row = (e, ids) => planEvent(e, ctx(ids)).row ?? {};
 const pack = (body, head = "#CM-EVENTS v1 · 📋 摘要（⚠ 前次送出失敗 1 次：{不是資料}）") => `${head}\n${JSON.stringify(body)}`;
 
@@ -207,6 +211,78 @@ const cases = [
   ["toNotionProps：非作業列寫空多選", JSON.stringify(toNotionProps({ ...row(T({ id: "c", kind: "good", act: "打掃支援" })), 學生: "x" }).作業科目), JSON.stringify({ multi_select: [] })],
   ["對照：作業科目順序不同不算差異", diffRow({ 作業科目: ["數學", "國語"] }, { 作業科目: ["國語", "數學"] }).includes("作業科目"), false],
   ["對照：作業科目少一科 → 抓到", diffRow({ 作業科目: ["數學", "國語"] }, { 作業科目: ["國語"] }).includes("作業科目"), true],
+
+  // ── 課堂作答 src:"assess"（SPEC_單節課簡報v4 §4.4、§6）──
+  // §4.4 門檻：整數比，對×10≥記×8 → good；對×2≤記 → bad；其餘 neutral
+  ["計分：8/10 剛好 → good", assessKind(8, 10), "good"],
+  ["計分：7/10 → neutral（差一題就不是＋）", assessKind(7, 10), "neutral"],
+  ["計分：6/10 → neutral", assessKind(6, 10), "neutral"],
+  ["計分：5/10 剛好 → bad", assessKind(5, 10), "bad"],
+  ["計分：4/5（＝8/10）→ good", assessKind(4, 5), "good"],
+  ["計分：3/5 → neutral", assessKind(3, 5), "neutral"],
+  ["計分：1/2（＝5/10）→ bad", assessKind(1, 2), "bad"],
+  ["計分：0/1 → bad", assessKind(0, 1), "bad"],
+  ["計分：記 0 → null（不產事件，不能被當成全對）", assessKind(0, 0), null],
+  ["計分：對＞記 → null", assessKind(3, 2), null],
+  ["門檻邊界寫入：4/5 → ＋、程度 1", (({ 正負向, 程度 }) => `${正負向}${程度}`)(Ar({ r: "Q1:提取:O,Q2:大意:O,Q3:推論:X,Q4:提取:O,Q5:大意:O" }).row), "＋1"],
+  ["門檻邊界寫入：2/4 → －、程度 1", (({ 正負向, 程度 }) => `${正負向}${程度}`)(Ar({ kind: "bad", r: "Q1:提取:O,Q2:大意:X,Q3:推論:N,Q4:提取:O" }).row), "－1"],
+  ["門檻邊界寫入：3/5 → 中性、程度空白", (({ 正負向, 程度 }) => `${正負向}${程度}`)(Ar({ kind: "neutral", r: "Q1:提取:O,Q2:大意:X,Q3:推論:N,Q4:提取:O,Q5:大意:O" }).row), "中性null"],
+  ["未答算分母不算對：4 對 1 未答 → ＋（4/5）", Ar({ r: "Q1:提取:O,Q2:大意:O,Q3:推論:N,Q4:提取:O,Q5:大意:O" }).action, "write"],
+  ["未答算分母不算對：3 對 2 未答 → 中性（工具送 good → E07）", Ar({ r: "Q1:提取:O,Q2:大意:N,Q3:推論:N,Q4:提取:O,Q5:大意:O" }).code, "E07"],
+  ["記 0（r 空字串）→ E06", Ar({ r: "" }).code, "E06"],
+  // 欄位對照（§6.2）
+  ["事件描述：小考＋課中", Ar({ kind: "neutral" }).row?.事件描述 ?? Ar({}).why, "國L7-2 課堂作答：小考 4/5・課中 1/2"],
+  ["7 題 5 對 → 5×10=50 < 56、5×2=10 > 7 → 中性；送 good → E07", Ar({}).code, "E07"],
+  ["事件描述：只有小考", Ar({ r: "Q1:提取:O,Q2:大意:O,Q3:推論:O,Q4:提取:O,Q5:大意:O" }).row.事件描述, "國L7-2 課堂作答：小考 5/5"],
+  ["缺席不列：小考全缺席、只在場課中 → 只寫課中", Ar({ kind: "bad", r: "C1:推論:O,C2:提取:N" }).row.事件描述, "國L7-2 課堂作答：課中 1/2"],
+  ["缺席不列：分母只算在場題（1/2 → －）", Ar({ kind: "bad", r: "C1:推論:O,C2:提取:N" }).row.正負向, "－"],
+  ["類別＝課堂表現", Ar({ kind: "neutral" }).row.類別, "課堂表現"],
+  ["科目＝subj", Ar({ kind: "neutral", subj: "數學", lesson: "數R3-1" }).row.科目, "數學"],
+  ["金幣 0（不入帳）", Ar({ kind: "neutral" }).row.金幣影響, 0],
+  ["次數 1（不吃 count）", Ar({ kind: "neutral", count: 7 }).row.次數, 1],
+  ["作業科目空（不是作業類）", Ar({ kind: "neutral" }).row.作業科目.length, 0],
+  ["備註：白話錯題", Ar({ kind: "neutral" }).row.備註, "錯：Q3（推論）；未答：C2（提取）"],
+  ["備註：多題用頓號", Ar({ kind: "bad", r: "Q1:提取:X,Q2:大意:X,C1:推論:N" }).row.備註, "錯：Q1（提取）、Q2（大意）；未答：C1（推論）"],
+  ["備註：全對", Ar({ r: "C1:推論:O,C2:提取:O" }).row.備註, "全對"],
+  ["作答明細＝r 原字串", Ar({ kind: "neutral" }).row.作答明細, "Q1:提取:O,Q2:大意:O,Q3:推論:X,Q4:提取:O,Q5:大意:O,C1:推論:O,C2:提取:N"],
+  ["事件id 原封", Ar({ kind: "neutral", id: "assess-20261022-s5-國L7-2" }).row.事件id, "assess-20261022-s5-國L7-2"],
+  ["學年／週次照 date", (({ 學年, 週次 }) => `${學年}|${週次}`)(Ar({ kind: "neutral", date: "2026-09-10" }).row), "115|四上第2週(9/7-9/11)"],
+  // 壞格式 E06（§6.1 第 2 關）
+  ["E06：結果碼不是 O/X/N", Ar({ r: "Q1:提取:Y" }).code, "E06"],
+  ["E06：題號超出 Q1–Q5", Ar({ r: "Q6:提取:O" }).code, "E06"],
+  ["E06：題號超出 C1–C3", Ar({ r: "C4:提取:O" }).code, "E06"],
+  ["E06：缺知識點", Ar({ r: "Q1::O" }).code, "E06"],
+  ["E06：題號重複", Ar({ r: "Q1:提取:O,Q1:提取:O" }).code, "E06"],
+  ["E06：尾端多逗號", Ar({ r: "Q1:提取:O," }).code, "E06"],
+  ["E06：缺 r", Ar({ r: undefined }).code, "E06"],
+  ["E06：lesson 格式不符", Ar({ lesson: "國L7" }).code, "E06"],
+  ["E06：lesson 科目首字不在國數社", Ar({ lesson: "自L1-1", subj: "其他" }).code, "E06"],
+  ["E06：subj 與 lesson 首字不一致", Ar({ subj: "數學" }).code, "E06"],
+  // kind 不符 E07（§6.1 第 3 關）
+  ["E07：全對卻送 bad", Ar({ kind: "bad", r: "C1:推論:O,C2:提取:O" }).code, "E07"],
+  ["E07：理由寫明", Ar({ kind: "bad", r: "C1:推論:O,C2:提取:O" }).why.startsWith("正負向與答對率不符"), true],
+  ["kind 不在三種 → E06（既有關卡）", Ar({ kind: "great" }).code, "E06"],
+  // 三道關卡順序不變：防重複先於驗格式
+  ["已入庫 id → 略過（即使格式壞）", planEvent(A({ id: "a1", r: "壞掉" }), ctx(["a1"])).action, "skip"],
+  ["整包：一筆壞格式只擋該筆", planPacket(pack({ tool: "assess", date: "2026-10-22", events: [
+    { seat: 1, id: "as-1", src: "assess", act: "課堂作答", subj: "國語", lesson: "國L7-2", kind: "good", r: "Q1:提取:O" },
+    { seat: 2, id: "as-2", src: "assess", act: "課堂作答", subj: "國語", lesson: "國L7-2", kind: "good", r: "Q1:提取" },
+    { seat: 5, id: "as-5", src: "assess", act: "課堂作答", subj: "國語", lesson: "國L7-2", kind: "bad", r: "Q1:提取:O" }] }), ctx()).results.map((r) => r.code ?? r.action).join(","), "write,E06,E07"],
+  ["重送整包 → 全數略過", execLog(planPacket(pack({ tool: "assess", date: "2026-10-22", events: [
+    { seat: 1, id: "as-1", src: "assess", act: "課堂作答", subj: "國語", lesson: "國L7-2", kind: "good", r: "Q1:提取:O" }] }), ctx(["as-1"])).results),
+    "已入庫 0 筆／略過 1 筆（已入庫）／失敗 0 筆"],
+  // 課堂作答 0 幣 → 不擋同天同科的主動發表 +5
+  ["課堂作答列不算已發主動發表", handPaidFrom([{ 類別: "課堂表現", 正負向: "＋", 金幣影響: 0, 事件描述: "國L7-2 課堂作答：小考 5/5", 科目: "國語", 學生: "page-s1" }]).size, 0],
+  // Notion 型別與新欄
+  ["toNotionProps：作答明細寫 rich_text", toNotionProps({ ...Ar({ kind: "neutral" }).row }).作答明細?.rich_text?.[0]?.text?.content, "Q1:提取:O,Q2:大意:O,Q3:推論:X,Q4:提取:O,Q5:大意:O,C1:推論:O,C2:提取:N"],
+  ["toNotionProps：非 assess 列不送作答明細", "作答明細" in toNotionProps(row(T({ kind: "good", act: "打掃支援" }))), false],
+  ["toNotionProps：程度 1 送 number", toNotionProps(Ar({ r: "C1:推論:O" }).row).程度.number, 1],
+  ["fromNotionPage：讀回作答明細", fromNotionPage({ properties: { 作答明細: { rich_text: [{ plain_text: "C1:推論:O" }] } } }).作答明細, "C1:推論:O"],
+  ["fromNotionPage：沒有這欄 → 空字串", fromNotionPage({ properties: {} }).作答明細, ""],
+  ["COMPARE_FIELDS 含作答明細", COMPARE_FIELDS.includes("作答明細"), true],
+  ["對照：作答明細不同 → 抓到", diffRow({ 作答明細: "C1:推論:O" }, { 作答明細: "C1:推論:X" }).includes("作答明細"), true],
+  ["對照：舊列兩邊都空 → 0 差異", diffRow(row(T({ id: "c", kind: "good", act: "打掃支援" })), { ...row(T({ id: "c", kind: "good", act: "打掃支援" })), 作答明細: "" }).length, 0],
+  ["parseAssessR：解析題數", parseAssessR("Q1:提取:O,C2:提取:N").items.length, 2],
 
   // ── 對照（compare 模式）──
   ["對照：完全相同 → 0 差異", diffRow(row(T({ id: "c", kind: "good", act: "打掃支援" })), { ...row(T({ id: "c", kind: "good", act: "打掃支援" })) }).length, 0],

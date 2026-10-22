@@ -57,6 +57,7 @@ const RULE_CAT = { 1: "生活指導", 2: "人際互動", 3: "生活技能", 4: "
  *  作業清點的 tally 一律含「作業」→ 類別＝作業：作業完成／作業補交完成／作業批改完成（good）／作業批改要訂正（neutral＝中性，
  *  2026-10-18 BX 線：結算時已交、之後批改的結果，0 幣、不進學習報告正負向）；學期作業換分讀這些描述（lib/term-daily-hw.mjs HW_STATUS）。 */
 export function categoryOf(ev) {
+  if (ev.src === "assess") return "課堂表現";
   if (ev.src === "rule") {
     if (Number(ev.rule_n) === 5) return ev.kind === "good" ? "人際互動" : "課堂表現";
     return RULE_CAT[Number(ev.rule_n)] ?? null;
@@ -74,6 +75,7 @@ export function categoryOf(ev) {
 export function describe(ev) {
   const act = String(ev.act ?? "");
   if (ev.src === "rule") return ev.subj ? `${act}（${ev.subj}）` : act;
+  if (ev.src === "assess") return assessDescribe(ev.lesson, parseAssessR(ev.r).items ?? []);
   // 小組加分／扣分與舉手回答同一格式：「在數學課小組加分」「在數學課舉手回答」
   return ev.subj ? `在${ev.subj}課${act}` : act;
 }
@@ -137,6 +139,74 @@ export function coinNumber(coin) {
 }
 
 /**
+ * 課堂作答（src:"assess"，CG 線 P2c；規格 教學簡報/_工具/改版提案_單節課簡報/SPEC_單節課簡報v4.md §4.3、§4.4、§6）
+ * 電子白板全班作答 → 收班送出 → 每生每節 1 列：類別課堂表現、金幣 0、程度＋－為 1 中性空白、次數 1。
+ * r＝該生在場的已確認題目，如 "Q1:提取:O,Q3:推論:X,C2:提取:N"（O 答對／X 答錯／N 未答；缺席的題不列）。
+ * ⚠️ 計分正本＝assessKind；class-manager assets/js/assess.js 是前端副本，scripts/assess-check.mjs 逐題比對兩份。
+ *    改門檻先改 SPEC §4.4（三站介面約定），兩邊一起改。
+ */
+export const ASSESS_ACT = "課堂作答";
+export const ASSESS_LESSON_RE = /^(國|數|社)[LR]\d+-\d+$/;
+const ASSESS_ITEM_RE = /^(Q[1-5]|C[1-3]):([^:,]+):([OXN])$/;
+const ASSESS_SUBJ = { 國: "國語", 數: "數學", 社: "社會" };
+
+/**
+ * §4.4 計分（唯一一支，前端副本照抄）：對＝O 題數，記＝O＋X＋N 題數（未答算分母、不算對，老師裁定 §9-1）。
+ * 整數比不用浮點：對×10 ≥ 記×8 → good；對×2 ≤ 記 → bad；其餘 neutral。記 ≤ 0（一題都不在場）→ null（不產事件，fail-closed）。
+ */
+export function assessKind(right, rec) {
+  const o = Number(right), n = Number(rec);
+  if (!Number.isInteger(o) || !Number.isInteger(n) || n <= 0 || o < 0 || o > n) return null;
+  if (o * 10 >= n * 8) return "good";
+  if (o * 2 <= n) return "bad";
+  return "neutral";
+}
+
+/** r 字串 → { ok, items:[{ q, kp, res }], why }；格式不合、題號重複、0 段 → ok:false（呼叫端記 E06）。 */
+export function parseAssessR(r) {
+  const segs = String(r ?? "").split(",");
+  if (!String(r ?? "").trim()) return { ok: false, why: "作答明細是空的" };
+  const items = [], seen = new Set();
+  for (const s of segs) {
+    const m = s.match(ASSESS_ITEM_RE);
+    if (!m) return { ok: false, why: `作答明細格式不符（${s}）` };
+    if (seen.has(m[1])) return { ok: false, why: `作答明細題號重複（${m[1]}）` };
+    seen.add(m[1]);
+    items.push({ q: m[1], kp: m[2], res: m[3] });
+  }
+  return { ok: true, items };
+}
+
+const tallyOf = (items) => ({ right: items.filter((x) => x.res === "O").length, rec: items.length });
+
+/** 事件描述（P2d 靠前綴撈，逐字固定）：「國L7-2 課堂作答：小考 4/5・課中 1/2」，只有一段就只寫那段。 */
+export function assessDescribe(lesson, items) {
+  const part = (label, xs) => (xs.length ? `${label} ${tallyOf(xs).right}/${xs.length}` : "");
+  const segs = [part("小考", items.filter((x) => x.q[0] === "Q")), part("課中", items.filter((x) => x.q[0] === "C"))].filter(Boolean);
+  return `${lesson} ${ASSESS_ACT}：${segs.join("・")}`;
+}
+
+/** 備註（白話錯題）：「錯：Q3（推論）；未答：C2（提取）」；全對寫「全對」。 */
+export function assessNote(items) {
+  const list = (res) => items.filter((x) => x.res === res).map((x) => `${x.q}（${x.kp}）`).join("、");
+  const segs = [["錯", list("X")], ["未答", list("N")]].filter(([, v]) => v).map(([k, v]) => `${k}：${v}`);
+  return segs.length ? segs.join("；") : "全對";
+}
+
+/** assess 事件逐筆驗證＋重算：{ ok:true, items, kind } | { ok:false, code, why }（§6.1 第 2、3 關）。 */
+export function checkAssess(ev) {
+  const lesson = String(ev.lesson ?? "");
+  if (!ASSESS_LESSON_RE.test(lesson)) return { ok: false, code: "E06", why: `節次格式不符（${lesson}）` };
+  if (ev.subj !== ASSESS_SUBJ[lesson[0]]) return { ok: false, code: "E06", why: `科目與節次不一致（${ev.subj ?? ""}／${lesson}）` };
+  const p = parseAssessR(ev.r);
+  if (!p.ok) return { ok: false, code: "E06", why: p.why };
+  const { right, rec } = tallyOf(p.items);
+  const kind = assessKind(right, rec);
+  if (kind !== ev.kind) return { ok: false, code: "E07", why: `正負向與答對率不符（工具 ${ev.kind}／重算 ${kind}，${right}/${rec}）` };
+  return { ok: true, items: p.items, kind };
+}
+
+/**
  * 舉手回答計次＝主動發表（學習報告評分標準 v2 §2，老師 2026-09-28 裁定）：入庫就記程度 1、+5 幣，
  * 走週結 ② 一般獎懲入帳。每生每科每天只給一筆（09-05 拍板 #8）——同天同科已有「有金幣的課堂正向」
  * （一句話記的主動發表，或先前已入庫的舉手回答）→ **不寫入**（action "drop"）。
@@ -173,7 +243,13 @@ export function planEvent(ev, ctx) {
 
   let level = null;
   let coin = 0;
-  if (ev.src === "rule") {
+  let assess = null;
+  if (ev.src === "assess") {
+    // 課堂作答：驗格式（E06）→ 重算正負向（E07）→ 不入帳（金幣 0）；程度＋－為 1、中性空白
+    assess = checkAssess(ev);
+    if (!assess.ok) return { action: "fail", seat, code: assess.code, why: assess.why };
+    level = ev.kind === "neutral" ? null : 1;
+  } else if (ev.src === "rule") {
     const ref = findRuleAct(ctx.rules, ev.rule_n, ev.kind, ev.act_i);
     if (!ref) return { action: "fail", seat, code: "E07", why: `班規查無此行為（${ev.rule_n}/${ev.kind}/${ev.act_i}）` };
     // 字串比字串：先轉數字再比，轉換失敗會變 NaN != NaN 而全部誤判
@@ -206,9 +282,9 @@ export function planEvent(ev, ctx) {
       事件描述: describe(ev),
       學生: student,
       事件id: ev.id,
-      次數: ev.count == null ? 1 : Number(ev.count),
+      次數: assess || ev.count == null ? 1 : Number(ev.count),
       正負向: kindPN,
-      備註: ev.note ? String(ev.note) : "",
+      備註: assess ? assessNote(assess.items) : ev.note ? String(ev.note) : "",
       程度: level,
       金幣影響: coin,
       日期: ev.date,
@@ -217,6 +293,7 @@ export function planEvent(ev, ctx) {
       類別: cat,
       科目: subjectOf(ev),
       作業科目: hwSubjectsFor({ category: cat, tool: ev.tool, note: ev.note, subject: subjectOf(ev) }),
+      作答明細: assess ? String(ev.r) : "",
     },
   };
 }
@@ -276,6 +353,8 @@ export function toNotionProps(row) {
     類別: { select: { name: row.類別 } },
     科目: { select: row.科目 ? { name: row.科目 } : null },
     作業科目: { multi_select: (row.作業科目 ?? []).map((name) => ({ name })) },
+    // 作答明細（課堂作答 r 原字串，P2d 弱點分析讀）：只有 assess 列有值才送，其他來源不碰這欄
+    ...(row.作答明細 ? { 作答明細: { rich_text: rt(row.作答明細) } } : {}),
   };
 }
 
@@ -298,10 +377,11 @@ export function fromNotionPage(page) {
     類別: p.類別?.select?.name ?? "",
     科目: p.科目?.select?.name ?? "",
     作業科目: (p.作業科目?.multi_select ?? []).map((o) => o.name),
+    作答明細: text(p.作答明細),
   };
 }
 
-export const COMPARE_FIELDS = ["事件描述", "學生", "次數", "正負向", "備註", "程度", "金幣影響", "日期", "學年", "週次", "類別", "科目", "作業科目"];
+export const COMPARE_FIELDS = ["事件描述", "學生", "次數", "正負向", "備註", "程度", "金幣影響", "日期", "學年", "週次", "類別", "科目", "作業科目", "作答明細"];
 
 /** 逐欄比對應寫值與實際值，回傳不同的欄位名。 */
 export function diffRow(expected, actual) {

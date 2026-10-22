@@ -183,6 +183,9 @@ export async function buildR18Sandbox() {
     程度: { number: {} }, 金幣影響: { number: {} }, 日期: { date: {} }, 學年: sel(["114", "115", "116"]),
     週次: { rich_text: {} }, 類別: sel(["課堂表現", "作業", "生活指導", "人際互動", "生活技能"]),
     科目: sel(["國語", "數學", "社會", "其他"]),
+    // 與正式紀錄庫同步：作業科目（2026-10-02）、作答明細（2026-10-22 CG 線 P2c，課堂作答 r 原字串）
+    作業科目: { multi_select: { options: ["國語", "數學", "社會", "其他", "需人工"].map((name) => ({ name })) } },
+    作答明細: { rich_text: {} },
   });
   return { pageId: page.id, ds: { roster, inbox, log } };
 }

@@ -147,9 +147,9 @@ async function runPending({ ds, execute }) {
             Object.assign(r, { action: "fail", code: "寫入被拒", why: `HTTP ${w.status}` });
             continue;
           }
-          // 逐筆回讀：事件id／學年／金幣影響／作業科目（不符＝記失敗，不自動刪列，交老師判斷）
+          // 逐筆回讀：事件id／學年／金幣影響／作答明細／作業科目（不符＝記失敗，不自動刪列，交老師判斷）
           const back = cm.fromNotionPage(await must("GET", `/pages/${w.json.id}`));
-          const bad = ["事件id", "學年", "金幣影響"].filter((k) => back[k] !== r.row[k]);
+          const bad = ["事件id", "學年", "金幣影響", "作答明細"].filter((k) => back[k] !== r.row[k]);
           if (cm.diffRow({ 作業科目: r.row.作業科目 }, { 作業科目: back.作業科目 }).includes("作業科目")) bad.push("作業科目");
           if (bad.length) Object.assign(r, { action: "fail", code: "回讀不符", why: `${bad.join("、")}（列已寫入，請人工確認）` });
           existing.set(r.row.事件id, [back]);
@@ -273,6 +273,17 @@ async function runSandbox() {
     ],
   };
   const text = `#CM-EVENTS v1 · 🧪 沙盒演練 · 6 筆\n${JSON.stringify(body)}`;
+  // 課堂作答（CG 線 P2c）：另一包 tool＝assess；4/5 → good、4/7 → neutral、全對卻送 bad → E07
+  const A = (o) => ({ src: "assess", act: cm.ASSESS_ACT, subj: "國語", lesson: "國L7-2", ...o });
+  const assessBody = {
+    tool: "assess", date, batch: "20260908-a1", part: 1, parts: 1,
+    events: [
+      A({ id: "sa-1", seat: 1, kind: "good", r: "Q1:提取:O,Q2:大意:O,Q3:推論:O,Q4:提取:O,Q5:大意:X" }),
+      A({ id: "sa-2", seat: 2, kind: "neutral", r: "Q1:提取:O,Q2:大意:X,Q3:推論:N,Q4:提取:O,Q5:大意:O,C1:推論:O,C2:提取:N" }),
+      A({ id: "sa-3", seat: 1, kind: "bad", r: "C1:推論:O,C2:提取:O" }),
+    ],
+  };
+  const assessText = `#CM-EVENTS v1 · 🧪 課堂作答沙盒 · 3 筆\n${JSON.stringify(assessBody)}`;
 
   console.log("🧪 建立 R18 沙盒…");
   const sb = await buildR18Sandbox();
@@ -283,16 +294,18 @@ async function runSandbox() {
     const newTask = (t) => must("POST", "/pages", { parent: { type: "data_source_id", data_source_id: ds.inbox },
       properties: { 任務原文: { title: rt(t) }, 狀態: { select: { name: "待處理" } } } });
     const a = await newTask(text);
+    const d = await newTask(assessText);
     const r1 = await runPending({ ds, execute: true });
-    ok("第一次：入庫", r1.write, 4); ok("第一次：失敗（E01＋E07）", r1.fail, 2); ok("第一次：略過", r1.skip, 0);
+    ok("第一次：入庫（4＋課堂作答 2）", r1.write, 6); ok("第一次：失敗（E01＋E07＋課堂作答 E07）", r1.fail, 3); ok("第一次：略過", r1.skip, 0);
 
     const b = await newTask(text);         // 重送同一包
+    const e = await newTask(assessText);   // 課堂作答重送同一包
     const bad = await newTask("#CM-EVENTS v1 · 壞掉\n{events:[");
     const r2 = await runPending({ ds, execute: true });
-    ok("重送：入庫", r2.write, 0); ok("重送：略過", r2.skip, 4); ok("E06 整件失敗", r2.fatal, 1);
+    ok("重送：入庫", r2.write, 0); ok("重送：略過", r2.skip, 6); ok("E06 整件失敗", r2.fatal, 1);
 
     const rows = await queryAll(ds.log);
-    ok("紀錄庫總列數", rows.length, 4);
+    ok("紀錄庫總列數", rows.length, 6);
     const byId = Object.fromEntries(rows.map((p) => [cm.fromNotionPage(p).事件id, cm.fromNotionPage(p)]));
     ok("rule good：金幣 +10", byId["sb-1"]?.金幣影響, Number(String(act(5, "good", 0).coin).replace("+", "")));
     ok("rule good：類別人際互動", byId["sb-1"]?.類別, "人際互動");
@@ -306,15 +319,28 @@ async function runSandbox() {
     ok("tally：次數 3", byId["sb-3"]?.次數, 3);
     ok("tally：事件描述", byId["sb-3"]?.事件描述, "在數學課小組加分");
     ok("neutral：中性＋備註", `${byId["sb-4"]?.正負向}/${byId["sb-4"]?.備註}`, "中性/請假");
+    ok("課堂作答 good：回讀作答明細", byId["sa-1"]?.作答明細, "Q1:提取:O,Q2:大意:O,Q3:推論:O,Q4:提取:O,Q5:大意:X");
+    ok("課堂作答 good：金幣 0", byId["sa-1"]?.金幣影響, 0);
+    ok("課堂作答 good：＋／程度 1／課堂表現／國語", `${byId["sa-1"]?.正負向}/${byId["sa-1"]?.程度}/${byId["sa-1"]?.類別}/${byId["sa-1"]?.科目}`, "＋/1/課堂表現/國語");
+    ok("課堂作答 good：事件描述", byId["sa-1"]?.事件描述, "國L7-2 課堂作答：小考 4/5");
+    ok("課堂作答 good：備註", byId["sa-1"]?.備註, "錯：Q5（大意）");
+    ok("課堂作答 neutral：回讀作答明細", byId["sa-2"]?.作答明細, "Q1:提取:O,Q2:大意:X,Q3:推論:N,Q4:提取:O,Q5:大意:O,C1:推論:O,C2:提取:N");
+    ok("課堂作答 neutral：中性／程度空白／金幣 0", `${byId["sa-2"]?.正負向}/${byId["sa-2"]?.程度}/${byId["sa-2"]?.金幣影響}`, "中性/null/0");
+    ok("課堂作答 neutral：事件描述", byId["sa-2"]?.事件描述, "國L7-2 課堂作答：小考 3/5・課中 1/2");
+    ok("課堂作答 kind 不符：不寫入", byId["sa-3"], undefined);
+    ok("非課堂作答列：作答明細空", byId["sb-3"]?.作答明細, "");
 
     const st = async (id) => (await must("GET", `/pages/${id}`)).properties;
-    const pa = await st(a.id), pb = await st(b.id), pc = await st(bad.id);
+    const pa = await st(a.id), pb = await st(b.id), pc = await st(bad.id), pd = await st(d.id), pe = await st(e.id);
     const log = (p) => (p.執行紀錄?.rich_text ?? []).map((x) => x.plain_text).join("");
     ok("任務 A 狀態", pa.狀態?.select?.name, "已完成");
     ok("任務 A 執行紀錄", log(pa), "已入庫 4 筆／略過 0 筆（已入庫）／失敗 2 筆：座號1、3");
     ok("任務 A 路由ID", (pa.路由ID?.rich_text ?? []).map((x) => x.plain_text).join(""), "R18");
     ok("任務 B 執行紀錄", log(pb), "已入庫 0 筆／略過 4 筆（已入庫）／失敗 2 筆：座號1、3");
     ok("E06 任務狀態", pc.狀態?.select?.name, "失敗");
+    ok("課堂作答任務 執行紀錄", log(pd), "已入庫 2 筆／略過 0 筆（已入庫）／失敗 1 筆：座號1");
+    ok("課堂作答重送 執行紀錄（第二次全略過）", log(pe), "已入庫 0 筆／略過 2 筆（已入庫）／失敗 1 筆：座號1");
+    ok("課堂作答 E07 寫進錯誤訊息（Notion 內）", (pd.錯誤訊息?.rich_text ?? []).map((x) => x.plain_text).join("").includes("E07 正負向與答對率不符"), true);
 
     const c = await runCompare({ ds, notify: false });
     ok("compare：程式對自己寫的列 0 差異", c.diff, 0);
