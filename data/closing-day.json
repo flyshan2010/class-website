@@ -1,6 +1,6 @@
 {
   "說明": "收尾閘門預算表：每一天的 closing-day 判定（lib/school-days.mjs closingVerdict）。由 scripts/classos/closing-day.mjs --table 在班網同步時產生，不要手改。雲端排程用 Read 讀、查台北今天那一格。",
-  "來源": "786f0d91b4f8",
+  "來源": "9c2d20d1fada",
   "範圍": {
     "起": "2026-07-17",
     "迄": "2027-10-28"
