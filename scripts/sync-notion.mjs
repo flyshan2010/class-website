@@ -15,6 +15,7 @@ import { buildDutyData } from "./lib/build-duties.mjs";
 import { GOAL_TIER, backersNeededOf, inWindow, goalPrefix, tallyGoal } from "./lib/class-goal.mjs";
 import { quizRange, toQuiz, inRange, summarize, reviewTip } from "./classos/lib/term-quiz.mjs";
 import { matchExam, analyze, reportItem, missingCards } from "./classos/lib/quiz-errors.mjs";
+import { rowFromRecord, teacherWeeks, seatWeek, weekKey as assessWeekKey } from "./classos/lib/assess-weak.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -49,7 +50,7 @@ const DS = {
   routines: "effc4788-5a86-4349-aa02-60f982a0c10e", // 🕗 作息與常規（一日作息＋上課常規）
   dailyPlan: "81515593-4d79-4b09-84a5-709628d7b58e", // 📅 每日課程進度（一列＝一個上課日；老師調課改這裡）
   proposals: "35cb027e-1465-47a2-ad91-e66fb5e83c7a", // 🧪 創造提案（學生線上填；只進加密學習報告，公開檔零洩漏）
-  log: "eb529fa1-59e5-45ef-bfb4-79fc30de79e4", // 📝 班經與學習紀錄庫（只給教師儀表板數筆數，內容不輸出）
+  log: "eb529fa1-59e5-45ef-bfb4-79fc30de79e4", // 📝 班經與學習紀錄庫（教師儀表板數筆數；課堂作答／評量只進加密檔，內容不進公開 JSON）
   quizExams: "51c1c08f-78b4-4352-85f6-e45fb7361c2a", // 📝 平時卷（含答案；只算錯題分析進加密報告，開放日前不輸出答案）
   reviewCards: "74bfc789-192e-425e-b7c6-477033bec302", // 📚 觀念複習卡（一列＝一個知識點；只有「上架」輸出到公開 data/review-cards.json）
 };
@@ -1001,6 +1002,37 @@ async function syncReviewCards() {
   await save("review-cards.json", { subjects: REVIEW_SUBJECTS.filter(s => cards.some(c => c.subject === s)), cards });
 }
 
+// ── 📋 課堂作答弱點分析（CG 線 P2d，老師 2026-10-23 範本定案）──
+// 撈紀錄庫「類別＝課堂表現、事件描述含『課堂作答』」的作答明細；規則正本 scripts/classos/lib/assess-weak.mjs（U83）。
+// 結果只進加密檔：學生報告每週期別的 assess（查詢碼加密）、教師儀表板 assess（教師口令加密）；不寫任何公開 JSON（U42）。
+// 報告與儀表板並行呼叫，共用同一次查詢（快取 promise）。
+let _assessRows;
+function assessRows() { return (_assessRows ||= loadAssessRows()); }
+async function loadAssessRows() {
+  const seatOfId = new Map((await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && r["座號"] !== "").map(r => [r._id, Number(r["座號"])]));
+  const recs = [];
+  let cursor;
+  do {
+    const filter = { and: [{ property: "類別", select: { equals: "課堂表現" } }, { property: "事件描述", title: { contains: "課堂作答" } },
+      ...(CURRENT_YEAR ? [{ property: "學年", select: { equals: CURRENT_YEAR } }] : [])] };
+    const res = await fetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
+      body: JSON.stringify({ page_size: 100, filter, ...(cursor ? { start_cursor: cursor } : {}) }),
+    });
+    if (!res.ok) throw new Error(`Notion API ${res.status}（紀錄庫課堂作答）：${await res.text()}`);
+    const json = await res.json();
+    recs.push(...json.results.map(props));
+    cursor = json.has_more ? json.next_cursor : undefined;
+  } while (cursor);
+  const rows = [], skip = {};
+  for (const r of recs) { const x = rowFromRecord(r, seatOfId); if (x.skip) skip[x.skip] = (skip[x.skip] || 0) + 1; else rows.push(x); }
+  // 公開 repo 的 Actions log 看得到：只印筆數與原因，不印座號
+  console.log(`  ↳ 課堂作答：紀錄庫 ${recs.length} 筆，可分析 ${rows.length} 筆` + (Object.keys(skip).length ? `；略過 ${Object.entries(skip).map(([k, n]) => `${k}×${n}`).join("、")}` : ""));
+  return rows;
+}
+
 async function syncReports() {
   const SUBJECTS = ["國語", "數學", "社會", "人際互動", "生活技能"];
   const focusByWeek = await courseFocusByWeek();
@@ -1110,6 +1142,13 @@ async function syncReports() {
   }
 
   const quiz = await quizBySeat(roster, bySeat);
+  // 課堂作答：每週期別帶該生該週的知識點得分率（沒有作答紀錄＝不帶，前端不顯示）
+  const assess = await assessRows();
+  for (const s of Object.values(bySeat)) for (const p of s.periods) {
+    if (p.reportType !== "每週") continue;
+    const k = assessWeekKey(p.period)?.key, a = k ? seatWeek(assess, s.seat, k) : null;
+    if (a) p.assess = a;
+  }
 
   const dir = path.join(DATA_DIR, "reports");
   await rm(dir, { recursive: true, force: true });
@@ -1217,7 +1256,9 @@ async function syncTeacherDashboard() {
       published: new Set(same.filter(r => r["發布"]).map(r => Number(r["座號"]))).size };
   }
 
-  const plain = { v: 1, generatedAt: new Date().toISOString(), seats, dims: DIMS, weeks, scores, status, records, essay };
+  // 課堂作答弱點分析（P2d）：依週分組的全班／節次／座號×知識點（座號×知識點只在這個教師加密檔）
+  const assess = teacherWeeks(await assessRows(), weeksFile);
+  const plain = { v: 1, generatedAt: new Date().toISOString(), seats, dims: DIMS, weeks, scores, status, records, essay, assess };
   const payload = await encryptReport(plain, PW, "teacher");
   await writeFile(path.join(DATA_DIR, "teacher-dashboard.json"), JSON.stringify(payload) + "\n", "utf8");
   console.log(`✅ teacher-dashboard.json（${seats.length} 位、${weeks.length} 週，已用教師口令加密）`);

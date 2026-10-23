@@ -35,7 +35,7 @@
       ${pts.map(([i, v]) => `<rect x="${x(i) - 12}" y="0" width="24" height="${H}" fill="transparent"><title>${esc(labels[i])}：${v}</title></rect>`).join("")}</svg>`;
   };
 
-  function render(body, D, w, focusSeat) {
+  function render(body, D, w, focusSeat, aw) {
     const N = D.seats.length;
     const cnt = { "已發布": 0, "待勾發布": 0, "尚未產生": 0 };
     D.seats.forEach(s => { cnt[(D.status[s] || [])[w] || "尚未產生"]++; });
@@ -125,6 +125,7 @@
             ${spark(series.map(x => x && x.avg), COL[d], labels)}</div>`;
         }).join("")}</div>
       </div>
+      ${window.AssessView ? window.AssessView.teacher(D.assess, aw) : ""}
       <p class="meta" style="margin-top:8px">資料更新：${esc(new Date(D.generatedAt).toLocaleString("zh-TW", { timeZone: "Asia/Taipei", hour12: false }))}（每次同步班網時重算；草稿報告也算進熱度圖，滑過會標「草稿」）</p>`;
   }
 
@@ -133,9 +134,10 @@
     const sel = document.getElementById("dash-week");
     sel.innerHTML = D.weeks.map((x, i) => `<option value="${i}"${i === D.weeks.length - 1 ? " selected" : ""}>${esc(shortWeek(x.label))}</option>`).join("");
     sel.hidden = false;
-    let w = D.weeks.length - 1, focus = null;
-    const draw = () => render(body, D, w, focus);
+    let w = D.weeks.length - 1, focus = null, aw = Math.max(0, (D.assess || []).length - 1);   // aw＝課堂作答選的週（自己一組，預設最新）
+    const draw = () => render(body, D, w, focus, aw);
     sel.onchange = () => { w = +sel.value; draw(); };
+    body.onchange = e => { if (e.target.matches("select[data-aw]")) { aw = +e.target.value; draw(); } };
     body.onclick = e => {
       const b = e.target.closest("[data-seat]");
       if (b) { const s = +b.dataset.seat; focus = focus === s ? null : s; draw(); return; }

@@ -706,6 +706,8 @@
           })()}
         </div>
 
+        ${(!isTerm && p.assess && window.AssessView) ? `<div style="margin-top:12px">${window.AssessView.parent(p.assess)}</div>` : ""}
+
         ${p.examSummary ? `
         <div class="report-box" style="--bc:#EE5253; margin-top:12px">
           <span class="report-badge" style="--bc:#EE5253">📊 ${isTerm ? "期末定期評量成績與全班級距" : "定期評量成績與全班級距"}</span>
