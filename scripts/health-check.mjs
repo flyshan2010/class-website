@@ -101,6 +101,7 @@ async function checkLocalAssets() {
     for (const m of html.matchAll(/(?:src|href)="(?!https?:|\/\/|#|mailto:)([^"?#]+)/g)) {
       const rel = m[1];
       if (!/\.(js|css|json|png|jpg|svg|webp)$/i.test(rel)) continue;
+      if ((cfg.crossSiteAssetPrefixes || []).some(p => rel.startsWith(p))) continue;
       if (await mtime(path.join(ROOT, rel)) === null) missing.add(`${f} → ${rel}`);
     }
   }

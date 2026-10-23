@@ -18,6 +18,10 @@
     ]
   },
   "_emptyDataPages說明": "頁面 id → 它的資料來源。全空卻沒有 autoHidden，代表導覽列上掛著一個點進去只有空狀態的分頁。sync-notion.mjs 收尾會自動維護 autoHidden，這裡是防它壞掉的哨兵。 來源可寫 \"檔名#a.b\" 取巢狀陣列長度；判準必須與 sync-notion.mjs 的 applyAutoHiddenNav 一致（2026-09-02：recap 補上 recap-extra 的 sel／economy weeks，否則誤報）。",
+  "crossSiteAssetPrefixes": [
+    "/class-manager/"
+  ],
+  "_crossSiteAssetPrefixes說明": "A4 本地引用檢查略過的路徑開頭：同一個 github.io 網域下的兄弟站（另一個 repo），本 repo 裡本來就沒有那支檔。2026-10-23 誤報：quiz.html 引用 /class-manager/assets/js/sync.js（錯題紀錄表跨電腦同步，BY 線刻意共用），線上實測 200。",
   "blueprintDir": "../ClassOS_v3.5_藍圖",
   "blueprintIndexFile": "README.md",
   "blueprintIndexExempt": [
