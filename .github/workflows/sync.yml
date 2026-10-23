@@ -70,6 +70,11 @@ jobs:
       - name: 產生學校週次對照表
         run: node scripts/build-weeks.mjs
 
+      # 雲端收尾排程用 Read 讀這份查今天（跑 node 會被雲端分類器時擋時放，2026-10-23 實測）。
+      # 要 daily-plan.json（sync-notion）與 weeks.json（build-weeks）都在，排在兩者之後。
+      - name: 產生收尾閘門預算表
+        run: node scripts/classos/closing-day.mjs --table
+
       # 調課對照表要 calendar.json（sync-gcal）與 schedule.json（sync-notion）都在才算得出來。
       - name: 產生當天調課對照表
         run: node scripts/build-schedule-overrides.mjs

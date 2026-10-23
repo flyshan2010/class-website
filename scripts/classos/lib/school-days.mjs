@@ -10,7 +10,13 @@
  *                      （daily-plan 把這兩種標 holiday:true 是因為沒有課程進度，學生仍到校）。
  *   工作日 workDays   ＝ 上課日扣掉校外活動日與休業式（當天沒有打掃、午餐工作、常規檢核）。
  *                      定期評量日照常算工作日。
- *   收尾日 closingDay ＝ 該週最後一個上課日（校外活動日也算——老師 2026-10-06：10/8 戶外教學即本週最後一天）。
+ *   收尾日 closingDay ＝ 該週最後一個「週一～週五」的上課日（校外活動日也算——老師 2026-10-06：10/8 戶外教學即本週最後一天）。
+ *                      週六上課日不當收尾日（老師 2026-10-23：固定週五收，例 2027-03-20 週六運動會）。
+ *
+ * 收尾閘門 closingVerdict（2026-10-23 老師裁定「停課不再例外處理」）：
+ *   今天＝收尾日 → YES；今天已過本週收尾日、仍是同一週的週一～週五 → YES｜補跑
+ *   （颱風假當天才停課，收尾日被往前改成已經過去的日子）。「本週是否已收尾」閘門不知道（在 Notion），
+ *   由下游防重跑：學習報告已存在即停、f24 冪等。closing-day.mjs 與 data/closing-day.json 預算表都只呼叫這一支。
  *
  * 「週」一律是週一～週日（與 weeks.json 的 起／迄 同界線）。零相依，純函式，不讀檔。
  */
@@ -33,7 +39,9 @@ export function weekRange(date) {
   return { from: iso(mon), to: iso(sun) };
 }
 
-export const isSchoolDay = day => !!day && (!day.holiday || ATTEND_RE.test(day.note ?? ""));
+const isWeekday = s => { const d = parse(s).getUTCDay(); return d >= 1 && d <= 5; };
+
+export const isSchoolDay =day => !!day && (!day.holiday || ATTEND_RE.test(day.note ?? ""));
 export const isTripDay = day => !!day && isSchoolDay(day) && NOWORK_RE.test(day.note ?? "");
 
 const inRange = (plan, from, to) => (plan?.days ?? []).filter(x => x.date >= from && x.date <= to);
@@ -58,13 +66,42 @@ export function weekInfo(plan, date, clip = {}) {
   const to = clip.to && clip.to < wr.to ? clip.to : wr.to;
   const rows = inRange(plan, from, to);
   const school = schoolDays(plan, from, to);
+  const closing = school.filter(isWeekday).at(-1) ?? null;
   return {
     from, to,
     known: rows.length > 0,
     schoolDays: school,
     workDays: workDays(plan, from, to),
     tripDays: rows.filter(isTripDay).map(x => x.date).sort(),
-    closingDay: school.at(-1) ?? null,
-    isClosingDay: school.at(-1) === date,
+    closingDay: closing,
+    isClosingDay: closing !== null && closing === date,
   };
+}
+
+/**
+ * 收尾閘門判定。weeks＝data/weeks.json。
+ * 回傳 { verdict: "YES"|"CATCHUP"|"NO"|"UNKNOWN", line }；line 開頭固定 `CLOSING-DAY: YES|NO|UNKNOWN`，
+ * 補跑也是 `CLOSING-DAY: YES｜補跑｜…`（三支原文只比對開頭，不必改）。
+ */
+export function closingVerdict(plan, weeks, date) {
+  const term = (weeks?.學期 ?? []).flatMap(t => t.週 ?? []).find(x => date >= x.起 && date <= x.迄);
+  if (!term) {
+    // 學期區間外：假期，或老師的「預排日」（歸下學期第1週的緩衝日，不收尾）
+    return { verdict: "NO", line: `CLOSING-DAY: NO｜${date} 不在任何上課週內（假期或預排日）` };
+  }
+  const w = weekInfo(plan, date, { from: term.起, to: term.迄 });
+  if (!w.known) {
+    return { verdict: "UNKNOWN", line: `CLOSING-DAY: UNKNOWN｜${date} 在 ${term.標籤} 內，但每日課程進度沒有本週資料，需人工` };
+  }
+  if (!w.closingDay) return { verdict: "NO", line: `CLOSING-DAY: NO｜${date} 這一週沒有上課日` };
+  const md = s => `${Number(s.slice(5, 7))}/${Number(s.slice(8, 10))}`;
+  const tail = `本週上課日 ${w.schoolDays.map(md).join("、")}（工作日 ${w.workDays.length} 天）｜${term.標籤}`;
+  if (w.isClosingDay) return { verdict: "YES", line: `CLOSING-DAY: YES｜${date} 是本週最後一個上課日｜${tail}` };
+  if (date > w.closingDay && isWeekday(date)) {
+    return {
+      verdict: "CATCHUP",
+      line: `CLOSING-DAY: YES｜補跑｜${date} 已過本週收尾日 ${w.closingDay}，先查本週是否已收尾、已收尾即停｜${tail}`,
+    };
+  }
+  return { verdict: "NO", line: `CLOSING-DAY: NO｜${date} 不是收尾日（本週收尾日 ${w.closingDay}）｜${tail}` };
 }
