@@ -2072,10 +2072,30 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 .quiz-badge { display: inline-block; font-size: .72rem; font-weight: 400; padding: 1px 8px; border-radius: 99px; background: var(--line); color: var(--ink-soft); }
 @media (max-width: 620px) { .quiz-kpis { grid-template-columns: 1fr; } }
 /* 🔍 錯題分析與複習建議（BY 線 2026-10-18，report.js quizAnalysis） */
-.qa-exam { border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 12px; padding: 10px 14px; margin: 10px 0; background: var(--card); min-width: 0; }
-.qa-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.qa-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 4px; }
+.qa-tab { border: 2px solid var(--c); background: var(--card); color: var(--c); border-radius: 12px; padding: 5px 14px; font: inherit; font-weight: 700; cursor: pointer; display: flex; align-items: baseline; gap: 8px; }
+.qa-tab small { font-weight: 400; color: var(--ink-soft); }
+.qa-tab[aria-selected="true"] { background: var(--c); color: #fff; }
+.qa-tab[aria-selected="true"] small { color: #ffffffcc; }
+.qa-exam { border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 12px; margin: 8px 0; background: var(--card); min-width: 0; }
+.qa-h { list-style: none; cursor: pointer; padding: 10px 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.qa-h::-webkit-details-marker { display: none; }
+.qa-h::after { content: "▸"; margin-left: auto; color: var(--ink-soft); transition: transform .15s; }
+.qa-exam[open] > .qa-h::after { transform: rotate(90deg); }
+.qa-h .quiz-muted { margin: 0; }
+.qa-chips { display: flex; gap: 6px; flex-wrap: wrap; flex-basis: 100%; order: 2; }
+.qa-chip { font-size: .78rem; border-radius: 999px; padding: 1px 10px; background: #fdecea; color: #B03A2E; }
+.qa-chip.ok { background: #e8f8f1; color: #047857; }
+.qa-body { padding: 0 14px 12px; }
+.qa-fine { font-size: .8rem; color: #047857; margin: 2px 0 8px; }
+.qa-fine summary, .qa-howto summary { cursor: pointer; }
+.qa-tips { margin: 6px 0; padding: 0; list-style: none; border-radius: 10px; background: #f0fbf7; }
+.qa-tips li { padding: 7px 12px; border-top: 1px solid #fff; overflow-wrap: anywhere; }
+.qa-tips li:first-child { border-top: 0; }
+.qa-tips b { color: #047857; }
+.qa-tips a { white-space: nowrap; }
 .qa-h b { color: var(--c); font-size: 1rem; }
-.qa-score { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.qa-score { font-size: 1.35rem; font-weight: 800; font-variant-numeric: tabular-nums; }
 .qa-kp { display: grid; grid-template-columns: minmax(110px, 190px) minmax(0, 1fr) 48px; gap: 4px 10px; align-items: center; margin: 6px 0 8px; }
 .qa-kn { min-width: 0; overflow-wrap: anywhere; }
 .qa-bar { height: 10px; border-radius: 5px; background: #eef0f3; overflow: hidden; }
@@ -2089,7 +2109,8 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 .qa-wrong .quiz-table td { overflow-wrap: anywhere; }
 .qa-tbl { overflow-x: auto; }
 .qa-wrong .quiz-table td:last-child { white-space: nowrap; }
-@media (max-width: 560px) { .qa-kp { grid-template-columns: 96px minmax(0, 1fr) 42px; } .qa-exam { padding: 10px; } }
+@media print { .qa-tabs, .qa-h::after { display: none; } .qa-panel[hidden] { display: block; } }
+@media (max-width: 560px) { .qa-kp { grid-template-columns: 96px minmax(0, 1fr) 42px; } .qa-h, .qa-body { padding-left: 10px; padding-right: 10px; } .qa-tab small { display: none; } }
 
 /* 📚 觀念複習卡 review.html（BY 線，2026-10-18 定案範本） */
 .rc-muted { color: var(--ink-soft); font-size: .85rem; }
