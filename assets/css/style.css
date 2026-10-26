@@ -2073,19 +2073,39 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 @media (max-width: 620px) { .quiz-kpis { grid-template-columns: 1fr; } }
 /* 🔍 錯題分析與複習建議（BY 線 2026-10-18，report.js quizAnalysis） */
 .qa-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 4px; }
-.qa-tab { border: 2px solid var(--c); background: var(--card); color: var(--c); border-radius: 12px; padding: 5px 14px; font: inherit; font-weight: 700; cursor: pointer; display: flex; align-items: baseline; gap: 8px; }
+.qa-tab { border: 2px solid var(--c); background: var(--card); color: var(--c); border-radius: 12px; padding: 5px 14px; font: inherit; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.qa-light { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #fff; font-size: .8rem; flex: none; }
 .qa-tab small { font-weight: 400; color: var(--ink-soft); }
-.qa-tab[aria-selected="true"] { background: var(--c); color: #fff; }
-.qa-tab[aria-selected="true"] small { color: #ffffffcc; }
+.qa-tab[aria-selected="true"] { background: var(--c); color: #fff; box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 45%, #000); }
+.qa-tab[aria-selected="true"] small { color: #ffffffdd; }
+.qa-focus { background: #fff6e5; border: 2px solid #F5B041; border-radius: 12px; padding: 10px 14px; margin: 12px 0; }
+.qa-focus h3 { margin: 0 0 6px; font-size: 1rem; color: #9C5A00; }
+.qa-focus ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.qa-focus li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; background: var(--card); border-radius: 10px; padding: 6px 10px; border-left: 4px solid var(--c); }
+.qa-focus .quiz-muted { margin: 0; }
+.qa-num { font-weight: 800; color: #9C5A00; }
+.qa-subj { font-weight: 700; color: var(--c); }
+.qa-low { font-weight: 700; color: #D63031; font-variant-numeric: tabular-nums; }
+.qa-go { margin-left: auto; }
+.qa-btn-card { display: inline-block; background: #1F5FA8; color: #fff !important; text-decoration: none; border-radius: 999px; padding: 2px 12px; font-size: .82rem; font-weight: 700; white-space: nowrap; }
+.qa-btn-card:hover { background: #174a85; }
 .qa-exam { border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 12px; margin: 8px 0; background: var(--card); min-width: 0; }
-.qa-h { list-style: none; cursor: pointer; padding: 10px 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.qa-exam.old { border-left-color: color-mix(in srgb, var(--c) 35%, #fff); }
+.qa-h { list-style: none; cursor: pointer; padding: 10px 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; border-radius: 12px; }
 .qa-h::-webkit-details-marker { display: none; }
-.qa-h::after { content: "▸"; margin-left: auto; color: var(--ink-soft); transition: transform .15s; }
-.qa-exam[open] > .qa-h::after { transform: rotate(90deg); }
+.qa-h:hover { background: color-mix(in srgb, var(--c) 6%, #fff); }
+.qa-toggle { margin-left: auto; border: 1.5px solid var(--c); color: var(--c); border-radius: 999px; padding: 1px 12px; font-size: .82rem; font-weight: 700; white-space: nowrap; }
+.qa-toggle::after { content: "看詳細 ▾"; }
+.qa-exam[open] .qa-toggle::after { content: "收起 ▴"; }
+.qa-exam.old .qa-h b { font-size: .95rem; }
+.qa-exam.old .qa-score { font-size: 1.1rem; }
 .qa-h .quiz-muted { margin: 0; }
 .qa-chips { display: flex; gap: 6px; flex-wrap: wrap; flex-basis: 100%; order: 2; }
 .qa-chip { font-size: .78rem; border-radius: 999px; padding: 1px 10px; background: #fdecea; color: #B03A2E; }
 .qa-chip.ok { background: #e8f8f1; color: #047857; }
+a.qa-chip.link { border: 1px solid #f3b5ad; text-decoration: none; }
+a.qa-chip.link:hover { background: #f9d6d1; }
+a.qa-chip.link::after { content: "👉 複習卡"; display: inline-block; white-space: nowrap; margin-left: .6em; color: #1F5FA8; font-weight: 700; }
 .qa-body { padding: 0 14px 12px; }
 .qa-fine { font-size: .8rem; color: #047857; margin: 2px 0 8px; }
 .qa-fine summary, .qa-howto summary { cursor: pointer; }
@@ -2099,7 +2119,7 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 .qa-kp { display: grid; grid-template-columns: minmax(110px, 190px) minmax(0, 1fr) 48px; gap: 4px 10px; align-items: center; margin: 6px 0 8px; }
 .qa-kn { min-width: 0; overflow-wrap: anywhere; }
 .qa-bar { height: 10px; border-radius: 5px; background: #eef0f3; overflow: hidden; }
-.qa-bar i { display: block; height: 100%; border-radius: 5px; }
+.qa-bar i { display: block; height: 100%; border-radius: 5px; min-width: 6px; }
 .qa-pct { text-align: right; font-variant-numeric: tabular-nums; font-size: .8rem; }
 .qa-tip { background: #f0fbf7; border-radius: 10px; padding: 8px 12px; margin: 6px 0; overflow-wrap: anywhere; }
 .qa-tip b { color: #047857; }
@@ -2109,8 +2129,8 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 .qa-wrong .quiz-table td { overflow-wrap: anywhere; }
 .qa-tbl { overflow-x: auto; }
 .qa-wrong .quiz-table td:last-child { white-space: nowrap; }
-@media print { .qa-tabs, .qa-h::after { display: none; } .qa-panel[hidden] { display: block; } }
-@media (max-width: 560px) { .qa-kp { grid-template-columns: 96px minmax(0, 1fr) 42px; } .qa-h, .qa-body { padding-left: 10px; padding-right: 10px; } .qa-tab small { display: none; } }
+@media print { .qa-tabs, .qa-toggle { display: none; } .qa-panel[hidden] { display: block; } }
+@media (max-width: 560px) { .qa-kp { grid-template-columns: 96px minmax(0, 1fr) 42px; } .qa-h, .qa-body { padding-left: 10px; padding-right: 10px; } .qa-tab { padding: 5px 10px; gap: 6px; } .qa-go { margin-left: 0; } }
 
 /* 📚 觀念複習卡 review.html（BY 線，2026-10-18 定案範本） */
 .rc-muted { color: var(--ink-soft); font-size: .85rem; }
