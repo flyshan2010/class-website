@@ -9,7 +9,7 @@
 <style>
 /* 錯題紀錄表（2026-10-18 上線；同日老師指示從班級管理系統搬到班網教師專區）：只用座號。
    登記（quizErrors.draft.v1）本機為正本、跨電腦同步走班級管理的 sync.js（代理 v2.13 起，已配對的電腦自動同步；老師 2026-10-18 指示上雲端）；
-   成績仍靠「複製成績」貼給 AI 記錄。考卷不進 repo（公開）：開頁時用教師口令向代理 quiz_exams 讀 Notion「📝 平時卷」，
+   成績按「⬆️ 上傳到紀錄庫」送收件匣（#QUIZ-SCORES，R20）→ 班網同步先跑 f52 寫紀錄庫平時考（2026-10-26 起；「複製成績」留作備用）。考卷不進 repo（公開）：開頁時用教師口令向代理 quiz_exams 讀 Notion「📝 平時卷」，
    讀不到才用這台電腦上次的快取（quizErrors.exams.v1）；「匯入考卷檔」只當備用。
    班網與班級管理同源（flyshan2010.github.io），兩個 localStorage 鍵沿用，搬家前匯入的考卷與登記不必重來。 */
 [hidden]{display:none!important}
@@ -318,16 +318,22 @@ function paintReport() {
     if (!touched(s)) return null;
     return '座號' + s + ' ' + ex.subj + ' ' + ex.name + ' ' + score(s) + '分 ' + errCode(s);
   }).filter(Boolean);
-  h += '<h2>④ 成績（複製後貼給 AI「記錄：」即入紀錄庫平時考）</h2><div class="card"><textarea id="out" readonly>' + esc(lines.join('\n')) + '</textarea>' +
-       '<div class="row" style="margin-top:8px"><button id="copy" class="on">複製成績</button><button id="json">下載完整登記（JSON）</button><button id="done" class="ghost">🧹 已記錄完，清掉這份卷的登記</button>' +
-       '<span class="hint">分數＝100 − 錯題扣分；請和考卷上的分數對一次。「錯:」後面是錯題碼（大題序＋題號），學生加密報告用它算知識點得分率。</span></div></div>';
+  h += '<h2>④ 成績（按「⬆️ 上傳到紀錄庫」直接入紀錄庫平時考）</h2><div class="card"><textarea id="out" readonly>' + esc(lines.join('\n')) + '</textarea>' +
+       '<div class="row" style="margin-top:8px"><button id="up" class="on">⬆️ 上傳到紀錄庫</button><button id="copy">複製成績（備用）</button><button id="json">下載完整登記（JSON）</button><button id="done" class="ghost">🧹 已記錄完，清掉這份卷的登記</button>' +
+       '<span class="hint">分數＝100 − 錯題扣分；請和考卷上的分數對一次。「錯:」後面是錯題碼（大題序＋題號），學生加密報告用它算知識點得分率。已登錄的分數上傳時不會被改，不同的會列出來給你看；同一份卷可以重傳。</span></div>' +
+       '<div id="upmsg" class="hint" style="margin-top:8px;white-space:pre-wrap">' + esc(UP[ex.id] || '') + '</div></div>';
   main.innerHTML = h;
   document.getElementById('copy').onclick = function () {
     var t = document.getElementById('out'); t.select();
     (navigator.clipboard ? navigator.clipboard.writeText(t.value) : Promise.reject()).then(function () { toast('已複製 ' + lines.length + ' 行'); }, function () { document.execCommand('copy'); toast('已複製'); });
   };
+  document.getElementById('up').onclick = function () {
+    if (!lines.length) { toast('還沒有登記任何學生'); return; }
+    if (!confirm('把「' + ex.title + '」' + lines.length + ' 人的成績與錯題上傳到紀錄庫？\n已登錄的分數不會被改；分數不同的會列出來給你看。')) return;
+    uploadScores(ex, lines);
+  };
   document.getElementById('done').onclick = function () {
-    if (!confirm('成績已經貼給 AI 記錄進紀錄庫了嗎？\n清掉後，這份卷在所有電腦上的登記都會刪除（雲端空間有限，記錄完就清）。')) return;
+    if (!confirm('成績已經上傳到紀錄庫（看到「✅ 已寫入」）了嗎？\n清掉後，這份卷在所有電腦上的登記都會刪除（雲端空間有限，記錄完就清）。')) return;
     delete S.data[S.exam]; save(); paint(); toast('已清掉「' + ex.title + '」的登記');
   };
   document.getElementById('json').onclick = function () {
@@ -339,6 +345,53 @@ function level(r) {
   if (r < 60) return '<span class="lv-bad">全班重教</span>';
   if (r < 80) return '<span class="lv-warn">課堂再提醒</span>';
   return '<span class="lv-ok">穩定</span>';
+}
+
+/* ── ⬆️ 上傳到紀錄庫（R20，2026-10-26）──
+   成績行（與「複製成績」同格式）切成每段 ≤1700 字送收件匣，首行 #QUIZ-SCORES v1 <卷id> <批次> <k>/<n>
+   （格式正本 scripts/classos/lib/quiz-scores.mjs）；再觸發班網同步，同步先跑 f52 寫紀錄庫、再產報告。之後每 20 秒查收件匣回報結果。 */
+var UP = {};                                       // 卷id → 上傳狀態文字（重畫畫面時保留）
+function setUp(id, t) { UP[id] = t; var e = document.getElementById('upmsg'); if (e && S.exam === id) e.textContent = t; }
+var proxyUrl = '';
+function proxy(body) {
+  body.pw = sessionStorage.getItem('teacherPw') || '';
+  return (proxyUrl ? Promise.resolve(proxyUrl) : fetch('data/site-config.json?t=' + Date.now(), { cache: 'no-cache' })
+      .then(function (r) { return r.json(); }).then(function (c) { return (proxyUrl = c.updateProxyUrl); }))
+    .then(function (u) { return fetch(u, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }); })
+    .then(function (r) { return r.json(); });
+}
+function uploadScores(ex, lines) {
+  var btn = document.getElementById('up'), batch = Date.now().toString(36), parts = [], cur = [];
+  lines.forEach(function (l) { if (cur.length && cur.join('\n').length + l.length > 1700) { parts.push(cur); cur = []; } cur.push(l); });
+  if (cur.length) parts.push(cur);
+  var head = function (i) { return '#QUIZ-SCORES v1 ' + ex.id + ' ' + batch + ' ' + (i + 1) + '/' + parts.length; };
+  if (btn) btn.disabled = true;
+  setUp(ex.id, '上傳中…');
+  var chain = Promise.resolve();
+  parts.forEach(function (p, i) {
+    chain = chain.then(function () {
+      return proxy({ action: 'submit_task', text: head(i) + ' · ' + ex.subj + ' ' + ex.name + ' ' + lines.length + ' 人\n' + p.join('\n') });
+    }).then(function (r) { if (!r || !r.ok) throw new Error((r && r.error) || '送出失敗'); });
+  });
+  chain.then(function () { return proxy({ action: 'trigger_sync' }); })
+    .then(function (r) {
+      setUp(ex.id, '已送出 ' + lines.length + ' 人' + (r && r.ok ? '，正在寫入紀錄庫（約 2–4 分鐘，這頁可以先做別的）…' : '；⚠️ 同步沒觸發（' + ((r && r.error) || '') + '），下一次整點同步才會寫入'));
+      pollUp(ex.id, head(0), 0);
+    }, function (e) { setUp(ex.id, '⚠️ 上傳失敗：' + (e.message || e) + '（可以再按一次，重傳不會重複）'); })
+    .then(function () { var b = document.getElementById('up'); if (b) b.disabled = false; });
+}
+function pollUp(id, head, n) {
+  if (n >= 20) { setUp(id, '還在排隊（超過 7 分鐘）：稍後到 Notion 📥 收件匣看這筆的結果。'); return; }
+  setTimeout(function () {
+    proxy({ action: 'list_tasks', limit: 30 }).then(function (r) {
+      var t = ((r && r.tasks) || []).filter(function (x) { return x.text.indexOf(head) === 0; })[0];
+      var st = t ? t.status : '';
+      if (st === '已完成') return setUp(id, '✅ 已寫入紀錄庫，學習報告同步中（再約 1–2 分鐘上線）。確定不再改這份卷，就可以按「🧹 已記錄完」。');
+      if (st === '待審') return setUp(id, '✅ 已寫入紀錄庫，但有要你看的（也在 Notion 📥 收件匣）：\n' + t.error);
+      if (st === '失敗') return setUp(id, '❌ 沒寫成：' + t.error);
+      pollUp(id, head, n + 1);
+    }, function () { pollUp(id, head, n + 1); });
+  }, 20000);
 }
 
 /* ── 初始化 ── */
@@ -364,11 +417,7 @@ function syncText() {
 }
 function showCloud(msg) { cloudEl.innerHTML = (msg ? esc(msg) + '　' : '') + syncText(); }
 showCloud('考卷讀取中…');
-fetch('data/site-config.json?t=' + Date.now(), { cache: 'no-cache' }).then(function (r) { return r.json(); })
-  .then(function (c) {
-    return fetch(c.updateProxyUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'quiz_exams', pw: sessionStorage.getItem('teacherPw') || '' }) });
-  }).then(function (r) { return r.json(); })
+proxy({ action: 'quiz_exams' })
   .then(function (res) {
     if (!res || !res.ok) throw new Error((res && res.error) || '代理沒有回應');
     var got = (res.exams || []).filter(function (e) { return !validExam(e); });

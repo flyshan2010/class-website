@@ -49,6 +49,15 @@ jobs:
           MODE: execute
         run: node scripts/classos/f34-price-apply.mjs
 
+      # R20 錯題表成績上傳（f52，2026-10-26）：放在同步之前，寫完的錯題當輪就進學習報告。
+      # 失敗不擋同步——任務留在收件匣（失敗／待處理），錯題表畫面與收件匣都看得到。
+      - name: 錯題表成績上傳入庫
+        continue-on-error: true
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          MODE: execute
+        run: node scripts/classos/f52-quiz-scores.mjs
+
       - name: 同步 Notion 資料
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
