@@ -108,3 +108,11 @@ test("觀念複習卡連結：同科目、卡名一字不差才連；對不到�
   assert.ok(other.tips.every((t) => t.card === null), "別科同名卡不算");
   assert.equal(reportItem({ subject: "社會", name: "x", date: "2026-10-14", open: "" }, res, "2026-10-20").tips[0].card, null, "沒給卡片清單＝都不連");
 });
+
+test("分數對不上：一般卷需人工；例外卷照出分析、分數用紀錄庫", () => {
+  assert.match(analyze(EXAM, "一1", 50).manual, /錯題算出/);
+  const r = analyze({ ...EXAM, id: "115上-社會-L1" }, "一1", 50);
+  assert.equal(r.manual, undefined);
+  assert.equal(r.score, 50);
+  assert.equal(r.wrong.length, 1);
+});

@@ -71,6 +71,10 @@ export function matchExam(exams, rec) {
   return hit.length === 1 ? hit[0] : null;
 }
 
+/** 分數對不上也照出錯題分析的卷（分數以紀錄庫為準）；其他卷照規則：對不上＝需人工、不出分析。
+ *  115上-社會-L1：老師 2026-10-26 裁定，手改時情境題 8、9 以 2 分計（卷面 3 分），僅此一次例外。 */
+export const SCORE_MISMATCH_OK = new Set(["115上-社會-L1"]);
+
 /**
  * 一位學生一份卷的分析。
  * @param {object} exam 卷 JSON（quiz-exam/1）
@@ -98,7 +102,7 @@ export function analyze(exam, code, score) {
   const total = items.reduce((a, it) => a + it.pts, 0);
   const lostSum = [...lost.values()].reduce((a, b) => a + b, 0);
   const calc = total === 100 ? 100 - lostSum : pct(total - lostSum, total);
-  if (Number(score) !== calc) return { manual: `錯題算出 ${calc} 分，紀錄是 ${score} 分` };
+  if (Number(score) !== calc && !SCORE_MISMATCH_OK.has(exam.id)) return { manual: `錯題算出 ${calc} 分，紀錄是 ${score} 分` };
   const kp = Object.entries(exam.tags || {}).map(([t, [name, tip]]) => {
     const its = items.filter((it) => it.tag === t);
     const full = its.reduce((a, it) => a + it.pts, 0);
@@ -108,7 +112,7 @@ export function analyze(exam, code, score) {
   const tips = kp.filter((k) => k.lost >= 2 && k.rate < 80)
     .sort((a, b) => a.rate - b.rate || b.lost - a.lost).slice(0, MAX_TIPS)
     .map((k) => ({ name: k.name, tip: k.tip }));
-  return { score: calc, kp: kp.map((k) => ({ name: k.name, rate: k.rate })), tips, wrong };
+  return { score: Number(score) === calc ? calc : Number(score), kp: kp.map((k) => ({ name: k.name, rate: k.rate })), tips, wrong };
 }
 
 /** 觀念複習卡網址（班網 review.html：每科一頁，#卡名 直接跳到該張卡）。 */
