@@ -483,15 +483,22 @@
     const subjects = [...known, ...new Set(list.map(e => e.subject).filter(s => !known.includes(s)))]
       .filter(s => list.some(e => e.subject === s));
     const bySubj = s => list.filter(e => e.subject === s).sort(byNewest);
-    const tabs = subjects.map((s, i) => { const e = bySubj(s)[0], n = e.kp.filter(k => k.rate < 80).length;
-      return `<button type="button" class="qa-tab" role="tab" style="--c:${QUIZ_COLOR[s] || "#6b7280"}" aria-selected="${i === 0}" data-qa-tab="${i}"><span class="qa-light">${QA_LIGHT(e)}</span>${App.esc(s)}<small>${e.score} 分・${n ? `${n} 項要加強` : "全部穩定"}</small></button>`; }).join("");
+    // 分頁：最近一卷分數＋比同科上一卷進退步；要加強（<80% 知識點）幾項＋比上一卷多／少幾項
+    const weakN = e => e.kp.filter(k => k.rate < 80).length;
+    const tabs = subjects.map((s, i) => { const [e, prev] = bySubj(s), n = weakN(e);
+      const d = prev ? e.score - prev.score : null, dn = prev ? n - weakN(prev) : null;
+      const delta = d === null ? `<span class="qa-dl">第 1 卷</span>` : d > 0 ? `<span class="qa-dl up">▲ ${d}</span>`
+        : d < 0 ? `<span class="qa-dl down">▼ ${-d}</span>` : `<span class="qa-dl">＝ 持平</span>`;
+      const weakDelta = !dn ? "" : dn < 0 ? `（比上次少 ${-dn} 項）` : `（比上次多 ${dn} 項）`;
+      return `<button type="button" class="qa-tab" role="tab" style="--c:${QUIZ_COLOR[s] || "#6b7280"}" aria-selected="${i === 0}" data-qa-tab="${i}"><span class="qa-light">${QA_LIGHT(e)}</span>
+        <span class="qa-tt"><span class="qa-t1">${App.esc(s)}<span class="qa-sc">最近 ${e.score} 分</span>${delta}</span><small>${n ? `要加強 ${n} 項` : "全部穩定"}${weakDelta}</small></span></button>`; }).join("");
     const panels = subjects.map((s, i) => `<div class="qa-panel" data-qa-panel="${i}"${i ? " hidden" : ""}>${bySubj(s).map((e, j) => one(e, j === 0)).join("")}</div>`).join("");
     return `<div class="report-box quiz-box" style="--bc:#E17055">
       <span class="report-badge" style="--bc:#E17055">🔍 錯題分析與複習建議</span>
       <p class="quiz-muted">每次平時卷改完，就會看到自己哪些地方要加強。只看自己，不放全班平均、不排名。</p>
       ${quizFocus(list)}
       <div class="qa-tabs" role="tablist">${tabs}</div>${panels}
-      <details class="quiz-muted qa-howto"><summary>ⓘ 怎麼看這一區</summary>📌「先複習這幾個」＝三科所有平時卷裡得分率最低的知識點，最多 3 個（同一個知識點考過好幾次，看最近那一次）。分頁的燈：🔴 有知識點低於 60%、🟠 最低在 60–79%、🟢 全部 80% 以上（看該科最近一份卷）。得分率＝這一類題目拿到的分數 ÷ 這一類的總分。複習建議依需要加強的程度排序，最多列 5 類。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷，到該卷自己的解答開放日才出現。</details>
+      <details class="quiz-muted qa-howto"><summary>ⓘ 怎麼看這一區</summary>📌「先複習這幾個」＝三科所有平時卷裡得分率最低的知識點，最多 3 個（同一個知識點考過好幾次，看最近那一次）。分頁的燈：🔴 有知識點低於 60%、🟠 最低在 60–79%、🟢 全部 80% 以上（看該科最近一份卷）。分頁上的分數是該科最近一份卷，▲▼ 是比同科上一份卷多或少幾分（不同課的卷難度不同，當參考就好）；要加強＝得分率低於 80% 的知識點數。得分率＝這一類題目拿到的分數 ÷ 這一類的總分。複習建議依需要加強的程度排序，最多列 5 類。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷，到該卷自己的解答開放日才出現。</details>
     </div>`;
   }
   // 科目分頁：報告是 innerHTML 重畫，所以掛在 document 上委派，只掛一次
