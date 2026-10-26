@@ -840,10 +840,12 @@ async function quizBySeat(roster, bySeat) {
   } while (cursor);
   const seatOfId = new Map(roster.map(r => [r._id, Number(r["座號"])]));
   const quizzesOf = new Map();
+  const allQ = [];
   for (const r of recs) {
     const q = toQuiz({ date: r["日期"]?.start, category: r["類別"], subject: r["科目"], score: r["分數"], name: r["評量名稱"], desc: r["事件描述"] });
     if (!q || q.manual) continue;
     q.errors = String(r["錯題"] || "").trim(); // BY 線：錯題碼（錯題表登記的平時卷才有）
+    allQ.push(q);
     for (const id of r["學生"] || []) {
       const seat = seatOfId.get(id);
       if (seat != null) (quizzesOf.get(seat) || quizzesOf.set(seat, []).get(seat)).push(q);
@@ -856,6 +858,16 @@ async function quizBySeat(roster, bySeat) {
     return w ? { term, w } : null;
   };
   const exams = await quizExams();
+  // 錯題表考卷選單標「已上傳」（老師 2026-10-26）：只輸出卷 id 與紀錄庫已有錯題碼（或缺考）的人數，不含座號、分數
+  if (exams.length) {
+    const uploaded = {};
+    for (const q of allQ) {
+      if (!q.errors && !q.absent) continue;
+      const e = matchExam(exams, q);
+      if (e) uploaded[e.id] = (uploaded[e.id] || 0) + 1;
+    }
+    await save("quiz-status.json", { updated: new Date().toISOString(), uploaded });
+  }
   const cards = await reviewCards();
   const hasCard = (subject, name) => cards.some(c => c.subject === subject && c.name === name);
   const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10); // 臺灣日期（開放日閘門）

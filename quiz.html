@@ -407,8 +407,25 @@ if (!pwOk || !SEATS.length) {
   throw new Error('quiz: gate');
 }
 var sel = document.getElementById('exam');
+/* 選單排序：期中→期末、國數社、第幾回（卷名格式「期中 國語 第一回平時卷（L1–L2）」，老師 2026-10-26 定） */
+function examKey(e) {
+  var m = String(e.title).match(/^(期中|期末)\s*(\S+?)\s*第(.+?)回/), N = '一二三四五六七八九十';
+  if (!m) return '9' + e.title;
+  var r = m[3].length === 1 ? N.indexOf(m[3]) + 1 : (m[3][0] === '十' ? 10 + N.indexOf(m[3][1]) + 1 : 99);
+  return (m[1] === '期中' ? '0' : '1') + (['國語', '數學', '社會'].indexOf(m[2]) + 5) + ('0' + r).slice(-2);
+}
+/* 已上傳標示：班網同步算的紀錄庫人數（data/quiz-status.json，只有卷 id 與人數）；讀不到就不標 */
+var UP = null;
+function upLabel(e) {
+  if (!UP) return '';
+  var n = UP[e.id] || 0;
+  return n ? (n >= SEATS.length ? '✅ 已上傳　' : '🟡 已上傳 ' + n + '/' + SEATS.length + ' 人　') : '⬜ 未上傳　';
+}
+fetch('data/quiz-status.json?t=' + Date.now(), { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; })
+  .then(function (j) { if (j && j.uploaded) { UP = j.uploaded; fillSel(); } }).catch(function () {});
 function fillSel() {
-  sel.innerHTML = EXAMS.length ? EXAMS.map(function (e) { return '<option value="' + esc(e.id) + '">' + esc(e.title) + '</option>'; }).join('') : '<option value="">（尚未匯入）</option>';
+  EXAMS.sort(function (a, b) { return examKey(a).localeCompare(examKey(b)); });
+  sel.innerHTML = EXAMS.length ? EXAMS.map(function (e) { return '<option value="' + esc(e.id) + '">' + esc(upLabel(e) + e.title) + '</option>'; }).join('') : '<option value="">（尚未匯入）</option>';
   if (!EXAMS.some(function (e) { return e.id === S.exam; })) S.exam = EXAMS.length ? EXAMS[EXAMS.length - 1].id : '';
   sel.value = S.exam;
 }
