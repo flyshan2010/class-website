@@ -8,6 +8,7 @@
  *   dry-run  讀「待處理」的上傳任務，算出每批會怎麼處理，不寫任何東西
  *   execute  認領 → 建列／補錯題 → 回讀 → 回填收件匣（全部相符＝已完成；分數不同、沒寫的人、回讀不符＝待審；格式壞或分段沒到齊逾時＝失敗）
  * TASK_STATUS：只給 dry-run 用，改撈別的狀態來演練既有任務。
+ * PAYLOAD「override <批次>」（phase-f 跑，老師看過衝突、確認以錯題表為準才用）：撈該批次「待審」任務重跑，分數不同的改成錯題表分數。
  * 不覆蓋分數（老師 2026-10-26 裁定：分數不同保留紀錄庫，列給老師看）；同一份卷重傳只補有變的錯題碼。
  *
  * ⚠️ 本 repo 為 PUBLIC，Actions log 公開可讀：只印數字與任務短 id，不印座號、分數、錯題。
@@ -21,7 +22,9 @@ const DS_QUIZ = "51c1c08f-78b4-4352-85f6-e45fb7361c2a"; // 📝 平時卷（與 
 const MODE = (process.env.MODE ?? "dry-run").trim();
 if (!["dry-run", "execute"].includes(MODE)) { console.error(`未知 MODE：${MODE}`); process.exit(1); }
 const EXECUTE = MODE === "execute";
-const TASK_STATUS = EXECUTE ? "待處理" : (process.env.TASK_STATUS || "待處理").trim();
+const OVERRIDE_BATCH = ((process.env.PAYLOAD ?? "").trim().match(/^override\s+(\S+)$/) ?? [])[1] ?? "";
+if ((process.env.PAYLOAD ?? "").trim() && !OVERRIDE_BATCH) { console.error("PAYLOAD 只接受「override <批次>」"); process.exit(1); }
+const TASK_STATUS = OVERRIDE_BATCH ? "待審" : EXECUTE ? "待處理" : (process.env.TASK_STATUS || "待處理").trim();
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const rt = (s) => (s ? [{ type: "text", text: { content: String(s).slice(0, 2000) } }] : []);
@@ -98,11 +101,16 @@ const toProps = (r) => ({
 });
 
 async function main() {
-  console.log(`f52｜模式 ${MODE}${TASK_STATUS !== "待處理" ? `｜撈「${TASK_STATUS}」` : ""}`);
+  console.log(`f52｜模式 ${MODE}${TASK_STATUS !== "待處理" ? `｜撈「${TASK_STATUS}」` : ""}${OVERRIDE_BATCH ? "｜以錯題表分數為準" : ""}`);
   const tasks = (await queryAll(DS.inbox, { filter: { property: "狀態", select: { equals: TASK_STATUS } } }))
     .map((p) => ({ id: p.id, text: plain(p.properties?.任務原文?.title), created: p.created_time }))
     .filter((t) => qs.isR20(t.text));
   const tot = { batches: 0, created: 0, patched: 0, done: 0, review: 0, fail: 0, wait: 0, retry: 0 };
+  let groups = qs.groupBatches(tasks);
+  if (OVERRIDE_BATCH) {
+    groups = groups.filter((g) => g.batch === OVERRIDE_BATCH).map((g) => ({ ...g, override: true }));
+    if (groups.length !== 1 || groups[0].state !== "ready") { console.error(`找不到可重跑的待審批次 ${OVERRIDE_BATCH}`); process.exit(1); }
+  }
   if (!tasks.length) { console.log("錯題表上傳任務 0 件"); return tot; }
 
   const fillAll = (ids, status, log, err) => Promise.all(ids.map((id) => must("PATCH", `/pages/${id}`, { properties: {
@@ -111,7 +119,7 @@ async function main() {
     ...(status === "已完成" ? { 完成時間: { date: { start: new Date().toISOString() } } } : {}),
   } })));
   let roster, weeks;
-  for (const g of qs.groupBatches(tasks)) {
+  for (const g of groups) {
     const tag = `批次 ${tid(g.tasks[0])}（${g.tasks.length} 段）`;
     if (g.state === "wait") { tot.wait++; console.log(`${tag}：分段還沒到齊，下一輪再處理`); continue; }
     tot.batches++;
@@ -127,8 +135,8 @@ async function main() {
       roster ??= await loadRoster();
       weeks ??= loadWeeks();
       const meta = await loadMeta(g.examId, weeks);
-      const plan = qs.planBatch(meta, g.rows, roster, await loadExisting(meta));
-      console.log(`${tag}：新建 ${plan.creates.length}／補錯題 ${plan.patches.length}／沒變 ${plan.same}／分數不同 ${plan.conflicts.length}／沒寫 ${plan.problems.length + g.bad.length}`);
+      const plan = qs.planBatch(meta, g.rows, roster, await loadExisting(meta), { override: g.override });
+      console.log(`${tag}：新建 ${plan.creates.length}／補錯題 ${plan.patches.length}（其中改分 ${plan.overridden.length}）／沒變 ${plan.same}／分數不同 ${plan.conflicts.length}／沒寫 ${plan.problems.length + g.bad.length}`);
       if (!EXECUTE) continue;
       const mismatch = [];
       for (const c of plan.creates) {
@@ -140,10 +148,12 @@ async function main() {
         tot.created++;
       }
       for (const u of plan.patches) {
-        await must("PATCH", `/pages/${u.id}`, { properties: { 錯題: { rich_text: rt(u.errors) } } });
+        const rescore = "score" in u; // 老師確認以錯題表為準：連分數與事件描述一起改
+        await must("PATCH", `/pages/${u.id}`, { properties: { 錯題: { rich_text: rt(u.errors) },
+          ...(rescore ? { 分數: { number: u.score }, 事件描述: { title: rt(u.desc) } } : {}) } });
         wrote = true;
         const b = (await must("GET", `/pages/${u.id}`)).properties;
-        if (plain(b.錯題?.rich_text) !== u.errors) mismatch.push(`座號${u.seat}`);
+        if (plain(b.錯題?.rich_text) !== u.errors || (rescore && (b.分數?.number ?? null) !== u.score)) mismatch.push(`座號${u.seat}`);
         tot.patched++;
       }
       const review = [qs.reviewText(plan, g.bad), mismatch.length ? `回讀不符（已寫入，請人工確認）：${mismatch.join("、")}` : ""].filter(Boolean).join("\n");

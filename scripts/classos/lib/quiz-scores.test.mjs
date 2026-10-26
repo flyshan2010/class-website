@@ -90,3 +90,19 @@ test("計畫：fail-closed——名冊查無、重複列、同批重複座號、
   assert.match(p.problems.join("|"), /座號1 紀錄庫已有 2 列/);
   assert.match(p.problems.join("|"), /座號9 名冊查無/);
 });
+
+test("override：首行旗標、分數不同改成錯題表分數（連描述）、相同的不動", () => {
+  const H = "#QUIZ-SCORES v1 115上-社會-L9 b1 1/1 override · 社會 L9平時卷 2 人";
+  const p = parsePart([H, "座號1 社會 L9平時卷 80分 錯:一11", "座號2 社會 L9平時卷 100分 錯:無"].join("\n"));
+  assert.equal(p.override, true);
+  assert.equal(parsePart(HEAD).override, false);
+  assert.equal(groupBatches([{ id: "a", text: [H, "座號1 社會 L9平時卷 80分 錯:無"].join("\n"), created: "2026-10-26T00:00:00Z" }])[0].override, true);
+  const existing = [{ id: "r1", student: "s1", score: 81, errors: "一11" }, { id: "r2", student: "s2", score: 100, errors: "無" }];
+  const plan = planBatch(META, p.rows, ROSTER, existing, { override: true });
+  assert.deepEqual(plan.patches, [{ seat: 1, id: "r1", errors: "一11", score: 80, desc: "社會平時考：L9平時卷 80分" }]);
+  assert.deepEqual(plan.conflicts, []);
+  assert.deepEqual(plan.overridden, ["座號1 紀錄庫81分／錯題表80分"]);
+  assert.equal(plan.same, 1);
+  assert.match(execLog(META, plan), /改成錯題表分數 1 人/);
+  assert.equal(reviewText(plan), "");
+});

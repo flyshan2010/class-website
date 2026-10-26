@@ -319,8 +319,8 @@ function paintReport() {
     return '座號' + s + ' ' + ex.subj + ' ' + ex.name + ' ' + score(s) + '分 ' + errCode(s);
   }).filter(Boolean);
   h += '<h2>④ 成績（按「⬆️ 上傳到紀錄庫」直接入紀錄庫平時考）</h2><div class="card"><textarea id="out" readonly>' + esc(lines.join('\n')) + '</textarea>' +
-       '<div class="row" style="margin-top:8px"><button id="up" class="on">⬆️ 上傳到紀錄庫</button><button id="copy">複製成績（備用）</button><button id="json">下載完整登記（JSON）</button><button id="done" class="ghost">🧹 已記錄完，清掉這份卷的登記</button>' +
-       '<span class="hint">分數＝100 − 錯題扣分；請和考卷上的分數對一次。「錯:」後面是錯題碼（大題序＋題號），學生加密報告用它算知識點得分率。已登錄的分數上傳時不會被改，不同的會列出來給你看；同一份卷可以重傳。</span></div>' +
+       '<div class="row" style="margin-top:8px"><button id="up" class="on">⬆️ 上傳到紀錄庫</button><button id="upov" class="ghost">以錯題表分數為準重傳</button><button id="copy">複製成績（備用）</button><button id="json">下載完整登記（JSON）</button><button id="done" class="ghost">🧹 已記錄完，清掉這份卷的登記</button>' +
+       '<span class="hint">分數＝100 − 錯題扣分；請和考卷上的分數對一次。「錯:」後面是錯題碼（大題序＋題號），學生加密報告用它算知識點得分率。已登錄的分數上傳時不會被改，不同的會列出來給你看；看過確定錯題表才對（例如改考卷時配分看錯），按「以錯題表分數為準重傳」改掉紀錄庫分數。同一份卷可以重傳。</span></div>' +
        '<div id="upmsg" class="hint" style="margin-top:8px;white-space:pre-wrap">' + esc(UP[ex.id] || '') + '</div></div>';
   main.innerHTML = h;
   document.getElementById('copy').onclick = function () {
@@ -331,6 +331,11 @@ function paintReport() {
     if (!lines.length) { toast('還沒有登記任何學生'); return; }
     if (!confirm('把「' + ex.title + '」' + lines.length + ' 人的成績與錯題上傳到紀錄庫？\n已登錄的分數不會被改；分數不同的會列出來給你看。')) return;
     uploadScores(ex, lines);
+  };
+  document.getElementById('upov').onclick = function () {
+    if (!lines.length) { toast('還沒有登記任何學生'); return; }
+    if (!confirm('以錯題表分數為準：紀錄庫裡「' + ex.title + '」分數不同的學生，會改成錯題表的分數。\n請先核對過考卷再按。確定？')) return;
+    uploadScores(ex, lines, true);
   };
   document.getElementById('done').onclick = function () {
     if (!confirm('成績已經上傳到紀錄庫（看到「✅ 已寫入」）了嗎？\n清掉後，這份卷在所有電腦上的登記都會刪除（雲端空間有限，記錄完就清）。')) return;
@@ -360,11 +365,11 @@ function proxy(body) {
     .then(function (u) { return fetch(u, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }); })
     .then(function (r) { return r.json(); });
 }
-function uploadScores(ex, lines) {
+function uploadScores(ex, lines, override) {
   var btn = document.getElementById('up'), batch = Date.now().toString(36), parts = [], cur = [];
   lines.forEach(function (l) { if (cur.length && cur.join('\n').length + l.length > 1700) { parts.push(cur); cur = []; } cur.push(l); });
   if (cur.length) parts.push(cur);
-  var head = function (i) { return '#QUIZ-SCORES v1 ' + ex.id + ' ' + batch + ' ' + (i + 1) + '/' + parts.length; };
+  var head = function (i) { return '#QUIZ-SCORES v1 ' + ex.id + ' ' + batch + ' ' + (i + 1) + '/' + parts.length + (override ? ' override' : ''); };
   if (btn) btn.disabled = true;
   setUp(ex.id, '上傳中…');
   var chain = Promise.resolve();
@@ -386,7 +391,7 @@ function pollUp(id, head, n) {
     proxy({ action: 'list_tasks', limit: 30 }).then(function (r) {
       var t = ((r && r.tasks) || []).filter(function (x) { return x.text.indexOf(head) === 0; })[0];
       var st = t ? t.status : '';
-      if (st === '已完成') return setUp(id, '✅ 已寫入紀錄庫，學習報告同步中（再約 1–2 分鐘上線）。確定不再改這份卷，就可以按「🧹 已記錄完」。');
+      if (st === '已完成') return setUp(id, '✅ 已寫入紀錄庫' + (head.indexOf(' override') > 0 ? '（分數已改成錯題表）' : '') + '，學習報告同步中（再約 1–2 分鐘上線）。確定不再改這份卷，就可以按「🧹 已記錄完」。');
       if (st === '待審') return setUp(id, '✅ 已寫入紀錄庫，但有要你看的（也在 Notion 📥 收件匣）：\n' + t.error);
       if (st === '失敗') return setUp(id, '❌ 沒寫成：' + t.error);
       pollUp(id, head, n + 1);
