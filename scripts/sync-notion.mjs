@@ -940,9 +940,14 @@ async function blockChildren(id) {
   const out = [];
   let cursor;
   do {
-    const res = await fetch(`https://api.notion.com/v1/blocks/${id}/children?page_size=100${cursor ? `&start_cursor=${cursor}` : ""}`, {
-      headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03" },
-    });
+    let res;
+    for (let i = 0; i <= 3; i++) { // 429／5xx 重試（10/26 限流漏掉 3 張上架卡，公開複習卡頁少卡）
+      res = await fetch(`https://api.notion.com/v1/blocks/${id}/children?page_size=100${cursor ? `&start_cursor=${cursor}` : ""}`, {
+        headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03" },
+      });
+      if (res.ok || (res.status !== 429 && res.status < 500) || i === 3) break;
+      await new Promise(r => setTimeout(r, Number(res.headers.get("retry-after")) * 1000 || 1000 * 2 ** i));
+    }
     if (!res.ok) throw new Error(`Notion API ${res.status}`);
     const json = await res.json();
     out.push(...json.results);
