@@ -27,9 +27,14 @@ async function listChildren(blockId) {
   let cursor;
   do {
     const qs = cursor ? `?start_cursor=${cursor}&page_size=100` : "?page_size=100";
-    const res = await fetch(`https://api.notion.com/v1/blocks/${blockId}/children${qs}`, {
-      headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03" },
-    });
+    let res;
+    for (let i = 0; i <= 3; i++) { // 429／5xx 重試（10/27 連兩次同步備份步驟吃 429、備份沒跟上）
+      res = await fetch(`https://api.notion.com/v1/blocks/${blockId}/children${qs}`, {
+        headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03" },
+      });
+      if (res.ok || (res.status !== 429 && res.status < 500) || i === 3) break;
+      await new Promise(r => setTimeout(r, Number(res.headers.get("retry-after")) * 1000 || 1000 * 2 ** i));
+    }
     if (!res.ok) throw new Error(`Notion API ${res.status}：${await res.text()}`);
     const json = await res.json();
     blocks.push(...json.results);
