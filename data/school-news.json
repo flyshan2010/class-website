@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-10-26T17:51:53.362Z",
+  "fetchedAt": "2026-10-27T01:54:02.860Z",
   "items": [
+    {
+      "date": "2026-10-27",
+      "title": "屏東縣⽴光春國⺠中學⾶夢林學園申請⼊學輔導及轉銜實施計畫",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1011&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
+    {
+      "date": "2026-10-27",
+      "title": "115學年度基隆市⽴中⼭⾼中國中部⼤德分校慈輝班招⽣簡章",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1010&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-10-22",
       "title": "【文化任意門—被遺忘才是真正的逝去：墨西哥亡靈節 × 鷄籠中元祭】線上講座，詳如說明。",
@@ -48,18 +60,6 @@
       "title": "「臺南市115學年度國民小學AI融入課室英語應用種子講師培訓計畫」，詳如說明。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=994&type=news&from_op=school_department_show",
       "dept": "教務處"
-    },
-    {
-      "date": "2026-10-20",
-      "title": "社團法人中華兒童家庭守護者協會「2026年特殊需求兒少支持論壇：從學習到生活，支持不能中斷」活動",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=993&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-10-20",
-      "title": "敬邀師生踴躍參與文化部「文化，在我們回家的路上」臺南場系列活動",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=990&type=news&from_op=school_department_show",
-      "dept": "學務處"
     }
   ]
 }
