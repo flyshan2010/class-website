@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-10-27T01:54:02.860Z",
+  "fetchedAt": "2026-10-27T11:53:43.052Z",
   "items": [
+    {
+      "date": "2026-10-27",
+      "title": "轉知國教署及原住民族委員會共同辦理「115學年度原住民族文化與科學展覽會」活動，鼓勵參加，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1030&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-10-27",
       "title": "屏東縣⽴光春國⺠中學⾶夢林學園申請⼊學輔導及轉銜實施計畫",
@@ -54,12 +60,6 @@
       "title": "衛生福利部臺南醫院健康管理中心「115-116年臺南市政府/臺南市議會健檢套裝」健康檢查專案",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=6&zone_id=0&page_id=53&content_id=996&type=news&from_op=school_department_show",
       "dept": "人事室"
-    },
-    {
-      "date": "2026-10-20",
-      "title": "「臺南市115學年度國民小學AI融入課室英語應用種子講師培訓計畫」，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=994&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
