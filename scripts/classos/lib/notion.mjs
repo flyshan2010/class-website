@@ -24,17 +24,28 @@ function token() {
   return t;
 }
 
-/** 低階呼叫。回傳 { status, ok, json }，不丟例外，由呼叫端判斷。 */
+/**
+ * 低階呼叫。回傳 { status, ok, json }，不丟例外，由呼叫端判斷。
+ * 限流重試（2026-10-27，護欄 §1）：讀取（GET、POST …/query）遇 429／5xx 依 retry-after 最多重試 3 次；
+ * 寫入只重試 429——429 代表 Notion 沒處理、重送安全；5xx 可能已寫入，重送會重複入帳，交回呼叫端判斷。
+ */
 export async function api(method, path, body) {
-  const res = await fetch(`${API}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${token()}`,
-      "Notion-Version": NV,
-      "Content-Type": "application/json",
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const isRead = method === "GET" || (method === "POST" && /\/query$/.test(path));
+  let res;
+  for (let i = 0; i <= 3; i++) {
+    res = await fetch(`${API}${path}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token()}`,
+        "Notion-Version": NV,
+        "Content-Type": "application/json",
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const retry = res.status === 429 || (isRead && res.status >= 500);
+    if (!retry || i === 3) break;
+    await sleep(Number(res.headers.get("retry-after")) * 1000 || 1000 * 2 ** i);
+  }
   let json = null;
   try { json = await res.json(); } catch { /* 非 JSON 回應 */ }
   return { status: res.status, ok: res.ok, json };
