@@ -104,6 +104,17 @@ function queryDataSource(dsId) {
   return _dsCache.get(dsId);
 }
 
+// 打 Notion API，遇 429／5xx 依 retry-after 最多重試 3 次（10/27 同步多處吃 429；紀錄庫三處查詢共用）
+async function notionFetch(url, init) {
+  let res;
+  for (let i = 0; i <= 3; i++) {
+    res = await fetch(url, init);
+    if (res.ok || (res.status !== 429 && res.status < 500) || i === 3) break;
+    await new Promise(r => setTimeout(r, Number(res.headers.get("retry-after")) * 1000 || 1000 * 2 ** i));
+  }
+  return res;
+}
+
 async function queryDataSourceRaw(dsId) {
   const results = [];
   let cursor;
@@ -833,7 +844,7 @@ async function quizBySeat(roster, bySeat) {
   do {
     const filter = { and: [{ property: "類別", select: { equals: "評量" } },
       ...(CURRENT_YEAR ? [{ property: "學年", select: { equals: CURRENT_YEAR } }] : [])] };
-    const res = await fetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
+    const res = await notionFetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
       method: "POST",
       headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
       body: JSON.stringify({ page_size: 100, filter, ...(cursor ? { start_cursor: cursor } : {}) }),
@@ -1035,7 +1046,7 @@ async function loadAssessRows() {
   do {
     const filter = { and: [{ property: "類別", select: { equals: "課堂表現" } }, { property: "事件描述", title: { contains: "課堂作答" } },
       ...(CURRENT_YEAR ? [{ property: "學年", select: { equals: CURRENT_YEAR } }] : [])] };
-    const res = await fetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
+    const res = await notionFetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
       method: "POST",
       headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
       body: JSON.stringify({ page_size: 100, filter, ...(cursor ? { start_cursor: cursor } : {}) }),
@@ -1251,7 +1262,7 @@ async function syncTeacherDashboard() {
     do {
       const body = { page_size: 100, ...(cursor ? { start_cursor: cursor } : {}),
         ...(CURRENT_YEAR ? { filter: { property: "學年", select: { equals: CURRENT_YEAR } } } : {}) };
-      const res = await fetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
+      const res = await notionFetch(`https://api.notion.com/v1/data_sources/${DS.log}/query`, {
         method: "POST",
         headers: { Authorization: `Bearer ${TOKEN}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
         body: JSON.stringify(body),
