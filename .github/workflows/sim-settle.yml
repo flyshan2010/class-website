@@ -43,7 +43,7 @@ jobs:
           node-version: "20"
       - name: 對照組：取出「⑤排除寫回列」修正前的 f24
         if: inputs.week == '' && inputs.cutoff == ''
-        run: git show a7009812~1:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-prefix-old.mjs
+        run: git show aa28d58e~1:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-prefix-old.mjs
       - name: 資料分析
         if: inputs.week == '' && inputs.cutoff == ''
         run: node scripts/classos/sim/week-analysis.mjs
@@ -66,13 +66,12 @@ jobs:
           node --test scripts/classos/lib/once-per-day.test.mjs
           git show 81bb3a77:scripts/classos/f24-weekly-settle-preview.mjs > scripts/classos/f24-once-old.mjs
           H="--import ./scripts/classos/sim/hooks.mjs"
-          # 每段都整庫重讀，連跑會被 Notion 限流（429，lib 沒有重試）→ 段與段之間停一下
           echo "########## f24 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f24-weekly-settle-preview.mjs
-          sleep 45; echo "########## f24 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f24-weekly-settle-preview.mjs
-          sleep 45; echo "########## f24 S6（接去重前，對照）";    SIM_SCENARIO=S6 node $H scripts/classos/f24-once-old.mjs
-          sleep 45; echo "########## f29 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f29-settle-week-rewards.mjs
-          sleep 45; echo "########## f29 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f29-settle-week-rewards.mjs
-          sleep 45; echo "########## 該週真資料：現況 vs 記憶體還原"; node scripts/classos/sim/once-per-day.mjs
+          echo "########## f24 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f24-weekly-settle-preview.mjs
+          echo "########## f24 S6（接去重前，對照）";    SIM_SCENARIO=S6 node $H scripts/classos/f24-once-old.mjs
+          echo "########## f29 S0（基準）";              SIM_SCENARIO=S0 node $H scripts/classos/f29-settle-week-rewards.mjs
+          echo "########## f29 S6（現行）";              SIM_SCENARIO=S6 node $H scripts/classos/f29-settle-week-rewards.mjs
+          echo "########## 該週真資料：現況 vs 記憶體還原"; node scripts/classos/sim/once-per-day.mjs
       # 2026-10-16 週結已入帳就不建待審（lib/settle-inbox.mjs）：正式 f24 本體＋模擬層，全程只讀
       - name: 已入帳不建待審（S0 現況 vs S7 回到 cutoff 當時）
         if: inputs.cutoff != ''
@@ -82,4 +81,4 @@ jobs:
           node --test scripts/classos/lib/settle-inbox.test.mjs
           H="--import ./scripts/classos/sim/hooks.mjs"
           echo "########## f24 S0（現況）";                 SIM_SCENARIO=S0 node $H scripts/classos/f24-weekly-settle-preview.mjs
-          sleep 45; echo "########## f24 S7（回到 $SIM_CUTOFF）"; SIM_SCENARIO=S7 node $H scripts/classos/f24-weekly-settle-preview.mjs
+          echo "########## f24 S7（回到 $SIM_CUTOFF）"; SIM_SCENARIO=S7 node $H scripts/classos/f24-weekly-settle-preview.mjs
