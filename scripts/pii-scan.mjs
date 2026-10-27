@@ -151,11 +151,16 @@ async function fetchRoster(token) {
   const rows = [];
   let cursor;
   do {
-    const res = await fetch(`https://api.notion.com/v1/data_sources/${ROSTER_DS}/query`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
-      body: JSON.stringify(cursor ? { start_cursor: cursor } : {}),
-    });
+    let res;
+    for (let i = 0; i <= 3; i++) { // 429／5xx 重試（10/27 同步剛跑完額度用盡，掃描連 3 次擋下不提交）；重試完仍失敗照樣 fail-closed
+      res = await fetch(`https://api.notion.com/v1/data_sources/${ROSTER_DS}/query`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
+        body: JSON.stringify(cursor ? { start_cursor: cursor } : {}),
+      });
+      if (res.ok || (res.status !== 429 && res.status < 500) || i === 3) break;
+      await new Promise(r => setTimeout(r, Number(res.headers.get("retry-after")) * 1000 || 1000 * 2 ** i));
+    }
     if (!res.ok) throw new Error(`Notion API ${res.status}`); // 回應內文可能帶名冊內容，不印
     const json = await res.json();
     rows.push(...json.results);
