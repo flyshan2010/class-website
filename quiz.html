@@ -51,6 +51,18 @@ button.ghost{background:none}
 .q.full{background:var(--bad);border-color:var(--bad);color:#fff}
 .q.part{background:var(--warn);border-color:var(--warn);color:#1a0f05}
 .q.full .p,.q.part .p{color:inherit}
+/* 大題扣分（2026-10-29 老師指示：每大題標扣幾分，方便對考卷加總）*/
+.sh{display:flex;align-items:center;gap:10px;margin:16px 0 6px}
+.sh h3{margin:0}
+.sh .line{flex:1;border-bottom:1px dashed var(--line)}
+.ded{font-size:14px;font-weight:700;padding:2px 10px;border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ded.zero{color:var(--ok);background:rgba(86,197,150,.12)}
+.ded.some{color:#fff;background:var(--bad)}
+.ded small{font-weight:400;opacity:.85;margin-left:4px}
+.sum{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.sum span{font-size:13px;padding:2px 9px;border-radius:6px;background:var(--surface-2);color:var(--mute);font-variant-numeric:tabular-nums}
+.sum span.some{color:#fff;background:rgba(239,107,107,.35)}
+.sum b{color:var(--ink)}
 /* 依題目模式 */
 table{border-collapse:collapse;width:100%}
 th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
@@ -198,8 +210,18 @@ function paintSeat() {
        '<div><b style="font-size:20px">' + s + ' 號</b>　算出分數：<b style="font-size:22px" class="' + (isAbs(s) ? 'hint' : '') + '">' + (isAbs(s) ? '缺考' : score(s) + ' 分') + '</b></div>' +
        '<div class="row"><button id="allok">✓ 全對</button><button id="abs">' + (isAbs(s) ? '取消缺考' : '缺考') + '</button>' +
        '<button id="clr" class="ghost">清除此人</button><button id="next" class="on">下一位 →</button></div></div>';
+  var secD = ex.sections.map(function (sec, si) {
+    var d = 0, w = 0, p = 0;
+    sec.items.forEach(function (it) { var v = ded(si + ':' + it[0], s); d += v; if (v) w++; p += +it[1] || 0; });
+    return { d: d, w: w, p: p };
+  });
+  if (!isAbs(s)) h += '<div class="sum">' + ex.sections.map(function (sec, si) {
+    return '<span class="' + (secD[si].d ? 'some' : '') + '">' + esc(sec.name.split('、')[0]) + ' <b>' + (secD[si].d ? '−' + secD[si].d : '0') + '</b></span>';
+  }).join('') + '<span>合計扣 <b>' + secD.reduce(function (a, x) { return a + x.d; }, 0) + '</b></span></div>';
   if (!isAbs(s)) ex.sections.forEach(function (sec, si) {
-    h += '<h3>' + esc(sec.name) + '</h3><div class="qs">' + sec.items.map(function (it) {
+    var x = secD[si];
+    h += '<div class="sh"><h3>' + esc(sec.name) + '</h3><span class="line"></span><span class="ded ' + (x.d ? 'some' : 'zero') + '">' +
+         (x.d ? '扣 ' + x.d + ' 分<small>錯 ' + x.w + ' 題・得 ' + (x.p - x.d) + '/' + x.p + '</small>' : '✓ 全對 ' + x.p + '/' + x.p) + '</span></div><div class="qs">' + sec.items.map(function (it) {
       var q = { id: si + ':' + it[0], pts: it[1] }, v = ded(q.id, s);
       var c = 'q' + (v === 0 ? '' : v === q.pts ? ' full' : ' part');
       var p = v === 0 ? it[1] + '分' + (it[2] ? '・' + esc(it[2]) : '') : (v === q.pts ? '扣 ' + v : '部分扣 ' + v);
