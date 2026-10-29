@@ -830,8 +830,9 @@ async function courseFocusByWeek() {
 
 // ── 📈 平時評量（BT 線，老師 2026-10-17 定案）：每生國數社平時考，只隨該生加密報告發布 ──
 // 規則正本 scripts/classos/lib/term-quiz.mjs（與 f48／f49 算平考同一支，U83）。
-// 「只顯示已發布週次」：每位學生以自己已勾發布的最後一份每週報告那週的「迄」為截止日，之後的平時考不放；
-// 跟週五發布一起上線。沒有已發布每週報告或範圍內沒有平時考 → 不放（前端不顯示這個分類）。
+// 即時顯示（老師 2026-10-30 改裁定，原「只顯示已發布週次」廢止）：截止日＝同步當天（臺灣日期），
+// 平時考一入紀錄庫、下次同步就出現，不等週五發布。學期依今天所在學期判定（查不到才退回最後一份已發布週報那學期）。
+// 仍須該生至少有一份已發布報告（分頁掛在他的加密報告裡）；範圍內沒有平時考 → 不放（前端不顯示這個分類）。
 // 不放全班平均、不排名；不進任何公開 data/*.json。
 async function quizBySeat(roster, bySeat) {
   let weeksFile, calendar;
@@ -867,6 +868,9 @@ async function quizBySeat(roster, bySeat) {
       if (seat != null) (quizzesOf.get(seat) || quizzesOf.set(seat, []).get(seat)).push(q);
     }
   }
+  const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10); // 臺灣日期（截止日與開放日閘門）
+  const nowTerm = (weeksFile.學期 || []).find(t => today >= t.開學日 && today <= t.休業日);
+  const nowWeek = nowTerm?.週?.find(w => today >= w.起 && today <= w.迄);
   const weekOf = period => {
     const t = (String(period || "").match(/(\S{2})第/) || [])[1], n = periodWeek(period);
     const term = (weeksFile.學期 || []).find(x => x.學期名稱 === t);
@@ -886,7 +890,6 @@ async function quizBySeat(roster, bySeat) {
   }
   const cards = await reviewCards();
   const hasCard = (subject, name) => cards.some(c => c.subject === subject && c.name === name);
-  const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10); // 臺灣日期（開放日閘門）
   const manual = [];
   const out = {};
   for (const s of Object.values(bySeat)) {
@@ -894,11 +897,12 @@ async function quizBySeat(roster, bySeat) {
       .sort((a, b) => a.w.迄.localeCompare(b.w.迄));
     const last = pub[pub.length - 1];
     if (!last) continue;
-    const termLabel = `${last.term.學年}${last.term.學期}`;
+    const term = nowTerm || last.term;
+    const termLabel = `${term.學年}${term.學期}`;
     const mid = quizRange(calendar, weeksFile, termLabel, "期中");
     const fin = quizRange(calendar, weeksFile, termLabel, "期末");
     if (mid.error) continue;
-    const cutoff = last.w.迄;
+    const cutoff = today;
     const stage = !fin.error && cutoff >= fin.from ? "期末" : "期中";
     const r = stage === "期末" ? fin : mid;
     const to = cutoff < r.to ? cutoff : r.to;
@@ -906,11 +910,11 @@ async function quizBySeat(roster, bySeat) {
     const cur = mine.filter(q => inRange(q, { from: r.from, to }));
     const sum = summarize(cur);
     if (!cur.length) continue;
-    const shownTo = [to, last.w.上課迄].filter(Boolean).sort()[0]; // 畫面寫到最後一個上課日（週五），篩選仍含週末
+    const shownTo = to; // 畫面寫到今天（或該階段最後一天）
     const prev = stage === "期末" ? summarize(mine.filter(q => inRange(q, mid))).subjects : null;
     out[s.seat] = {
-      term: last.term.學期名稱, termLabel, stage, from: r.from, to: shownTo,
-      updated: { label: `第 ${last.w.週次} 週`, date: last.w.上課迄 || last.w.迄 },
+      term: term.學期名稱, termLabel, stage, from: r.from, to: shownTo,
+      updated: { label: nowWeek ? `第 ${nowWeek.週次} 週` : "今天", date: today },
       subjects: sum.subjects, others: sum.others, tip: reviewTip(sum.subjects, stage),
       prevAvg: prev ? Object.fromEntries(Object.entries(prev).map(([k, v]) => [k, v.avg])) : null,
       analysis: cur.filter(q => q.errors && !q.absent).map(q => {
