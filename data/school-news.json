@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-10-30T02:29:02.697Z",
+  "fetchedAt": "2026-10-30T06:54:05.463Z",
   "items": [
+    {
+      "date": "2026-10-30",
+      "title": "防範假冒財政部發送統一發票中獎通知之詐騙事件",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1084&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-10-30",
+      "title": "國立中山大學116學年度政治學研究所碩士在職專班招生，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1075&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-10-29",
       "title": "國家太空中心辦理「2027 ATZ-G 零重力實驗提案競賽」，報名期限至2026年11月30日止",
@@ -48,18 +60,6 @@
       "title": "115學年度基隆市⽴中⼭⾼中國中部⼤德分校慈輝班招⽣簡章",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1010&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-10-22",
-      "title": "【文化任意門—被遺忘才是真正的逝去：墨西哥亡靈節 × 鷄籠中元祭】線上講座，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1006&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-22",
-      "title": "國立臺灣師範大學研發之中英文學科適性診斷系統及中英文適性閱讀平台相關簡介資訊，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1005&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
