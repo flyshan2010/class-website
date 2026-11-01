@@ -194,7 +194,17 @@
   if (document.fonts?.ready) document.fonts.ready.then(relayout);
   document.querySelectorAll(".wk-photos img").forEach(img => img.addEventListener("load", relayout));
   // 摺疊作品展開／收合會改變海報高度；stage 高度是 JS 算的，必須在此重算，否則內容被截掉
-  document.querySelectorAll(".wk-essay-fold").forEach(d => d.addEventListener("toggle", relayout));
+  // 某些瀏覽器（Safari）展開後內容高度要晚一點才定案、toggle 事件也可能先於排版：點擊後再補算數次，並直接盯海報本身的尺寸
+  document.querySelectorAll(".wk-essay-fold").forEach(d => {
+    d.addEventListener("toggle", relayout);
+    d.querySelector("summary").addEventListener("click", () => {
+      [0, 100, 400, 1000].forEach(ms => setTimeout(relayout, ms));
+    });
+  });
+  if (window.ResizeObserver) {
+    const po = new ResizeObserver(relayout);
+    document.querySelectorAll(".wk-poster").forEach(el => po.observe(el));
+  }
 
   document.getElementById("main").addEventListener("click", e => {
     if (e.target.tagName !== "IMG") return;
