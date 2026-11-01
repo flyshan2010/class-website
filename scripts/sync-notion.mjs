@@ -358,6 +358,7 @@ async function syncWeekly() {
       reminders: r["下週提醒"],
       parents: r["家長配合事項"],
       webVersion: r["班網版"],
+      essays: r["優良短文"],
       images: await saveImages(r["圖片"], r._id),
       _range: r["日期區間"],
     });

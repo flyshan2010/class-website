@@ -72,6 +72,27 @@
       </div>`;
   };
 
+  // 優良短文：第一段為本週練習；之後每段三行（同學 N／短文／老師回饋），段間空一行
+  const essays = w => {
+    const blocks = String(w.essays || "").split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+    if (!blocks.length) return "";
+    const [task, ...items] = blocks;
+    return `
+      <details class="card wk-essays" style="border-top-color:var(--orange)">
+        <summary>📝 班級優良短文（${items.length} 篇）</summary>
+        <p class="wk-essay-task">${App.esc(task)}</p>
+        ${items.map(b => {
+          const [name, text, comment] = b.split("\n");
+          return `
+            <article class="wk-essay">
+              <h4>${App.esc(name)}</h4>
+              <p class="wk-essay-text">${App.esc(text || "")}</p>
+              ${comment ? `<p class="wk-essay-comment"><b>老師回饋：</b>${App.esc(comment)}</p>` : ""}
+            </article>`;
+        }).join("")}
+      </details>`;
+  };
+
   const poster = (w, i) => `
     <section class="wk-stage" id="w${i}">
       <div class="wk-poster">
@@ -107,7 +128,7 @@
         ${data.map((w, i) => `<a href="#w${i}">${App.esc(w.week)}</a>`).join("")}
       </div>
     </div>
-    <div class="weekly-main">${data.map(poster).join("")}</div>
+    <div class="weekly-main">${data.map((w, i) => poster(w, i) + essays(w)).join("")}</div>
     ` : '<p class="empty-hint">第一期週報即將出刊，敬請期待！</p>'}`;
 
   // 等比縮放：畫布固定 1280×720，依容器寬度縮放，版面永遠一致
