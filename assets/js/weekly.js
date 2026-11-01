@@ -79,8 +79,8 @@
     if (!blocks.length) return "";
     const [task, ...items] = blocks;
     return `
-      <div class="wk-box wk-essays-box" style="--c:var(--orange)">
-        <span class="wk-title">📝 班級優良短文（${items.length} 篇）</span>
+      <details class="wk-box wk-essays-box" style="--c:var(--orange)">
+        <summary class="wk-title">📝 班級優良短文（${items.length} 篇）<span class="wk-essay-hint">點開閱讀</span></summary>
         <p class="wk-essay-task">${App.esc(task)}</p>
         <div class="wk-essay-list">
           ${items.map(b => {
@@ -93,7 +93,7 @@
               </article>`;
           }).join("")}
         </div>
-      </div>`;
+      </details>`;
   };
 
   const poster = (w, i) => `

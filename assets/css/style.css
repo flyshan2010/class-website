@@ -2166,6 +2166,12 @@ a.qa-chip.link::after { content: "👉 複習卡"; display: inline-block; white-
 /* 週報：優良短文併入海報 */
 .wk-poster.wk-merged { height: auto; grid-template-rows: 116px 540px auto; }
 .wk-essays-box { grid-template-rows: auto auto auto; padding: 12px 18px 16px; }
+.wk-essays-box > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; }
+.wk-essays-box > summary::-webkit-details-marker { display: none; }
+.wk-essays-box > summary::after { content: "▼"; font-size: .8em; color: var(--orange); transition: transform .2s; }
+.wk-essays-box[open] > summary::after { transform: rotate(180deg); }
+.wk-essays-box[open] .wk-essay-hint { display: none; }
+.wk-essay-hint { font-size: .85em; font-weight: 400; color: var(--muted, #8a7a66); }
 .wk-essay-task { margin: 0 0 12px; padding: 6px 12px; background: #FFF6E5; border-radius: 8px; }
 .wk-essay-list { column-count: 2; column-gap: 24px; }
 .wk-essay { break-inside: avoid; padding: 10px 0 12px; border-top: 1px dashed var(--line); }
