@@ -193,6 +193,8 @@
   matchMedia("(max-width: 719px)").addEventListener("change", relayout);
   if (document.fonts?.ready) document.fonts.ready.then(relayout);
   document.querySelectorAll(".wk-photos img").forEach(img => img.addEventListener("load", relayout));
+  // 摺疊作品展開／收合會改變海報高度；stage 高度是 JS 算的，必須在此重算，否則內容被截掉
+  document.querySelectorAll(".wk-essay-fold").forEach(d => d.addEventListener("toggle", relayout));
 
   document.getElementById("main").addEventListener("click", e => {
     if (e.target.tagName !== "IMG") return;
