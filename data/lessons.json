@@ -3674,6 +3674,87 @@
     }
   },
   {
+    "title": "社P2 期中總複習第二份｜單元一、二",
+    "subject": "社會",
+    "grade": "四上",
+    "version": "康軒",
+    "status": "已完成",
+    "stages": [],
+    "points": [
+      "三合院",
+      "傳統住屋與保存",
+      "水資源",
+      "讀氣候圖",
+      "器物與材料"
+    ],
+    "date": "2026-11-01",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "完成版 22 頁，類題全自編。老師 2026-11-01 指示上駕駛艙，可由電子白板「選簡報」開啟；未加入學生入口清單。",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": "https://flyshan2010.github.io/lessons/4上-社會-社P2-期中總複習第二份/3.review.html"
+    }
+  },
+  {
+    "title": "國P2 期中總複習第二份｜L1～L6",
+    "subject": "國語",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "已完成",
+    "stages": [],
+    "points": [
+      "字音字形",
+      "語詞與成語（16 個成語總表與練習）",
+      "詞性與句意",
+      "短語與造句",
+      "課文理解"
+    ],
+    "date": "2026-11-01",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "完成版 27 頁，類題全自編。老師 2026-11-01 指示上駕駛艙，可由電子白板「選簡報」開啟；未加入學生入口清單。",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": "https://flyshan2010.github.io/lessons/4上-國語-國P2-期中總複習第二份/3.review.html"
+    }
+  },
+  {
+    "title": "數P2 期中總複習第二份｜L1～L5",
+    "subject": "數學",
+    "grade": "四上",
+    "version": "翰林",
+    "status": "已完成",
+    "stages": [],
+    "points": [
+      "大數位值與數序",
+      "分數",
+      "角度",
+      "量角器旋轉",
+      "大數加減與乘法規律"
+    ],
+    "date": "2026-11-01",
+    "dateEnd": "",
+    "dateAuto": false,
+    "note": "完成版 23 頁，類題全自編。老師 2026-11-01 指示上駕駛艙，可由電子白板「選簡報」開啟；未加入學生入口清單。",
+    "links": {
+      "material": "",
+      "pretest": "",
+      "site": "",
+      "differentiated": "",
+      "exam": "",
+      "review": "https://flyshan2010.github.io/lessons/4上-數學-數P2-期中總複習第二份/3.review.html"
+    }
+  },
+  {
     "title": "數P1 期中平時卷總複習｜L1～L5",
     "subject": "數學",
     "grade": "四上",
