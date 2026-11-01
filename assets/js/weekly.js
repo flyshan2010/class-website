@@ -3,7 +3,7 @@
   const data = await App.fetchJSON("data/weekly.json").catch(() => []);
 
   // 固定版型海報：設計稿 1280×720（16:9），一律等比縮放，不因視窗寬度重排。
-  const STAGE_W = 1280, STAGE_H = 720, PHOTO_SLOTS = 4;
+  const STAGE_W = 1280, PHOTO_SLOTS = 4;
 
   const subjects = [
     ["chinese", "📖", "國語", "var(--pink)"],
@@ -73,29 +73,32 @@
   };
 
   // 優良短文：第一段為本週練習；之後每段三行（同學 N／短文／老師回饋），段間空一行
+  const essayBlocks = w => String(w.essays || "").split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
   const essays = w => {
-    const blocks = String(w.essays || "").split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+    const blocks = essayBlocks(w);
     if (!blocks.length) return "";
     const [task, ...items] = blocks;
     return `
-      <details class="card wk-essays" style="border-top-color:var(--orange)">
-        <summary>📝 班級優良短文（${items.length} 篇）</summary>
+      <div class="wk-box wk-essays-box" style="--c:var(--orange)">
+        <span class="wk-title">📝 班級優良短文（${items.length} 篇）</span>
         <p class="wk-essay-task">${App.esc(task)}</p>
-        ${items.map(b => {
-          const [name, text, comment] = b.split("\n");
-          return `
-            <article class="wk-essay">
-              <h4>${App.esc(name)}</h4>
-              <p class="wk-essay-text">${App.esc(text || "")}</p>
-              ${comment ? `<p class="wk-essay-comment"><b>老師回饋：</b>${App.esc(comment)}</p>` : ""}
-            </article>`;
-        }).join("")}
-      </details>`;
+        <div class="wk-essay-list">
+          ${items.map(b => {
+            const [name, text, comment] = b.split("\n");
+            return `
+              <article class="wk-essay">
+                <h4>${App.esc(name)}</h4>
+                <p class="wk-essay-text">${App.esc(text || "")}</p>
+                ${comment ? `<p class="wk-essay-comment"><b>老師回饋：</b>${App.esc(comment)}</p>` : ""}
+              </article>`;
+          }).join("")}
+        </div>
+      </div>`;
   };
 
   const poster = (w, i) => `
     <section class="wk-stage" id="w${i}">
-      <div class="wk-poster">
+      <div class="wk-poster${essayBlocks(w).length ? " wk-merged" : ""}">
         <header class="wk-head">
           <div>
             <h3 class="wk-brand">📰 班級週報</h3>
@@ -116,6 +119,7 @@
             ${photos(w)}
           </div>
         </div>
+        ${essays(w)}
       </div>
     </section>`;
 
@@ -128,7 +132,7 @@
         ${data.map((w, i) => `<a href="#w${i}">${App.esc(w.week)}</a>`).join("")}
       </div>
     </div>
-    <div class="weekly-main">${data.map((w, i) => poster(w, i) + essays(w)).join("")}</div>
+    <div class="weekly-main">${data.map(poster).join("")}</div>
     ` : '<p class="empty-hint">第一期週報即將出刊，敬請期待！</p>'}`;
 
   // 等比縮放：畫布固定 1280×720，依容器寬度縮放，版面永遠一致
@@ -148,11 +152,14 @@
         return;
       }
       const scale = stage.clientWidth / STAGE_W;
-      // 只在縮放值真的變了才寫入，否則 ResizeObserver 會被自己改的高度重複觸發
-      if (Math.abs(scale - parseFloat(stage.dataset.scale || 0)) < 0.001) return;
+      // 有優良短文的海報較長，高度取實際內容；無短文時即 720
+      const height = stage.querySelector(".wk-poster").offsetHeight * scale;
+      // 只在值真的變了才寫入，否則 ResizeObserver 會被自己改的高度重複觸發
+      if (Math.abs(scale - parseFloat(stage.dataset.scale || 0)) < 0.001
+        && Math.abs(height - parseFloat(stage.style.height || 0)) < 0.5) return;
       stage.dataset.scale = scale;
       stage.style.setProperty("--wk-scale", scale);
-      stage.style.height = `${STAGE_H * scale}px`;
+      stage.style.height = `${height}px`;
       changed = true;
     });
     return changed;
