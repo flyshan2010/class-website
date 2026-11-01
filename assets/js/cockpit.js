@@ -777,7 +777,7 @@
       if (/[RP]\d+$/.test(b.unit)) {
         // 期中／期末只要同組任一份寫了就算（數R1-1「習作範圍總驗收」本身沒寫期中）
         const titles = b.rows.map(r => r.title || "").join(" ");
-        const label = /P\d+$/.test(b.unit) ? "平時卷總複習" : /期末/.test(titles) ? "期末複習" : /期中/.test(titles) ? "期中複習" : "複習";
+        const label = /P1$/.test(b.unit) ? "平時卷總複習" : /期末/.test(titles) ? "期末複習" : /期中/.test(titles) ? "期中複習" : "複習";
         return `📄 ${App.esc(label)}
                 <span class="meta">（${App.esc(b.unit)}・${b.rows.length} 份）</span>`;
       }
@@ -798,7 +798,7 @@
     if (!code) return `📄 ${App.esc(l.title || "")}`;
     // 複習課（國R1、數R1…）沒有課次概念，標「期中／期末複習」而不是「第 1 課」
     if (/[RP]\d+$/.test(code)) {
-      const label = /P\d+$/.test(code) ? "平時卷總複習"
+      const label = /P1$/.test(code) ? "平時卷總複習"
                   : /期末/.test(l.title || "") ? "期末複習"
                   : /期中/.test(l.title || "") ? "期中複習" : "複習";
       return `📄 ${label} <span class="meta">（${App.esc(code)}・${App.esc(name)}）</span>`;
