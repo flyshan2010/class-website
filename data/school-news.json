@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-11-02T01:35:26.708Z",
+  "fetchedAt": "2026-11-02T02:11:53.897Z",
   "items": [
+    {
+      "date": "2026-11-02",
+      "title": "台南市私立國民中小學116學年度招生全面採線上登記方式自由申請且免試入學",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1087&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-11-02",
       "title": "迷你廚房玩具存在安全隱憂",
@@ -54,12 +60,6 @@
       "title": "轉知國教署及原住民族委員會共同辦理「115學年度原住民族文化與科學展覽會」活動，鼓勵參加，詳如說明。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1030&type=news&from_op=school_department_show",
       "dept": "教務處"
-    },
-    {
-      "date": "2026-10-27",
-      "title": "屏東縣⽴光春國⺠中學⾶夢林學園申請⼊學輔導及轉銜實施計畫",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1011&type=news&from_op=school_department_show",
-      "dept": "輔導室"
     }
   ]
 }
