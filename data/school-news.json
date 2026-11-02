@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-11-01T17:24:19.243Z",
+  "fetchedAt": "2026-11-02T01:35:26.708Z",
   "items": [
+    {
+      "date": "2026-11-02",
+      "title": "迷你廚房玩具存在安全隱憂",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1086&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-10-30",
       "title": "防範假冒財政部發送統一發票中獎通知之詐騙事件",
@@ -53,12 +59,6 @@
       "date": "2026-10-27",
       "title": "屏東縣⽴光春國⺠中學⾶夢林學園申請⼊學輔導及轉銜實施計畫",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1011&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-10-27",
-      "title": "115學年度基隆市⽴中⼭⾼中國中部⼤德分校慈輝班招⽣簡章",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1010&type=news&from_op=school_department_show",
       "dept": "輔導室"
     }
   ]
