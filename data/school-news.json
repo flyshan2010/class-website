@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-11-03T03:53:23.817Z",
+  "fetchedAt": "2026-11-03T12:10:39.322Z",
   "items": [
+    {
+      "date": "2026-11-03",
+      "title": "有關本市國教階段特殊教育學生申請116學年度延長修業年限事宜。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1096&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-11-02",
       "title": "全國教師純植永續推廣協會「第一屆（115年度）全國中小學純植永續教育創新教案徵選」，詳如說明。",
@@ -48,12 +54,6 @@
       "title": "台南市衛生局於115年12月6日（星期日）辦理115年「南瀛獅子盃第14屆反毒宣導書法比賽」，請踴躍報名參加",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1054&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-10-28",
-      "title": "有關教育部116年持續辦理高級中等以下學校教師在職進修學分班，有意報名的教師請在11/6前聯繫課研組。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1033&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
