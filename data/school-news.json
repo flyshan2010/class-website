@@ -1,6 +1,42 @@
 {
-  "fetchedAt": "2026-11-03T18:48:06.834Z",
+  "fetchedAt": "2026-11-04T02:58:16.309Z",
   "items": [
+    {
+      "date": "2026-11-04",
+      "title": "「2026-2027第八屆科普閱讀力大賽」，歡迎踴躍參加。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1104&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-11-04",
+      "title": "「115 學年度PaGamO教師應用經驗分享活動」，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1103&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-11-04",
+      "title": "轉知115年「國中小英語教師海外短期進修」及「本國籍領域/科目教師海外短期進修」經驗分享會資訊，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1102&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-11-04",
+      "title": "戶海中心辦理海洋教育教案暨實施成果徵選活動，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1101&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-11-04",
+      "title": "戶海中心辦理「漫畫．慢話 ～為海洋發聲─四格漫畫徵選」活動，歡迎學生踴躍報名參加。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1100&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-11-04",
+      "title": "轉知清華大學辦理科普活動競賽「吉娃斯愛科學決戰」體驗賽，歡迎學生參加。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1099&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-11-03",
       "title": "有關本市國教階段特殊教育學生申請116學年度延長修業年限事宜。",
@@ -23,36 +59,6 @@
       "date": "2026-11-02",
       "title": "迷你廚房玩具存在安全隱憂",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1086&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
-      "date": "2026-10-30",
-      "title": "防範假冒財政部發送統一發票中獎通知之詐騙事件",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1084&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
-      "date": "2026-10-30",
-      "title": "國立中山大學116學年度政治學研究所碩士在職專班招生，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1075&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-29",
-      "title": "國家太空中心辦理「2027 ATZ-G 零重力實驗提案競賽」，報名期限至2026年11月30日止",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1057&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-10-29",
-      "title": "國立成功大學辦理「心連心學情緒：2026SEL社會情緒學習嘉年華」活動",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1055&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-10-29",
-      "title": "台南市衛生局於115年12月6日（星期日）辦理115年「南瀛獅子盃第14屆反毒宣導書法比賽」，請踴躍報名參加",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1054&type=news&from_op=school_department_show",
       "dept": "學務處"
     }
   ]
