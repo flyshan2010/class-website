@@ -73,19 +73,30 @@
   };
 
   // 優良短文：第一段為本週練習；之後每段三行（同學 N／短文／老師回饋），段間空一行
+  // 一週可放多組練習：以「作業時間」開頭的段落視為新一組題目（第一段不論開頭都算題目，相容舊資料）
   const essayBlocks = w => String(w.essays || "").split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+  const essayGroups = w => {
+    const groups = [];
+    essayBlocks(w).forEach(b => {
+      if (!groups.length || b.startsWith("作業時間")) groups.push({ task: b, items: [] });
+      else groups[groups.length - 1].items.push(b);
+    });
+    return groups;
+  };
   const essays = w => {
-    const blocks = essayBlocks(w);
-    if (!blocks.length) return "";
-    const [task, ...items] = blocks;
+    const groups = essayGroups(w);
+    if (!groups.length) return "";
+    const total = groups.reduce((n, g) => n + g.items.length, 0);
     return `
       <div class="wk-box wk-essays-box" style="--c:var(--orange)">
-        <span class="wk-title">📝 班級優良短文（${items.length} 篇）</span>
-        <p class="wk-essay-task">${App.esc(task)}</p>
-        <details class="wk-essay-fold">
-        <summary>點開閱讀 ${items.length} 篇作品</summary>
+        <span class="wk-title">📝 班級優良短文（${total} 篇）</span>
+        ${groups.map(g => `
+        <div class="wk-essay-group">
+        <p class="wk-essay-task">${App.esc(g.task)}</p>
+        ${g.items.length ? `<details class="wk-essay-fold">
+        <summary>點開閱讀 ${g.items.length} 篇作品</summary>
         <div class="wk-essay-list">
-          ${items.map(b => {
+          ${g.items.map(b => {
             const [name, text, comment] = b.split("\n");
             return `
               <article class="wk-essay">
@@ -95,7 +106,8 @@
               </article>`;
           }).join("")}
         </div>
-        </details>
+        </details>` : ""}
+        </div>`).join("")}
       </div>`;
   };
 

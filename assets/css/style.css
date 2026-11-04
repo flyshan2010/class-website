@@ -2172,6 +2172,7 @@ a.qa-chip.link::after { content: "👉 複習卡"; display: inline-block; white-
 .wk-essay-fold[open] > summary::after { transform: rotate(180deg); }
 .wk-essay-fold[open] > summary { margin-bottom: 8px; }
 .wk-essay-task { margin: 0 0 12px; padding: 6px 12px; background: #FFF6E5; border-radius: 8px; }
+.wk-essay-group + .wk-essay-group { margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(0,0,0,.18); }
 .wk-essay-list { column-count: 2; column-gap: 24px; }
 .wk-essay { break-inside: avoid; padding: 10px 0 12px; border-top: 1px dashed var(--line); }
 .wk-essay h4 { color: var(--orange); margin-bottom: 2px; }
