@@ -667,7 +667,7 @@
     "date": "2026-12-08",
     "dateEnd": "",
     "dateAuto": true,
-    "note": "ECC 活動卡 #3 用聲音說故事：分組改編「美食島」1 分鐘廣播劇，音效需呼應情節轉折。",
+    "note": "ECC 活動卡 #3 用聲音說故事：分組改編「美食島」1 分鐘廣播劇，音效需呼應情節轉折。\n2026-11-04 加總結影片（第三版，全幅照片版）：第 28 頁（共 29 頁，重點總結前），影片名「國11-2內容理解總結影片」76 秒，離線替代＝頁內旁白稿，Drive 序號 1a，檔名同標題，lessons 6960993，頁面 200；YouTube 不公開 https://youtu.be/glQlpT4n0iM",
     "links": {
       "material": "",
       "pretest": "https://flyshan2010.github.io/lessons/4上-國語-國L11-2-內容理解/0.pretest.html",
@@ -701,7 +701,7 @@
     "date": "2026-12-07",
     "dateEnd": "2026-12-09",
     "dateAuto": true,
-    "note": "康軒版四上第四單元第3課（本單元最後一節）。\n\n2026-08-28 網頁五份上線：套教學 DS（society）、教學 14 頁、練習 14 頁、複習 7 頁（含 4-1→4-2→4-3 串接圖）、前測 5 題、線上評量選擇 8×9＋填充 4×7。老師裁示已落實：課本「桌面大風吹」改編成網頁互動（隨機抽分類條件，學生打出符合的節日卡並說理由）；「小小探究家：兒童節大不同」放在挑戰題（紙本筆記方格表）。實測：逐頁無溢出（複習 frame 頁原 957 已縮字）、答案帶連按下一步與整頁攤開皆不洩題、作答後才出現，五個網址皆 HTTP 200。\n\n紙本 15 份已完成：前測六合一（6×10＋2×10＋問答20，15 分鐘）、評量六合一（10×6＋6×5＋問答10，40 分鐘，問答為四節日分類）、差異化 2a/2b/2c（docx＋pdf，2c 含筆記方格表、行動省思、設計新節日）。網頁與紙本為平行題本。spec 存 _工具/specs/社4-3.json、specs/exam/社4-3*.json。\n\n第五段成果回流待實際教學後登記。",
+    "note": "康軒版四上第四單元第3課（本單元最後一節）。\n\n2026-08-28 網頁五份上線：套教學 DS（society）、教學 14 頁、練習 14 頁、複習 7 頁（含 4-1→4-2→4-3 串接圖）、前測 5 題、線上評量選擇 8×9＋填充 4×7。老師裁示已落實：課本「桌面大風吹」改編成網頁互動（隨機抽分類條件，學生打出符合的節日卡並說理由）；「小小探究家：兒童節大不同」放在挑戰題（紙本筆記方格表）。實測：逐頁無溢出（複習 frame 頁原 957 已縮字）、答案帶連按下一步與整頁攤開皆不洩題、作答後才出現，五個網址皆 HTTP 200。\n\n紙本 15 份已完成：前測六合一（6×10＋2×10＋問答20，15 分鐘）、評量六合一（10×6＋6×5＋問答10，40 分鐘，問答為四節日分類）、差異化 2a/2b/2c（docx＋pdf，2c 含筆記方格表、行動省思、設計新節日）。網頁與紙本為平行題本。spec 存 _工具/specs/社4-3.json、specs/exam/社4-3*.json。\n\n2026-11-04 加總結影片：第 26 頁（共 27 頁，重點總結前），影片名「社4-3現代的節日總結影片」81 秒，離線替代＝頁內旁白稿，Drive 序號 1a，檔名同標題，lessons 6960993，頁面 200；YouTube 不公開 https://youtu.be/ffDBMtfcKO0\n\n第五段成果回流待實際教學後登記。",
     "links": {
       "material": "https://drive.google.com/file/d/1c-u-5meCVrYbT7mYuLlfgdp5Z9Y6XSEX/view",
       "pretest": "https://flyshan2010.github.io/lessons/4上-社會-社4-3-現代的節日/0.pretest.html",
@@ -766,7 +766,7 @@
     "date": "2026-12-07",
     "dateEnd": "",
     "dateAuto": true,
-    "note": "第九單元 二位小數 9-4＋綜合練習（課本139-142）；建議1.5節",
+    "note": "第九單元 二位小數 9-4＋綜合練習（課本139-142）；建議1.5節\n2026-11-04 加總結影片：第 23 頁（共 24 頁，重點總結前），影片名「數9-4小數的加法與減法總結影片」80 秒，離線替代＝頁內旁白稿，Drive 序號 1a，檔名同標題，lessons 6960993，頁面 200；YouTube 不公開 https://youtu.be/fCifx048bxw",
     "links": {
       "material": "https://drive.google.com/file/d/1g_26s8NnfuJNHkWt3yzmMoVg0ofFD9ru/view",
       "pretest": "https://flyshan2010.github.io/lessons/4上-數學-數L9-4-小數的加法與減法/0.pretest.html",
@@ -798,7 +798,7 @@
     "date": "2026-12-04",
     "dateEnd": "",
     "dateAuto": true,
-    "note": "第九單元 二位小數 9-3（課本136-138）；建議1節",
+    "note": "第九單元 二位小數 9-3（課本136-138）；建議1節\n2026-11-04 加總結影片：第 21 頁（共 22 頁，重點總結前），影片名「數9-3長度與小數比較總結影片」77 秒，離線替代＝頁內旁白稿，Drive 序號 1a，檔名同標題，lessons 6960993，頁面 200；YouTube 不公開 https://youtu.be/UjqJ2oZPLVw",
     "links": {
       "material": "https://drive.google.com/file/d/1dbFAkt1RY8DVdpGUcsh1Ui1I4JEIYEc_/view",
       "pretest": "https://flyshan2010.github.io/lessons/4上-數學-數L9-3-長度與小數比較/0.pretest.html",
@@ -830,7 +830,7 @@
     "date": "2026-12-03",
     "dateEnd": "",
     "dateAuto": true,
-    "note": "第九單元 二位小數 9-2（課本134-135）；建議1.5節",
+    "note": "第九單元 二位小數 9-2（課本134-135）；建議1.5節\n2026-11-04 加總結影片：第 21 頁（共 22 頁，重點總結前），影片名「數9-2百分位與小數化聚總結影片」81 秒，離線替代＝頁內旁白稿，Drive 序號 1a，檔名同標題，lessons 6960993，頁面 200；YouTube 不公開 https://youtu.be/89MnNyyS3-U",
     "links": {
       "material": "https://drive.google.com/file/d/1x0ZCJ2b_QGzAVjlwU-5KWkJzHcLUoABZ/view",
       "pretest": "https://flyshan2010.github.io/lessons/4上-數學-數L9-2-百分位與小數化聚/0.pretest.html",

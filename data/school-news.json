@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-11-04T02:58:16.309Z",
+  "fetchedAt": "2026-11-04T15:56:38.404Z",
   "items": [
+    {
+      "date": "2026-11-04",
+      "title": "臺南市編彙「數位融入課中差異化教學全攻略」國中小國語、英語及數學共六冊電子書，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1106&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-11-04",
+      "title": "轉知親子天下推出之線上課程「最強國中生父母攻略課」學校專屬優惠代碼資訊。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1105&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-11-04",
       "title": "「2026-2027第八屆科普閱讀力大賽」，歡迎踴躍參加。",
@@ -48,18 +60,6 @@
       "title": "全國教師純植永續推廣協會「第一屆（115年度）全國中小學純植永續教育創新教案徵選」，詳如說明。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1089&type=news&from_op=school_department_show",
       "dept": "教務處"
-    },
-    {
-      "date": "2026-11-02",
-      "title": "台南市私立國民中小學116學年度招生全面採線上登記方式自由申請且免試入學",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1087&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-11-02",
-      "title": "迷你廚房玩具存在安全隱憂",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1086&type=news&from_op=school_department_show",
-      "dept": "學務處"
     }
   ]
 }
