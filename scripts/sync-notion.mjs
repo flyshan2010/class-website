@@ -833,6 +833,7 @@ async function courseFocusByWeek() {
 // 規則正本 scripts/classos/lib/term-quiz.mjs（與 f48／f49 算平考同一支，U83）。
 // 即時顯示（老師 2026-10-30 改裁定，原「只顯示已發布週次」廢止）：截止日＝同步當天（臺灣日期），
 // 平時考一入紀錄庫、下次同步就出現，不等週五發布。學期依今天所在學期判定（查不到才退回最後一份已發布週報那學期）。
+// 期中考後、期末階段還沒有平時考 → 續顯示期中階段（老師 2026-11-05 裁定）。
 // 仍須該生至少有一份已發布報告（分頁掛在他的加密報告裡）；範圍內沒有平時考 → 不放（前端不顯示這個分類）。
 // 不放全班平均、不排名；不進任何公開 data/*.json。
 async function quizBySeat(roster, bySeat) {
@@ -904,10 +905,13 @@ async function quizBySeat(roster, bySeat) {
     const fin = quizRange(calendar, weeksFile, termLabel, "期末");
     if (mid.error) continue;
     const cutoff = today;
-    const stage = !fin.error && cutoff >= fin.from ? "期末" : "期中";
+    const mine = quizzesOf.get(s.seat) || [];
+    // 期中考後、期末階段還沒有任何平時考 → 續顯示期中階段（老師 2026-11-05 裁定，免得期中考後分類整個消失）
+    const finCur = !fin.error && cutoff >= fin.from
+      ? mine.filter(q => inRange(q, { from: fin.from, to: cutoff < fin.to ? cutoff : fin.to })) : [];
+    const stage = finCur.length ? "期末" : "期中";
     const r = stage === "期末" ? fin : mid;
     const to = cutoff < r.to ? cutoff : r.to;
-    const mine = quizzesOf.get(s.seat) || [];
     const cur = mine.filter(q => inRange(q, { from: r.from, to }));
     const sum = summarize(cur);
     if (!cur.length) continue;
