@@ -401,52 +401,78 @@
   const QUIZ_SUBJ = [["國語", "#B23A2E"], ["數學", "#1F5FA8"], ["社會", "#6B4423"]];
   const EVAL_IDX = -1; // 學習評量不是一個期別，用 -1 代表這個分頁
   const md = iso => { const [, m, d] = String(iso).split("-"); return `${Number(m)}/${Number(d)}`; };
-  // 📈 學習評量・頂端整學期軌跡（DI 線 v3.1）：四格表＋三科同一張折線，資料是 sync 端算好的 ev.trail（規則正本 term-trail.mjs）
+  // 📈 學習評量・頂端整學期軌跡（DI 線 v3.1→v3.4 每科一張整併圖），資料是 sync 端算好的 ev.trail（規則正本 term-trail.mjs）
   const evDl = (a, b) => a == null || b == null ? "" : b > a ? `<span class="ev-dl up">▲ ${b - a}</span>`
     : b < a ? `<span class="ev-dl down">▼ ${a - b}</span>` : `<span class="ev-dl">＝ 持平</span>`;
   const EV_STEPS = [["s1", "①", "期中前平時卷"], ["mid", "②", "期中考"], ["s3", "③", "期末前平時卷"], ["fin", "④", "期末考"]];
-  // v3.2（老師 2026-11-07）：學習評量頁的表頭 ①②③④ 就是按鈕、分數格也能點（跳到那一段並捲到內容）；學期總結（sel＝null）只看不點
-  function trailTable(ev, sel) {
-    const st = ev.trail.state, click = sel != null;
-    const head = `<tr><th class="s"></th>${EV_STEPS.map(([k, n, t]) => !click ? `<th>${n}<br>${t}</th>`
-      : `<th><button type="button" class="ev-th${k === sel ? " sel" : ""}" data-ev-step="${k}" data-ev-scroll="1"${st[k] === "lock" ? " disabled" : ""}>${n} ${t}<span class="go">${st[k] === "lock" ? "🔒" : k === sel ? "👀 正在看" : "看 ›"}</span></button></th>`).join("")}</tr>`;
+  // v3.4（老師 2026-11-07 定案範本 ClassOS_v3.5_藍圖/學習軌跡_提案/範本_軌跡整併_示意.html）：
+  // 原「四格表＋三科同一張折線」整併成「每科一張圖」——四欄＝①②③④，上半＝這段分數（○平時卷平均、■考試）＋▲▼，
+  // 下半＝同一欄裡每份卷的小走勢；還沒到的段落灰色虛線框。這塊只用來看，切換段落統一用下面的分頁按鈕。
+  // 一句話結論只比對 sync 算好的 cells（前一段 vs 最新一段），不重算分數。學習評量頁與學期總結共用。
+  function trailSay(ev) {
+    const st = ev.trail.state, k = EV_STEPS.map(([key]) => st[key] !== "lock").lastIndexOf(true);
+    if (k < 0) return "";
+    if (k === 0) { const n = Math.max(0, ...QUIZ_SUBJ.map(([s]) => ev.trail.subjects[s]?.n?.[0] || 0));
+      return `📝 期中前已經考了 ${n} 份平時卷；期中考後這裡會出現「考試比平時卷進步多少」。`; }
+    const up = [], down = [], same = [];
+    QUIZ_SUBJ.forEach(([s]) => { const c = ev.trail.subjects[s]?.cells; if (!c || c[k] == null) return;
+      const prev = c.slice(0, k).filter(x => x != null).pop(); if (prev == null) return;
+      const d = c[k] - prev; (d > 0 ? up : d < 0 ? down : same).push(d < 0 ? `${s}少 ${-d} 分` : s); });
+    const seg = [];
+    if (up.length) seg.push(`<b class="up">${up.join("、")}進步</b>`);
+    if (down.length) seg.push(`<b class="down">${down.join("、")}</b>`);
+    if (same.length) seg.push(`${same.join("、")}持平`);
+    return seg.length ? `📝 <b>${EV_STEPS[k][2]}</b>比${EV_STEPS[k - 1][2]}：${seg.join("；")}。` : "";
+  }
+  function trailViz(ev) {
+    const st = ev.trail.state, { s1, s3 } = ev.trail.slots, narrow = innerWidth < 560;
+    const W = narrow ? 360 : 640, P = 4, col = (W - P * 2) / 4, cx = k => P + col * k + col / 2;
+    const now = EV_STEPS.map(([k]) => st[k] !== "lock").lastIndexOf(true);
+    // 每份卷落在哪一欄、欄內哪個位置（平時卷在欄內 20%～80% 平均排開）
+    const span = [[0, s1 - 1], [s1, s1], [s1 + 1, s1 + s3], [s1 + s3 + 1, s1 + s3 + 1]];
+    const px = slot => { const k = span.findIndex(([a, b]) => slot >= a && slot <= b), [a, b] = span[k];
+      return a === b ? cx(k) : P + col * k + col * (0.2 + 0.6 * (slot - a) / (b - a)); };
+    const head = `<svg viewBox="0 0 ${W} 42" class="ev-viz" aria-hidden="true">${EV_STEPS.map(([k, n, t], i) => {
+      const fill = st[k] === "lock" ? "#c0c4ca" : i % 2 ? "#B03A2E" : "#57606f";
+      const ls = narrow && t.includes("平時卷") ? [t.replace("平時卷", ""), "平時卷"] : [t];
+      return ls.map((s, j) => `<text x="${cx(i)}" y="${(ls.length > 1 ? 13 : 20) + j * 14}" text-anchor="middle" font-size="${narrow ? 12 : 13}" font-weight="700" fill="${fill}">${j ? "" : n + " "}${s}</text>`).join("")
+        + (i === now ? `<rect x="${cx(i) - 18}" y="${ls.length > 1 ? 30 : 27}" width="36" height="12" rx="6" fill="#54A0FF"/><text x="${cx(i)}" y="${ls.length > 1 ? 39.5 : 36.5}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">現在</text>` : "");
+    }).join("")}</svg>`;
     const rows = QUIZ_SUBJ.map(([s, c]) => {
       const t = ev.trail.subjects[s];
       if (!t) return "";
-      return `<tr style="--c:${c}"><td class="subj">${s}</td>${t.cells.map((v, i) => {
-        const ex = i % 2 === 1, prev = t.cells.slice(0, i).filter(x => x != null).pop();
-        return v == null ? `<td class="none${ex ? " exam" : ""}">—</td>`
-          : `<td class="${ex ? "exam" : ""}${EV_STEPS[i][0] === sel ? " sel" : ""}${click && st[EV_STEPS[i][0]] !== "lock" ? " go" : ""}"${click && st[EV_STEPS[i][0]] !== "lock" ? ` data-ev-step="${EV_STEPS[i][0]}" data-ev-scroll="1"` : ""}><b>${v}</b><br>${prev != null ? evDl(prev, v)
-            : t.n[i] != null ? `<span class="quiz-muted">${t.n[i]} 份</span>` : ""}</td>`;
-      }).join("")}</tr>`;
+      const pts = t.points || [], H = 180, T = 90, B = 170;
+      const lo = Math.min(40, Math.floor((Math.min(100, ...pts.map(p => p.score)) - 3) / 10) * 10); // 低於 40 分不壓扁
+      const Y = v => B - (B - T) * (v - lo) / (100 - lo);
+      let o = EV_STEPS.map(([k], i) => { const x = P + col * i + 3, w = col - 6;
+        return st[k] === "lock" && t.cells[i] == null
+          ? `<rect x="${x}" y="2" width="${w}" height="${H - 4}" rx="10" fill="#fafafa" stroke="#d9dde3" stroke-dasharray="5 5"/>`
+          : `<rect x="${x}" y="2" width="${w}" height="${H - 4}" rx="10" fill="${i % 2 ? "#fdf3f2" : "#f6f8fc"}"/>`; }).join("");
+      o += `<line x1="${P + 6}" x2="${W - P - 6}" y1="${Y(60)}" y2="${Y(60)}" stroke="#e5e7eb" stroke-dasharray="3 4"/>`;
+      const big = t.cells.map((v, i) => v == null ? null : [cx(i), 30]).filter(Boolean);
+      if (big.length > 1) o += `<path d="M${big.map(p => p.join(",")).join("L")}" stroke="${c}" stroke-width="3" opacity=".3"/>`;
+      if (pts.length) o += `<path d="${pts.map((p, i) => `${i ? "L" : "M"}${px(p.slot)},${Y(p.score)}`).join("")}" fill="none" stroke="${c}" stroke-width="2" opacity=".55" stroke-linejoin="round"/>`;
+      pts.forEach(p => { const x = px(p.slot), y = Y(p.score), tip = `<title>${s} ${p.date ? md(p.date) + " " : ""}${App.esc(p.name)} ${p.score}</title>`;
+        o += p.exam ? `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" rx="2.5" fill="${c}">${tip}</rect>`
+          : `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" stroke="${c}" stroke-width="2">${tip}</circle>`;
+        o += `<text x="${x}" y="${y - 7}" text-anchor="middle" font-size="10" fill="${c}">${p.score}</text>`; });
+      t.cells.forEach((v, i) => {
+        if (v == null) { o += `<text x="${cx(i)}" y="${H / 2 + 5}" text-anchor="middle" font-size="13" fill="#b0b5bb">${st[EV_STEPS[i][0]] === "lock" ? "🔒 還沒到" : "—"}</text>`; return; }
+        o += i % 2
+          ? `<rect x="${cx(i) - 21}" y="9" width="42" height="42" rx="11" fill="${c}"/><text x="${cx(i)}" y="37" text-anchor="middle" font-size="19" font-weight="900" fill="#fff">${v}</text>`
+          : `<circle cx="${cx(i)}" cy="30" r="20" fill="#fff" stroke="${c}" stroke-width="3"/><text x="${cx(i)}" y="37" text-anchor="middle" font-size="18" font-weight="900" fill="#2d3436">${v}</text>`;
+        const prev = t.cells.slice(0, i).filter(x => x != null).pop(), d = prev == null ? null : v - prev;
+        const tag = d == null ? (t.n[i] != null ? `${t.n[i]} 份平均` : "") : d > 0 ? `▲ ${d}` : d < 0 ? `▼ ${-d}` : "＝ 持平";
+        if (!tag) return;
+        const [tc, bg] = d == null || d === 0 ? ["#6b7280", "#f1f2f6"] : d > 0 ? ["#047857", "#e8f8f1"] : ["#B03A2E", "#fdecea"];
+        const tw = d == null ? 52 : 44;
+        o += `<rect x="${cx(i) - tw / 2}" y="54" width="${tw}" height="16" rx="8" fill="${bg}"/><text x="${cx(i)}" y="66" text-anchor="middle" font-size="11" font-weight="800" fill="${tc}">${tag}</text>`;
+      });
+      return `<div class="ev-vrow" style="--c:${c}"><h4>${s}</h4><svg viewBox="0 0 ${W} ${H}" class="ev-viz" role="img" aria-label="${s}這學期四段分數與每份卷走勢">${o}</svg></div>`;
     }).join("");
-    return `<table class="ev-trail">${head}${rows}</table>`;
-  }
-  function trailChart(ev) {
-    const { s1, s3 } = ev.trail.slots, total = s1 + s3 + 2;
-    const W = 460, H = 240, L = 30, R = 454, T = 28, B = 192;
-    const X = i => L + 26 + (R - L - 52) * i / (total - 1);
-    const all = QUIZ_SUBJ.flatMap(([s]) => (ev.trail.subjects[s]?.points || []).map(p => p.score));
-    const lo = Math.min(40, Math.floor(Math.min(100, ...all) / 10) * 10); // 低於 40 分不壓扁，底線跟著往下
-    const Y = v => B - (B - T) * (v - lo) / (100 - lo);
-    const band = (a, b, t, f) => `<rect x="${X(a) - 22}" y="${T - 22}" width="${X(b) - X(a) + 44}" height="${B - T + 20}" rx="8" fill="${f}"/>
-      <text x="${(X(a) + X(b)) / 2}" y="${T - 6}" text-anchor="middle" font-size="13" fill="#6b7280">${t}</text>`;
-    const grid = [...new Set([100, 80, 60, 40, lo])].filter(v => v >= lo).map(v => `<line x1="${L}" x2="${R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#9ca3af">${v}</text>`).join("");
-    const lines = QUIZ_SUBJ.map(([s, c]) => {
-      const pts = ev.trail.subjects[s]?.points || [];
-      if (!pts.length) return "";
-      return `<path d="${pts.map((p, k) => `${k ? "L" : "M"}${X(p.slot)},${Y(p.score)}`).join("")}" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`
-        + pts.map(p => p.exam
-          ? `<text x="${X(p.slot)}" y="${Y(p.score) + 8}" text-anchor="middle" font-size="22" fill="${c}"><title>${s} ${App.esc(p.name)} ${p.score}</title>★</text>`
-          : `<circle cx="${X(p.slot)}" cy="${Y(p.score)}" r="5.5" fill="#fff" stroke="${c}" stroke-width="3"><title>${s} ${md(p.date)} ${App.esc(p.name)} ${p.score}</title></circle>`).join("");
-    }).join("");
-    const lab = i => i < s1 ? `第${i + 1}卷` : i === s1 ? "期中考" : i <= s1 + s3 ? `第${i - s1}卷` : "期末考";
-    const fs = total > 8 ? 11 : 14;
-    const xl = Array.from({ length: total }, (_, i) => `<text x="${X(i)}" y="${B + 22}" text-anchor="middle" font-size="${fs}" fill="#57606f">${lab(i)}</text>`).join("");
-    return `<svg viewBox="0 0 ${W} ${H}" class="ev-chart" role="img" aria-label="國語、數學、社會整學期分數軌跡">
-      ${band(0, s1 - 1, "期中前平時卷", "#f5f8ff")}${band(s1, s1, "期中考", "#fff3f3")}${band(s1 + 1, s1 + s3, "期末前平時卷", "#f5f8ff")}${band(total - 1, total - 1, "期末考", "#fff3f3")}
-      ${grid}${lines}${xl}</svg>
-      <div class="quiz-legend" style="justify-content:center">${QUIZ_SUBJ.map(([s, c]) => `<span><i style="background:${c}"></i>${s}</span>`).join("")}<span>● 平時卷　★ 期中考／期末考</span></div>`;
+    const say = trailSay(ev);
+    return `${say ? `<div class="ev-say">${say}</div>` : ""}${head}${rows}
+      <div class="ev-vkey"><span><i></i>平時卷平均</span><span><i class="ex"></i>期中考／期末考</span><span><i class="p"></i>每一份卷</span><span>▲▼＝比前一段多或少幾分</span></div>`;
   }
   // 🔍 錯題分析與複習建議（BY 線，老師 2026-10-18 定案範本 ClassOS_v3.5_藍圖/觀念複習卡與錯題公開_範本.html）：
   // sync 端算好 ev.s1／ev.s3 的 analysis（規則正本 scripts/classos/lib/quiz-errors.mjs），前端只畫。
@@ -669,11 +695,8 @@
         <p class="quiz-sub">${App.esc(ev.term)}・座號 ${seatText}　｜　更新到${App.esc(ev.updated.label)}（${md(ev.updated.date)}）｜平時卷 → 期中考 → 平時卷 → 期末考</p>
         <div class="report-box quiz-box" style="--bc:#5F27CD">
           <span class="report-badge" style="--bc:#5F27CD">🧭 這學期的學習軌跡</span>
-          ${trailTable(ev, sel)}
-          <p class="ev-hint no-print">👆 點上面的 ①②③④ 或分數，就能看那一段的詳細內容</p>
-          <p class="quiz-muted">平時卷格＝那一段每份平時卷的平均；考試格＝期中考／期末考分數；▲▼＝比前一格多或少幾分；還沒考的格子先留「—」。藍框＝下面正在看的那一段。</p>
-          ${trailChart(ev)}
-          <p class="quiz-muted" style="text-align:center">只畫孩子自己的分數，不放全班平均、不排名。</p>
+          ${trailViz(ev)}
+          <p class="quiz-muted" style="text-align:center">只畫孩子自己的分數，不放全班平均、不排名。往下「📖 選一段來看詳細內容」看每一段的錯題分析。</p>
         </div>
         <div class="ev-picker" id="ev-picker">
           <h3 class="no-print">📖 選一段來看詳細內容 <small>點下面的按鈕切換；打開時先停在最新的一段</small></h3>
@@ -724,7 +747,7 @@
       <div class="ev-meter"><i style="width:${Math.floor(learned / sm.tracked.length * 100 + 0.5)}%"></i></div>
       <p class="quiz-muted">平時卷低於 80% 的 ${sm.tracked.length} 個觀念，期中／期末考已經學會 <b style="color:#047857">${learned} 個</b>${left.length ? `，還有 ${left.length} 個（列在下面「寒假可以努力」）` : ""}。</p>
       <div class="ev-legend">${QUIZ_SUBJ.filter(([s]) => sm.bySubject[s].n).map(([s, c]) => `<span><b style="--lc:${c}">${s}</b> 學會 ${sm.bySubject[s].ok}／${sm.bySubject[s].n}</span>`).join("")}</div></div>` : "";
-    const trail = !ev ? "" : box("#1F5FA8", "📈 這學期的評量軌跡", `${trailTable(ev, null)}${sm ? `<div class="ev-sum">${lines}</div>${growth}` : `<p class="quiz-muted">期末考成績登記後，這裡會出現各科一句話與觀念學會進度。</p>`}`);
+    const trail = !ev ? "" : box("#1F5FA8", "📈 這學期的評量軌跡", `${trailViz(ev)}${sm ? `<div class="ev-sum">${lines}</div>${growth}` : `<p class="quiz-muted">期末考成績登記後，這裡會出現各科一句話與觀念學會進度。</p>`}`);
     // 🗓️ 每週學習足跡：四項等第×每週＋好表現筆數（取代五向度逐週曲線，裁定 v3）
     const good = weeks.map(x => App.lines(x.highlights).length), gmax = Math.max(1, ...good);
     const strip = from => { const ws = weeks.slice(from, from + 10), pad = 10 - ws.length;

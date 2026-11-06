@@ -2230,6 +2230,16 @@ a.qa-chip.link::after { content: "👉 複習卡"; display: inline-block; white-
 .ev-trail td.none { color: #c4c8cf; }
 .ev-trail td.sel { outline: 2px solid #54A0FF; }
 .ev-chart { width: 100%; max-width: 640px; height: auto; display: block; margin: 6px auto 0; }
+/* DI 線 v3.4：學習軌跡每科一張整併圖（範本 學習軌跡_提案/範本_軌跡整併_示意.html） */
+.ev-say { margin: 10px 0 4px; background: #f6f3ff; border-radius: 12px; padding: 8px 12px; font-size: .92rem; }
+.ev-say b.up { color: #047857; } .ev-say b.down { color: #B03A2E; }
+.ev-viz { width: 100%; max-width: 640px; height: auto; display: block; margin: 0 auto; }
+.ev-vrow { max-width: 640px; margin: 8px auto 0; border-top: 1px dashed #e5e7eb; padding-top: 6px; break-inside: avoid; }
+.ev-vrow h4 { margin: 0; font-size: 1rem; font-weight: 900; color: var(--c); }
+.ev-vkey { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; font-size: .76rem; color: var(--ink-soft); margin-top: 10px; }
+.ev-vkey i { display: inline-block; width: 14px; height: 14px; border: 2.5px solid #888; border-radius: 50%; vertical-align: -2px; margin-right: 3px; }
+.ev-vkey i.ex { border-radius: 4px; background: #888; }
+.ev-vkey i.p { width: 8px; height: 8px; border-width: 2px; opacity: .6; vertical-align: 0; }
 .ev-lockbox { text-align: center; padding: 30px 10px; color: #9aa0a6; background: #fafafa; border-radius: 12px; margin-top: 8px; font-size: .86rem; }
 .ev-lockbox b { display: block; font-size: 1.8rem; }
 .ev-g-sub { border-left: 5px solid var(--c); border-radius: 10px; background: color-mix(in srgb, var(--c) 4%, var(--card)); padding: 6px 10px; margin: 10px 0; }
