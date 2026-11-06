@@ -405,15 +405,18 @@
   const evDl = (a, b) => a == null || b == null ? "" : b > a ? `<span class="ev-dl up">▲ ${b - a}</span>`
     : b < a ? `<span class="ev-dl down">▼ ${a - b}</span>` : `<span class="ev-dl">＝ 持平</span>`;
   const EV_STEPS = [["s1", "①", "期中前平時卷"], ["mid", "②", "期中考"], ["s3", "③", "期末前平時卷"], ["fin", "④", "期末考"]];
+  // v3.2（老師 2026-11-07）：學習評量頁的表頭 ①②③④ 就是按鈕、分數格也能點（跳到那一段並捲到內容）；學期總結（sel＝null）只看不點
   function trailTable(ev, sel) {
-    const head = `<tr><th class="s"></th>${EV_STEPS.map(([, n, t]) => `<th>${n}<br>${t}</th>`).join("")}</tr>`;
+    const st = ev.trail.state, click = sel != null;
+    const head = `<tr><th class="s"></th>${EV_STEPS.map(([k, n, t]) => !click ? `<th>${n}<br>${t}</th>`
+      : `<th><button type="button" class="ev-th${k === sel ? " sel" : ""}" data-ev-step="${k}" data-ev-scroll="1"${st[k] === "lock" ? " disabled" : ""}>${n} ${t}<span class="go">${st[k] === "lock" ? "🔒" : k === sel ? "👀 正在看" : "看 ›"}</span></button></th>`).join("")}</tr>`;
     const rows = QUIZ_SUBJ.map(([s, c]) => {
       const t = ev.trail.subjects[s];
       if (!t) return "";
       return `<tr style="--c:${c}"><td class="subj">${s}</td>${t.cells.map((v, i) => {
         const ex = i % 2 === 1, prev = t.cells.slice(0, i).filter(x => x != null).pop();
         return v == null ? `<td class="none${ex ? " exam" : ""}">—</td>`
-          : `<td class="${ex ? "exam" : ""}${EV_STEPS[i][0] === sel ? " sel" : ""}"><b>${v}</b><br>${prev != null ? evDl(prev, v)
+          : `<td class="${ex ? "exam" : ""}${EV_STEPS[i][0] === sel ? " sel" : ""}${click && st[EV_STEPS[i][0]] !== "lock" ? " go" : ""}"${click && st[EV_STEPS[i][0]] !== "lock" ? ` data-ev-step="${EV_STEPS[i][0]}" data-ev-scroll="1"` : ""}><b>${v}</b><br>${prev != null ? evDl(prev, v)
             : t.n[i] != null ? `<span class="quiz-muted">${t.n[i]} 份</span>` : ""}</td>`;
       }).join("")}</tr>`;
     }).join("");
@@ -423,10 +426,12 @@
     const { s1, s3 } = ev.trail.slots, total = s1 + s3 + 2;
     const W = 460, H = 240, L = 30, R = 454, T = 28, B = 192;
     const X = i => L + 26 + (R - L - 52) * i / (total - 1);
-    const Y = v => B - (B - T) * (Math.max(v, 40) - 40) / 60;
+    const all = QUIZ_SUBJ.flatMap(([s]) => (ev.trail.subjects[s]?.points || []).map(p => p.score));
+    const lo = Math.min(40, Math.floor(Math.min(100, ...all) / 10) * 10); // 低於 40 分不壓扁，底線跟著往下
+    const Y = v => B - (B - T) * (v - lo) / (100 - lo);
     const band = (a, b, t, f) => `<rect x="${X(a) - 22}" y="${T - 22}" width="${X(b) - X(a) + 44}" height="${B - T + 20}" rx="8" fill="${f}"/>
       <text x="${(X(a) + X(b)) / 2}" y="${T - 6}" text-anchor="middle" font-size="13" fill="#6b7280">${t}</text>`;
-    const grid = [40, 60, 80, 100].map(v => `<line x1="${L}" x2="${R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#9ca3af">${v}</text>`).join("");
+    const grid = [...new Set([100, 80, 60, 40, lo])].filter(v => v >= lo).map(v => `<line x1="${L}" x2="${R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#9ca3af">${v}</text>`).join("");
     const lines = QUIZ_SUBJ.map(([s, c]) => {
       const pts = ev.trail.subjects[s]?.points || [];
       if (!pts.length) return "";
@@ -614,7 +619,6 @@
     return `
         <div class="report-box quiz-box" style="--bc:#54A0FF">
           <span class="report-badge" style="--bc:#54A0FF">${first ? "①" : "③"} ${first ? "期中前" : "期末前"}平時卷${ev.trail.state[k] === "now" ? "（進行中）" : ""}</span>
-          <p class="quiz-muted">${md(q.from)}～${md(q.to)}</p>
           <div class="quiz-kpis">${QUIZ_SUBJ.map(kpi).join("")}</div>
           ${q.tip ? `<div class="quiz-tip">💡 複習建議：${App.esc(q.tip)}</div>` : ""}
         </div>
@@ -647,11 +651,18 @@
     const latest = EV_STEPS.map(([k]) => k).filter(k => st[k] !== "lock" && ev[k]).pop() || "s1";
     const sel = evalStep && st[evalStep] ? evalStep : latest;
     const [, n, t] = EV_STEPS.find(([k]) => k === sel);
-    const steps = EV_STEPS.map(([k, sn, stt]) => `<button type="button" class="ev-step ${st[k]}${k === sel ? " sel" : ""}" data-ev-step="${k}">
-      <span class="n">${sn}</span><span class="t">${stt}</span><span class="st">${st[k] === "lock" ? "🔒 還沒開始" : st[k] === "now" ? "● 進行中" : "✅ 完成"}</span></button>`).join("");
+    const tabs = EV_STEPS.map(([k, sn, stt]) => `<button type="button" class="ev-tab${k === sel ? " sel" : ""}" role="tab" aria-selected="${k === sel}" data-ev-step="${k}"${st[k] === "lock" ? " disabled" : ""}>
+      <span class="n">${sn}</span><span class="t">${stt}</span><span class="st">${st[k] === "lock" ? "🔒 還沒開始" : st[k] === "now" ? "● 進行中" : "✅ 已完成"}</span>
+      ${st[k] === "lock" ? "" : `<span class="cta">${k === sel ? "👀 正在看" : "👉 點我看"}</span>`}</button>`).join("");
+    const open = EV_STEPS.filter(([k]) => st[k] !== "lock" && ev[k]), oi = open.findIndex(([k]) => k === sel);
+    const prev = open[oi - 1], next = open[oi + 1], lockNext = EV_STEPS.find(([k], i) => i > EV_STEPS.findIndex(([x]) => x === sel) && st[k] === "lock");
+    const nav = `<div class="ev-nav no-print">
+      <button type="button"${prev ? ` data-ev-step="${prev[0]}" data-ev-scroll="1"` : " disabled"}>← ${prev ? `上一段：${prev[1]} ${prev[2]}` : "沒有上一段"}</button>
+      <button type="button"${next ? ` data-ev-step="${next[0]}" data-ev-scroll="1"` : " disabled"}>${next ? `下一段：${next[1]} ${next[2]}` : lockNext ? `下一段：${lockNext[1]} ${lockNext[2]}（🔒 ${EV_WHEN[lockNext[0]]}）` : "已經是最後一段"} →</button></div>`;
     const body = st[sel] === "lock" || !ev[sel]
-      ? `<div class="report-box quiz-box" style="--bc:#9ca3af"><span class="report-badge" style="--bc:#9ca3af">${n} ${t}</span><div class="ev-lockbox"><b>🔒</b>${EV_WHEN[sel]}，就會出現在這裡。</div></div>`
+      ? `<div class="ev-lockbox"><b>🔒</b>${EV_WHEN[sel]}，就會出現在這裡。</div>`
       : sel === "s1" || sel === "s3" ? quizStage(ev, sel) : examStage(ev, sel);
+    const range = ev[sel] && (sel === "s1" || sel === "s3") ? `${md(ev[sel].from)}～${md(ev[sel].to)}` : "";
     return `
       <div class="report-sheet report-quiz">
         <h2 class="report-title">📈 學習評量 📈</h2>
@@ -659,13 +670,20 @@
         <div class="report-box quiz-box" style="--bc:#5F27CD">
           <span class="report-badge" style="--bc:#5F27CD">🧭 這學期的學習軌跡</span>
           ${trailTable(ev, sel)}
+          <p class="ev-hint no-print">👆 點上面的 ①②③④ 或分數，就能看那一段的詳細內容</p>
           <p class="quiz-muted">平時卷格＝那一段每份平時卷的平均；考試格＝期中考／期末考分數；▲▼＝比前一格多或少幾分；還沒考的格子先留「—」。藍框＝下面正在看的那一段。</p>
           ${trailChart(ev)}
           <p class="quiz-muted" style="text-align:center">只畫孩子自己的分數，不放全班平均、不排名。</p>
         </div>
-        <div class="ev-steps no-print" role="tablist">${steps}</div>
-        <p class="quiz-muted no-print" style="text-align:center">點上面的格子切換；打開時自動停在最新那一段，舊的內容隨時可以回頭看。</p>
-        ${body}
+        <div class="ev-picker" id="ev-picker">
+          <h3 class="no-print">📖 選一段來看詳細內容 <small>點下面的按鈕切換；打開時先停在最新的一段</small></h3>
+          <div class="ev-tabs no-print" role="tablist">${tabs}</div>
+          <div class="ev-panel">
+            <div class="ev-now"><span>👀 目前在看：${n} ${t}</span>${range ? `<small>${range}</small>` : ""}</div>
+            ${body}
+            ${nav}
+          </div>
+        </div>
       </div>`;
   }
   // 作品牆（週報「本週作品」與學期總結「學期作品牆」共用）
@@ -1043,7 +1061,12 @@
     // 切換分類＝開該類最新一筆
     main.querySelectorAll(".report-cats button").forEach(b =>
       b.onclick = () => { const l = idxs(b.dataset.cat); evalStep = null; if (l.length) showReport(report, l[l.length - 1], anon); });
-    main.querySelectorAll(".ev-step").forEach(b => b.onclick = () => { evalStep = b.dataset.evStep; showReport(report, EVAL_IDX, anon); });
+    main.querySelectorAll("[data-ev-step]").forEach(b => b.onclick = () => {
+      if (b.disabled) return;
+      evalStep = b.dataset.evStep; const go = !!b.dataset.evScroll;
+      showReport(report, EVAL_IDX, anon);
+      if (go) document.getElementById("ev-picker")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     const sel = document.getElementById("report-period");
     if (sel) sel.onchange = () => showReport(report, Number(sel.value), anon);
     document.getElementById("report-anon").onclick = () => showReport(report, periodIdx, !anon);
