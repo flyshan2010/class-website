@@ -2092,7 +2092,15 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 @media (max-width: 620px) {
   .mid-scores { grid-template-columns: 1fr; }
   .mid-card { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-  .mg-row { grid-template-columns: 40px minmax(0, 1fr) 46px 46px 78px; font-size: .8rem; }
+  /* 手機：兩行——科目＋知識點／平時卷・期中考・結果（表頭藏起來，數字前補標籤） */
+  .mg-row { grid-template-columns: 64px 64px minmax(0, 1fr); gap: 2px 8px; font-size: .8rem; }
+  .mg-row.head { display: none; }
+  .mg-row > :nth-child(2) { grid-column: 2 / -1; }
+  .mg-row > :nth-child(3) { grid-column: 1; text-align: left; }
+  .mg-row > :nth-child(4) { grid-column: 2; text-align: left; }
+  .mg-row > :nth-child(5) { grid-column: 3; justify-self: start; padding: 0 4px; font-size: .72rem; }
+  .mg-row > :nth-child(3)::before { content: "平時 "; color: var(--ink-soft); font-weight: 400; }
+  .mg-row > :nth-child(4)::before { content: "期中 "; color: var(--ink-soft); font-weight: 400; }
 }
 @media print { .mid-scores { grid-template-columns: repeat(3, 1fr); } .mid-growth, .mid-card { break-inside: avoid; } }
 /* 🔍 錯題分析與複習建議（BY 線 2026-10-18，report.js quizAnalysis） */
