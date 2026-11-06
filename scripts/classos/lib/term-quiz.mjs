@@ -57,6 +57,23 @@ export function quizRange(calendar, weeks, term, stage) {
  */
 export function toQuiz(rec) {
   if (rec.category !== "評量") return null;
+  // 期中考／期末考的錯題表也寫進紀錄庫評量列（DG 線，老師 2026-11-06 裁定 A），但不是平時考：
+  // 不算平考、不進平時評量分頁；sync 另用 toTermExam 組「📝 期中評量」分頁。
+  if (isTermExam(rec.name)) return null;
+  return parseEval(rec);
+}
+
+/** 定期評量的評量名稱（📝平時卷「名稱」欄，錯題表上傳時原樣寫進紀錄庫）。 */
+export const TERM_EXAMS = ["期中考", "期末考"];
+export const isTermExam = (name) => TERM_EXAMS.includes(String(name ?? "").replace(/\s+/g, ""));
+
+/** 紀錄庫一列 → 定期評量項目（只收評量名稱＝期中考／期末考）；欄位同 toQuiz。 */
+export function toTermExam(rec) {
+  if (rec.category !== "評量" || !isTermExam(rec.name)) return null;
+  return parseEval(rec);
+}
+
+function parseEval(rec) {
   const desc = String(rec.desc ?? "");
   const raw = rec.score;
   const has = raw !== null && raw !== undefined && raw !== "";

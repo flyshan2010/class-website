@@ -452,33 +452,35 @@
       <span class="qa-num">${i + 1}</span><span class="qa-subj">${App.esc(e.subject)}</span><span>${App.esc(k.name)}</span><span class="qa-low">${k.rate}%</span><span class="quiz-muted">${App.esc(e.name)}</span>
       <span class="qa-go">${cardBtn(cardOf(e, k.name)) || `<span class="quiz-muted">看下方錯題訂正</span>`}</span></li>`).join("")}</ol></div>`;
   }
+  // 一份卷的錯題分析卡（平時卷與 📝 期中評量共用）；prefix＝標題前綴（不給＝最新卷寫「最近一次・」）
+  function qaExam(e, latest, prefix) {
+    const weak = e.kp.filter(k => k.rate < 80).sort((a, b) => a.rate - b.rate);
+    const fine = e.kp.filter(k => k.rate >= 80);
+    const chips = weak.length ? weak.slice(0, 2).map(k => { const c = cardOnly(cardOf(e, k.name));
+        return c ? `<a class="qa-chip link" href="${c}" target="_blank" rel="noopener">要加強：${App.esc(k.name)} ${k.rate}%</a>`
+          : `<span class="qa-chip">要加強：${App.esc(k.name)} ${k.rate}%</span>`; }).join("")
+      : `<span class="qa-chip ok">各知識點都很穩定 👍</span>`;
+    const fineHtml = !fine.length ? "" : weak.length
+      ? `<details class="qa-fine"><summary>✓ 其他 ${fine.length} 項都在 80% 以上（點開看）</summary>${bars(fine)}</details>` : bars(fine);
+    const tips = e.tips.length ? `<ul class="qa-tips">${e.tips.map(t => `<li><b>💡 ${App.esc(t.name)}</b>：${App.esc(t.tip)}${t.card && cardOnly(t.card) ? `　${cardBtn(t.card)}` : ""}</li>`).join("")}</ul>`
+      : `<div class="qa-tip">把錯的題目訂正一次就好。</div>`;
+    const whole = e.review && httpsOnly(e.review.href)
+      ? `<div class="quiz-muted">📖 <a href="${httpsOnly(e.review.href)}" target="_blank" rel="noopener">${App.esc(e.review.label || "整課觀念複習")}</a></div>` : "";
+    const paper = e.unlocked && e.paper && httpsOnly(e.paper) ? `<div class="quiz-muted">📄 <a href="${httpsOnly(e.paper)}" target="_blank" rel="noopener">打開試卷</a></div>` : "";
+    const lock = e.unlocked ? "" : `<div class="qa-lock">🔒 正確答案與試卷，${e.open ? `${md(e.open)}（解答開放日）起出現在這裡。` : "老師公布解答開放日後才會出現在這裡。"}</div>`;
+    const showAns = e.unlocked && (e.wrong || []).some(w => "ans" in w);
+    const wrong = !e.wrong?.length ? `<div class="qa-lock">這份卷全對，沒有錯題 🎉</div>${paper}`
+      : `<details class="qa-wrong" open><summary>我錯的題目${showAns ? "與正確答案" : ""}（${e.wrong.length} 題）</summary>${paper}
+        <div class="qa-tbl"><table class="quiz-table"><thead><tr><th>題目</th><th>知識點</th><th class="n">扣分</th>${showAns ? "<th>正確答案</th>" : ""}<th>複習</th></tr></thead><tbody>
+        ${e.wrong.map(w => `<tr><td>${App.esc(w.label)}</td><td><span class="quiz-badge">${App.esc(w.tag)}</span></td><td class="n">−${w.lost}</td>${showAns ? `<td>${App.esc(w.ans ?? "")}</td>` : ""}<td>${cardLink(w.card, "卡片") || "—"}</td></tr>`).join("")}
+        </tbody></table></div>${lock}</details>`;
+    return `<details class="qa-exam${latest ? "" : " old"}" style="--c:${QUIZ_COLOR[e.subject] || "#6b7280"}"${latest ? " open" : ""}>
+      <summary class="qa-h"><b>${prefix ?? (latest ? "最近一次・" : "")}${App.esc(e.name)}</b><span class="quiz-muted">${md(e.date)}</span><span><span class="qa-score">${e.score}</span> 分</span><span class="qa-toggle"></span><span class="qa-chips">${chips}</span></summary>
+      <div class="qa-body">${weak.length ? bars(weak) : ""}${fineHtml}${tips}${whole}${wrong}</div></details>`;
+  }
   function quizAnalysis(list) {
     if (!list?.length) return "";
-    const one = (e, latest) => {
-      const weak = e.kp.filter(k => k.rate < 80).sort((a, b) => a.rate - b.rate);
-      const fine = e.kp.filter(k => k.rate >= 80);
-      const chips = weak.length ? weak.slice(0, 2).map(k => { const c = cardOnly(cardOf(e, k.name));
-          return c ? `<a class="qa-chip link" href="${c}" target="_blank" rel="noopener">要加強：${App.esc(k.name)} ${k.rate}%</a>`
-            : `<span class="qa-chip">要加強：${App.esc(k.name)} ${k.rate}%</span>`; }).join("")
-        : `<span class="qa-chip ok">各知識點都很穩定 👍</span>`;
-      const fineHtml = !fine.length ? "" : weak.length
-        ? `<details class="qa-fine"><summary>✓ 其他 ${fine.length} 項都在 80% 以上（點開看）</summary>${bars(fine)}</details>` : bars(fine);
-      const tips = e.tips.length ? `<ul class="qa-tips">${e.tips.map(t => `<li><b>💡 ${App.esc(t.name)}</b>：${App.esc(t.tip)}${t.card && cardOnly(t.card) ? `　${cardBtn(t.card)}` : ""}</li>`).join("")}</ul>`
-        : `<div class="qa-tip">把錯的題目訂正一次就好。</div>`;
-      const whole = e.review && httpsOnly(e.review.href)
-        ? `<div class="quiz-muted">📖 <a href="${httpsOnly(e.review.href)}" target="_blank" rel="noopener">${App.esc(e.review.label || "整課觀念複習")}</a></div>` : "";
-      const paper = e.unlocked && e.paper && httpsOnly(e.paper) ? `<div class="quiz-muted">📄 <a href="${httpsOnly(e.paper)}" target="_blank" rel="noopener">打開試卷</a></div>` : "";
-      const lock = e.unlocked ? "" : `<div class="qa-lock">🔒 正確答案與試卷，${e.open ? `${md(e.open)}（解答開放日）起出現在這裡。` : "老師公布解答開放日後才會出現在這裡。"}</div>`;
-      const showAns = e.unlocked && (e.wrong || []).some(w => "ans" in w);
-      const wrong = !e.wrong?.length ? `<div class="qa-lock">這份卷全對，沒有錯題 🎉</div>${paper}`
-        : `<details class="qa-wrong" open><summary>我錯的題目${showAns ? "與正確答案" : ""}（${e.wrong.length} 題）</summary>${paper}
-          <div class="qa-tbl"><table class="quiz-table"><thead><tr><th>題目</th><th>知識點</th><th class="n">扣分</th>${showAns ? "<th>正確答案</th>" : ""}<th>複習</th></tr></thead><tbody>
-          ${e.wrong.map(w => `<tr><td>${App.esc(w.label)}</td><td><span class="quiz-badge">${App.esc(w.tag)}</span></td><td class="n">−${w.lost}</td>${showAns ? `<td>${App.esc(w.ans ?? "")}</td>` : ""}<td>${cardLink(w.card, "卡片") || "—"}</td></tr>`).join("")}
-          </tbody></table></div>${lock}</details>`;
-      return `<details class="qa-exam${latest ? "" : " old"}" style="--c:${QUIZ_COLOR[e.subject] || "#6b7280"}"${latest ? " open" : ""}>
-        <summary class="qa-h"><b>${latest ? "最近一次・" : ""}${App.esc(e.name)}</b><span class="quiz-muted">${md(e.date)}</span><span><span class="qa-score">${e.score}</span> 分</span><span class="qa-toggle"></span><span class="qa-chips">${chips}</span></summary>
-        <div class="qa-body">${weak.length ? bars(weak) : ""}${fineHtml}${tips}${whole}${wrong}</div></details>`;
-    };
+    const one = qaExam;
     const known = QUIZ_SUBJ.map(([s]) => s);
     const subjects = [...known, ...new Set(list.map(e => e.subject).filter(s => !known.includes(s)))]
       .filter(s => list.some(e => e.subject === s));
@@ -500,6 +502,56 @@
       <div class="qa-tabs" role="tablist">${tabs}</div>${panels}
       <details class="quiz-muted qa-howto"><summary>ⓘ 怎麼看這一區</summary>📌「先複習這幾個」＝三科所有平時卷裡得分率最低的知識點，最多 3 個（同一個知識點考過好幾次，看最近那一次）。分頁的燈：🔴 有知識點低於 60%、🟠 最低在 60–79%、🟢 全部 80% 以上（看該科最近一份卷）。分頁上的分數是該科最近一份卷，▲▼ 是比同科上一份卷多或少幾分（不同課的卷難度不同，當參考就好）；要加強＝得分率低於 80% 的知識點數。得分率＝這一類題目拿到的分數 ÷ 這一類的總分。複習建議依需要加強的程度排序，最多列 5 類。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷，到該卷自己的解答開放日才出現。</details>
     </div>`;
+  }
+  // 📝 期中評量分頁（DG 線，老師 2026-11-06 定案範本 ClassOS_v3.5_藍圖/期中考分頁_範本.html；資料流裁定 A）：
+  // 資料是 sync 端算好的 report.midterm（規則正本 scripts/classos/lib/midterm-report.mjs），前端只畫。
+  // A 三科分數對照平時卷平均 → B 先複習這幾個 → C 平時卷錯過的觀念期中考學會沒 → D 各科錯題分析（沿用 qaExam）。
+  const MID_IDX = -2; // 期中評量也不是一個期別
+  function midSheet(report, seatText) {
+    const m = report.midterm, subs = m.subjects;
+    const byDate = {};
+    subs.forEach(s => (byDate[s.date] = byDate[s.date] || []).push(s.subject));
+    const dates = Object.keys(byDate).sort().map(d => `${byDate[d].join("、")} ${md(d)}`).join("，");
+    const cards = subs.map(s => {
+      const d = s.score != null && s.quizAvg != null ? s.score - s.quizAvg : null;
+      const dl = d === null ? "" : d > 0 ? `<span class="mid-dl up">▲ ${d}</span>` : d < 0 ? `<span class="mid-dl down">▼ ${-d}</span>` : `<span class="mid-dl">＝ 持平</span>`;
+      const big = s.absent ? "缺考" : s.score ?? "—";
+      return `<div class="mid-card" style="--c:${QUIZ_COLOR[s.subject] || "#6b7280"}"><div class="s">${App.esc(s.subject)}</div>
+        <div class="big">${big}${s.absent || s.score == null ? "" : "<small> 分</small>"}</div>
+        <div class="vs">平時卷平均 ${s.quizAvg ?? "—"}${s.quizAvg != null ? " 分" : ""} ${dl}</div></div>`;
+    }).join("");
+    const items = subs.filter(s => s.item).map(s => s.item);
+    const weakAll = items.flatMap(e => e.kp.filter(k => k.rate < 80).map(k => ({ e, k }))).sort((a, b) => a.k.rate - b.k.rate).slice(0, 3);
+    const focus = !items.length ? "" : !weakAll.length
+      ? `<div class="qa-focus"><h3>🎉 每個知識點都在 80% 以上</h3>把錯的題目訂正一次就好。</div>`
+      : `<div class="qa-focus"><h3>📌 先複習這幾個</h3><ol>${weakAll.map(({ e, k }, i) => `<li style="--c:${QUIZ_COLOR[e.subject] || "#6b7280"}">
+        <span class="qa-num">${i + 1}</span><span class="qa-subj">${App.esc(e.subject)}</span><span>${App.esc(k.name)}</span><span class="qa-low">${k.rate}%</span>
+        <span class="qa-go">${cardBtn(cardOf(e, k.name)) || `<span class="quiz-muted">看下方錯題訂正</span>`}</span></li>`).join("")}</ol></div>`;
+    const g = m.growth || [];
+    const okN = g.filter(x => x.ok).length;
+    const growth = !g.length ? "" : `<div class="mid-growth"><h3>🔁 平時卷錯過的觀念，期中考學會了嗎？</h3>
+      <p class="quiz-muted" style="margin:0 0 6px">平時卷低於 80% 的 ${g.length} 個知識點，期中考有 <b style="color:#047857">${okN} 個</b> 到 80% 以上。</p>
+      <div class="mg-row head"><span>科目</span><span>知識點</span><span class="n">平時卷</span><span class="n">期中考</span><span></span></div>
+      ${g.map(x => `<div class="mg-row"><span style="color:${QUIZ_COLOR[x.subject] || "#6b7280"};font-weight:700">${App.esc(x.subject)}</span><span title="${App.esc(x.quizName)}">${App.esc(x.name)}</span>
+        <span class="n" style="color:${rateColor(x.quiz)}">${x.quiz}%</span><span class="n" style="color:${rateColor(x.mid)};font-weight:700">${x.mid}%</span>
+        ${x.ok ? `<span class="mg-tag ok">✅ 學會了</span>` : `<span class="mg-tag no">⚠️ 還要加強</span>`}</div>`).join("")}</div>`;
+    const weakN = e => e.kp.filter(k => k.rate < 80).length;
+    const tabs = items.map((e, i) => `<button type="button" class="qa-tab" role="tab" style="--c:${QUIZ_COLOR[e.subject] || "#6b7280"}" aria-selected="${i === 0}" data-qa-tab="${i}"><span class="qa-light">${QA_LIGHT(e)}</span>
+      <span class="qa-tt"><span class="qa-t1">${App.esc(e.subject)}<span class="qa-sc">${e.score} 分</span></span><small>${weakN(e) ? `要加強 ${weakN(e)} 項` : "全部穩定"}</small></span></button>`).join("");
+    const panels = items.map((e, i) => `<div class="qa-panel" data-qa-panel="${i}"${i ? " hidden" : ""}>${qaExam(e, true, "")}</div>`).join("");
+    return `
+      <div class="report-sheet report-quiz">
+        <h2 class="report-title">📝 ${App.esc(m.term)} ${App.esc(m.name)} 📝</h2>
+        <p class="quiz-sub">座號 ${seatText}　｜　考試日：${App.esc(dates)}　｜　更新到${App.esc(m.updated.label)}（${md(m.updated.date)}）</p>
+        <div class="report-box quiz-box" style="--bc:#E17055">
+          <span class="report-badge" style="--bc:#E17055">📝 期中評量・錯題分析</span>
+          <p class="quiz-muted">只看自己，不放全班平均、不排名。</p>
+          <div class="mid-scores">${cards}</div>
+          ${focus}${growth}
+          ${items.length ? `<div class="qa-tabs" role="tablist">${tabs}</div>${panels}` : `<p class="quiz-muted">錯題分析還在整理，整理好就會出現在這裡。</p>`}
+          <details class="quiz-muted qa-howto"><summary>ⓘ 怎麼看這一頁</summary>「平時卷平均」＝期中考前每份平時卷的平均分（和 📈 平時評量同一套算法）；▲▼ 是期中考比平時卷平均多或少幾分（題目範圍與難度不同，當參考就好）。得分率＝這一類題目拿到的分數 ÷ 這一類的總分。「平時卷 → 期中考」只列平時卷曾經低於 80% 的知識點（看期中考前最近一份考到它的平時卷）：期中考到 80% 以上＝✅ 學會了。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷到解答開放日才出現。</details>
+        </div>
+      </div>`;
   }
   // 科目分頁：報告是 innerHTML 重畫，所以掛在 document 上委派，只掛一次
   document.addEventListener("click", ev => {
@@ -569,8 +621,9 @@
   function showReport(report, periodIdx = defaultIdx(report.periods), anon = false) {
     document.body.classList.add("report-open");
     const isQuiz = periodIdx === QUIZ_IDX && !!report.quiz;
-    if (periodIdx === QUIZ_IDX && !isQuiz) periodIdx = defaultIdx(report.periods);
-    const p = isQuiz ? {} : report.periods[periodIdx];
+    const isMid = periodIdx === MID_IDX && !!report.midterm;
+    if ((periodIdx === QUIZ_IDX && !isQuiz) || (periodIdx === MID_IDX && !isMid)) periodIdx = defaultIdx(report.periods);
+    const p = isQuiz || isMid ? {} : report.periods[periodIdx];
     const isTerm = p.reportType === "期末總報告";
     const isEssay = p.reportType === "作文批改";
     const displayName = anon ? maskName(report.name) : report.name;
@@ -583,15 +636,17 @@
     // 兩類都有才顯示分類鈕；類內筆數多時用下拉選單，少時用按鈕。作文以「✍️ 題目」標示。
     // 2026-10-17 加第三類「📈 平時評量」（report.quiz，不是期別、只有一頁）。
     const catOf = x => x.reportType === "作文批改" ? "essay" : "report";
-    const cat = isQuiz ? "quiz" : catOf(p);
+    const cat = isQuiz ? "quiz" : isMid ? "midterm" : catOf(p);
     const idxs = cat2 => cat2 === "quiz" ? (report.quiz ? [QUIZ_IDX] : [])
+      : cat2 === "midterm" ? (report.midterm ? [MID_IDX] : [])
       : report.periods.map((x, i) => catOf(x) === cat2 ? i : -1).filter(i => i >= 0);
-    const inCat = isQuiz ? [] : idxs(cat);
+    const inCat = isQuiz || isMid ? [] : idxs(cat);
     const quizN = report.quiz ? QUIZ_SUBJ.reduce((a, [s]) => a + (report.quiz.subjects[s]?.items?.length || 0), 0) : 0;
-    const catCount = { report: idxs("report").length, essay: idxs("essay").length, quiz: quizN };
+    const catCount = { report: idxs("report").length, essay: idxs("essay").length, quiz: quizN,
+      midterm: report.midterm?.subjects?.length || 0 };
     const tabLabel = x => x.reportType === "作文批改"
       ? `✍️ ${x.essay?.title || x.period}` : x.period;
-    const catList = [["report", "📊 學習報告"], ["essay", "✍️ 作文"], ["quiz", "📈 平時評量"]].filter(([k]) => catCount[k]);
+    const catList = [["report", "📊 學習報告"], ["essay", "✍️ 作文"], ["quiz", "📈 平時評量"], ["midterm", "📝 期中評量"]].filter(([k]) => catCount[k]);
     const catTabs = catList.length >= 2
       ? `<div class="report-cats" role="tablist">${catList.map(([k, t]) =>
           `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "active" : ""}" data-cat="${k}">${t}<small>${catCount[k]}</small></button>`).join("")}</div>`
@@ -685,7 +740,7 @@
       </div>`;
     };
 
-    main.innerHTML = toolbar + (isQuiz ? quizSheet(report, seatText) : isEssay ? essaySheet() : dashOverview(report, periodIdx) + `
+    main.innerHTML = toolbar + (isQuiz ? quizSheet(report, seatText) : isMid ? midSheet(report, seatText) : isEssay ? essaySheet() : dashOverview(report, periodIdx) + `
       <div class="report-sheet${isTerm ? " report-term" : ""}">
         <h2 class="report-title">${isTerm ? "🌟 學期學習總報告 🌟" : "✨ 學生學習分析報告 ✨"}</h2>
 

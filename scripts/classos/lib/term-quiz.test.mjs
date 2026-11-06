@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { roundHalfUp, quizRange, toQuiz, inRange, trendOf, summarize, othersNote, reviewTip } from "./term-quiz.mjs";
+import { roundHalfUp, quizRange, toQuiz, toTermExam, inRange, trendOf, summarize, othersNote, reviewTip } from "./term-quiz.mjs";
 
 const ROOT = new URL("../../../", import.meta.url);
 const calendar = JSON.parse(readFileSync(new URL("data/calendar.json", ROOT), "utf8"));
@@ -88,4 +88,13 @@ test("備註：科目「其他」標出評量名稱，同名合併、不同名�
     "其他科平時考平均：其他（英語普測） 87（1 次）、健康 90（1 次）");
   assert.equal(othersNote([o("其他", "英語普測", 80), o("其他", "英語普測", 91), o("其他", "自然小考", 70), o("其他", "英語普測", null, true)]),
     "其他科平時考平均：其他（英語普測） 86（2 次）、其他（自然小考） 70（1 次）");
+});
+
+test("toQuiz：期中考／期末考不算平時考，改走 toTermExam（DG 線）", () => {
+  const mid = { ...q("2026-11-05", "國語", 86), name: "期中考" };
+  assert.equal(toQuiz(mid), null);
+  assert.equal(toQuiz({ ...mid, name: "期末考" }), null);
+  assert.equal(toTermExam(mid).score, 86);
+  assert.equal(toTermExam(q("2026-10-01", "數學", 85)), null);
+  assert.equal(toQuiz({ ...mid, name: "期中考前複習卷" }).score, 86);
 });

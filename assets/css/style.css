@@ -2071,6 +2071,30 @@ a.store-buy { display: block; text-align: center; text-decoration: none; box-siz
 .quiz-calc td:last-child { text-align: right; white-space: nowrap; }
 .quiz-badge { display: inline-block; font-size: .72rem; font-weight: 400; padding: 1px 8px; border-radius: 99px; background: var(--line); color: var(--ink-soft); }
 @media (max-width: 620px) { .quiz-kpis { grid-template-columns: 1fr; } }
+/* 📝 期中評量（DG 線 2026-11-06，report.js midSheet；範本 ClassOS_v3.5_藍圖/期中考分頁_範本.html） */
+.mid-scores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+.mid-card { border: 2px solid var(--c); border-radius: 12px; padding: 8px 12px; background: color-mix(in srgb, var(--c) 5%, var(--card)); }
+.mid-card .s { color: var(--c); font-weight: 800; }
+.mid-card .big { font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.mid-card .big small { font-size: .9rem; font-weight: 400; }
+.mid-card .vs { font-size: .78rem; color: var(--ink-soft); }
+.mid-dl { font-size: .78rem; font-weight: 800; border-radius: 999px; padding: 0 8px; background: #f1f2f6; color: var(--ink-soft); white-space: nowrap; }
+.mid-dl.up { background: #e8f8f1; color: #047857; }
+.mid-dl.down { background: #fdecea; color: #B03A2E; }
+.mid-growth { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 12px 0; }
+.mid-growth h3 { margin: 0 0 6px; font-size: 1rem; color: #4834D4; }
+.mg-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) 64px 64px 92px; gap: 4px 8px; align-items: center; padding: 4px 0; border-top: 1px solid var(--line); font-size: .85rem; }
+.mg-row.head { border-top: 0; color: var(--ink-soft); font-size: .78rem; }
+.mg-row .n { text-align: right; font-variant-numeric: tabular-nums; }
+.mg-tag { font-size: .78rem; font-weight: 700; border-radius: 999px; padding: 0 8px; text-align: center; white-space: nowrap; }
+.mg-tag.ok { background: #e8f8f1; color: #047857; }
+.mg-tag.no { background: #fdecea; color: #B03A2E; }
+@media (max-width: 620px) {
+  .mid-scores { grid-template-columns: 1fr; }
+  .mid-card { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .mg-row { grid-template-columns: 40px minmax(0, 1fr) 46px 46px 78px; font-size: .8rem; }
+}
+@media print { .mid-scores { grid-template-columns: repeat(3, 1fr); } .mid-growth, .mid-card { break-inside: avoid; } }
 /* 🔍 錯題分析與複習建議（BY 線 2026-10-18，report.js quizAnalysis） */
 .qa-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 4px; }
 .qa-tab { border: 2px solid var(--c); background: var(--card); color: var(--c); border-radius: 12px; padding: 5px 14px; font: inherit; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
