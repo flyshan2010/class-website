@@ -2214,3 +2214,80 @@ a.qa-chip.link::after { content: "👉 複習卡"; display: inline-block; white-
   .wk-poster.wk-merged { grid-template-rows: auto auto auto; }
   .wk-essay-list { column-count: 1; }
 }
+
+/* ── 📈 學習評量・🎓 學期總結（DI 線 v3.1 2026-11-07，report.js evalSheet／termSheet；範本 ClassOS_v3.5_藍圖/學習軌跡_提案/範本_學習評量完整版_示意.html）── */
+.ev-dl { font-size: .74rem; font-weight: 800; border-radius: 999px; padding: 0 7px; background: #f1f2f6; color: var(--ink-soft); white-space: nowrap; }
+.ev-dl.up { background: #e8f8f1; color: #047857; }
+.ev-dl.down { background: #fdecea; color: #B03A2E; }
+.ev-trail { width: 100%; border-collapse: separate; border-spacing: 4px; table-layout: fixed; font-size: .84rem; }
+.ev-trail th { font-size: .7rem; color: var(--ink-soft); font-weight: 700; line-height: 1.3; }
+.ev-trail th.s { width: 3.4em; }
+.ev-trail td { text-align: center; border-radius: 10px; background: #f6f8fb; padding: 6px 2px; line-height: 1.3; }
+.ev-trail td.subj { background: none; font-weight: 800; color: var(--c); text-align: left; }
+.ev-trail td.exam { background: color-mix(in srgb, var(--c) 9%, #fff); }
+.ev-trail td b { font-size: 1.1rem; }
+.ev-trail td .ev-dl { display: inline-block; margin-top: 2px; }
+.ev-trail td.none { color: #c4c8cf; }
+.ev-trail td.sel { outline: 2px solid #54A0FF; }
+.ev-chart { width: 100%; max-width: 640px; height: auto; display: block; margin: 6px auto 0; }
+.ev-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 14px; }
+.ev-step { font: inherit; border: 2px solid var(--line); background: var(--card); border-radius: 12px; padding: 6px 4px; cursor: pointer; text-align: center; line-height: 1.3; color: inherit; }
+.ev-step .n { display: block; font-size: 1rem; }
+.ev-step .t { display: block; font-size: .74rem; font-weight: 700; }
+.ev-step .st { display: block; font-size: .64rem; color: var(--ink-soft); }
+.ev-step.done { border-color: #bfe8d8; }
+.ev-step.now { border-color: #54A0FF; }
+.ev-step.lock { background: #f7f7f7; color: #aaa; }
+.ev-step.sel { background: #54A0FF; border-color: #54A0FF; color: #fff; }
+.ev-step.sel .st { color: #eaf4ff; }
+.ev-lockbox { text-align: center; padding: 30px 10px; color: #9aa0a6; background: #fafafa; border-radius: 12px; margin-top: 8px; font-size: .86rem; }
+.ev-lockbox b { display: block; font-size: 1.8rem; }
+.ev-g-sub { border-left: 5px solid var(--c); border-radius: 10px; background: color-mix(in srgb, var(--c) 4%, var(--card)); padding: 6px 10px; margin: 10px 0; }
+.ev-g-sub h4 { margin: 0 0 2px; color: var(--c); font-size: .95rem; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.ev-g-sub h4 small { color: var(--ink-soft); font-weight: 400; font-size: .74rem; }
+.ev-mini { height: 6px; background: #eef0f3; border-radius: 3px; overflow: hidden; margin: 2px 0 4px; }
+.ev-mini i { display: block; height: 100%; background: #047857; }
+.ev-g-row { display: grid; grid-template-columns: minmax(0, 1fr) 60px 60px 88px; gap: 4px 8px; align-items: center; padding: 4px 0; border-top: 1px solid var(--line); font-size: .82rem; }
+.ev-g-row.head { border-top: 0; color: var(--ink-soft); font-size: .72rem; }
+.ev-g-row .n { text-align: right; font-variant-numeric: tabular-nums; }
+.ev-g-row .mg-tag i { font-style: normal; }
+.ev-sum { display: grid; gap: 6px; margin-top: 6px; }
+.ev-sum div { background: #fbfbfd; border-left: 5px solid var(--c); border-radius: 8px; padding: 4px 10px; font-size: .84rem; }
+.ev-meter { height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; margin: 6px 0; }
+.ev-meter i { display: block; height: 100%; background: #1DD1A1; }
+.ev-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .78rem; color: var(--ink-soft); }
+.ev-legend b { color: var(--lc); }
+.ev-strip { display: grid; grid-template-columns: 4.4em repeat(10, minmax(0, 1fr)); gap: 3px; align-items: center; font-size: .68rem; margin-top: 6px; }
+.ev-strip .h { text-align: center; color: var(--ink-soft); }
+.ev-strip .lab { font-weight: 700; white-space: nowrap; }
+.ev-cell { height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: .62rem; }
+.ev-cell.g-特優 { background: #e84393; } .ev-cell.g-優 { background: #ff7675; } .ev-cell.g-甲 { background: #fdcb6e; color: #5a4300; }
+.ev-cell.g-乙 { background: #dfe6e9; color: #555; } .ev-cell.g-丙, .ev-cell.g-丁 { background: #b2bec3; } .ev-cell.g-none { background: #f1f2f6; color: #aaa; }
+.ev-bar { height: 30px; display: flex; align-items: flex-end; justify-content: center; }
+.ev-bar i { display: block; width: 70%; background: #1DD1A1; border-radius: 4px 4px 0 0; }
+.ev-db { display: grid; grid-template-columns: 5.6em 1fr 3.2em; gap: 6px; align-items: center; font-size: .8rem; margin: 5px 0; }
+.ev-db .track { position: relative; height: 16px; background: #f1f2f6; border-radius: 8px; }
+.ev-db .seg { position: absolute; top: 6px; height: 4px; background: #a29bfe; }
+.ev-db .dot { position: absolute; top: 2px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-50%); }
+.ev-db .d0 { background: #fff; border: 2px solid #a29bfe; } .ev-db .d1 { background: #5F27CD; }
+.ev-grades { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 8px 0; }
+.ev-grades > div { border: 2px solid var(--c); border-radius: 14px; padding: 8px 10px; text-align: center; background: color-mix(in srgb, var(--c) 5%, var(--card)); }
+.ev-grades .h { color: var(--c); font-weight: 800; }
+.ev-grades .lv { display: inline-block; margin: 4px 0 2px; font-size: 2.2rem; font-weight: 900; line-height: 1.1; color: var(--lc); }
+.ev-todo { padding: 0; margin: 4px 0 0; }
+.ev-todo li { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 5px 0; border-top: 1px dashed var(--line); font-size: .84rem; }
+.report-cats button.locked { opacity: .55; }
+@media (max-width: 640px) {
+  .ev-g-row { grid-template-columns: minmax(0, 1fr) 44px 48px 30px; font-size: .8rem; }
+  .ev-g-row .mg-tag i { display: none; }
+  .ev-g-sub { padding: 6px 8px; }
+  .ev-grades { grid-template-columns: 1fr; }
+  .ev-trail th { font-size: .62rem; }
+  .ev-trail td b { font-size: .95rem; }
+  .ev-steps { gap: 4px; }
+  .ev-step .t { font-size: .66rem; }
+  .ev-strip { grid-template-columns: 3.6em repeat(10, minmax(0, 1fr)); font-size: .6rem; }
+  .ev-db { grid-template-columns: 4.8em 1fr 2.8em; }
+}
+@media print { .ev-steps { display: none; } .ev-grades { grid-template-columns: repeat(3, 1fr); } .ev-g-sub, .ev-strip, .ev-trail { break-inside: avoid; } }
+.quiz-kpi .big small { font-size: .8rem; font-weight: 400; color: var(--ink-soft); }

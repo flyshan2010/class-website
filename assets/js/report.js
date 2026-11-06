@@ -395,34 +395,56 @@
       </section>`;
   };
 
-  // 📈 平時評量分頁（BT 線，老師 2026-10-17 定案；版面照「平時評量分頁範本」）：
-  // 資料是 sync 端算好的 report.quiz（規則正本 scripts/classos/lib/term-quiz.mjs），前端只畫、不重算。
+  // 📈 學習評量（DI 線 v3.1，老師 2026-11-07 定案；原 BT 線 📈 平時評量＋DG 線 📝 期中評量合併，期末考也在這裡）：
+  // 資料是 sync 端算好的 report.evals（每學期一筆；規則正本 scripts/classos/lib/term-trail.mjs、term-quiz.mjs），前端只畫、不重算。
   // 只看孩子自己：不放全班平均、不排名。顏色＝教學 DS 國語／數學 accent、社會 accent-2（與數學藍拉開）。
   const QUIZ_SUBJ = [["國語", "#B23A2E"], ["數學", "#1F5FA8"], ["社會", "#6B4423"]];
-  const QUIZ_IDX = -1; // 平時評量不是一個期別，用 -1 代表這個分頁
+  const EVAL_IDX = -1; // 學習評量不是一個期別，用 -1 代表這個分頁
   const md = iso => { const [, m, d] = String(iso).split("-"); return `${Number(m)}/${Number(d)}`; };
-  function quizChart(q) {
-    const pts = QUIZ_SUBJ.map(([s, c]) => ({ s, c, items: (q.subjects[s]?.items || []).filter(x => !x.absent) }));
-    const dates = [...new Set(pts.flatMap(p => p.items.map(x => x.date)))].sort();
-    if (!dates.length) return "";
-    const all = pts.flatMap(p => p.items.map(x => x.score));
-    const lo = Math.min(60, Math.floor(Math.min(...all) / 10) * 10);
-    const W = 640, H = 260, L = 40, R = 610, T = 20, B = 220;
-    const x = d => dates.length === 1 ? (L + R) / 2 : L + 20 + (R - L - 40) * dates.indexOf(d) / (dates.length - 1);
-    const y = v => B - (B - T) * (v - lo) / (100 - lo);
-    const ticks = []; for (let v = lo; v <= 100; v += 10) ticks.push(v);
-    const every = Math.ceil(dates.length / 8);
-    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="國語、數學、社會平時考分數折線圖" class="quiz-chart">
-      ${ticks.map(v => `<line x1="${L}" y1="${y(v)}" x2="${R + 15}" y2="${y(v)}" stroke="#eef0f3"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="#6b7280">${v}</text>`).join("")}
-      ${dates.map((d, i) => i % every ? "" : `<text x="${x(d)}" y="${B + 24}" text-anchor="middle" font-size="11" fill="#6b7280">${md(d)}</text>`).join("")}
-      ${pts.map(p => p.items.length ? `
-        <polyline fill="none" stroke="${p.c}" stroke-width="2.5" points="${p.items.map(it => `${x(it.date)},${y(it.score)}`).join(" ")}"/>
-        ${p.items.map(it => `<circle cx="${x(it.date)}" cy="${y(it.score)}" r="4" fill="${p.c}"><title>${App.esc(p.s)} ${md(it.date)} ${App.esc(it.name)} ${it.score}</title></circle>`).join("")}` : "").join("")}
-    </svg>
-    <div class="quiz-legend">${QUIZ_SUBJ.map(([s, c]) => `<span><i style="background:${c}"></i>${s}</span>`).join("")}</div>`;
+  // 📈 學習評量・頂端整學期軌跡（DI 線 v3.1）：四格表＋三科同一張折線，資料是 sync 端算好的 ev.trail（規則正本 term-trail.mjs）
+  const evDl = (a, b) => a == null || b == null ? "" : b > a ? `<span class="ev-dl up">▲ ${b - a}</span>`
+    : b < a ? `<span class="ev-dl down">▼ ${a - b}</span>` : `<span class="ev-dl">＝ 持平</span>`;
+  const EV_STEPS = [["s1", "①", "期中前平時卷"], ["mid", "②", "期中考"], ["s3", "③", "期末前平時卷"], ["fin", "④", "期末考"]];
+  function trailTable(ev, sel) {
+    const head = `<tr><th class="s"></th>${EV_STEPS.map(([, n, t]) => `<th>${n}<br>${t}</th>`).join("")}</tr>`;
+    const rows = QUIZ_SUBJ.map(([s, c]) => {
+      const t = ev.trail.subjects[s];
+      if (!t) return "";
+      return `<tr style="--c:${c}"><td class="subj">${s}</td>${t.cells.map((v, i) => {
+        const ex = i % 2 === 1, prev = t.cells.slice(0, i).filter(x => x != null).pop();
+        return v == null ? `<td class="none${ex ? " exam" : ""}">—</td>`
+          : `<td class="${ex ? "exam" : ""}${EV_STEPS[i][0] === sel ? " sel" : ""}"><b>${v}</b><br>${prev != null ? evDl(prev, v)
+            : t.n[i] != null ? `<span class="quiz-muted">${t.n[i]} 份</span>` : ""}</td>`;
+      }).join("")}</tr>`;
+    }).join("");
+    return `<table class="ev-trail">${head}${rows}</table>`;
+  }
+  function trailChart(ev) {
+    const { s1, s3 } = ev.trail.slots, total = s1 + s3 + 2;
+    const W = 460, H = 240, L = 30, R = 454, T = 28, B = 192;
+    const X = i => L + 26 + (R - L - 52) * i / (total - 1);
+    const Y = v => B - (B - T) * (Math.max(v, 40) - 40) / 60;
+    const band = (a, b, t, f) => `<rect x="${X(a) - 22}" y="${T - 22}" width="${X(b) - X(a) + 44}" height="${B - T + 20}" rx="8" fill="${f}"/>
+      <text x="${(X(a) + X(b)) / 2}" y="${T - 6}" text-anchor="middle" font-size="13" fill="#6b7280">${t}</text>`;
+    const grid = [40, 60, 80, 100].map(v => `<line x1="${L}" x2="${R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#9ca3af">${v}</text>`).join("");
+    const lines = QUIZ_SUBJ.map(([s, c]) => {
+      const pts = ev.trail.subjects[s]?.points || [];
+      if (!pts.length) return "";
+      return `<path d="${pts.map((p, k) => `${k ? "L" : "M"}${X(p.slot)},${Y(p.score)}`).join("")}" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`
+        + pts.map(p => p.exam
+          ? `<text x="${X(p.slot)}" y="${Y(p.score) + 8}" text-anchor="middle" font-size="22" fill="${c}"><title>${s} ${App.esc(p.name)} ${p.score}</title>★</text>`
+          : `<circle cx="${X(p.slot)}" cy="${Y(p.score)}" r="5.5" fill="#fff" stroke="${c}" stroke-width="3"><title>${s} ${md(p.date)} ${App.esc(p.name)} ${p.score}</title></circle>`).join("");
+    }).join("");
+    const lab = i => i < s1 ? `第${i + 1}卷` : i === s1 ? "期中考" : i <= s1 + s3 ? `第${i - s1}卷` : "期末考";
+    const fs = total > 8 ? 11 : 14;
+    const xl = Array.from({ length: total }, (_, i) => `<text x="${X(i)}" y="${B + 22}" text-anchor="middle" font-size="${fs}" fill="#57606f">${lab(i)}</text>`).join("");
+    return `<svg viewBox="0 0 ${W} ${H}" class="ev-chart" role="img" aria-label="國語、數學、社會整學期分數軌跡">
+      ${band(0, s1 - 1, "期中前平時卷", "#f5f8ff")}${band(s1, s1, "期中考", "#fff3f3")}${band(s1 + 1, s1 + s3, "期末前平時卷", "#f5f8ff")}${band(total - 1, total - 1, "期末考", "#fff3f3")}
+      ${grid}${lines}${xl}</svg>
+      <div class="quiz-legend" style="justify-content:center">${QUIZ_SUBJ.map(([s, c]) => `<span><i style="background:${c}"></i>${s}</span>`).join("")}<span>● 平時卷　★ 期中考／期末考</span></div>`;
   }
   // 🔍 錯題分析與複習建議（BY 線，老師 2026-10-18 定案範本 ClassOS_v3.5_藍圖/觀念複習卡與錯題公開_範本.html）：
-  // sync 端算好 report.quiz.analysis（規則正本 scripts/classos/lib/quiz-errors.mjs），前端只畫。
+  // sync 端算好 ev.s1／ev.s3 的 analysis（規則正本 scripts/classos/lib/quiz-errors.mjs），前端只畫。
   // 錯題明細發布即公開、預設展開；正確答案（ans）與試卷連結開放日前 sync 根本不放，這裡只顯示鎖頭說明。
   // 每條建議與每道錯題連到「📚 觀念複習卡」（card；對不到卡＝null，不放連結）。
   const QUIZ_COLOR = Object.fromEntries(QUIZ_SUBJ);
@@ -503,22 +525,43 @@
       <details class="quiz-muted qa-howto"><summary>ⓘ 怎麼看這一區</summary>📌「先複習這幾個」＝三科所有平時卷裡得分率最低的知識點，最多 3 個（同一個知識點考過好幾次，看最近那一次）。分頁的燈：🔴 有知識點低於 60%、🟠 最低在 60–79%、🟢 全部 80% 以上（看該科最近一份卷）。分頁上的分數是該科最近一份卷，▲▼ 是比同科上一份卷多或少幾分（不同課的卷難度不同，當參考就好）；要加強＝得分率低於 80% 的知識點數。得分率＝這一類題目拿到的分數 ÷ 這一類的總分。複習建議依需要加強的程度排序，最多列 5 類。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷，到該卷自己的解答開放日才出現。</details>
     </div>`;
   }
-  // 📝 期中評量分頁（DG 線，老師 2026-11-06 定案範本 ClassOS_v3.5_藍圖/期中考分頁_範本.html；資料流裁定 A）：
-  // 資料是 sync 端算好的 report.midterm（規則正本 scripts/classos/lib/midterm-report.mjs），前端只畫。
-  // A 三科分數對照平時卷平均 → B 先複習這幾個 → C 平時卷錯過的觀念期中考學會沒 → D 各科錯題分析（沿用 qaExam）。
-  const MID_IDX = -2; // 期中評量也不是一個期別
-  function midSheet(report, seatText) {
-    const m = report.midterm, subs = m.subjects;
+  // 定期考版型（② 期中考／④ 期末考共用；DG 線 📝 期中評量定案範本延伸，DI 線 v3.1）：
+  // 資料是 sync 端算好的 ev.mid／ev.fin（規則正本 scripts/classos/lib/midterm-report.mjs），前端只畫。
+  // A 三科分數對照該段平時卷平均 → B 先複習這幾個 → C 平時卷錯過的觀念考試學會沒（依科目分組）→ D 各科錯題分析（沿用 qaExam）。
+  // 🔁 依科目分組（老師 2026-11-07 v3.1）：每科小標＋學會 M／N＋進度條，✅ 在前；該科有錯題分析但沒有低於 80% 的觀念＝👍。
+  // 該科沒有錯題分析（缺考、還在整理）＝不畫那一科，不可以說成 👍（U41）。
+  function evGrowth(m) {
+    const g = m.growth || [], name = App.esc(m.name);
+    const withItem = QUIZ_SUBJ.filter(([s]) => m.subjects.some(x => x.subject === s && x.item));
+    if (!withItem.length) return "";
+    const okN = g.filter(x => x.ok).length;
+    const blocks = withItem.map(([s, c]) => {
+      const rows = g.filter(x => x.subject === s).sort((a, b) => (b.ok - a.ok) || (b.exam - a.exam));
+      if (!rows.length) return `<div class="ev-g-sub" style="--c:${c}"><h4>${s}<small>平時卷沒有低於 80% 的知識點 👍</small></h4></div>`;
+      const ok = rows.filter(x => x.ok).length;
+      return `<div class="ev-g-sub" style="--c:${c}"><h4>${s}<small>${rows.length} 個知識點，學會 <b style="color:#047857">${ok}</b> 個</small></h4>
+        <div class="ev-mini"><i style="width:${Math.floor(ok / rows.length * 100 + 0.5)}%"></i></div>
+        <div class="ev-g-row head"><span>知識點</span><span class="n">平時卷</span><span class="n">${name}</span><span></span></div>
+        ${rows.map(x => `<div class="ev-g-row"><span title="${App.esc(x.quizName)}">${App.esc(x.name)}</span><span class="n" style="color:${rateColor(x.quiz)}">${x.quiz}%</span>
+          <span class="n" style="color:${rateColor(x.exam)};font-weight:700">${x.exam}%</span>
+          ${x.ok ? `<span class="mg-tag ok">✅<i> 學會了</i></span>` : `<span class="mg-tag no">⚠️<i> 還要加強</i></span>`}</div>`).join("")}</div>`;
+    }).join("");
+    return `<div class="mid-growth"><h3>🔁 平時卷錯過的觀念，${name}學會了嗎？</h3>
+      <p class="quiz-muted" style="margin:0 0 6px">${g.length ? `平時卷低於 80% 的 ${g.length} 個知識點，${name}有 <b style="color:#047857">${okN} 個</b> 到 80% 以上。` : "這段平時卷沒有低於 80% 的知識點 👍"}</p>
+      ${blocks}</div>`;
+  }
+  function examStage(ev, k) {
+    const m = ev[k], first = k === "mid", name = App.esc(m.name), subs = m.subjects;
     const byDate = {};
     subs.forEach(s => (byDate[s.date] = byDate[s.date] || []).push(s.subject));
     const dates = Object.keys(byDate).sort().map(d => `${byDate[d].join("、")} ${md(d)}`).join("，");
+    const midScore = s => { const x = ev.mid?.subjects.find(y => y.subject === s); return x && !x.absent ? x.score : null; };
     const cards = subs.map(s => {
-      const d = s.score != null && s.quizAvg != null ? s.score - s.quizAvg : null;
-      const dl = d === null ? "" : d > 0 ? `<span class="mid-dl up">▲ ${d}</span>` : d < 0 ? `<span class="mid-dl down">▼ ${-d}</span>` : `<span class="mid-dl">＝ 持平</span>`;
-      const big = s.absent ? "缺考" : s.score ?? "—";
+      const big = s.absent ? "缺考" : s.score ?? "—", ms = first ? null : midScore(s.subject);
       return `<div class="mid-card" style="--c:${QUIZ_COLOR[s.subject] || "#6b7280"}"><div class="s">${App.esc(s.subject)}</div>
         <div class="big">${big}${s.absent || s.score == null ? "" : "<small> 分</small>"}</div>
-        <div class="vs">平時卷平均 ${s.quizAvg ?? "—"}${s.quizAvg != null ? " 分" : ""} ${dl}</div></div>`;
+        <div class="vs">這段平時卷平均 ${s.quizAvg ?? "—"}${s.quizAvg != null ? " 分" : ""} ${evDl(s.quizAvg, s.score)}</div>
+        ${!first && ms != null && s.score != null ? `<div class="vs">期中考 ${ms} → 期末考 ${s.score} ${evDl(ms, s.score)}</div>` : ""}</div>`;
     }).join("");
     const items = subs.filter(s => s.item).map(s => s.item);
     const weakAll = items.flatMap(e => e.kp.filter(k => k.rate < 80).map(k => ({ e, k }))).sort((a, b) => a.k.rate - b.k.rate).slice(0, 3);
@@ -527,31 +570,19 @@
       : `<div class="qa-focus"><h3>📌 先複習這幾個</h3><ol>${weakAll.map(({ e, k }, i) => `<li style="--c:${QUIZ_COLOR[e.subject] || "#6b7280"}">
         <span class="qa-num">${i + 1}</span><span class="qa-subj">${App.esc(e.subject)}</span><span>${App.esc(k.name)}</span><span class="qa-low">${k.rate}%</span>
         <span class="qa-go">${cardBtn(cardOf(e, k.name)) || `<span class="quiz-muted">看下方錯題訂正</span>`}</span></li>`).join("")}</ol></div>`;
-    const g = m.growth || [];
-    const okN = g.filter(x => x.ok).length;
-    const growth = !g.length ? "" : `<div class="mid-growth"><h3>🔁 平時卷錯過的觀念，期中考學會了嗎？</h3>
-      <p class="quiz-muted" style="margin:0 0 6px">平時卷低於 80% 的 ${g.length} 個知識點，期中考有 <b style="color:#047857">${okN} 個</b> 到 80% 以上。</p>
-      <div class="mg-row head"><span>科目</span><span>知識點</span><span class="n">平時卷</span><span class="n">期中考</span><span></span></div>
-      ${g.map(x => `<div class="mg-row"><span style="color:${QUIZ_COLOR[x.subject] || "#6b7280"};font-weight:700">${App.esc(x.subject)}</span><span title="${App.esc(x.quizName)}">${App.esc(x.name)}</span>
-        <span class="n" style="color:${rateColor(x.quiz)}">${x.quiz}%</span><span class="n" style="color:${rateColor(x.mid)};font-weight:700">${x.mid}%</span>
-        ${x.ok ? `<span class="mg-tag ok">✅ 學會了</span>` : `<span class="mg-tag no">⚠️ 還要加強</span>`}</div>`).join("")}</div>`;
     const weakN = e => e.kp.filter(k => k.rate < 80).length;
     const tabs = items.map((e, i) => `<button type="button" class="qa-tab" role="tab" style="--c:${QUIZ_COLOR[e.subject] || "#6b7280"}" aria-selected="${i === 0}" data-qa-tab="${i}"><span class="qa-light">${QA_LIGHT(e)}</span>
       <span class="qa-tt"><span class="qa-t1">${App.esc(e.subject)}<span class="qa-sc">${e.score} 分</span></span><small>${weakN(e) ? `要加強 ${weakN(e)} 項` : "全部穩定"}</small></span></button>`).join("");
     const panels = items.map((e, i) => `<div class="qa-panel" data-qa-panel="${i}"${i ? " hidden" : ""}>${qaExam(e, true, "")}</div>`).join("");
     return `
-      <div class="report-sheet report-quiz">
-        <h2 class="report-title">📝 ${App.esc(m.term)} ${App.esc(m.name)} 📝</h2>
-        <p class="quiz-sub">座號 ${seatText}　｜　考試日：${App.esc(dates)}　｜　更新到${App.esc(m.updated.label)}（${md(m.updated.date)}）</p>
         <div class="report-box quiz-box" style="--bc:#E17055">
-          <span class="report-badge" style="--bc:#E17055">📝 期中評量・錯題分析</span>
-          <p class="quiz-muted">只看自己，不放全班平均、不排名。</p>
+          <span class="report-badge" style="--bc:#E17055">${first ? "②" : "④"} ${App.esc(ev.term)} ${name}・錯題分析</span>
+          <p class="quiz-muted">考試日：${App.esc(dates)}。只看自己，不放全班平均、不排名。</p>
           <div class="mid-scores">${cards}</div>
-          ${focus}${growth}
+          ${focus}${evGrowth(m)}
           ${items.length ? `<div class="qa-tabs" role="tablist">${tabs}</div>${panels}` : `<p class="quiz-muted">錯題分析還在整理，整理好就會出現在這裡。</p>`}
-          <details class="quiz-muted qa-howto"><summary>ⓘ 怎麼看這一頁</summary>「平時卷平均」＝期中考前每份平時卷的平均分（和 📈 平時評量同一套算法）；▲▼ 是期中考比平時卷平均多或少幾分（題目範圍與難度不同，當參考就好）。得分率＝這一類題目拿到的分數 ÷ 這一類的總分。「平時卷 → 期中考」只列平時卷曾經低於 80% 的知識點（看期中考前最近一份考到它的平時卷）：期中考到 80% 以上＝✅ 學會了。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷到解答開放日才出現。</details>
-        </div>
-      </div>`;
+          <details class="quiz-muted qa-howto"><summary>ⓘ 怎麼看這一段</summary>「這段平時卷平均」＝${name}前那一段每份平時卷的平均分（和平時卷段同一套算法）；▲▼ 是${name}比平時卷平均多或少幾分（題目範圍與難度不同，當參考就好）。得分率＝這一類題目拿到的分數 ÷ 這一類的總分。「平時卷 → ${name}」只列平時卷曾經低於 80% 的知識點（看考試前最近一份考到它的平時卷）：${name}到 80% 以上＝✅ 學會了。👉 複習卡＝這個觀念的重點、例題和自我檢查。錯的題目一發布就看得到；正確答案與試卷到解答開放日才出現。</details>
+        </div>`;
   }
   // 科目分頁：報告是 innerHTML 重畫，所以掛在 document 上委派，只掛一次
   document.addEventListener("click", ev => {
@@ -562,16 +593,16 @@
   });
   // A4 列印：三科全印、每份卷都展開
   window.addEventListener("beforeprint", () => document.querySelectorAll(".qa-exam, .qa-fine").forEach(d => { d.open = true; }));
-  function quizSheet(report, seatText) {
-    const q = report.quiz;
-    const trend = t => !t ? `<span class="quiz-flat">還不到 2 次，先看不出走勢</span>`
-      : `近 ${t.k} 次比前 ${t.k} 次 ${t.delta >= 3 ? `<span class="quiz-up">▲ ${t.delta}</span>` : t.delta <= -3 ? `<span class="quiz-down">▼ ${Math.abs(t.delta)}</span>` : `<span class="quiz-flat">— ${Math.abs(t.delta)}</span>`}`;
+  // 平時卷版型（① 期中前／③ 期末前共用；BT 線 📈 平時評量延伸，DI 線 v3.1）：各段走勢圖改由頂端整學期圖代替。
+  function quizStage(ev, k) {
+    const q = ev[k], first = k === "s1", exam = first ? "期中考" : "期末考";
     const kpi = ([s, c]) => {
-      const v = q.subjects[s] || {};
+      const v = q.subjects[s] || {}, done = (v.items || []).filter(x => !x.absent);
+      const last = done[done.length - 1], prev = done[done.length - 2];
       return `<div class="quiz-kpi" style="--c:${c}"><div class="h">${s}</div>
-        <div class="big">${v.avg ?? "—"}</div>
-        <div class="s">${v.n ? `考了 ${v.n} 次・最近一次 ${v.latest}` : "這段期間還沒有平時考"}${v.absent ? `・缺考 ${v.absent} 次（不計入）` : ""}</div>
-        <div class="s">${v.n ? trend(v.trend) : ""}</div></div>`;
+        <div class="big">${v.avg ?? "—"}<small> 平均</small></div>
+        <div class="s">${v.n ? `考了 ${v.n} 次・最近一次 ${v.latest} ${prev ? evDl(prev.score, last.score) : ""}` : "這段期間還沒有平時考"}${v.absent ? `・缺考 ${v.absent} 次（不計入）` : ""}</div>
+        ${q.prevAvg && q.prevAvg[s] != null && v.avg != null ? `<div class="s">期中前平時卷平均 ${q.prevAvg[s]} → 現在 ${v.avg} ${evDl(q.prevAvg[s], v.avg)}</div>` : ""}</div>`;
     };
     const rows = items => items.map(it => `<tr><td>${md(it.date)}</td><td>${App.esc(it.name)}</td>
       <td class="n">${it.absent ? `缺考 <span class="quiz-badge">不計入</span>` : it.score}</td></tr>`).join("");
@@ -580,22 +611,14 @@
       return v?.items?.length ? `<div class="quiz-subj" style="color:${c}">${s}（平均 ${v.avg ?? "—"}）</div>
         <table class="quiz-table"><thead><tr><th>日期</th><th>評量</th><th class="n">分數</th></tr></thead><tbody>${rows(v.items)}</tbody></table>` : "";
     };
-    const exam = q.stage === "期末" ? "期末考" : "期中考";
     return `
-      <div class="report-sheet report-quiz">
-        <h2 class="report-title">📈 平時評量表現 📈</h2>
-        <p class="quiz-sub">${App.esc(q.term)}・${exam}前（${md(q.from)}～${md(q.to)}）・座號 ${seatText}　｜　更新到${App.esc(q.updated.label)}（${md(q.updated.date)}）</p>
-        <div class="quiz-kpis">${QUIZ_SUBJ.map(kpi).join("")}</div>
-        ${q.prevAvg ? `<p class="quiz-muted">期中考前平時考平均：${QUIZ_SUBJ.map(([s]) => `${s} ${q.prevAvg[s] ?? "—"}`).join("／")}</p>` : ""}
-
         <div class="report-box quiz-box" style="--bc:#54A0FF">
-          <span class="report-badge" style="--bc:#54A0FF">各科分數走勢（每個點是一次平時考）</span>
-          ${quizChart(q)}
+          <span class="report-badge" style="--bc:#54A0FF">${first ? "①" : "③"} ${first ? "期中前" : "期末前"}平時卷${ev.trail.state[k] === "now" ? "（進行中）" : ""}</span>
+          <p class="quiz-muted">${md(q.from)}～${md(q.to)}</p>
+          <div class="quiz-kpis">${QUIZ_SUBJ.map(kpi).join("")}</div>
           ${q.tip ? `<div class="quiz-tip">💡 複習建議：${App.esc(q.tip)}</div>` : ""}
-          <p class="quiz-muted">只看孩子自己的進步，不放全班平均、不排名。</p>
         </div>
         ${quizAnalysis(q.analysis)}
-
         <div class="report-box quiz-box" style="--bc:#8395A7">
           <span class="report-badge" style="--bc:#8395A7">每次評量明細</span>
           ${QUIZ_SUBJ.map(detail).join("")}
@@ -603,7 +626,6 @@
             <table class="quiz-table"><tbody>${q.others.map(o => `<tr><td>${md(o.date)}</td><td>${o.subject === "其他" ? App.esc(o.name) : `${App.esc(o.subject)}　${App.esc(o.name)}`}</td>
               <td class="n">${o.absent ? `缺考 <span class="quiz-badge">不計入</span>` : o.score}</td></tr>`).join("")}</tbody></table>` : ""}
         </div>
-
         <div class="report-box quiz-box" style="--bc:#10AC84">
           <span class="report-badge" style="--bc:#10AC84">平時成績怎麼算</span>
           <table class="quiz-calc">
@@ -614,16 +636,150 @@
             <tr><td>定期評量（期中／期末考）</td><td>50%</td></tr>
           </table>
           <p class="quiz-muted">${exam}後老師確認平時考平均，才寫進學期成績；這裡顯示到目前為止已登記的平時考（老師登記後下次更新就會出現）。</p>
+        </div>`;
+  }
+  // 📈 學習評量（DI 線 v3.1，老師 2026-11-07 定案；範本 ClassOS_v3.5_藍圖/學習軌跡_提案/範本_學習評量完整版_示意.html）：
+  // 頂端整學期軌跡（每段都一樣）→ 四格階段列（打開停在最新那一段）→ 該段內容（平時卷版型／定期考版型）。只看自己。
+  const EV_WHEN = { s1: "開學後第一份平時卷改完", mid: "期中考成績登記後", s3: "期中考後第一份平時卷改完", fin: "期末考成績登記後" };
+  let evalStep = null; // 使用者點過的階段；切換分類或學生就回到最新那一段
+  function evalSheet(report, seatText) {
+    const ev = report.evals[report.evals.length - 1], st = ev.trail.state;
+    const latest = EV_STEPS.map(([k]) => k).filter(k => st[k] !== "lock" && ev[k]).pop() || "s1";
+    const sel = evalStep && st[evalStep] ? evalStep : latest;
+    const [, n, t] = EV_STEPS.find(([k]) => k === sel);
+    const steps = EV_STEPS.map(([k, sn, stt]) => `<button type="button" class="ev-step ${st[k]}${k === sel ? " sel" : ""}" data-ev-step="${k}">
+      <span class="n">${sn}</span><span class="t">${stt}</span><span class="st">${st[k] === "lock" ? "🔒 還沒開始" : st[k] === "now" ? "● 進行中" : "✅ 完成"}</span></button>`).join("");
+    const body = st[sel] === "lock" || !ev[sel]
+      ? `<div class="report-box quiz-box" style="--bc:#9ca3af"><span class="report-badge" style="--bc:#9ca3af">${n} ${t}</span><div class="ev-lockbox"><b>🔒</b>${EV_WHEN[sel]}，就會出現在這裡。</div></div>`
+      : sel === "s1" || sel === "s3" ? quizStage(ev, sel) : examStage(ev, sel);
+    return `
+      <div class="report-sheet report-quiz">
+        <h2 class="report-title">📈 學習評量 📈</h2>
+        <p class="quiz-sub">${App.esc(ev.term)}・座號 ${seatText}　｜　更新到${App.esc(ev.updated.label)}（${md(ev.updated.date)}）｜平時卷 → 期中考 → 平時卷 → 期末考</p>
+        <div class="report-box quiz-box" style="--bc:#5F27CD">
+          <span class="report-badge" style="--bc:#5F27CD">🧭 這學期的學習軌跡</span>
+          ${trailTable(ev, sel)}
+          <p class="quiz-muted">平時卷格＝那一段每份平時卷的平均；考試格＝期中考／期末考分數；▲▼＝比前一格多或少幾分；還沒考的格子先留「—」。藍框＝下面正在看的那一段。</p>
+          ${trailChart(ev)}
+          <p class="quiz-muted" style="text-align:center">只畫孩子自己的分數，不放全班平均、不排名。</p>
         </div>
+        <div class="ev-steps no-print" role="tablist">${steps}</div>
+        <p class="quiz-muted no-print" style="text-align:center">點上面的格子切換；打開時自動停在最新那一段，舊的內容隨時可以回頭看。</p>
+        ${body}
       </div>`;
   }
+  // 作品牆（週報「本週作品」與學期總結「學期作品牆」共用）
+  const worksGrid = works => `
+          <div class="work-grid">
+            ${works.map(w => w.photos.map(u => `
+            <figure class="work-item">
+              ${typeof u === "string" ? `
+              <a href="${App.esc(u)}" target="_blank" rel="noopener">
+                <img class="work-img" src="${App.esc(workImg(u))}" alt="${App.esc(w.title)}" loading="lazy" />
+              </a>` : `
+              <a target="_blank" rel="noopener">
+                <img class="work-img" data-enc="${App.esc(u.enc)}" data-k="${App.esc(u.k)}" data-iv="${App.esc(u.iv)}"
+                     data-type="${App.esc(u.type)}" alt="${App.esc(w.title)}" />
+              </a>`}
+              <figcaption class="meta">
+                ${w.subject ? `<span class="badge">${App.esc(w.subject)}</span> ` : ""}${App.esc(w.title)}
+                ${w.caption ? `<br />${App.esc(w.caption)}` : ""}
+              </figcaption>
+            </figure>`).join("")).join("")}
+          </div>`;
+  // 🎓 學期總結（DI 線 v3.1）：原「期末總報告」搬過來再擴充。評量部分只看自己：不放全班平均、不排名、不放級距（裁定 5）。
+  const LV_COLOR = { 優: "#047857", 甲: "#1F5FA8", 乙: "#B7791F", 丙: "#C05621", 丁: "#B03A2E" };
+  const FOOT_KEYS = ["內容評量", "作業成績", "上課參與", "生活常規"];
+  function termSheet(report, p, h) {
+    const ev = (report.evals || []).find(e => String(p.period || "").includes(e.term));
+    const keys = ev ? [ev.term, ev.termLabel] : [String(p.period || "").slice(0, 2)];
+    const weeks = report.periods.filter(x => x.reportType === "每週" && keys.some(k => String(x.period).includes(k)));
+    const wkOf = x => (String(x.period).match(/第(.+?)週/) || [, "?"])[1];
+    const sm = ev?.summary;
+    const box = (color, badge, inner) => `<div class="report-box quiz-box" style="--bc:${color}"><span class="report-badge" style="--bc:${color}">${badge}</span>${inner}</div>`;
+    // 📈 評量軌跡：四格表＋各科一句話＋錯過的觀念學會幾個（各科 M／N）
+    const verdict = l => l.verdict === "up" ? `<b style="color:#047857">進步 ${l.delta} 分</b>` : l.verdict === "down" ? `<b style="color:#B03A2E">少了 ${-l.delta} 分</b>` : l.verdict === "flat" ? "<b>保持穩定</b>" : "";
+    const lines = sm ? sm.lines.map(l => { const [a, m, b, f] = l.cells.map(v => v ?? "—");
+      return `<div style="--c:${QUIZ_COLOR[l.subject]}"><b style="color:${QUIZ_COLOR[l.subject]}">${l.subject}</b>：期中前平時卷平均 ${a} → 期中考 ${m} → 期末前平時卷平均 ${b} → 期末考 ${f}${verdict(l) ? `，${verdict(l)}` : ""}</div>`; }).join("") : "";
+    const learned = sm ? sm.tracked.filter(x => x.ok).length : 0, left = sm ? sm.tracked.filter(x => !x.ok) : [];
+    const growth = sm && sm.tracked.length ? `<div class="mid-growth"><h3>🔁 這學期錯過的觀念，學會了幾個？</h3>
+      <div class="ev-meter"><i style="width:${Math.floor(learned / sm.tracked.length * 100 + 0.5)}%"></i></div>
+      <p class="quiz-muted">平時卷低於 80% 的 ${sm.tracked.length} 個觀念，期中／期末考已經學會 <b style="color:#047857">${learned} 個</b>${left.length ? `，還有 ${left.length} 個（列在下面「寒假可以努力」）` : ""}。</p>
+      <div class="ev-legend">${QUIZ_SUBJ.map(([s, c]) => `<span><b style="--lc:${c}">${s}</b> 學會 ${sm.bySubject[s].ok}／${sm.bySubject[s].n}</span>`).join("")}</div></div>` : "";
+    const trail = !ev ? "" : box("#1F5FA8", "📈 這學期的評量軌跡", `${trailTable(ev, null)}${sm ? `<div class="ev-sum">${lines}</div>${growth}` : `<p class="quiz-muted">期末考成績登記後，這裡會出現各科一句話與觀念學會進度。</p>`}`);
+    // 🗓️ 每週學習足跡：四項等第×每週＋好表現筆數（取代五向度逐週曲線，裁定 v3）
+    const good = weeks.map(x => App.lines(x.highlights).length), gmax = Math.max(1, ...good);
+    const strip = from => { const ws = weeks.slice(from, from + 10), pad = 10 - ws.length;
+      const blank = `<span></span>`.repeat(pad);
+      return `<div class="ev-strip"><span class="lab">週次</span>${ws.map(x => `<span class="h">${App.esc(wkOf(x))}</span>`).join("")}${blank}
+        ${FOOT_KEYS.map(k => `<span class="lab">${k}</span>${ws.map(x => { const g = x.grades?.[k]; return `<span class="ev-cell g-${g ? App.esc(g) : "none"}">${g ? App.esc(g) : "—"}</span>`; }).join("")}${blank}`).join("")}
+        <span class="lab">好表現</span>${ws.map((x, i) => `<span class="ev-bar" title="${good[from + i]} 則"><i style="height:${Math.floor(26 * good[from + i] / gmax + 0.5)}px"></i></span>`).join("")}${blank}</div>`; };
+    const foot = weeks.length ? box("#1DD1A1", "🗓️ 每週學習足跡", `${Array.from({ length: Math.ceil(weeks.length / 10) }, (_, i) => strip(i * 10)).join("")}
+      <p class="quiz-muted">格子＝那一週的等第（特優＞優＞甲＞乙）；綠色長條＝那一週老師記下的好表現（亮點）則數。</p>`) : "";
+    // 🌱 品格與生活能力：開學初（最前 k 週平均）→ 學期末（最後 k 週平均），k＝min(3, 週數÷2)
+    const selW = weeks.filter(x => x.sel), k = Math.min(3, Math.floor(selW.length / 2));
+    const avgSel = (list, a) => Math.floor(list.reduce((s, x) => s + (x.sel[a] || 0), 0) / list.length * 10 + 0.5) / 10;
+    const sel = k < 1 ? "" : box("#5F27CD", "🌱 品格與生活能力：開學初 → 學期末", `${Object.keys(selW[0].sel).map(a => {
+      const s0 = avgSel(selW.slice(0, k), a), s1 = avgSel(selW.slice(-k), a), pc = v => (Math.max(1, Math.min(5, v)) - 1) / 4 * 100;
+      const d = Math.floor((s1 - s0) * 10 + 0.5) / 10, lo = Math.min(pc(s0), pc(s1));
+      return `<div class="ev-db"><span>${App.esc(a)}</span><div class="track"><span class="seg" style="left:${lo}%;width:${Math.abs(pc(s1) - pc(s0))}%"></span><span class="dot d0" style="left:${pc(s0)}%"></span><span class="dot d1" style="left:${pc(s1)}%"></span></div>
+        <span style="color:${d > 0 ? "#047857" : d < 0 ? "#B03A2E" : "var(--ink-soft)"};font-weight:700">${d > 0 ? `↑${d}` : d < 0 ? `↓${-d}` : "＝"}</span></div>`; }).join("")}
+      <p class="quiz-muted">○ 開學初（前 ${k} 週平均）　● 學期末（最後 ${k} 週平均）　滿分 5</p>`);
+    const shown = (p.subjects || []).filter(s => s.state || s.advice);
+    const subjects = shown.length ? `<span class="report-badge" style="--bc:#FF9F43">各科學期總評與建議</span>
+        <div class="report-subjects">${shown.map(s => `
+          <div class="report-subject" style="--sc:${SUBJ_COLORS[s.name] || "#54A0FF"}">
+            <div class="head">${SUBJ_EMOJI[s.name] || "📘"} ${App.esc(s.name)}</div>
+            ${s.state ? `<p><strong>狀態：</strong>${App.esc(s.state)}</p>` : ""}
+            ${s.advice ? `<p><strong>建議：</strong>${App.esc(s.advice)}</p>` : ""}
+          </div>`).join("")}</div>` : "";
+    // 🏅 學期總成績：(期中考＋期末考)÷2 四捨五入換五等第（規則正本 term-trail.mjs），只給等第、不放級距（裁定 5、v3.1）
+    const grades = !sm ? "" : box("#EE5253", "🏅 學期總成績", `<div class="ev-grades">${sm.grades.map(g => `<div style="--c:${QUIZ_COLOR[g.subject]}"><div class="h">${g.subject}</div>
+        <span class="lv" style="--lc:${LV_COLOR[g.level] || "#9ca3af"}">${g.level || "—"}</span></div>`).join("")}</div>
+      <div class="ev-legend">${[["優", "90 分以上"], ["甲", "80～89 分"], ["乙", "70～79 分"], ["丙", "60～69 分"], ["丁", "未滿 60 分"]].map(([g, t]) => `<span><b style="--lc:${LV_COLOR[g]}">${g}</b> ${t}</span>`).join("")}</div>
+      <p class="quiz-muted">學期總成績＝（期中考＋期末考）÷ 2，四捨五入取整數後換成等第${sm.grades.some(g => !g.level) ? "；「—」＝有一次考試缺考或還沒登記，老師確認後再補" : ""}。</p>`);
+    const works = box("#10AC84", "🎨 學期作品牆", (p.works || []).length ? worksGrid(p.works) : `<p class="work-empty meta">本學期作品陸續收錄中。</p>`);
+    const hi = App.lines(p.growthHighlight).length ? box("#FECA57", "🌱 學期成長亮點", `<div class="recap-highlights">${App.lines(p.growthHighlight).map(x => `<span class="recap-chip">${App.esc(x)}</span>`).join("")}</div>`) : "";
+    const itemOf = x => [ev?.fin, ev?.mid].map(e => e?.subjects.find(s => s.subject === x.subject)?.item).find(it => it && cardOf(it, x.name));
+    const todo = left.length ? box("#54A0FF", "🎯 寒假可以努力的地方", `<p class="quiz-muted">這學期期中／期末考還沒到 80% 的觀念，寒假再複習一次：</p><ul class="ev-todo">${left.map(x => { const it = itemOf(x);
+      return `<li><span class="mg-tag no">${App.esc(x.subject)}</span><b>${App.esc(x.name)}</b><span class="quiz-muted" style="margin:0">平時卷 ${x.quiz}% → 考試 ${x.exam}%</span>${it ? cardBtn(cardOf(it, x.name)) : ""}</li>`; }).join("")}</ul>`) : "";
+    const tips = App.lines(p.parentTips).length ? box("#FF9F43", "🤝 家長協助建議", App.ul(p.parentTips)) : "";
+    const goal = App.lines(p.nextGoal).length ? box("#54A0FF", "🚀 下學期目標", App.ul(p.nextGoal)) : "";
+    return `
+      <div class="report-sheet report-term report-quiz">
+        <h2 class="report-title">🌟 ${App.esc(ev?.term || keys[0])} 學期總結 🌟</h2>
+        <div class="report-top">
+          <div class="report-id-card">
+            ${h.avatar}
+            <p><strong>姓名：</strong>${App.esc(h.displayName)}</p>
+            <p><strong>座號：</strong>${h.seatText}</p>
+            <p class="meta">${App.esc(p.period)}</p>
+          </div>
+          <div class="report-overview-card">
+            <span class="report-badge" style="--bc:#5F27CD">📝 學期總評</span>
+            ${App.lines(p.termComment).map(t => `<p>${App.esc(t)}</p>`).join("") || `<p class="meta">老師撰寫中。</p>`}
+          </div>
+        </div>
+        ${trail}${foot}${sel}
+        <div style="margin-top:12px">${subjects}</div>
+        ${grades}${works}${hi}${todo}${tips}${goal}
+        <p class="report-footnote">學期總結的評量部分只看孩子自己：不放全班平均、不排名、不放級距。${h.anon ? "本報告已去識別化。" : `本報告僅供 ${App.esc(h.displayName)} 的家長參考，請勿外傳。`}　${App.esc(c.schoolYear)} ${App.esc(c.className)}</p>
+      </div>`;
+  }
+  const TERM_LOCK_IDX = -3; // 還沒有期末總報告時的 🎓 鎖定頁
+  const termLockSheet = () => `
+      <div class="report-sheet report-quiz">
+        <h2 class="report-title">🎓 學期總結 🎓</h2>
+        <div class="ev-lockbox"><b>🔒</b>學期結束、老師發布期末總報告後，就會出現在這裡：這學期的評量軌跡、每週學習足跡、品格與生活能力的變化、學期總成績、作品牆與寒假可以努力的地方。</div>
+      </div>`;
 
   function showReport(report, periodIdx = defaultIdx(report.periods), anon = false) {
     document.body.classList.add("report-open");
-    const isQuiz = periodIdx === QUIZ_IDX && !!report.quiz;
-    const isMid = periodIdx === MID_IDX && !!report.midterm;
-    if ((periodIdx === QUIZ_IDX && !isQuiz) || (periodIdx === MID_IDX && !isMid)) periodIdx = defaultIdx(report.periods);
-    const p = isQuiz || isMid ? {} : report.periods[periodIdx];
+    const hasEval = !!report.evals?.length;
+    const isEval = periodIdx === EVAL_IDX && hasEval;
+    const isTermLock = periodIdx === TERM_LOCK_IDX;
+    if (periodIdx < 0 && !isEval && !isTermLock) periodIdx = defaultIdx(report.periods);
+    const p = isEval || isTermLock ? {} : report.periods[periodIdx];
     const isTerm = p.reportType === "期末總報告";
     const isEssay = p.reportType === "作文批改";
     const displayName = anon ? maskName(report.name) : report.name;
@@ -632,24 +788,25 @@
       ? `<img class="avatar-img" src="${report.avatar}" alt="頭貼" />`
       : `<div class="avatar">🧑‍🎓</div>`;
 
-    // 先分類再選期別（2026-10-15 老師要求）：「📊 學習報告」＝每週＋期末總報告、「✍️ 作文」＝作文批改。
-    // 兩類都有才顯示分類鈕；類內筆數多時用下拉選單，少時用按鈕。作文以「✍️ 題目」標示。
-    // 2026-10-17 加第三類「📈 平時評量」（report.quiz，不是期別、只有一頁）。
-    const catOf = x => x.reportType === "作文批改" ? "essay" : "report";
-    const cat = isQuiz ? "quiz" : isMid ? "midterm" : catOf(p);
-    const idxs = cat2 => cat2 === "quiz" ? (report.quiz ? [QUIZ_IDX] : [])
-      : cat2 === "midterm" ? (report.midterm ? [MID_IDX] : [])
-      : report.periods.map((x, i) => catOf(x) === cat2 ? i : -1).filter(i => i >= 0);
-    const inCat = isQuiz || isMid ? [] : idxs(cat);
-    const quizN = report.quiz ? QUIZ_SUBJ.reduce((a, [s]) => a + (report.quiz.subjects[s]?.items?.length || 0), 0) : 0;
-    const catCount = { report: idxs("report").length, essay: idxs("essay").length, quiz: quizN,
-      midterm: report.midterm?.subjects?.length || 0 };
+    // 先分類再選期別（2026-10-15 老師要求）；類內筆數多時用下拉選單，少時用按鈕。作文以「✍️ 題目」標示。
+    // DI 線 v3.1（老師 2026-11-07）：📊 學習週報＝每週｜✍️ 作文｜📈 學習評量（report.evals，只有一頁）｜
+    // 🎓 學期總結＝期末總報告（還沒發布＝淡色＋🔒，點了看鎖定說明）。
+    const catOf = x => x.reportType === "作文批改" ? "essay" : x.reportType === "期末總報告" ? "term" : "week";
+    const cat = isEval ? "eval" : isTermLock ? "term" : catOf(p);
+    const periodIdxs = cat2 => report.periods.map((x, i) => catOf(x) === cat2 ? i : -1).filter(i => i >= 0);
+    const idxs = cat2 => cat2 === "eval" ? (hasEval ? [EVAL_IDX] : [])
+      : cat2 === "term" ? (periodIdxs("term").length ? periodIdxs("term") : [TERM_LOCK_IDX])
+      : periodIdxs(cat2);
+    const inCat = isEval || isTermLock ? [] : idxs(cat);
+    const termLocked = !periodIdxs("term").length;
+    const catCount = { week: periodIdxs("week").length, essay: periodIdxs("essay").length,
+      eval: hasEval ? -1 : 0, term: periodIdxs("week").length || !termLocked ? -1 : 0 }; // -1＝顯示但不標筆數
     const tabLabel = x => x.reportType === "作文批改"
       ? `✍️ ${x.essay?.title || x.period}` : x.period;
-    const catList = [["report", "📊 學習報告"], ["essay", "✍️ 作文"], ["quiz", "📈 平時評量"], ["midterm", "📝 期中評量"]].filter(([k]) => catCount[k]);
+    const catList = [["week", "📊 學習週報"], ["essay", "✍️ 作文"], ["eval", "📈 學習評量"], ["term", "🎓 學期總結"]].filter(([k]) => catCount[k]);
     const catTabs = catList.length >= 2
-      ? `<div class="report-cats" role="tablist">${catList.map(([k, t]) =>
-          `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "active" : ""}" data-cat="${k}">${t}<small>${catCount[k]}</small></button>`).join("")}</div>`
+      ? `<div class="report-cats" role="tablist">${catList.map(([k, t]) => { const lock = k === "term" && termLocked;
+          return `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "active" : ""}${lock ? " locked" : ""}" data-cat="${k}">${t}${lock ? " 🔒" : ""}${catCount[k] > 0 ? `<small>${catCount[k]}</small>` : ""}</button>`; }).join("")}</div>`
       : "";
     const periodPicker = catTabs + (inCat.length > 5
       ? `<select id="report-period">${inCat.map(i =>
@@ -740,7 +897,8 @@
       </div>`;
     };
 
-    main.innerHTML = toolbar + (isQuiz ? quizSheet(report, seatText) : isMid ? midSheet(report, seatText) : isEssay ? essaySheet() : dashOverview(report, periodIdx) + `
+    main.innerHTML = toolbar + (isEval ? evalSheet(report, seatText) : isTermLock ? termLockSheet() : isEssay ? essaySheet()
+      : isTerm ? termSheet(report, p, { avatar, displayName, seatText, anon }) : dashOverview(report, periodIdx) + `
       <div class="report-sheet${isTerm ? " report-term" : ""}">
         <h2 class="report-title">${isTerm ? "🌟 學期學習總報告 🌟" : "✨ 學生學習分析報告 ✨"}</h2>
 
@@ -829,24 +987,7 @@
 
         <div class="report-box work-box" style="--bc:#10AC84; margin-top:12px">
           <span class="report-badge" style="--bc:#10AC84">🎨 ${isTerm ? "學期作品牆" : "本週作品"}</span>
-          ${(p.works || []).length ? `
-          <div class="work-grid">
-            ${p.works.map(w => w.photos.map(u => `
-            <figure class="work-item">
-              ${typeof u === "string" ? `
-              <a href="${App.esc(u)}" target="_blank" rel="noopener">
-                <img class="work-img" src="${App.esc(workImg(u))}" alt="${App.esc(w.title)}" loading="lazy" />
-              </a>` : `
-              <a target="_blank" rel="noopener">
-                <img class="work-img" data-enc="${App.esc(u.enc)}" data-k="${App.esc(u.k)}" data-iv="${App.esc(u.iv)}"
-                     data-type="${App.esc(u.type)}" alt="${App.esc(w.title)}" />
-              </a>`}
-              <figcaption class="meta">
-                ${w.subject ? `<span class="badge">${App.esc(w.subject)}</span> ` : ""}${App.esc(w.title)}
-                ${w.caption ? `<br />${App.esc(w.caption)}` : ""}
-              </figcaption>
-            </figure>`).join("")).join("")}
-          </div>` : `
+          ${(p.works || []).length ? worksGrid(p.works) : `
           <p class="work-empty meta">${isTerm ? "本學期作品陸續收錄中。" : "本週沒有新收錄的作品；老師上傳後會自動出現在這裡。"}</p>`}
         </div>
 
@@ -901,7 +1042,8 @@
     main.querySelectorAll(".dash-go").forEach(b => b.onclick = () => showReport(report, Number(b.dataset.i), anon));
     // 切換分類＝開該類最新一筆
     main.querySelectorAll(".report-cats button").forEach(b =>
-      b.onclick = () => { const l = idxs(b.dataset.cat); if (l.length) showReport(report, l[l.length - 1], anon); });
+      b.onclick = () => { const l = idxs(b.dataset.cat); evalStep = null; if (l.length) showReport(report, l[l.length - 1], anon); });
+    main.querySelectorAll(".ev-step").forEach(b => b.onclick = () => { evalStep = b.dataset.evStep; showReport(report, EVAL_IDX, anon); });
     const sel = document.getElementById("report-period");
     if (sel) sel.onchange = () => showReport(report, Number(sel.value), anon);
     document.getElementById("report-anon").onclick = () => showReport(report, periodIdx, !anon);

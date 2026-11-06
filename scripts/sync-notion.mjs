@@ -14,7 +14,8 @@ import { uniqueMaskNames } from "./lib/mask-name.mjs";
 import { buildDutyData } from "./lib/build-duties.mjs";
 import { GOAL_TIER, backersNeededOf, inWindow, goalPrefix, tallyGoal } from "./lib/class-goal.mjs";
 import { quizRange, toQuiz, toTermExam, inRange, summarize, reviewTip } from "./classos/lib/term-quiz.mjs";
-import { midtermData } from "./classos/lib/midterm-report.mjs";
+import { termExamData } from "./classos/lib/midterm-report.mjs";
+import { trailOf, termSummary } from "./classos/lib/term-trail.mjs";
 import { matchExam, analyze, reportItem, missingCards } from "./classos/lib/quiz-errors.mjs";
 import { rowFromRecord, teacherWeeks, seatWeek, weekKey as assessWeekKey } from "./classos/lib/assess-weak.mjs";
 
@@ -836,6 +837,8 @@ async function courseFocusByWeek() {
 // 平時考一入紀錄庫、下次同步就出現，不等週五發布。學期依今天所在學期判定（查不到才退回最後一份已發布週報那學期）。
 // 期中考後、期末階段還沒有平時考 → 續顯示期中階段（老師 2026-11-05 裁定）。
 // 仍須該生至少有一份已發布報告（分頁掛在他的加密報告裡）；範圍內沒有平時考 → 不放（前端不顯示這個分類）。
+// DI 線 v3.1（老師 2026-11-07）：「📈 平時評量」＋「📝 期中評量」合併為「📈 學習評量」，輸出 report.evals＝[每學期一筆]，
+// 四段（①期中前平時卷 ②期中考 ③期末前平時卷 ④期末考）都保留；trail／summary 規則正本 scripts/classos/lib/term-trail.mjs。
 // 不放全班平均、不排名；不進任何公開 data/*.json。
 async function quizBySeat(roster, bySeat) {
   let weeksFile, calendar;
@@ -860,17 +863,18 @@ async function quizBySeat(roster, bySeat) {
   } while (cursor);
   const seatOfId = new Map(roster.map(r => [r._id, Number(r["座號"])]));
   const quizzesOf = new Map();
-  const midOf = new Map(); // 📝 期中評量（DG 線）：紀錄庫評量名稱＝期中考的列，不算平時考
-  const allQ = [], allMid = [];
+  const examOf = new Map(); // 定期評量（DG 線；DI 線起含期末考）：紀錄庫評量名稱＝期中考／期末考的列，不算平時考
+  const allQ = [], allExam = [];
   for (const r of recs) {
     const base = { date: r["日期"]?.start, category: r["類別"], subject: r["科目"], score: r["分數"], name: r["評量名稱"], desc: r["事件描述"] };
     const t = toTermExam(base);
-    if (t && !t.manual && t.name === "期中考") {
+    if (t && !t.manual) {
+      t.name = t.name.replace(/\s+/g, "");
       t.errors = String(r["錯題"] || "").trim();
-      allMid.push(t);
+      allExam.push(t);
       for (const id of r["學生"] || []) {
         const seat = seatOfId.get(id);
-        if (seat != null) (midOf.get(seat) || midOf.set(seat, []).get(seat)).push(t);
+        if (seat != null) (examOf.get(seat) || examOf.set(seat, []).get(seat)).push(t);
       }
     }
     const q = toQuiz(base);
@@ -895,7 +899,7 @@ async function quizBySeat(roster, bySeat) {
   // 錯題表考卷選單標「已上傳」（老師 2026-10-26）：只輸出卷 id 與紀錄庫已有錯題碼（或缺考）的人數，不含座號、分數
   if (exams.length) {
     const uploaded = {};
-    for (const q of [...allQ, ...allMid]) {
+    for (const q of [...allQ, ...allExam]) {
       if (!q.errors && !q.absent) continue;
       const e = matchExam(exams, q);
       if (e) uploaded[e.id] = (uploaded[e.id] || 0) + 1;
@@ -905,66 +909,86 @@ async function quizBySeat(roster, bySeat) {
   const cards = await reviewCards();
   const hasCard = (subject, name) => cards.some(c => c.subject === subject && c.name === name);
   const manual = [];
-  const out = {};
-  const midOut = {};
-  // 一份卷（平時卷或期中考）→ 錯題分析；對不到卷或錯題碼有問題＝需人工、不出分析
+  // 一份卷（平時卷或期中／期末考）→ 錯題分析；對不到卷或錯題碼有問題＝需人工、不出分析。同一份卷只算一次。
+  const analysisMemo = new Map();
   const analysisOf = q => {
+    if (analysisMemo.has(q)) return analysisMemo.get(q);
+    let item = null;
     const e = matchExam(exams, q);
-    if (!e) { manual.push(`${q.subject}「${q.name}」對不到📝平時卷`); return null; }
-    const res = analyze(e.exam, q.errors, q.score);
-    if (res.manual) { manual.push(`${q.subject}「${q.name}」${res.manual}`); return null; }
-    const item = reportItem({ subject: q.subject, name: q.name, date: q.date, open: e.open, paper: e.paper,
-      review: e.review ? { label: "整課觀念複習", href: e.review } : null }, res, today, hasCard);
-    for (const k of missingCards(item)) manual.push(`${q.subject}「${k}」沒有上架的📚觀念複習卡（報告不放連結）`);
+    if (!e) manual.push(`${q.subject}「${q.name}」對不到📝平時卷`);
+    else {
+      const res = analyze(e.exam, q.errors, q.score);
+      if (res.manual) manual.push(`${q.subject}「${q.name}」${res.manual}`);
+      else {
+        item = reportItem({ subject: q.subject, name: q.name, date: q.date, open: e.open, paper: e.paper,
+          review: e.review ? { label: "整課觀念複習", href: e.review } : null }, res, today, hasCard);
+        for (const k of missingCards(item)) manual.push(`${q.subject}「${k}」沒有上架的📚觀念複習卡（報告不放連結）`);
+      }
+    }
+    analysisMemo.set(q, item);
     return item;
   };
+  const analysisList = list => list.filter(q => q.errors && !q.absent).map(analysisOf).filter(Boolean)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const avgOf = list => Object.fromEntries(Object.entries(summarize(list).subjects).map(([k, v]) => [k, v.avg]));
+  const updated = { label: nowWeek ? `第 ${nowWeek.週次} 週` : "今天", date: today };
+  // 平時卷版型（① ③ 共用，沿用 BT 線 📈 平時評量）；prevAvg＝③ 才有的「期中前平時卷平均」
+  const quizSeg = (list, stage, r, prevAvg) => {
+    if (!list.length) return null;
+    const sum = summarize(list);
+    return { stage, from: r.from, to: r.to, subjects: sum.subjects, others: sum.others,
+      tip: reviewTip(sum.subjects, stage), prevAvg, analysis: analysisList(list) };
+  };
+  // 定期考版型（② ④ 共用，沿用 DG 線 📝 期中評量）：對照該段平時卷
+  const examSeg = (rows, quizList, name) => {
+    const data = termExamData(rows.map(t => ({ subject: t.subject, date: t.date, score: t.score, absent: t.absent,
+      item: t.errors && !t.absent ? analysisOf(t) : null })), analysisList(quizList), avgOf(quizList));
+    return data ? { name, ...data } : null;
+  };
+  // 一位學生一個學期 → 📈 學習評量（DI 線 v3.1，老師 2026-11-07 定案）：四段都保留輸出，前端四格階段列切換。
+  // 截止日＝今天（老師 2026-10-30：平時考一入紀錄庫、下次同步就出現）；期末階段今天還沒到＝③ 空。
+  const termEval = (s, term) => {
+    const termLabel = `${term.學年}${term.學期}`;
+    const mid = quizRange(calendar, weeksFile, termLabel, "期中");
+    const fin = quizRange(calendar, weeksFile, termLabel, "期末");
+    if (mid.error) return null;
+    const clip = r => ({ from: r.from, to: today < r.to ? today : r.to });
+    const r1 = clip(mid), r3 = !fin.error && today >= fin.from ? clip(fin) : null;
+    const mine = quizzesOf.get(s.seat) || [];
+    const s1 = mine.filter(q => inRange(q, r1)), s3 = r3 ? mine.filter(q => inRange(q, r3)) : [];
+    // 定期評量列用評量名稱分期中／期末，用學期範圍分上下學期（下學期也叫期中考）
+    const rows = name => (examOf.get(s.seat) || []).filter(t => t.name === name && t.date >= term.開學日 && t.date <= term.休業日)
+      .sort((a, b) => a.date.localeCompare(b.date) || a.subject.localeCompare(b.subject));
+    const midE = examSeg(rows("期中考"), s1, "期中考"), finE = examSeg(rows("期末考"), s3, "期末考");
+    const seg1 = quizSeg(s1, "期中", r1, null), seg3 = r3 ? quizSeg(s3, "期末", r3, avgOf(s1)) : null;
+    if (!seg1 && !seg3 && !midE && !finE) return null;
+    const trail = trailOf({ s1, mid: midE, s3, fin: finE });
+    return { term: term.學期名稱, termLabel, updated, trail, s1: seg1, mid: midE, s3: seg3, fin: finE,
+      summary: termSummary(trail, midE, finE) };
+  };
+  const evals = {};
   for (const s of Object.values(bySeat)) {
     const pub = s.periods.filter(p => p.reportType === "每週").map(p => weekOf(p.period)).filter(Boolean)
       .sort((a, b) => a.w.迄.localeCompare(b.w.迄));
     const last = pub[pub.length - 1];
     if (!last) continue;
-    const term = nowTerm || last.term;
-    const termLabel = `${term.學年}${term.學期}`;
-    const mid = quizRange(calendar, weeksFile, termLabel, "期中");
-    const fin = quizRange(calendar, weeksFile, termLabel, "期末");
-    if (mid.error) continue;
-    const cutoff = today;
-    const mine = quizzesOf.get(s.seat) || [];
-    // 📝 期中評量：期中考第一天起、本學期內的期中考列（下學期也叫期中考，用學期範圍分開）
-    const midRows = (midOf.get(s.seat) || []).filter(t => t.date > mid.to && t.date <= term.休業日)
-      .sort((a, b) => a.date.localeCompare(b.date) || a.subject.localeCompare(b.subject));
-    if (midRows.length) {
-      const midQuiz = mine.filter(q => inRange(q, mid));
-      const avg = Object.fromEntries(Object.entries(summarize(midQuiz).subjects).map(([k, v]) => [k, v.avg]));
-      const data = midtermData(midRows.map(t => ({ subject: t.subject, date: t.date, score: t.score, absent: t.absent,
-        item: t.errors && !t.absent ? analysisOf(t) : null })),
-        midQuiz.filter(q => q.errors && !q.absent).map(analysisOf).filter(Boolean), avg);
-      if (data) midOut[s.seat] = { term: term.學期名稱, termLabel, name: "期中考",
-        updated: { label: nowWeek ? `第 ${nowWeek.週次} 週` : "今天", date: today }, ...data };
+    // 今天所在學期（查不到＝寒暑假，退回最後一份已發布週報那學期）＋每份期末總報告的學期（🎓 學期總結要用那學期的軌跡）
+    const terms = new Map();
+    const cur = nowTerm || last.term;
+    terms.set(cur.學期名稱, cur);
+    for (const p of s.periods) if (p.reportType === "期末總報告") {
+      const t = (weeksFile.學期 || []).find(x => String(p.period || "").includes(x.學期名稱));
+      if (t) terms.set(t.學期名稱, t);
+      else manual.push(`期末總報告期間「${p.period}」看不出是哪個學期（學期總結不放評量軌跡）`);
     }
-    // 期中考後、期末階段還沒有任何平時考 → 續顯示期中階段（老師 2026-11-05 裁定，免得期中考後分類整個消失）
-    const finCur = !fin.error && cutoff >= fin.from
-      ? mine.filter(q => inRange(q, { from: fin.from, to: cutoff < fin.to ? cutoff : fin.to })) : [];
-    const stage = finCur.length ? "期末" : "期中";
-    const r = stage === "期末" ? fin : mid;
-    const to = cutoff < r.to ? cutoff : r.to;
-    const cur = mine.filter(q => inRange(q, { from: r.from, to }));
-    const sum = summarize(cur);
-    if (!cur.length) continue;
-    const shownTo = to; // 畫面寫到今天（或該階段最後一天）
-    const prev = stage === "期末" ? summarize(mine.filter(q => inRange(q, mid))).subjects : null;
-    out[s.seat] = {
-      term: term.學期名稱, termLabel, stage, from: r.from, to: shownTo,
-      updated: { label: nowWeek ? `第 ${nowWeek.週次} 週` : "今天", date: today },
-      subjects: sum.subjects, others: sum.others, tip: reviewTip(sum.subjects, stage),
-      prevAvg: prev ? Object.fromEntries(Object.entries(prev).map(([k, v]) => [k, v.avg])) : null,
-      analysis: cur.filter(q => q.errors && !q.absent).map(analysisOf).filter(Boolean).sort((a, b) => a.date.localeCompare(b.date)),
-    };
+    const list = [...terms.values()].sort((a, b) => a.開學日.localeCompare(b.開學日)).map(t => termEval(s, t)).filter(Boolean);
+    if (list.length) evals[s.seat] = list;
   }
-  console.log(`  ↳ 平時評量：紀錄庫評量 ${recs.length} 筆，${Object.keys(out).length} 位學生有分頁；期中評量 ${Object.keys(midOut).length} 位`);
+  const n = k => Object.values(evals).filter(l => l[l.length - 1][k]).length;
+  console.log(`  ↳ 學習評量：紀錄庫評量 ${recs.length} 筆，${Object.keys(evals).length} 位學生有分頁（期中前 ${n("s1")}、期中考 ${n("mid")}、期末前 ${n("s3")}、期末考 ${n("fin")}）`);
   // 公開 repo 的 Actions log 看得到：只印卷名與原因，不印座號與分數
   if (manual.length) console.warn(`⚠️ 錯題分析需人工 ${new Set(manual).size} 筆（該生該卷不出分析）：\n    ${[...new Set(manual)].join("\n    ")}`);
-  return { quiz: out, midterm: midOut };
+  return evals;
 }
 
 // ── 🔍 錯題分析的卷（BY 線，老師 2026-10-18 裁定）：讀「📝 平時卷」庫，題目結構與答案在頁面內文第一個 json 程式碼框。
@@ -1207,7 +1231,7 @@ async function syncReports() {
     }
   }
 
-  const { quiz, midterm } = await quizBySeat(roster, bySeat);
+  const evals = await quizBySeat(roster, bySeat);
   // 課堂作答：每週期別帶該生該週的知識點得分率（沒有作答紀錄＝不帶，前端不顯示）
   const assess = await assessRows();
   for (const s of Object.values(bySeat)) for (const p of s.periods) {
@@ -1231,7 +1255,7 @@ async function syncReports() {
     } : null;
     const payload = await encryptReport(
       { name: s.name, seat: s.seat, avatar: s.avatar, balance: f ? f.balance : null, finance: fin, periods: s.periods,
-        proposals: proposals[s.seat] || [], quiz: quiz[s.seat] || null, midterm: midterm[s.seat] || null }, s.code, s.seat);
+        proposals: proposals[s.seat] || [], evals: evals[s.seat] || [] }, s.code, s.seat);
     await writeFile(path.join(dir, `${s.seat}.json`), JSON.stringify(payload) + "\n", "utf8");
   }
   // 只公開「哪些座號有報告」，不含任何個資
