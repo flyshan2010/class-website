@@ -2291,3 +2291,8 @@ a.qa-chip.link::after { content: "👉 複習卡"; display: inline-block; white-
 }
 @media print { .ev-steps { display: none; } .ev-grades { grid-template-columns: repeat(3, 1fr); } .ev-g-sub, .ev-strip, .ev-trail { break-inside: avoid; } }
 .quiz-kpi .big small { font-size: .8rem; font-weight: 400; color: var(--ink-soft); }
+/* 分類鈕四個（DI 線 v3.1）：手機不讓字斷行，排不下就換行 */
+@media (max-width: 640px) {
+  .report-cats { display: flex; flex-wrap: wrap; border-radius: 16px; }
+  .report-cats button { white-space: nowrap; padding: 6px 10px; font-size: .82rem; }
+}

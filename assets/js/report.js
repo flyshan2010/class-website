@@ -705,7 +705,7 @@
     const growth = sm && sm.tracked.length ? `<div class="mid-growth"><h3>🔁 這學期錯過的觀念，學會了幾個？</h3>
       <div class="ev-meter"><i style="width:${Math.floor(learned / sm.tracked.length * 100 + 0.5)}%"></i></div>
       <p class="quiz-muted">平時卷低於 80% 的 ${sm.tracked.length} 個觀念，期中／期末考已經學會 <b style="color:#047857">${learned} 個</b>${left.length ? `，還有 ${left.length} 個（列在下面「寒假可以努力」）` : ""}。</p>
-      <div class="ev-legend">${QUIZ_SUBJ.map(([s, c]) => `<span><b style="--lc:${c}">${s}</b> 學會 ${sm.bySubject[s].ok}／${sm.bySubject[s].n}</span>`).join("")}</div></div>` : "";
+      <div class="ev-legend">${QUIZ_SUBJ.filter(([s]) => sm.bySubject[s].n).map(([s, c]) => `<span><b style="--lc:${c}">${s}</b> 學會 ${sm.bySubject[s].ok}／${sm.bySubject[s].n}</span>`).join("")}</div></div>` : "";
     const trail = !ev ? "" : box("#1F5FA8", "📈 這學期的評量軌跡", `${trailTable(ev, null)}${sm ? `<div class="ev-sum">${lines}</div>${growth}` : `<p class="quiz-muted">期末考成績登記後，這裡會出現各科一句話與觀念學會進度。</p>`}`);
     // 🗓️ 每週學習足跡：四項等第×每週＋好表現筆數（取代五向度逐週曲線，裁定 v3）
     const good = weeks.map(x => App.lines(x.highlights).length), gmax = Math.max(1, ...good);
