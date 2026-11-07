@@ -10,6 +10,7 @@
  *      → 寫新「座位表」並回讀 → 條件比對（新增建列、不在清單的改「已取消」，不刪列）→ 觸發班網同步。
  *   健康類（需坐前面）只存老師電腦瀏覽器，收到就整筆拒絕。
  *   若回「讀不到🪑座位條件」：Notion 打開該資料庫 → ⋯ → 連線 → 加入代理用的整合。
+ *   另加 version（免口令、只回版本號）：部署後送 {"action":"version"} 回 2.14 才算新版上線。
  *
  * ── v2.13 升級步驟（2026-10-18，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -121,6 +122,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
+const PROXY_VERSION = "2.14"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -145,6 +147,9 @@ function doPost(e) {
   const props = PropertiesService.getScriptProperties();
 
   try {
+    // v2.14：版本查詢（免口令、不含任何資料）——部署後 AI 自己 curl 確認新版上線，不必用口令
+    if (body.action === "version") return out_({ ok: true, version: PROXY_VERSION });
+
     // 學生動作：不驗教師口令，改以 座號＋查詢碼 對名冊驗證
     if (body.action === "redeem_request") return out_(redeemRequest_(props, body));
     if (body.action === "proposal_get") return out_(proposalGet_(props, body));

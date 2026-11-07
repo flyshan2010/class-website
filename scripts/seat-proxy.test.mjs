@@ -171,3 +171,8 @@ for (const [name, body, re] of [
     assert.equal(w.grid(), "1,2,3\n4,5,6");
   });
 }
+
+test("version 免口令，只回版本號", () => {
+  const w = makeWorld();
+  assert.deepEqual(JSON.parse(w.ctx.doPost({ postData: { contents: JSON.stringify({ action: "version" }) } })), { ok: true, version: "2.14" });
+});
