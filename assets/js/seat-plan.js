@@ -1,13 +1,15 @@
 /* 🪑 排座頁（DJ 線 P3，SPEC_座位編排.md §7）
  * 資料：代理 seat_get（名冊、座位表、座位條件）→ 本頁微調 → seat_apply（封存舊表、寫新表、更新條件、同步班網）。
  * 計算：window.SeatPlan（assets/js/seat-plan-core.js，與 node 測試同一支，不在這裡重寫規則）。
- * 健康（只存本機 localStorage，絕不送代理）：🦻 聽力「seatplan-hear-v1」（座號陣列）、視力「seatplan-vision-v1」、身高「seatplan-height-v1」、BMI「seatplan-bmi-v1」（{座號: 數值}）。
+ * 未套用草稿（個人狀況＋人際關係，本機「seatplan-draft-v1」，套用成功即清）；健康（只存本機 localStorage，絕不送代理）：🦻 聽力「seatplan-hear-v1」（座號陣列）、視力「seatplan-vision-v1」、身高「seatplan-height-v1」、BMI「seatplan-bmi-v1」（{座號: 數值}）。
  *   視力、身高由老師貼上，👁️ 需坐前面／👓 第 3–4 排／📏 身高高由 SP.deriveTags 推出，不手勾（老師 11/07）。
  *   舊版手勾的「seatplan-health-v1／v2」（視力標籤）載入時清掉，改以貼上的視力為準。 */
 (function () {
   "use strict";
   const SP = window.SeatPlan;
   const HEAR_KEY = "seatplan-hear-v1", OLD_KEYS = ["seatplan-health-v1", "seatplan-health-v2"];
+  // 老師 11/08：個人狀況與人際關係改了還沒套用，也要記住（草稿只存這台電腦；套用成功即清掉）
+  const DRAFT_KEY = "seatplan-draft-v1";
   // 貼上的數值：身高、視力（格式「座號:數值」；視力可寫「右/左」取較差眼）
   const NUM = {
     height: { key: "seatplan-height-v1", min: 80, max: 220, unit: "身高", box: "h" },
@@ -61,6 +63,42 @@
     if (msg) $("#gateMsg").textContent = msg;
   }
   function setStatus(msg, bad) { const el = $("#status"); el.textContent = msg; el.classList.toggle("bad", !!bad); }
+
+  // ── 送 Notion 的條件（易分心、需協助、小老師＋人際關係）與未套用草稿 ──
+  function condList() {
+    const out = [];
+    students.forEach(s => s.tags.forEach(t => { if (TRAITS[t].chip && !TRAITS[t].health) out.push({ seat: s.seat, kind: t }); }));
+    relations.forEach(r => out.push({ seat: r.a, kind: r.k, other: r.b }));
+    return out;
+  }
+  // 比對用簽章：同一組條件不論順序、關係不論誰先，簽章都一樣
+  function condSig(list) {
+    return JSON.stringify(list.map(c => c.other != null ? c.kind + ":" + Math.min(c.seat, c.other) + "-" + Math.max(c.seat, c.other) : c.kind + ":" + c.seat).sort());
+  }
+  let draftBase = null;                                        // 載入時 Notion 條件的簽章
+  function saveDraft() {
+    if (draftBase == null) return;
+    try {
+      const list = condList();
+      if (condSig(list) === draftBase) localStorage.removeItem(DRAFT_KEY);   // 和 Notion 一樣就不必留草稿
+      else localStorage.setItem(DRAFT_KEY, JSON.stringify({ base: draftBase, list, at: new Date().toISOString() }));
+    } catch (e) { /* 封鎖儲存：照常運作，只是不記 */ }
+  }
+  // Notion 從存草稿後沒被改過（例如另一台電腦已套用）才用草稿；否則以 Notion 為準、丟掉草稿
+  function loadDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY); if (!raw) return "";
+      const d = JSON.parse(raw);
+      if (d.base !== draftBase || !Array.isArray(d.list)) { localStorage.removeItem(DRAFT_KEY); return "Notion 的座位條件已在別處更新，這台電腦上次沒套用的修改已作廢"; }
+      students.forEach(s => [...s.tags].forEach(t => { if (TRAITS[t] && TRAITS[t].chip && !TRAITS[t].health) s.tags.delete(t); }));
+      relations = [];
+      d.list.forEach(c => {
+        if (c.other != null) { if (bySeat.has(c.seat) && bySeat.has(c.other) && REL[c.kind]) relations.push({ a: c.seat, b: c.other, k: c.kind }); }
+        else if (bySeat.has(c.seat) && TRAITS[c.kind] && TRAITS[c.kind].chip && !TRAITS[c.kind].health) bySeat.get(c.seat).tags.add(c.kind);
+      });
+      return "已帶入這台電腦上次還沒套用的個人狀況與人際關係（按「確認並更新班網」才會存進 Notion）";
+    } catch (e) { return ""; }
+  }
 
   // ── 健康標籤：只存本機 ──
   function loadHealth() {
@@ -123,6 +161,7 @@
   function regen() {
     try {
       rederive();
+      saveDraft();
       plan = SP.optimize(input(), { seed, locks }).assign;
       selected = null; render();
     } catch (err) { setStatus("排不出座位：" + err.message, true); }
@@ -301,9 +340,7 @@
   async function doApply() {
     if (busy) return;
     busy = true; $("#applyGo").disabled = true; $("#apply").disabled = true;
-    const conditions = [];
-    students.forEach(s => s.tags.forEach(t => { if (TRAITS[t].chip && !TRAITS[t].health) conditions.push({ seat: s.seat, kind: t }); }));
-    relations.forEach(r => conditions.push({ seat: r.a, kind: r.k, other: r.b }));
+    const conditions = condList();
     const grid = SP.formatGrid({ rows: room.rows, cols: room.cols, assign: plan });
     setStatus("更新中…（請不要關掉頁面）");
     try {
@@ -311,6 +348,7 @@
       $("#dlgApply").close();
       if (!r.ok) { setStatus("❌ " + (r.error || "更新失敗"), true); toast("沒有更新成功，畫面保留，可以再按一次"); return; }
       current = { rows: room.rows, cols: room.cols, assign: plan.slice() };
+      draftBase = condSig(conditions); try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}   // 已存進 Notion，草稿清掉
       const syncMsg = r.sync && r.sync.ok ? "班網同步已觸發，約 1 分鐘後換新" : "⚠️ 班網同步沒觸發成功，請到教師專區按「立即更新班網」";
       setStatus(`✅ 已更新座位表${r.archived ? `（舊座位封存成「${r.archived}」）` : "（座位沒變，未封存）"}；條件新增 ${r.added}、取消 ${r.cancelled}。${syncMsg}`, !(r.sync && r.sync.ok));
       toast("座位已送出");
@@ -337,6 +375,8 @@
       if (c.other != null) { relations = relations.filter(x => key2(x.a, x.b) !== key2(c.seat, c.other)); relations.push({ a: c.seat, b: c.other, k: c.kind }); }
       else if (bySeat.has(c.seat) && TRAITS[c.kind] && TRAITS[c.kind].chip) bySeat.get(c.seat).tags.add(c.kind);   // 舊「身高高」列改由身高推算，不讀
     });
+    draftBase = condSig(condList());
+    const draftMsg = loadDraft();
     loadHealth();
     loadNums();
     const msgs = [];
@@ -351,7 +391,7 @@
       current = { rows: 5, cols: 6, assign: Array(30).fill(null) };
     }
     if (r.skipped && r.skipped.length) msgs.push(`有 ${r.skipped.length} 筆座位條件對不到在學學生，沒有用：${r.skipped.join("、")}`);
-    setStatus(`${r.year} 學年・${students.length} 人・${room.rows} 排 × ${room.cols} 欄。` + (msgs.length ? "⚠️ " + msgs.join("；") : ""), msgs.length > 0);
+    setStatus(`${r.year} 學年・${students.length} 人・${room.rows} 排 × ${room.cols} 欄。` + (msgs.length ? "⚠️ " + msgs.join("；") : "") + (draftMsg ? "　📝 " + draftMsg : ""), msgs.length > 0);
     bind();
     regen();
   }
