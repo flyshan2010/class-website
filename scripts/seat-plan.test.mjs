@@ -9,7 +9,7 @@ const { parseGrid, formatGrid, evaluate, optimize, prepare } = require("../asset
 
 // ── 示意資料 ─────────────────────────────────────────
 const SEX = "男女女男男女男女男女女男男女男女男女女男男女男女男男女";
-const INIT = { 4: ["front"], 15: ["front"], 22: ["front"], 11: ["front"], 9: ["tall"], 18: ["tall"], 26: ["tall"],
+const INIT = { 4: ["front", "tall"], 15: ["front"], 22: ["front"], 11: ["front"], 9: ["tall"], 18: ["tall"], 26: ["tall"],
   7: ["distract"], 13: ["distract"], 20: ["distract"], 12: ["distract", "needhelp"], 5: ["needhelp"], 21: ["needhelp"],
   2: ["tutor"], 10: ["tutor"], 16: ["tutor"], 24: ["tutor"] };
 const CURRENT = `-,4,12,7,13,1
@@ -95,6 +95,15 @@ test("同條件同種子結果相同；換種子結果不同", () => {
   const a = optimize(demo(), { seed: 3 }), b = optimize(demo(), { seed: 3 }), c = optimize(demo(), { seed: 4 });
   assert.deepEqual(a, b);
   assert.notDeepEqual(a.assign, c.assign);
+});
+
+test("優先：身高高又需坐前面 → 不坐中間欄（6 欄＝第 3、4 欄；3 欄＝第 2 欄）", () => {
+  const wide = { rows: 2, cols: 6, relations: [], students: [{ seat: 1, sex: "", tags: ["front", "tall"] }] };
+  for (const [c, bad] of [[0, 0], [1, 0], [2, 1], [3, 1], [4, 0], [5, 0]])
+    assert.equal(failed(evaluate(wide, at(2, 6, { [6 + c]: 1 }), { detail: true }), "tallfront").length, bad, `第${c + 1}欄`);
+  assert.equal(failed(evaluate(tiny({ 1: ["front", "tall"] }), at(3, 3, { 4: 1 }), { detail: true }), "tallfront").length, 1);
+  assert.equal(failed(evaluate(tiny({ 1: ["front", "tall"] }), at(3, 3, { 3: 1 }), { detail: true }), "tallfront").length, 0);
+  assert.equal(failed(evaluate(tiny({ 1: ["tall"] }), at(3, 3, { 4: 1 }), { detail: true }), "tallfront").length, 0);
 });
 
 test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位子", () => {

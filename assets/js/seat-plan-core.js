@@ -21,6 +21,7 @@
   const ROOM = {
     FRONT_ROWS: 2,                                          // 「需坐前面」＝前兩排
     isWindow: (c, cols) => c === 0 || c === cols - 1,
+    isMiddle: (c, cols) => cols % 2 ? c === (cols - 1) / 2 : c === cols / 2 - 1 || c === cols / 2,   // 中間一欄（奇數）或兩欄（偶數）
     isDoor: (r, c, rows, cols) => (r <= 1 && (c === 0 || c === cols - 1)) || (r >= rows - 2 && c === cols - 1),
   };
   const ADJ_LR = 1, ADJ_FB = 0.7, ADJ_DIAG = 0.35;          // 相鄰程度：左右、前後、斜角
@@ -36,6 +37,7 @@
     distract: { tier: "pri",  label: "🌀 易分心 → 中間偏前，避開門窗" },
     helper:   { tier: "pri",  label: "🙋 需協助 → 旁邊有小老師" },
     tall:     { tier: "pri",  label: "📏 身高高 → 不坐第一排" },
+    tallfront:{ tier: "pri",  label: "📏👁️ 身高高又需坐前面 → 不坐中間欄" },
     pos:      { tier: "soft", label: "💚 能互助 → 坐近" },
     gender:   { tier: "soft", label: "男女梅花座" },
     history:  { tier: "soft", label: "不和上次同座" },
@@ -148,6 +150,10 @@
         add("distract", ok, [n], () => ok ? `座號${n} 易分心，坐中間第${r + 1}排` : `座號${n} 易分心，現在靠${door ? "門" : "窗（走廊）"}`);
       }
       if (t.has("tall")) add("tall", r >= 1, [n], () => r >= 1 ? `座號${n} 身高高，沒坐第一排` : `座號${n} 身高高坐第一排，會擋後面`);
+      if (t.has("tall") && t.has("front")) {               // 老師 11/07：高個子近視坐前面時靠兩側，不擋後面
+        const ok = !ROOM.isMiddle(c, cols);
+        add("tallfront", ok, [n], () => ok ? `座號${n} 身高高又需坐前面，坐在第${c + 1}欄（不在中間）` : `座號${n} 身高高又需坐前面，現在在中間欄，會擋後面`);
+      }
       if (t.has("needhelp")) {
         const h = students.find(o => o.seat !== n && o.tags.has("tutor") && pos.has(o.seat) && ADJ[i][pos.get(o.seat)] >= CLOSE_MIN);
         add("helper", !!h, h ? [n, h.seat] : [n],
