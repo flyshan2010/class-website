@@ -62,6 +62,7 @@ select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--line);
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 @media (prefers-color-scheme:dark){.btn.primary{color:#0f1a17}}
 .btn.small{padding:2px 8px;font-size:12.5px}
+.hbox{margin-top:10px;font-size:13.5px}.hbox summary{cursor:pointer;font-weight:600}.hbox textarea{width:100%;box-sizing:border-box;font:inherit;font-size:13px}
 .btn.ghost{border-color:transparent;background:none;color:var(--muted)}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{font:inherit;font-size:13.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 12px;cursor:pointer}
@@ -137,6 +138,12 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
     <p class="hint">點標籤開關。<b>👁️👓 虛線＝健康資料</b>（視力、聽力）：不存 Notion、AI 不讀，只記在這台電腦的瀏覽器。<span id="healthState"></span>
       <button class="btn ghost small" id="clearHealth">清除這台電腦的健康標籤</button></p>
     <div class="scroll" id="stuList"></div>
+    <details class="hbox" id="hBox">
+      <summary>📐 身高（特殊條件之外，矮的坐前、高的坐後）<span id="hState"></span></summary>
+      <p class="hint">貼上「座號:身高」，空白、逗號或換行分隔都可以（例：<code>1:142.8 2:132.5</code>）。只記在這台電腦的瀏覽器，不存 Notion、不送代理；每學期體格檢查後重貼一次。</p>
+      <textarea id="hIn" rows="3" aria-label="座號與身高"></textarea>
+      <p style="margin:6px 0 0"><button class="btn small" id="hGo">套用身高</button> <button class="btn ghost small" id="hClear">清除這台電腦的身高</button></p>
+    </details>
 
     <h2 style="margin-top:16px"><span class="step">2</span>人際關係</h2>
     <p class="hint">只記「會影響學習」或「能互相幫忙」的兩人，沒記的就是沒關係。同一對只留一筆。</p>
@@ -189,7 +196,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/seat-plan-core.js?v=20261108-2"></script>
-<script src="assets/js/seat-plan.js?v=20261108-2"></script>
+<script src="assets/js/seat-plan-core.js?v=20261108-3"></script>
+<script src="assets/js/seat-plan.js?v=20261108-3"></script>
 </body>
 </html>

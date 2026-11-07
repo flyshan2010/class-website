@@ -40,11 +40,13 @@
     tallfront:{ tier: "pri",  label: "📏👁️ 身高高又需坐前面 → 不坐中間欄" },
     mid:      { tier: "soft", label: "👓 視力稍弱 → 第 3–4 排" },
     pos:      { tier: "soft", label: "💚 能互助 → 坐近" },
+    height:   { tier: "soft", label: "📐 其餘依身高：矮的前、高的後" },
     gender:   { tier: "soft", label: "男女梅花座" },
     history:  { tier: "soft", label: "不和上次同座" },
     spread:   { tier: "soft", label: "🎓 小老師分散" },
   };
-  const PEN = { must: 100, pri: 20, soft: 3 };              // 內部用，畫面不顯示數字
+  const PEN = { must: 100, pri: 20, soft: 3 };
+  const HEIGHT_W = 2;                                       // 依身高：離「該坐的排」每差一排扣 2（低於 👓 視力稍弱的 6，特殊條件先滿足）              // 內部用，畫面不顯示數字
   const SA = { RUNS: 3, STEPS: 6000, T0: 60, T_END_RATIO: 0.001 };
 
   const key2 = (a, b) => Math.min(a, b) + "-" + Math.max(a, b);
@@ -101,8 +103,16 @@
     const students = (input.students || []).map(s => {
       const tags = new Set(s.tags || []);
       for (const t of tags) if (!TAGS.includes(t)) throw new Error(`座號${s.seat} 有不認得的個人狀況「${t}」`);
-      return { seat: Number(s.seat), sex: s.sex || "", tags };
+      let height = null;
+      if (s.height != null && s.height !== "") {
+        height = Number(s.height);
+        if (!Number.isFinite(height) || height < 80 || height > 220) throw new Error(`座號${s.seat} 的身高「${s.height}」不合理（要 80–220 公分）`);
+      }
+      return { seat: Number(s.seat), sex: s.sex || "", tags, height, hRow: null };
     });
+    // 依身高算「該坐第幾排」：矮→高依序填，每排 cols 人（同高依座號）；沒填身高的人不參與（老師 11/07）
+    students.filter(s => s.height != null).sort((a, b) => a.height - b.height || a.seat - b.seat)
+      .forEach((s, k) => { s.hRow = Math.min(Math.floor(k / cols), rows - 1); });
     const bySeat = new Map(students.map(s => [s.seat, s]));
     if (bySeat.size !== students.length) throw new Error("學生名單有重複座號");
     // 同一對只留一筆（後寫蓋前寫，SPEC §2.2）
@@ -158,6 +168,11 @@
       if (t.has("tall") && t.has("front")) {               // 老師 11/07：高個子近視坐前面時靠兩側，不擋後面
         const ok = !ROOM.isMiddle(c, cols);
         add("tallfront", ok, [n], () => ok ? `座號${n} 身高高又需坐前面，坐在第${c + 1}欄（不在中間）` : `座號${n} 身高高又需坐前面，現在在中間欄，會擋後面`);
+      }
+      if (s.hRow != null) {
+        const d = Math.abs(r - s.hRow);
+        total += HEIGHT_W * d;
+        add("height", d <= 1, [n], () => d <= 1 ? `座號${n} 依身高坐第${r + 1}排` : `座號${n} 依身高該在第${s.hRow + 1}排附近，現在第${r + 1}排`, 0);
       }
       if (t.has("needhelp")) {
         const h = students.find(o => o.seat !== n && o.tags.has("tutor") && pos.has(o.seat) && ADJ[i][pos.get(o.seat)] >= CLOSE_MIN);

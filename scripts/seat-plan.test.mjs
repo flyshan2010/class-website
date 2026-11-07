@@ -112,6 +112,19 @@ test("盡量：視力稍弱 → 第 3–4 排（第 1、2、5 排都算沒達成
     assert.equal(failed(evaluate(inp, at(5, 1, { [r]: 1 }), { detail: true }), "mid").length, bad, `第${r + 1}排`);
 });
 
+test("依身高：沒有其他條件時矮的前、高的後；特殊條件優先", () => {
+  const H = [150, 130, 140, 125, 145, 135];
+  const inp = { rows: 3, cols: 2, relations: [], students: H.map((h, i) => ({ seat: i + 1, sex: "", tags: [], height: h })) };
+  const g = optimize(inp, { seed: 1 });
+  const rowOf = n => Math.floor(g.assign.indexOf(n) / 2);
+  assert.deepEqual([4, 2, 6, 3, 5, 1].map(rowOf), [0, 0, 1, 1, 2, 2]);
+  // 最高的需坐前面 → 仍在前兩排
+  const inp2 = { ...inp, students: inp.students.map(s => s.seat === 1 ? { ...s, tags: ["front"] } : s) };
+  const g2 = optimize(inp2, { seed: 1 });
+  assert.ok(Math.floor(g2.assign.indexOf(1) / 2) <= 1);
+  assert.throws(() => prepare({ ...inp, students: [{ seat: 1, sex: "", tags: [], height: 15 }] }), /不合理/);
+});
+
 test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位子", () => {
   for (let seed = 1; seed <= 6; seed++) {
     const g = optimize(demo(), { seed });

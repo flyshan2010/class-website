@@ -7,6 +7,7 @@
   const SP = window.SeatPlan;
   const HKEY = "seatplan-health-v2", HKEY_V1 = "seatplan-health-v1";
   const HEALTH = ["front", "mid"];
+  const HTKEY = "seatplan-height-v1";                          // 身高 {座號: 公分}，只存本機（老師 11/07）
   const TRAITS = {
     front:    { icon: "👁️", label: "需坐前面", health: true },
     mid:      { icon: "👓", label: "視力稍弱", health: true },
@@ -70,11 +71,35 @@
     catch (e) { healthSaved = false; toast("這台電腦沒辦法記住健康標籤（瀏覽器封鎖儲存），關掉頁面就會消失"); }
   }
 
+  // ── 身高：只存本機 ──
+  function parseHeights(text) {
+    const out = new Map(), bad = [];
+    String(text || "").split(/[\s,，、;；]+/).filter(Boolean).forEach(tok => {
+      const m = tok.match(/^(\d+)[:：=](\d+(?:\.\d+)?)$/);
+      if (!m) { bad.push(tok); return; }
+      const n = Number(m[1]), h = Number(m[2]);
+      if (!bySeat.has(n) || h < 80 || h > 220) { bad.push(tok); return; }
+      out.set(n, h);
+    });
+    return { out, bad };
+  }
+  function loadHeights() {
+    try {
+      const raw = localStorage.getItem(HTKEY); if (!raw) return;
+      const d = JSON.parse(raw);
+      Object.keys(d).forEach(k => { const s = bySeat.get(Number(k)); const h = Number(d[k]); if (s && h >= 80 && h <= 220) s.height = h; });
+    } catch (e) { /* 封鎖儲存：照常運作 */ }
+  }
+  function saveHeights() {
+    const d = {}; students.forEach(s => { if (s.height != null) d[s.seat] = s.height; });
+    try { localStorage.setItem(HTKEY, JSON.stringify(d)); return true; } catch (e) { return false; }
+  }
+
   // ── 計算 ──
   function input() {
     return {
       rows: room.rows, cols: room.cols, current,
-      students: students.map(s => ({ seat: s.seat, sex: s.sex, tags: [...s.tags] })),
+      students: students.map(s => ({ seat: s.seat, sex: s.sex, tags: [...s.tags], height: s.height ?? null })),
       relations,
     };
   }
@@ -95,9 +120,11 @@
 
   // ── 畫面 ──
   function renderInputs() {
-    $("#stuList").innerHTML = students.map(s => `<div class="stu"><div class="who">${s.seat} ${esc(s.name)}<small>${esc(s.sex || "未填性別")}</small></div><div class="chips">` +
+    $("#stuList").innerHTML = students.map(s => `<div class="stu"><div class="who">${s.seat} ${esc(s.name)}<small>${esc(s.sex || "未填性別")}${s.height != null ? "・" + s.height : ""}</small></div><div class="chips">` +
       Object.entries(TRAITS).map(([k, v]) => `<button class="chip${v.health ? " health" : ""}${s.tags.has(k) ? " on" : ""}" data-s="${s.seat}" data-t="${k}" aria-pressed="${s.tags.has(k)}">${v.icon} ${v.label}</button>`).join("") + `</div></div>`).join("");
     $("#healthState").textContent = healthSaved ? "（這台電腦已記住）" : "";
+    const hn = students.filter(s => s.height != null).length;
+    $("#hState").textContent = hn ? `（已記 ${hn}／${students.length} 人）` : "（尚未設定，不依身高排）";
     const nm = n => esc(bySeat.get(n) ? bySeat.get(n).name : "");
     $("#relList").innerHTML = relations.map((r, i) => `<li><span>座號${r.a} ${nm(r.a)} ↔ 座號${r.b} ${nm(r.b)}<br><small style="color:var(--muted)">${REL[r.k]}</small></span><button class="btn ghost small" data-del="${i}" aria-label="刪除這組">✕</button></li>`).join("") || `<li><span style="color:var(--muted)">還沒有記錄</span></li>`;
   }
@@ -187,6 +214,21 @@
       try { localStorage.removeItem(HKEY); localStorage.removeItem(HKEY_V1); } catch (e) {}
       healthSaved = false; toast("已清除這台電腦的健康標籤"); regen();
     };
+    $("#hGo").onclick = () => {
+      const { out, bad } = parseHeights($("#hIn").value);
+      if (bad.length) { toast("看不懂：" + bad.slice(0, 5).join("、") + (bad.length > 5 ? "…" : "") + "（格式「座號:身高」，身高 80–220）"); return; }
+      if (!out.size) { toast("沒有貼上任何身高"); return; }
+      out.forEach((h, n) => { bySeat.get(n).height = h; });
+      const kept = saveHeights();
+      $("#hIn").value = "";
+      toast(`已套用 ${out.size} 人身高` + (kept ? "" : "（這台電腦記不住，關掉頁面就會消失）"));
+      renderInputs(); regen();
+    };
+    $("#hClear").onclick = () => {
+      students.forEach(s => { s.height = null; });
+      try { localStorage.removeItem(HTKEY); } catch (e) {}
+      toast("已清除這台電腦的身高"); renderInputs(); regen();
+    };
     $("#relList").addEventListener("click", ev => {
       const b = ev.target.closest("[data-del]"); if (!b) return;
       relations.splice(Number(b.dataset.del), 1); regen();
@@ -272,6 +314,7 @@
       else if (bySeat.has(c.seat) && TRAITS[c.kind]) bySeat.get(c.seat).tags.add(c.kind);
     });
     loadHealth();
+    loadHeights();
     const msgs = [];
     try {
       current = SP.parseGrid(r.grid);
