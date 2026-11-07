@@ -1,13 +1,15 @@
 /* 🪑 排座頁（DJ 線 P3，SPEC_座位編排.md §7）
  * 資料：代理 seat_get（名冊、座位表、座位條件）→ 本頁微調 → seat_apply（封存舊表、寫新表、更新條件、同步班網）。
  * 計算：window.SeatPlan（assets/js/seat-plan-core.js，與 node 測試同一支，不在這裡重寫規則）。
- * 健康：👁️ front 只存 localStorage「seatplan-health-v1」（座號陣列），絕不放進送給代理的條件清單。 */
+ * 健康：👁️ front、👓 mid 只存 localStorage「seatplan-health-v2」（{front:[座號], mid:[座號]}；舊版 v1＝front 座號陣列，讀到會轉存），絕不放進送給代理的條件清單。 */
 (function () {
   "use strict";
   const SP = window.SeatPlan;
-  const HKEY = "seatplan-health-v1";
+  const HKEY = "seatplan-health-v2", HKEY_V1 = "seatplan-health-v1";
+  const HEALTH = ["front", "mid"];
   const TRAITS = {
     front:    { icon: "👁️", label: "需坐前面", health: true },
+    mid:      { icon: "👓", label: "視力稍弱", health: true },
     distract: { icon: "🌀", label: "易分心" },
     tall:     { icon: "📏", label: "身高高" },
     needhelp: { icon: "🙋", label: "需協助" },
@@ -53,14 +55,18 @@
   // ── 健康標籤：只存本機 ──
   function loadHealth() {
     try {
-      const raw = localStorage.getItem(HKEY);
-      if (!raw) return;
-      JSON.parse(raw).forEach(n => { const s = bySeat.get(Number(n)); if (s) s.tags.add("front"); });
+      const raw = localStorage.getItem(HKEY), old = localStorage.getItem(HKEY_V1);
+      const data = raw ? JSON.parse(raw) : old ? { front: JSON.parse(old) } : null;
+      if (!data) return;
+      HEALTH.forEach(t => (data[t] || []).forEach(n => { const s = bySeat.get(Number(n)); if (s) s.tags.add(t); }));
       healthSaved = true;
+      if (!raw) saveHealth();                                  // 舊版轉存成 v2
     } catch (e) { /* 私密視窗或封鎖儲存：照常運作，只是不記 */ }
   }
   function saveHealth() {
-    try { localStorage.setItem(HKEY, JSON.stringify(students.filter(s => s.tags.has("front")).map(s => s.seat))); healthSaved = true; }
+    const data = {};
+    HEALTH.forEach(t => { data[t] = students.filter(s => s.tags.has(t)).map(s => s.seat); });
+    try { localStorage.setItem(HKEY, JSON.stringify(data)); localStorage.removeItem(HKEY_V1); healthSaved = true; }
     catch (e) { healthSaved = false; toast("這台電腦沒辦法記住健康標籤（瀏覽器封鎖儲存），關掉頁面就會消失"); }
   }
 
@@ -177,8 +183,8 @@
       regen();
     });
     $("#clearHealth").onclick = () => {
-      students.forEach(s => s.tags.delete("front"));
-      try { localStorage.removeItem(HKEY); } catch (e) {}
+      students.forEach(s => HEALTH.forEach(t => s.tags.delete(t)));
+      try { localStorage.removeItem(HKEY); localStorage.removeItem(HKEY_V1); } catch (e) {}
       healthSaved = false; toast("已清除這台電腦的健康標籤"); regen();
     };
     $("#relList").addEventListener("click", ev => {
@@ -222,7 +228,7 @@
     $("#applyMsg").innerHTML = nm ? `<span class="bdl">⚠️ 還有 ${nm} 件「必須」沒做到</span>，確定要用這份嗎？` : "這份建議「必須」的條件全部做到。按確認後：";
     $("#applySteps").innerHTML = (same ? `<li>座位和目前一樣，不封存、只更新條件。</li>` :
       `<li>現在的座位封存成「座位表（${prevMonthLabel()}）」（已有同名就加（2）），下次排座用來比對「不和上次同座」。</li><li>新座位寫入 Notion「⚙️ 網站設定」的「座位表」。</li>`) +
-      `<li>易分心、身高高、需協助、小老師與人際關係存進 Notion「🪑 座位條件」；<b>👁️ 需坐前面不會送出</b>。</li><li>班網約 1 分鐘後換新；班網只顯示座位和遮罩姓名。</li>`;
+      `<li>易分心、身高高、需協助、小老師與人際關係存進 Notion「🪑 座位條件」；<b>👁️ 需坐前面、👓 視力稍弱不會送出</b>。</li><li>班網約 1 分鐘後換新；班網只顯示座位和遮罩姓名。</li>`;
     $("#dlgApply").showModal();
   }
 

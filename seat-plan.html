@@ -9,7 +9,7 @@
 <style>
 /* 🪑 排座頁（DJ 線 P3，SPEC_座位編排.md §7）：畫面照範本 `座位編排建議_精簡版.html`。
    資料走代理 seat_get／seat_apply（教師口令）；計算一律用 assets/js/seat-plan-core.js（與測試同一支）。
-   健康標籤（👁️ 需坐前面）只存這台電腦 localStorage「seatplan-health-v1」，不送代理。 */
+   健康標籤（👁️ 需坐前面、👓 視力稍弱）只存這台電腦 localStorage「seatplan-health-v2」，不送代理。 */
 [hidden]{display:none!important}
 :root{
   --bg:#f6f4ef; --panel:#fff; --ink:#1f2328; --muted:#6b6f76; --line:#e3ded3;
@@ -134,7 +134,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 <main>
   <section class="panel" aria-label="編排條件">
     <h2><span class="step">1</span>個人狀況</h2>
-    <p class="hint">點標籤開關。<b>👁️ 虛線＝健康資料</b>（視力、聽力）：不存 Notion、AI 不讀，只記在這台電腦的瀏覽器。<span id="healthState"></span>
+    <p class="hint">點標籤開關。<b>👁️👓 虛線＝健康資料</b>（視力、聽力）：不存 Notion、AI 不讀，只記在這台電腦的瀏覽器。<span id="healthState"></span>
       <button class="btn ghost small" id="clearHealth">清除這台電腦的健康標籤</button></p>
     <div class="scroll" id="stuList"></div>
 
@@ -189,7 +189,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/seat-plan-core.js?v=20261108"></script>
-<script src="assets/js/seat-plan.js?v=20261108"></script>
+<script src="assets/js/seat-plan-core.js?v=20261108-2"></script>
+<script src="assets/js/seat-plan.js?v=20261108-2"></script>
 </body>
 </html>

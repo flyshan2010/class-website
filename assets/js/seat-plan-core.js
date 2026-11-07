@@ -5,7 +5,7 @@
  *
  * 資料形狀：
  *   grid      = { rows, cols, assign }，assign 長度 rows*cols，第 i 格＝第 floor(i/cols)+1 排、第 i%cols+1 欄，值＝座號或 null（空位）
- *   input     = { rows, cols, students:[{seat, sex:"男"|"女"|"", tags:["front","distract","tall","needhelp","tutor"]}],
+ *   input     = { rows, cols, students:[{seat, sex:"男"|"女"|"", tags:["front","mid","distract","tall","needhelp","tutor"]}],
  *                 relations:[{a, b, k:"chat"|"conflict"|"pos"}], current: grid|null（目前座位，用來算「不和上次同座」）}
  *   locks     = { 桌位 index: 座號 }（🔒 固定，只存在本次頁面）
  *   空位一律排在後排（optimize 的結構限制，不是計分規則；老師手動互換仍可移動空位）
@@ -27,7 +27,7 @@
   const ADJ_LR = 1, ADJ_FB = 0.7, ADJ_DIAG = 0.35;          // 相鄰程度：左右、前後、斜角
   const CLOSE_MIN = 0.7;                                    // 「前後左右」＝程度 ≥ 0.7
 
-  const TAGS = ["front", "distract", "tall", "needhelp", "tutor"];
+  const TAGS = ["front", "mid", "distract", "tall", "needhelp", "tutor"];
   const KINDS = ["chat", "conflict", "pos"];
   const TIER = { must: "必須", pri: "優先", soft: "盡量" };
   const RULES = {
@@ -38,6 +38,7 @@
     helper:   { tier: "pri",  label: "🙋 需協助 → 旁邊有小老師" },
     tall:     { tier: "pri",  label: "📏 身高高 → 不坐第一排" },
     tallfront:{ tier: "pri",  label: "📏👁️ 身高高又需坐前面 → 不坐中間欄" },
+    mid:      { tier: "soft", label: "👓 視力稍弱 → 第 3–4 排" },
     pos:      { tier: "soft", label: "💚 能互助 → 坐近" },
     gender:   { tier: "soft", label: "男女梅花座" },
     history:  { tier: "soft", label: "不和上次同座" },
@@ -150,6 +151,10 @@
         add("distract", ok, [n], () => ok ? `座號${n} 易分心，坐中間第${r + 1}排` : `座號${n} 易分心，現在靠${door ? "門" : "窗（走廊）"}`);
       }
       if (t.has("tall")) add("tall", r >= 1, [n], () => r >= 1 ? `座號${n} 身高高，沒坐第一排` : `座號${n} 身高高坐第一排，會擋後面`);
+      if (t.has("mid")) {                                 // 老師 11/07：視力 0.8–0.9 盡可能坐第 3–4 排
+        const ok = r === 2 || r === 3;
+        add("mid", ok, [n], () => ok ? `座號${n} 視力稍弱，在第${r + 1}排` : `座號${n} 視力稍弱，現在第${r + 1}排`, 2);
+      }
       if (t.has("tall") && t.has("front")) {               // 老師 11/07：高個子近視坐前面時靠兩側，不擋後面
         const ok = !ROOM.isMiddle(c, cols);
         add("tallfront", ok, [n], () => ok ? `座號${n} 身高高又需坐前面，坐在第${c + 1}欄（不在中間）` : `座號${n} 身高高又需坐前面，現在在中間欄，會擋後面`);

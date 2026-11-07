@@ -9,7 +9,7 @@ const { parseGrid, formatGrid, evaluate, optimize, prepare } = require("../asset
 
 // ── 示意資料 ─────────────────────────────────────────
 const SEX = "男女女男男女男女男女女男男女男女男女女男男女男女男男女";
-const INIT = { 4: ["front", "tall"], 15: ["front"], 22: ["front"], 11: ["front"], 9: ["tall"], 18: ["tall"], 26: ["tall"],
+const INIT = { 4: ["front", "tall"], 3: ["mid"], 19: ["mid"], 15: ["front"], 22: ["front"], 11: ["front"], 9: ["tall"], 18: ["tall"], 26: ["tall"],
   7: ["distract"], 13: ["distract"], 20: ["distract"], 12: ["distract", "needhelp"], 5: ["needhelp"], 21: ["needhelp"],
   2: ["tutor"], 10: ["tutor"], 16: ["tutor"], 24: ["tutor"] };
 const CURRENT = `-,4,12,7,13,1
@@ -104,6 +104,12 @@ test("優先：身高高又需坐前面 → 不坐中間欄（6 欄＝第 3、4 
   assert.equal(failed(evaluate(tiny({ 1: ["front", "tall"] }), at(3, 3, { 4: 1 }), { detail: true }), "tallfront").length, 1);
   assert.equal(failed(evaluate(tiny({ 1: ["front", "tall"] }), at(3, 3, { 3: 1 }), { detail: true }), "tallfront").length, 0);
   assert.equal(failed(evaluate(tiny({ 1: ["tall"] }), at(3, 3, { 4: 1 }), { detail: true }), "tallfront").length, 0);
+});
+
+test("盡量：視力稍弱 → 第 3–4 排（第 1、2、5 排都算沒達成）", () => {
+  const inp = { rows: 5, cols: 1, relations: [], students: [{ seat: 1, sex: "", tags: ["mid"] }] };
+  for (const [r, bad] of [[0, 1], [1, 1], [2, 0], [3, 0], [4, 1]])
+    assert.equal(failed(evaluate(inp, at(5, 1, { [r]: 1 }), { detail: true }), "mid").length, bad, `第${r + 1}排`);
 });
 
 test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位子", () => {
