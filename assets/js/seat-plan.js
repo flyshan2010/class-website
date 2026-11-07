@@ -10,6 +10,9 @@
   const HEAR_KEY = "seatplan-hear-v1", OLD_KEYS = ["seatplan-health-v1", "seatplan-health-v2"];
   // 老師 11/08：個人狀況與人際關係改了還沒套用，也要記住（草稿只存這台電腦；套用成功即清掉）
   const DRAFT_KEY = "seatplan-draft-v1";
+  // 老師 11/08：手動互換會誤排 → 可一步步復原；套用後想反悔 → 記住套用前的座位（只存這台電腦）
+  const BEFORE_KEY = "seatplan-before-apply-v1";
+  const undoStack = [];
   // 貼上的數值：身高、視力（格式「座號:數值」；視力可寫「右/左」取較差眼）
   const NUM = {
     height: { key: "seatplan-height-v1", min: 80, max: 220, unit: "身高", box: "h" },
@@ -150,6 +153,26 @@
   }
   function shownTags(s) { return [...new Set([...s.tags, ...(derived.get(s.seat) || [])])]; }
 
+  // ── 復原 ──
+  function snap() {
+    if (!plan) return;
+    undoStack.push(plan.slice()); if (undoStack.length > 50) undoStack.shift();
+  }
+  function setPlan(arr, msg) {
+    snap(); plan = arr.slice(); view = "plan"; selected = null;
+    for (const [i, n] of [...locks]) if (plan[i] !== n) locks.delete(i);   // 固定的人不在原格就取消固定
+    toast(msg); render();
+  }
+  function beforeApply() {
+    try { const d = JSON.parse(localStorage.getItem(BEFORE_KEY) || "null"); const g = d && SP.parseGrid(d.grid); return g && g.rows === room.rows && g.cols === room.cols ? { g, at: d.at } : null; }
+    catch (e) { return null; }
+  }
+  function syncUndoBtns() {
+    $("#undo").disabled = !undoStack.length;
+    $("#undo").textContent = undoStack.length ? `↶ 復原（${undoStack.length}）` : "↶ 復原";
+    $("#restoreBefore").hidden = !beforeApply();
+  }
+
   // ── 計算 ──
   function input() {
     return {
@@ -162,6 +185,7 @@
     try {
       rederive();
       saveDraft();
+      snap();
       plan = SP.optimize(input(), { seed, locks }).assign;
       selected = null; render();
     } catch (err) { setStatus("排不出座位：" + err.message, true); }
@@ -238,6 +262,7 @@
       }).join("") + `</ul></div>`).join("");
     renderDetail(assign, e);
     document.querySelectorAll("#view button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === view));
+    syncUndoBtns();
   }
 
   function renderDetail(assign, e) {
@@ -312,6 +337,7 @@
       if (selected == null || selected === i) { selected = selected === i ? null : i; render(); return; }
       if (locks.has(selected) || locks.has(i)) return toast("有一格已固定，先取消固定才能換");
       const a = plan[selected], b = plan[i];
+      snap();
       [plan[selected], plan[i]] = [b, a];
       toast(`${a ? "座號" + a : "空位"} ⇄ ${b ? "座號" + b : "空位"}`); selected = null; render();
     };
@@ -320,6 +346,17 @@
     $("#view").addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; view = b.dataset.v; selected = null; render(); });
     $("#again").onclick = () => { seed++; view = "plan"; regen(); toast(`換成第 ${seed} 份建議`); };
     $("#apply").onclick = openApply;
+    $("#undo").onclick = () => {
+      if (!undoStack.length) return;
+      plan = undoStack.pop(); view = "plan"; selected = null;
+      for (const [i, n] of [...locks]) if (plan[i] !== n) locks.delete(i);
+      toast("已復原上一步"); render();
+    };
+    $("#backNow").onclick = () => setPlan(current.assign, "已把建議換回目前座位，可以從這裡手動調整");
+    $("#restoreBefore").onclick = () => {
+      const b = beforeApply(); if (!b) return;
+      setPlan(b.g.assign, `已換回 ${b.at} 套用前的座位；按「✅ 確認並更新班網」才會真的改回去`);
+    };
     document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
     $("#applyGo").onclick = doApply;
   }
@@ -347,6 +384,7 @@
       const r = await call({ action: "seat_apply", grid, conditions });
       $("#dlgApply").close();
       if (!r.ok) { setStatus("❌ " + (r.error || "更新失敗"), true); toast("沒有更新成功，畫面保留，可以再按一次"); return; }
+      try { localStorage.setItem(BEFORE_KEY, JSON.stringify({ grid: SP.formatGrid(current), at: new Date().toLocaleString("zh-TW", { hour12: false }) })); } catch (e) {}
       current = { rows: room.rows, cols: room.cols, assign: plan.slice() };
       draftBase = condSig(conditions); try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}   // 已存進 Notion，草稿清掉
       const syncMsg = r.sync && r.sync.ok ? "班網同步已觸發，約 1 分鐘後換新" : "⚠️ 班網同步沒觸發成功，請到教師專區按「立即更新班網」";

@@ -176,6 +176,9 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
         <button data-v="pub" aria-pressed="false">學生看到的</button>
       </div>
       <span class="spacer"></span>
+      <button class="btn" id="undo" disabled title="退回上一步（手動互換、換建議、改條件都可以退）">↶ 復原</button>
+      <button class="btn" id="backNow" title="把建議換成目前的座位表，再從這裡手動調整">↩️ 從目前座位開始</button>
+      <button class="btn" id="restoreBefore" hidden title="上次按確認之前的座位（只記在這台電腦）">⏪ 改回套用前的座位</button>
       <button class="btn" id="again">🔄 換一個建議</button>
       <button class="btn primary" id="apply">✅ 確認並更新班網</button>
     </div>
@@ -208,7 +211,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/seat-plan-core.js?v=20261108-8"></script>
-<script src="assets/js/seat-plan.js?v=20261108-8"></script>
+<script src="assets/js/seat-plan-core.js?v=20261108-9"></script>
+<script src="assets/js/seat-plan.js?v=20261108-9"></script>
 </body>
 </html>
