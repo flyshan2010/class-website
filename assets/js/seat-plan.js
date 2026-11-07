@@ -1,20 +1,27 @@
 /* 🪑 排座頁（DJ 線 P3，SPEC_座位編排.md §7）
  * 資料：代理 seat_get（名冊、座位表、座位條件）→ 本頁微調 → seat_apply（封存舊表、寫新表、更新條件、同步班網）。
  * 計算：window.SeatPlan（assets/js/seat-plan-core.js，與 node 測試同一支，不在這裡重寫規則）。
- * 健康：👁️ front、👓 mid 只存 localStorage「seatplan-health-v2」（{front:[座號], mid:[座號]}；舊版 v1＝front 座號陣列，讀到會轉存），絕不放進送給代理的條件清單。 */
+ * 健康（只存本機 localStorage，絕不送代理）：🦻 聽力「seatplan-hear-v1」（座號陣列）、視力「seatplan-vision-v1」、身高「seatplan-height-v1」（{座號: 數值}）。
+ *   視力、身高由老師貼上，👁️ 需坐前面／👓 第 3–4 排／📏 身高高由 SP.deriveTags 推出，不手勾（老師 11/07）。
+ *   舊版手勾的「seatplan-health-v1／v2」（視力標籤）載入時清掉，改以貼上的視力為準。 */
 (function () {
   "use strict";
   const SP = window.SeatPlan;
-  const HKEY = "seatplan-health-v2", HKEY_V1 = "seatplan-health-v1";
-  const HEALTH = ["front", "mid"];
-  const HTKEY = "seatplan-height-v1";                          // 身高 {座號: 公分}，只存本機（老師 11/07）
+  const HEAR_KEY = "seatplan-hear-v1", OLD_KEYS = ["seatplan-health-v1", "seatplan-health-v2"];
+  // 貼上的數值：身高、視力（格式「座號:數值」；視力可寫「右/左」取較差眼）
+  const NUM = {
+    height: { key: "seatplan-height-v1", min: 80, max: 220, unit: "身高", box: "h" },
+    vision: { key: "seatplan-vision-v1", min: 0.01, max: 2.0, unit: "視力", box: "v" },
+  };
+  // chip＝老師手勾；其餘由視力、身高推出（只顯示圖示）
   const TRAITS = {
-    front:    { icon: "👁️", label: "需坐前面", health: true },
-    mid:      { icon: "👓", label: "視力稍弱", health: true },
-    distract: { icon: "🌀", label: "易分心" },
-    tall:     { icon: "📏", label: "身高高" },
-    needhelp: { icon: "🙋", label: "需協助" },
-    tutor:    { icon: "🎓", label: "小老師" },
+    hear:     { icon: "🦻", label: "聽力・需坐前面", health: true, chip: true },
+    distract: { icon: "🌀", label: "易分心", chip: true },
+    needhelp: { icon: "🙋", label: "需協助", chip: true },
+    tutor:    { icon: "🎓", label: "小老師", chip: true },
+    front:    { icon: "👁️", label: "視力≤0.7・需坐前面" },
+    mid:      { icon: "👓", label: "視力0.8–0.9・第3–4排" },
+    tall:     { icon: "📏", label: "全班最高1/5" },
   };
   const REL = { chat: "🗣️ 愛聊天（不相鄰）", conflict: "⚡ 易衝突（隔開）", pos: "💚 能互助（坐近）" };
   const MONTH = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
@@ -56,55 +63,64 @@
   // ── 健康標籤：只存本機 ──
   function loadHealth() {
     try {
-      const raw = localStorage.getItem(HKEY), old = localStorage.getItem(HKEY_V1);
-      const data = raw ? JSON.parse(raw) : old ? { front: JSON.parse(old) } : null;
-      if (!data) return;
-      HEALTH.forEach(t => (data[t] || []).forEach(n => { const s = bySeat.get(Number(n)); if (s) s.tags.add(t); }));
+      OLD_KEYS.forEach(k => localStorage.removeItem(k));        // 舊版手勾視力：改由貼上的視力推算
+      const raw = localStorage.getItem(HEAR_KEY);
+      if (!raw) return;
+      JSON.parse(raw).forEach(n => { const s = bySeat.get(Number(n)); if (s) s.tags.add("hear"); });
       healthSaved = true;
-      if (!raw) saveHealth();                                  // 舊版轉存成 v2
     } catch (e) { /* 私密視窗或封鎖儲存：照常運作，只是不記 */ }
   }
   function saveHealth() {
-    const data = {};
-    HEALTH.forEach(t => { data[t] = students.filter(s => s.tags.has(t)).map(s => s.seat); });
-    try { localStorage.setItem(HKEY, JSON.stringify(data)); localStorage.removeItem(HKEY_V1); healthSaved = true; }
+    try { localStorage.setItem(HEAR_KEY, JSON.stringify(students.filter(s => s.tags.has("hear")).map(s => s.seat))); healthSaved = true; }
     catch (e) { healthSaved = false; toast("這台電腦沒辦法記住健康標籤（瀏覽器封鎖儲存），關掉頁面就會消失"); }
   }
 
-  // ── 身高：只存本機 ──
-  function parseHeights(text) {
-    const out = new Map(), bad = [];
+  // ── 身高、視力：貼上、只存本機 ──
+  function parseNums(kind, text) {
+    const cfg = NUM[kind], out = new Map(), bad = [];
     String(text || "").split(/[\s,，、;；]+/).filter(Boolean).forEach(tok => {
-      const m = tok.match(/^(\d+)[:：=](\d+(?:\.\d+)?)$/);
-      if (!m) { bad.push(tok); return; }
-      const n = Number(m[1]), h = Number(m[2]);
-      if (!bySeat.has(n) || h < 80 || h > 220) { bad.push(tok); return; }
-      out.set(n, h);
+      const m = tok.match(/^(\d+)[:：=](\d*\.?\d+)(?:[\/／](\d*\.?\d+))?$/);
+      if (!m || (m[3] && kind !== "vision")) { bad.push(tok); return; }
+      const n = Number(m[1]), v = m[3] ? Math.min(Number(m[2]), Number(m[3])) : Number(m[2]);
+      if (!bySeat.has(n) || !(v >= cfg.min && v <= cfg.max)) { bad.push(tok); return; }
+      out.set(n, v);
     });
     return { out, bad };
   }
-  function loadHeights() {
-    try {
-      const raw = localStorage.getItem(HTKEY); if (!raw) return;
-      const d = JSON.parse(raw);
-      Object.keys(d).forEach(k => { const s = bySeat.get(Number(k)); const h = Number(d[k]); if (s && h >= 80 && h <= 220) s.height = h; });
-    } catch (e) { /* 封鎖儲存：照常運作 */ }
+  function loadNums() {
+    for (const kind of Object.keys(NUM)) {
+      try {
+        const raw = localStorage.getItem(NUM[kind].key); if (!raw) continue;
+        const d = JSON.parse(raw);
+        Object.keys(d).forEach(k => { const s = bySeat.get(Number(k)), v = Number(d[k]); if (s && v >= NUM[kind].min && v <= NUM[kind].max) s[kind] = v; });
+      } catch (e) { /* 封鎖儲存：照常運作 */ }
+    }
   }
-  function saveHeights() {
-    const d = {}; students.forEach(s => { if (s.height != null) d[s.seat] = s.height; });
-    try { localStorage.setItem(HTKEY, JSON.stringify(d)); return true; } catch (e) { return false; }
+  function saveNums(kind) {
+    const d = {}; students.forEach(s => { if (s[kind] != null) d[s.seat] = s[kind]; });
+    try { localStorage.setItem(NUM[kind].key, JSON.stringify(d)); return true; } catch (e) { return false; }
   }
+  // 實際送進計算的標籤＝手勾（🦻 聽力→需坐前面）＋由視力、身高推出
+  let derived = new Map();
+  function rederive() { derived = SP.deriveTags(students.map(s => ({ seat: s.seat, vision: s.vision, height: s.height }))); }
+  function eff(s) {
+    const t = new Set([...s.tags].map(x => x === "hear" ? "front" : x));
+    (derived.get(s.seat) || []).forEach(x => t.add(x));
+    return t;
+  }
+  function shownTags(s) { return [...new Set([...s.tags, ...(derived.get(s.seat) || [])])]; }
 
   // ── 計算 ──
   function input() {
     return {
       rows: room.rows, cols: room.cols, current,
-      students: students.map(s => ({ seat: s.seat, sex: s.sex, tags: [...s.tags], height: s.height ?? null })),
+      students: students.map(s => ({ seat: s.seat, sex: s.sex, tags: [...eff(s)], height: s.height ?? null })),
       relations,
     };
   }
   function regen() {
     try {
+      rederive();
       plan = SP.optimize(input(), { seed, locks }).assign;
       selected = null; render();
     } catch (err) { setStatus("排不出座位：" + err.message, true); }
@@ -120,11 +136,12 @@
 
   // ── 畫面 ──
   function renderInputs() {
-    $("#stuList").innerHTML = students.map(s => `<div class="stu"><div class="who">${s.seat} ${esc(s.name)}<small>${esc(s.sex || "未填性別")}${s.height != null ? "・" + s.height : ""}</small></div><div class="chips">` +
-      Object.entries(TRAITS).map(([k, v]) => `<button class="chip${v.health ? " health" : ""}${s.tags.has(k) ? " on" : ""}" data-s="${s.seat}" data-t="${k}" aria-pressed="${s.tags.has(k)}">${v.icon} ${v.label}</button>`).join("") + `</div></div>`).join("");
+    $("#stuList").innerHTML = students.map(s => `<div class="stu"><div class="who">${s.seat} ${esc(s.name)}<small>${esc(s.sex || "未填性別")}${s.height != null ? "・" + s.height : ""}${s.vision != null ? "・視" + s.vision : ""}${[...(derived.get(s.seat) || [])].map(t => " " + TRAITS[t].icon).join("")}</small></div><div class="chips">` +
+      Object.entries(TRAITS).filter(([, v]) => v.chip).map(([k, v]) => `<button class="chip${v.health ? " health" : ""}${s.tags.has(k) ? " on" : ""}" data-s="${s.seat}" data-t="${k}" aria-pressed="${s.tags.has(k)}">${v.icon} ${v.label}</button>`).join("") + `</div></div>`).join("");
     $("#healthState").textContent = healthSaved ? "（這台電腦已記住）" : "";
-    const hn = students.filter(s => s.height != null).length;
+    const hn = students.filter(s => s.height != null).length, vn = students.filter(s => s.vision != null).length;
     $("#hState").textContent = hn ? `（已記 ${hn}／${students.length} 人）` : "（尚未設定，不依身高排）";
+    $("#vState").textContent = vn ? `（已記 ${vn}／${students.length} 人）` : "（尚未設定）";
     const nm = n => esc(bySeat.get(n) ? bySeat.get(n).name : "");
     $("#relList").innerHTML = relations.map((r, i) => `<li><span>座號${r.a} ${nm(r.a)} ↔ 座號${r.b} ${nm(r.b)}<br><small style="color:var(--muted)">${REL[r.k]}</small></span><button class="btn ghost small" data-del="${i}" aria-label="刪除這組">✕</button></li>`).join("") || `<li><span style="color:var(--muted)">還沒有記錄</span></li>`;
   }
@@ -153,7 +170,7 @@
       h += `<div class="${cls.filter(Boolean).join(" ")}" data-i="${i}" role="button" tabindex="0" aria-label="${esc(s != null ? "座號" + s + " " + name : "空位")}">
         ${st && pri.has(s) && !must.has(s) ? `<span class="pri"></span>` : ""}${moved ? `<span class="mv"></span>` : ""}${mode === "plan" && locks.has(i) ? `<span class="lock">🔒</span>` : ""}
         <div class="no">${mode === "pub" ? "" : (s ?? "")}</div><div class="nk">${esc(name)}</div>
-        <div class="ic">${st && mode !== "pub" ? [...st.tags].map(t => TRAITS[t].icon).join("") : ""}</div></div>`;
+        <div class="ic">${st && mode !== "pub" ? shownTags(st).map(t => TRAITS[t].icon).join("") : ""}</div></div>`;
     });
     return h + `</div>`;
   }
@@ -189,7 +206,7 @@
     if (s == null) { d.innerHTML = `空位，${where}。再點一位學生，就把他移到這裡。`; d.classList.add("on"); return; }
     const st = bySeat.get(s), mine = e.items.filter(x => x.seats.includes(s));
     const cls = x => x.ok ? "okl" : x.tier === "must" ? "bdl" : "pril";
-    d.innerHTML = `<b>座號${s} ${esc(st.name)}</b>（${esc(st.sex || "未填性別")}）${where}　${[...st.tags].map(t => TRAITS[t].icon + TRAITS[t].label).join("　") || "沒有標狀況"}
+    d.innerHTML = `<b>座號${s} ${esc(st.name)}</b>（${esc(st.sex || "未填性別")}）${where}　${shownTags(st).map(t => TRAITS[t].icon + TRAITS[t].label).join("　") || "沒有標狀況"}${st.height != null ? "　身高 " + st.height : ""}${st.vision != null ? "　視力 " + st.vision : ""}
       <ul>${mine.map(x => `<li class="${cls(x)}">${x.ok ? "✅" : "⚠️"} ${esc(x.text)}</li>`).join("") || `<li class="okl">✅ 沒有特別的條件，前後左右也沒有衝突</li>`}</ul>
       <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn small" id="lockBtn">${locks.has(selected) ? "🔓 取消固定" : "🔒 固定這個位子"}</button>
       <small style="color:var(--muted)">固定後按「換一個建議」也不會動（例：行動不便要坐門邊）；固定只在這次頁面有效。再點另一格＝兩人互換。</small></div>`;
@@ -210,25 +227,28 @@
       regen();
     });
     $("#clearHealth").onclick = () => {
-      students.forEach(s => HEALTH.forEach(t => s.tags.delete(t)));
-      try { localStorage.removeItem(HKEY); localStorage.removeItem(HKEY_V1); } catch (e) {}
-      healthSaved = false; toast("已清除這台電腦的健康標籤"); regen();
+      students.forEach(s => { s.tags.delete("hear"); s.height = null; s.vision = null; });
+      try { [HEAR_KEY, ...OLD_KEYS, NUM.height.key, NUM.vision.key].forEach(k => localStorage.removeItem(k)); } catch (e) {}
+      healthSaved = false; toast("已清除這台電腦的聽力、視力、身高"); regen();
     };
-    $("#hGo").onclick = () => {
-      const { out, bad } = parseHeights($("#hIn").value);
-      if (bad.length) { toast("看不懂：" + bad.slice(0, 5).join("、") + (bad.length > 5 ? "…" : "") + "（格式「座號:身高」，身高 80–220）"); return; }
-      if (!out.size) { toast("沒有貼上任何身高"); return; }
-      out.forEach((h, n) => { bySeat.get(n).height = h; });
-      const kept = saveHeights();
-      $("#hIn").value = "";
-      toast(`已套用 ${out.size} 人身高` + (kept ? "" : "（這台電腦記不住，關掉頁面就會消失）"));
-      renderInputs(); regen();
-    };
-    $("#hClear").onclick = () => {
-      students.forEach(s => { s.height = null; });
-      try { localStorage.removeItem(HTKEY); } catch (e) {}
-      toast("已清除這台電腦的身高"); renderInputs(); regen();
-    };
+    for (const kind of Object.keys(NUM)) {
+      const b = NUM[kind].box, u = NUM[kind].unit;
+      $("#" + b + "Go").onclick = () => {
+        const { out, bad } = parseNums(kind, $("#" + b + "In").value);
+        if (bad.length) { toast("看不懂：" + bad.slice(0, 5).join("、") + (bad.length > 5 ? "…" : "") + `（格式「座號:${u}」，${u} ${NUM[kind].min}–${NUM[kind].max}）`); return; }
+        if (!out.size) { toast("沒有貼上任何" + u); return; }
+        out.forEach((v, n) => { bySeat.get(n)[kind] = v; });
+        const kept = saveNums(kind);
+        $("#" + b + "In").value = "";
+        toast(`已套用 ${out.size} 人${u}` + (kept ? "" : "（這台電腦記不住，關掉頁面就會消失）"));
+        regen();
+      };
+      $("#" + b + "Clear").onclick = () => {
+        students.forEach(s => { s[kind] = null; });
+        try { localStorage.removeItem(NUM[kind].key); } catch (e) {}
+        toast("已清除這台電腦的" + u); regen();
+      };
+    }
     $("#relList").addEventListener("click", ev => {
       const b = ev.target.closest("[data-del]"); if (!b) return;
       relations.splice(Number(b.dataset.del), 1); regen();
@@ -270,7 +290,7 @@
     $("#applyMsg").innerHTML = nm ? `<span class="bdl">⚠️ 還有 ${nm} 件「必須」沒做到</span>，確定要用這份嗎？` : "這份建議「必須」的條件全部做到。按確認後：";
     $("#applySteps").innerHTML = (same ? `<li>座位和目前一樣，不封存、只更新條件。</li>` :
       `<li>現在的座位封存成「座位表（${prevMonthLabel()}）」（已有同名就加（2）），下次排座用來比對「不和上次同座」。</li><li>新座位寫入 Notion「⚙️ 網站設定」的「座位表」。</li>`) +
-      `<li>易分心、身高高、需協助、小老師與人際關係存進 Notion「🪑 座位條件」；<b>👁️ 需坐前面、👓 視力稍弱不會送出</b>。</li><li>班網約 1 分鐘後換新；班網只顯示座位和遮罩姓名。</li>`;
+      `<li>易分心、需協助、小老師與人際關係存進 Notion「🪑 座位條件」；<b>🦻 聽力、視力、身高不會送出</b>（只在這台電腦）。</li><li>班網約 1 分鐘後換新；班網只顯示座位和遮罩姓名。</li>`;
     $("#dlgApply").showModal();
   }
 
@@ -278,7 +298,7 @@
     if (busy) return;
     busy = true; $("#applyGo").disabled = true; $("#apply").disabled = true;
     const conditions = [];
-    students.forEach(s => s.tags.forEach(t => { if (!TRAITS[t].health) conditions.push({ seat: s.seat, kind: t }); }));
+    students.forEach(s => s.tags.forEach(t => { if (TRAITS[t].chip && !TRAITS[t].health) conditions.push({ seat: s.seat, kind: t }); }));
     relations.forEach(r => conditions.push({ seat: r.a, kind: r.k, other: r.b }));
     const grid = SP.formatGrid({ rows: room.rows, cols: room.cols, assign: plan });
     setStatus("更新中…（請不要關掉頁面）");
@@ -311,10 +331,10 @@
     bySeat = new Map(students.map(s => [s.seat, s]));
     r.conditions.forEach(c => {
       if (c.other != null) { relations = relations.filter(x => key2(x.a, x.b) !== key2(c.seat, c.other)); relations.push({ a: c.seat, b: c.other, k: c.kind }); }
-      else if (bySeat.has(c.seat) && TRAITS[c.kind]) bySeat.get(c.seat).tags.add(c.kind);
+      else if (bySeat.has(c.seat) && TRAITS[c.kind] && TRAITS[c.kind].chip) bySeat.get(c.seat).tags.add(c.kind);   // 舊「身高高」列改由身高推算，不讀
     });
     loadHealth();
-    loadHeights();
+    loadNums();
     const msgs = [];
     try {
       current = SP.parseGrid(r.grid);

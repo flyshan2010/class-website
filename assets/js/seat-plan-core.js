@@ -31,14 +31,14 @@
   const KINDS = ["chat", "conflict", "pos"];
   const TIER = { must: "必須", pri: "優先", soft: "盡量" };
   const RULES = {
-    front:    { tier: "must", label: "👁️ 需坐前面 → 前兩排" },
+    front:    { tier: "must", label: "👁️🦻 需坐前面（視力 ≤0.7、聽力）→ 前兩排" },
     conflict: { tier: "must", label: "⚡ 易衝突 → 隔開" },
     chat:     { tier: "must", label: "🗣️ 愛聊天 → 不相鄰" },
     distract: { tier: "pri",  label: "🌀 易分心 → 中間偏前，避開門窗" },
     helper:   { tier: "pri",  label: "🙋 需協助 → 旁邊有小老師" },
-    tall:     { tier: "pri",  label: "📏 身高高 → 不坐第一排" },
-    tallfront:{ tier: "pri",  label: "📏👁️ 身高高又需坐前面 → 不坐中間欄" },
-    mid:      { tier: "soft", label: "👓 視力稍弱 → 第 3–4 排" },
+    tall:     { tier: "pri",  label: "📏 全班最高 1/5 → 不坐第一排" },
+    tallfront:{ tier: "pri",  label: "📏 高個子又需坐前面 → 不坐中間欄" },
+    mid:      { tier: "soft", label: "👓 視力 0.8–0.9 → 第 3–4 排" },
     pos:      { tier: "soft", label: "💚 能互助 → 坐近" },
     height:   { tier: "soft", label: "📐 其餘依身高：矮的前、高的後" },
     gender:   { tier: "soft", label: "男女梅花座" },
@@ -132,6 +132,25 @@
       for (const [i, j] of cc) if (cur.assign[i] != null && cur.assign[j] != null) histPairs.add(key2(cur.assign[i], cur.assign[j]));
     }
     return { __prepared: true, rows, cols, D: rows * cols, students, bySeat, relations: [...relMap.values()], histPairs, ...adj };
+  }
+
+  // ═════════ 由視力、身高推出標籤（老師 11/07：視力、身高照體格結果表貼上，不再手勾） ═════════
+  // list = [{seat, vision?, height?}]；vision＝有效視力（有配鏡看戴鏡、沒配鏡看裸視，取較差眼）
+  // 回傳 Map(座號 → Set)：vision ≤0.7 → front；0.7 < vision ≤0.9 → mid；身高最高 round(n/5) 人 → tall
+  const DERIVE = { FRONT_MAX: 0.7, MID_MAX: 0.9, TALL_RATIO: 1 / 5 };
+  function deriveTags(list) {
+    const out = new Map((list || []).map(s => [Number(s.seat), new Set()]));
+    for (const s of list || []) {
+      const v = s.vision == null || s.vision === "" ? NaN : Number(s.vision);
+      if (!Number.isFinite(v)) continue;
+      if (v <= DERIVE.FRONT_MAX + 1e-9) out.get(Number(s.seat)).add("front");
+      else if (v <= DERIVE.MID_MAX + 1e-9) out.get(Number(s.seat)).add("mid");
+    }
+    const hs = (list || []).filter(s => s.height != null && s.height !== "" && Number.isFinite(Number(s.height)))
+      .sort((a, b) => Number(b.height) - Number(a.height) || a.seat - b.seat);
+    const k = Math.round(hs.length * DERIVE.TALL_RATIO);
+    hs.slice(0, k).forEach(s => out.get(Number(s.seat)).add("tall"));
+    return out;
   }
 
   // ═════════ 評分（範本 evaluate() 為正本） ═════════
@@ -253,7 +272,7 @@
     return { rows: ctx.rows, cols: ctx.cols, assign: best };
   }
 
-  const api = { ROOM, TAGS, KINDS, TIER, RULES, parseGrid, formatGrid, prepare, evaluate, optimize, adjWord };
+  const api = { ROOM, TAGS, KINDS, TIER, RULES, DERIVE, deriveTags, parseGrid, formatGrid, prepare, evaluate, optimize, adjWord };
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.SeatPlan = api;
 })(typeof window !== "undefined" ? window : globalThis);

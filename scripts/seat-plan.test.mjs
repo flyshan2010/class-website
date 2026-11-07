@@ -5,7 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
-const { parseGrid, formatGrid, evaluate, optimize, prepare } = require("../assets/js/seat-plan-core.js");
+const { parseGrid, formatGrid, evaluate, optimize, prepare, deriveTags } = require("../assets/js/seat-plan-core.js");
 
 // ── 示意資料 ─────────────────────────────────────────
 const SEX = "男女女男男女男女男女女男男女男女男女女男男女男女男男女";
@@ -123,6 +123,22 @@ test("依身高：沒有其他條件時矮的前、高的後；特殊條件優�
   const g2 = optimize(inp2, { seed: 1 });
   assert.ok(Math.floor(g2.assign.indexOf(1) / 2) <= 1);
   assert.throws(() => prepare({ ...inp, students: [{ seat: 1, sex: "", tags: [], height: 15 }] }), /不合理/);
+});
+
+test("由視力、身高推標籤：≤0.7 需坐前面、0.8–0.9 第 3–4 排、最高 1/5 身高高", () => {
+  const list = [
+    { seat: 1, vision: 0.7, height: 150 }, { seat: 2, vision: 0.8, height: 140 }, { seat: 3, vision: 0.9, height: 130 },
+    { seat: 4, vision: 1.0, height: 120 }, { seat: 5, vision: 0.3, height: 145 }, { seat: 6, height: 125 },
+    { seat: 7, vision: 1.2 }, { seat: 8, vision: 0.5 }, { seat: 9, height: 135 }, { seat: 10 },
+  ];
+  const d = deriveTags(list), tags = n => [...d.get(n)].sort().join(",");
+  assert.equal(tags(1), "front,tall");          // 0.7 含在需坐前面；身高 7 人取 round(7/5)=1 人
+  assert.equal(tags(2), "mid");
+  assert.equal(tags(3), "mid");
+  assert.equal(tags(4), "");
+  assert.equal(tags(5), "front");               // 145 第二高，不算
+  assert.equal(tags(8), "front");
+  assert.equal(tags(10), "");
 });
 
 test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位子", () => {
