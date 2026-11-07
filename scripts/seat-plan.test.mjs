@@ -108,6 +108,24 @@ test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位�
   }
 });
 
+test("空位固定放後排（6 個種子；有固定桌時也一樣）", () => {
+  for (let seed = 1; seed <= 6; seed++) {
+    for (const locks of [{}, { 29: 4, 24: 9 }]) {
+      const g = optimize(demo(), { seed, locks });
+      const empties = g.assign.map((s, i) => (s == null ? i : -1)).filter(i => i >= 0);
+      assert.equal(empties.length, 3);
+      assert.ok(empties.every(i => Math.floor(i / 6) === 4), `seed ${seed} 空位在 ${empties}`);
+    }
+  }
+  // 空位比一排多：佔滿最後一排，其餘落在倒數第二排
+  const inp = { rows: 3, cols: 3, relations: [], students: [1, 2, 3, 4].map(seat => ({ seat, sex: "", tags: [] })) };
+  for (let seed = 1; seed <= 6; seed++) {
+    const g = optimize(inp, { seed });
+    assert.deepEqual(g.assign.slice(6), [null, null, null], `seed ${seed}`);
+    assert.equal(g.assign.slice(3, 6).filter(s => s == null).length, 2, `seed ${seed}`);
+  }
+});
+
 test("固定桌位不被移動", () => {
   const locks = { 29: 4, 0: 26 };                         // 故意固定在違規位置，也不能被搬走
   for (let seed = 1; seed <= 3; seed++) {

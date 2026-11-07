@@ -8,6 +8,7 @@
  *   input     = { rows, cols, students:[{seat, sex:"男"|"女"|"", tags:["front","distract","tall","needhelp","tutor"]}],
  *                 relations:[{a, b, k:"chat"|"conflict"|"pos"}], current: grid|null（目前座位，用來算「不和上次同座」）}
  *   locks     = { 桌位 index: 座號 }（🔒 固定，只存在本次頁面）
+ *   空位一律排在後排（optimize 的結構限制，不是計分規則；老師手動互換仍可移動空位）
  *
  * 執行測試：node --test scripts/seat-plan.test.mjs
  */
@@ -203,13 +204,20 @@
       const pool = students.map(s => s.seat).filter(s => !lockedSeats.has(s));
       for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
       pool.forEach((s, k) => { assign[free[k]] = s; });
+      // 空位固定放後排（老師 2026-11-07 裁定）：空位一開始就落在最後幾個可動桌位。
+      // 空位比一排多時，它後面的整排固定空著不參與交換；只有交界那一排（backRow）可以挑哪幾格空。
+      const nEmpty = free.length - pool.length;
+      const backRow = nEmpty > 0 ? Math.floor(free[free.length - nEmpty] / ctx.cols) : ctx.rows;
+      const movable = free.filter(i => Math.floor(i / ctx.cols) <= backRow);
+      const backZone = new Set(free.filter(i => Math.floor(i / ctx.cols) === backRow));
       let cur = evaluate(ctx, assign).total;
       if (cur < bestC) { bestC = cur; best = assign.slice(); }
-      if (free.length < 2) continue;
+      if (movable.length < 2) continue;
       for (let it = 0; it < steps; it++) {
         const T = SA.T0 * Math.pow(SA.T_END_RATIO, it / steps);
-        const a = free[Math.floor(rnd() * free.length)], b = free[Math.floor(rnd() * free.length)];
+        const a = movable[Math.floor(rnd() * movable.length)], b = movable[Math.floor(rnd() * movable.length)];
         if (a === b || (assign[a] == null && assign[b] == null)) continue;
+        if ((assign[a] == null && !backZone.has(b)) || (assign[b] == null && !backZone.has(a))) continue;   // 空位不離開後排
         [assign[a], assign[b]] = [assign[b], assign[a]];
         const c = evaluate(ctx, assign).total;
         if (c <= cur || rnd() < Math.exp((cur - c) / T)) { cur = c; if (c < bestC) { bestC = c; best = assign.slice(); } }
