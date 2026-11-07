@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>排座位｜教師專區</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪑</text></svg>" />
+<style>
+/* 🪑 排座頁（DJ 線 P3，SPEC_座位編排.md §7）：畫面照範本 `座位編排建議_精簡版.html`。
+   資料走代理 seat_get／seat_apply（教師口令）；計算一律用 assets/js/seat-plan-core.js（與測試同一支）。
+   健康標籤（👁️ 需坐前面）只存這台電腦 localStorage「seatplan-health-v1」，不送代理。 */
+[hidden]{display:none!important}
+:root{
+  --bg:#f6f4ef; --panel:#fff; --ink:#1f2328; --muted:#6b6f76; --line:#e3ded3;
+  --accent:#2f6f5e; --accent-soft:#e3f0ec; --warn:#b4432f; --warn-soft:#fbe9e4;
+  --ok:#2f7d4a; --ok-soft:#e5f3e9; --gold:#a9731a; --gold-soft:#fbf1dc;
+  --desk:#fffdf8; --sel:#2b5fb4; --moved:#7a4fc0; --boy:#3d7fb8; --girl:#c9663f; --win:#8fb8d8;
+  --shadow:0 1px 2px rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#16181b; --panel:#1f2226; --ink:#e8e6e1; --muted:#9aa0a6; --line:#33373d;
+    --accent:#6cc0a6; --accent-soft:#1f3a33; --warn:#f08a74; --warn-soft:#3d2420;
+    --ok:#7fcf98; --ok-soft:#1e3626; --gold:#e2b15a; --gold-soft:#3a2f1a;
+    --desk:#25292e; --sel:#7aa7f0; --moved:#b896f0; --boy:#6fa8dc; --girl:#e8946c; --win:#4f7898;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+header,main,.gate{max-width:1280px;margin:0 auto;padding-left:20px;padding-right:20px}
+header{padding-top:16px;padding-bottom:4px}
+h1{font-size:22px;margin:0 0 4px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+h1 a{font-size:14px;font-weight:600;color:var(--accent);text-decoration:none;margin-left:auto}
+.goal{margin:6px 0 0;padding:10px 14px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;font-size:14.5px}
+.status{margin:8px 0 0;font-size:14px}
+.status.bad{color:var(--warn);font-weight:600}
+main{padding-top:12px;padding-bottom:40px;display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:16px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);min-width:0;padding:12px 14px}
+.panel h2{font-size:16px;margin:0 0 6px}
+.step{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;margin-right:6px}
+@media (prefers-color-scheme:dark){.step{color:#0f1a17}}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 8px}
+.scroll{max-height:420px;overflow:auto;border-top:1px solid var(--line)}
+.stu{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line)}
+.stu .who{min-width:72px;font-weight:600;font-size:14px}
+.stu .who small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font:inherit;font-size:12.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.chip.health{border-style:dashed}
+.rels{list-style:none;margin:0 0 8px;padding:0}
+.rels li{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.rels li span{flex:1}
+.addrel{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.addrel .full{grid-column:1/-1}
+select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);width:100%}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.55;cursor:wait}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){.btn.primary{color:#0f1a17}}
+.btn.small{padding:2px 8px;font-size:12.5px}
+.btn.ghost{border-color:transparent;background:none;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:13.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.bar .spacer{flex:1}
+/* 教室 */
+.roomwrap{overflow-x:auto;padding:0 18px}
+.room{position:relative;min-width:420px;max-width:760px;margin:0 auto;border:2px solid var(--line);border-radius:8px;padding:44px 14px 30px;background:var(--bg)}
+.board{position:absolute;left:30%;right:30%;top:8px;height:24px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-weight:700;display:flex;align-items:center;justify-content:center;letter-spacing:.3em;font-size:13px}
+.win{position:absolute;top:40px;bottom:26px;width:5px;background:repeating-linear-gradient(180deg,var(--win) 0 16px,transparent 16px 24px)}
+.win.l{left:-4px}.win.r{right:-4px}
+.door{position:absolute;font-size:11.5px;font-weight:700;color:var(--gold);background:var(--gold-soft);padding:0 6px;border-radius:6px}
+.grid{display:grid;gap:10px 8px}
+.desk{position:relative;min-height:64px;border-radius:8px;border:1.5px solid var(--line);border-top:4px solid var(--line);background:var(--desk);text-align:center;cursor:pointer;user-select:none;display:flex;flex-direction:column;justify-content:center;padding:2px}
+.desk.m{border-top-color:var(--boy)} .desk.f{border-top-color:var(--girl)}
+.desk .no{font-size:18px;font-weight:700;line-height:1.1}
+.desk .nk{font-size:11.5px;color:var(--muted);line-height:1.2;white-space:nowrap;overflow:hidden}
+.desk .ic{font-size:11px;min-height:13px;line-height:1.2}
+.desk.empty{border-style:dashed;border-top-width:1.5px;color:var(--muted)}
+.desk.must{border-color:var(--warn);background:var(--warn-soft)}
+.desk.must.m,.desk.must.f{border-top-color:var(--warn)}
+.desk .pri{position:absolute;top:3px;left:4px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.desk .mv{position:absolute;top:3px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--moved)}
+.desk .lock{position:absolute;bottom:1px;right:3px;font-size:10px}
+.desk.sel{outline:3px solid var(--sel);outline-offset:1px;z-index:2}
+.desk.hi{box-shadow:0 0 0 3px var(--sel) inset}
+.desk.pub{cursor:default;border-top:1.5px solid var(--line)}
+.legend{font-size:12px;color:var(--muted);margin:8px 0 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.detail{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:14px;display:none}
+.detail.on{display:block}
+.detail ul{margin:4px 0 0;padding-left:18px}
+.okl{color:var(--ok)} .bdl{color:var(--warn)} .pril{color:var(--gold)}
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.tier{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.tier h3{font-size:14px;margin:0 0 4px}
+.tier ul{list-style:none;margin:0;padding:0;font-size:13px}
+.tier li{padding:3px 0}
+.head{font-size:15px;font-weight:700;margin:12px 0 0}
+.gate{padding-top:40px}
+.gate .panel{max-width:520px;margin:0 auto}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);max-width:min(560px,94vw);width:100%;padding:0}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg-h{padding:12px 16px;border-bottom:1px solid var(--line);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.dlg-b{padding:12px 16px}
+.dlg-act{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;max-width:90vw}
+.toast.on{opacity:1}
+@media (max-width:900px){main{grid-template-columns:1fr}.tiers{grid-template-columns:1fr}}
+@media (max-width:560px){header,main,.gate{padding-left:16px;padding-right:16px}.roomwrap{padding:0 8px}}
+</style>
+</head>
+<body>
+<div class="gate" id="gate" hidden>
+  <div class="panel">
+    <h2>🔒 請先登入教師專區</h2>
+    <p class="hint" id="gateMsg">排座位要讀名冊與座位條件，需要教師口令。</p>
+    <a class="btn primary" href="teacher.html">前往教師專區登入</a>
+  </div>
+</div>
+
+<div id="app" hidden>
+<header>
+  <h1>🪑 排座位 <a href="teacher.html">← 回教師專區</a></h1>
+  <p class="goal"><b>只看兩件事：學生個人狀況、人際關係。</b>目的是讓每個學生能專心學習：減少影響學習的因素，需要幫忙的人身邊有人幫。</p>
+  <p class="status" id="status">讀取名冊與座位條件中…</p>
+</header>
+
+<main>
+  <section class="panel" aria-label="編排條件">
+    <h2><span class="step">1</span>個人狀況</h2>
+    <p class="hint">點標籤開關。<b>👁️ 虛線＝健康資料</b>（視力、聽力）：不存 Notion、AI 不讀，只記在這台電腦的瀏覽器。<span id="healthState"></span>
+      <button class="btn ghost small" id="clearHealth">清除這台電腦的健康標籤</button></p>
+    <div class="scroll" id="stuList"></div>
+
+    <h2 style="margin-top:16px"><span class="step">2</span>人際關係</h2>
+    <p class="hint">只記「會影響學習」或「能互相幫忙」的兩人，沒記的就是沒關係。同一對只留一筆。</p>
+    <ul class="rels" id="relList"></ul>
+    <div class="addrel">
+      <select id="ra" aria-label="第一位學生"></select><select id="rb" aria-label="第二位學生"></select>
+      <select id="rk" class="full" aria-label="關係"></select>
+      <button class="btn small full" id="addRel">＋ 加入這組</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-label="座位">
+    <h2><span class="step">3</span>看座位、微調、確認</h2>
+    <div class="bar">
+      <div class="seg" id="view">
+        <button data-v="plan" aria-pressed="true">建議座位</button>
+        <button data-v="now" aria-pressed="false">目前座位</button>
+        <button data-v="pub" aria-pressed="false">學生看到的</button>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn" id="again">🔄 換一個建議</button>
+      <button class="btn primary" id="apply">✅ 確認並更新班網</button>
+    </div>
+    <div class="roomwrap"><div class="room" id="room"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--boy);border-radius:2px;height:4px"></i>男</span>
+      <span><i style="background:var(--girl);border-radius:2px;height:4px"></i>女</span>
+      <span><i style="background:var(--warn)"></i>紅框＝「必須」沒做到</span>
+      <span><i style="background:var(--gold)"></i>黃點＝「優先」沒做到</span>
+      <span><i style="background:var(--moved)"></i>和目前座位不同</span>
+      <span>點一格看原因，再點另一格＝互換</span>
+    </div>
+    <div class="detail" id="detail"></div>
+    <div class="head" id="headline"></div>
+    <div class="tiers" id="tiers"></div>
+  </section>
+</main>
+</div>
+
+<dialog id="dlgApply">
+  <div class="dlg-h">確認並更新班網 <button class="btn ghost" data-close aria-label="關閉">✕</button></div>
+  <div class="dlg-b">
+    <p id="applyMsg"></p>
+    <ol style="padding-left:20px;font-size:14px" id="applySteps"></ol>
+    <div class="dlg-act">
+      <button class="btn" data-close>先不要</button>
+      <button class="btn primary" id="applyGo">確認</button>
+    </div>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/seat-plan-core.js"></script>
+<script src="assets/js/seat-plan.js"></script>
+</body>
+</html>

@@ -82,6 +82,7 @@
       { icon: "🌅", label: "Morning Launch", href: "morning-launch.html", color: "#FF9F43" },
       { icon: "📊", label: "全班儀表板", href: "#sec-dash", color: "#2a78d6" },
       { icon: "📝", label: "錯題紀錄表", href: "quiz.html", color: "#E17055" }, // 平時卷錯題登記（2026-10-18 從班級管理系統搬來）
+      { icon: "🪑", label: "排座位", href: "seat-plan.html", color: "#2f6f5e" }, // DJ 線 2026-11-07：建議→微調→確認→更新班網座位表
       { icon: "💬", label: "一句話交辦", href: "#sec-task", color: "#FF9F43" },
       { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
       { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },
