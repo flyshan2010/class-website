@@ -8,7 +8,8 @@
  *   input     = { rows, cols, students:[{seat, sex:"男"|"女"|"", tags:["front","mid","distract","tall","needhelp","tutor"]}],
  *                 relations:[{a, b, k:"chat"|"conflict"|"pos"}], current: grid|null（目前座位，用來算「不和上次同座」）}
  *   locks     = { 桌位 index: 座號 }（🔒 固定，只存在本次頁面）
- *   空位一律排在後排（optimize 的結構限制，不是計分規則；老師手動互換仍可移動空位）
+ *   空位比照目前座位表的空位位置（老師 2026-11-08 裁定）；目前座位表空位數對不上（人數變了、空格被🔒固定）才退回「空位放後排」。
+ *   兩者都是 optimize 的結構限制，不是計分規則；老師手動互換仍可移動空位
  *
  * 執行測試：node --test scripts/seat-plan.test.mjs
  */
@@ -251,11 +252,16 @@
       if ([...locks.values()].includes(n)) throw new Error(`座號${n} 被固定在兩個位子`);
       locks.set(i, n);
     }
+    // 老師 11/08：空位比照目前座位表（例：第一排靠門那格、最後一排左邊兩格），不再一律擠到後排
+    const cur0 = input.current, need = D - students.length;
+    const curBlanks = cur0 && cur0.rows === ctx.rows && cur0.cols === ctx.cols && Array.isArray(cur0.assign)
+      ? cur0.assign.map((s, i) => (s == null ? i : -1)).filter(i => i >= 0) : [];
+    const blanks = new Set(curBlanks.length === need && curBlanks.every(i => !locks.has(i)) ? curBlanks : []);
     let best = null, bestC = Infinity;
     for (let run = 0; run < runs; run++) {
       const rnd = rng(seed * 101 + run), assign = Array(D).fill(null);
       for (const [i, s] of locks) assign[i] = s;
-      const lockedSeats = new Set(locks.values()), free = [...Array(D).keys()].filter(i => !locks.has(i));
+      const lockedSeats = new Set(locks.values()), free = [...Array(D).keys()].filter(i => !locks.has(i) && !blanks.has(i));
       const pool = students.map(s => s.seat).filter(s => !lockedSeats.has(s));
       for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
       pool.forEach((s, k) => { assign[free[k]] = s; });

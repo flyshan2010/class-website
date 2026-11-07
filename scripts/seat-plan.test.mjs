@@ -160,10 +160,18 @@ test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位�
   }
 });
 
-test("空位固定放後排（6 個種子；有固定桌時也一樣）", () => {
+test("空位比照目前座位表（6 個種子；有固定桌時也一樣）", () => {
+  const blanksOf = g => g.assign.map((s, i) => (s == null ? i : -1)).filter(i => i >= 0);
+  for (let seed = 1; seed <= 6; seed++)
+    for (const locks of [{}, { 29: 4, 5: 9 }])
+      assert.deepEqual(blanksOf(optimize(demo(), { seed, locks })), [0, 24, 25], `seed ${seed}`);
+});
+
+test("目前座位表空位對不上 → 退回空位放後排", () => {
   for (let seed = 1; seed <= 6; seed++) {
-    for (const locks of [{}, { 29: 4, 24: 9 }]) {
-      const g = optimize(demo(), { seed, locks });
+    const viaLock = optimize(demo(), { seed, locks: { 29: 4, 24: 9 } });   // 🔒 蓋在原本的空格上
+    const noCur = optimize({ ...demo(), current: null }, { seed });
+    for (const g of [viaLock, noCur]) {
       const empties = g.assign.map((s, i) => (s == null ? i : -1)).filter(i => i >= 0);
       assert.equal(empties.length, 3);
       assert.ok(empties.every(i => Math.floor(i / 6) === 4), `seed ${seed} 空位在 ${empties}`);
