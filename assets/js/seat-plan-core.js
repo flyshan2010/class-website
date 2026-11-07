@@ -45,6 +45,8 @@
     height:   { tier: "soft", label: "📐 其餘依身高：矮的前、高的後" },
     gender:   { tier: "soft", label: "男女梅花座" },
     history:  { tier: "soft", label: "不和上次同座" },
+    moved:    { tier: "soft", label: "🔄 不坐原位，換個位子" },
+    side:     { tier: "soft", label: "↔️ 左右輪替（上次坐左邊這次換右邊，護眼）" },
     spread:   { tier: "soft", label: "🎓 小老師分散" },
   };
   const PEN = { must: 100, pri: 20, soft: 3 };
@@ -133,7 +135,11 @@
       const cur = input.current, cc = adjacency(cur.rows, cur.cols).CLOSE;
       for (const [i, j] of cc) if (cur.assign[i] != null && cur.assign[j] != null) histPairs.add(key2(cur.assign[i], cur.assign[j]));
     }
-    return { __prepared: true, rows, cols, D: rows * cols, students, bySeat, relations: [...relMap.values()], histPairs, ...adj };
+    // 老師 11/08：上一版座位（目前座位表，大小相同才比）每人的桌位，用來「不坐原位」「左右輪替」
+    const prevPos = new Map();
+    if (input.current && input.current.rows === rows && input.current.cols === cols)
+      input.current.assign.forEach((s, i) => { if (s != null && bySeat.has(s)) prevPos.set(s, i); });
+    return { __prepared: true, rows, cols, D: rows * cols, students, bySeat, relations: [...relMap.values()], histPairs, prevPos, ...adj };
   }
 
   // ═════════ 由視力、身高推出標籤（老師 11/07：視力、身高照體格結果表貼上，不再手勾） ═════════
@@ -163,7 +169,7 @@
   // 回傳 { total, items, counts }；items 只在 detail=true 時產生：{rule, tier, ok, seats, text}
   function evaluate(input, assign, opts) {
     const ctx = prepare(input), detail = !!(opts && opts.detail);
-    const { rows, cols, students, bySeat, relations, histPairs, ADJ, NEAR2, CLOSE } = ctx;
+    const { rows, cols, students, bySeat, relations, histPairs, prevPos, ADJ, NEAR2, CLOSE } = ctx;
     let total = 0;
     const items = detail ? [] : null, counts = { must: 0, pri: 0, soft: 0 };
     const add = (rule, ok, seats, text, w = 1) => {
@@ -198,6 +204,14 @@
         const m = ROOM.isMiddle(c, cols) ? 1 : 0, f = r === 0 ? 1 : 0;
         add("wide", !m && !f, [n], () => !m && !f ? `座號${n} 體型較寬，坐兩旁第${r + 1}排` : `座號${n} 體型較寬，現在${f ? "第一排" : ""}${m && f ? "、" : ""}${m ? "中間欄" : ""}，會擋後面`, 2 * (m + f));
         total += (rows - 1 - r) * 0.5;                       // 越後面越好（小扣分，不算違規）
+      }
+      if (prevPos.has(n)) {                                // 老師 11/08：盡量不坐原位；左右輪替，不要一直坐同一邊（影響視力）
+        const p = prevPos.get(n), pc = p % cols, side = x => x < (cols - 1) / 2 ? "左" : x > (cols - 1) / 2 ? "右" : "";
+        add("moved", p !== i, [n], () => p !== i ? `座號${n} 換了位子` : `座號${n} 還坐原位`);
+        if (side(pc)) {
+          const ok = side(c) !== side(pc);
+          add("side", ok, [n], () => ok ? `座號${n} 上次坐${side(pc)}邊，這次換到${side(c) || "中間"}` : `座號${n} 上次也坐${side(pc)}邊`, 2);
+        }
       }
       if (s.hRow != null) {
         const d = Math.abs(r - s.hRow);

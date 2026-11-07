@@ -149,6 +149,23 @@ test("體型較寬：BMI ≥19 推出 wide；坐第一排或中間欄算沒達�
   assert.deepEqual([0, 2, 6, 8, 11].map(bad), [1, 1, 0, 1, 0]);   // 第一排、中間欄都不行；第二排兩旁可以
 });
 
+test("不坐原位、左右輪替：和上一版座位比", () => {
+  const cur = { rows: 2, cols: 6, assign: [1, null, null, null, null, 2, null, null, null, null, null, null] };
+  const inp = { rows: 2, cols: 6, relations: [], current: cur, students: [1, 2].map(seat => ({ seat, sex: "", tags: [] })) };
+  const res = g => { const e = evaluate(inp, g, { detail: true }); return ["moved", "side"].map(k => failed(e, k).length); };
+  assert.deepEqual(res(at(2, 6, { 0: 1, 5: 2 })), [2, 2]);     // 都坐原位：兩條都沒做到
+  assert.deepEqual(res(at(2, 6, { 6: 1, 11: 2 })), [0, 2]);    // 換了位子但同一邊
+  assert.deepEqual(res(at(2, 6, { 5: 1, 0: 2 })), [0, 0]);     // 左右對調
+});
+
+test("示意資料：左右輪替大多做到、沒人坐原位", () => {
+  for (let seed = 1; seed <= 3; seed++) {
+    const e = evaluate(demo(), optimize(demo(), { seed }).assign, { detail: true });
+    assert.equal(failed(e, "moved").length, 0, `seed ${seed}`);
+    assert.ok(failed(e, "side").length <= 6, `seed ${seed} 同一邊 ${failed(e, "side").length} 人`);
+  }
+});
+
 test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位子", () => {
   for (let seed = 1; seed <= 6; seed++) {
     const g = optimize(demo(), { seed });
