@@ -35,22 +35,21 @@
     front:    { tier: "must", label: "👁️🦻 需坐前面（視力 ≤0.7、聽力）→ 前兩排" },
     conflict: { tier: "must", label: "⚡ 易衝突 → 隔開" },
     chat:     { tier: "must", label: "🗣️ 愛聊天 → 不相鄰" },
-    distract: { tier: "pri",  label: "🌀 易分心 → 中間偏前，避開門窗" },
+    distract: { tier: "soft", label: "🌀 易分心 → 中間偏前，避開門窗" },
     helper:   { tier: "pri",  label: "🙋 需協助 → 旁邊有小老師" },
     tall:     { tier: "pri",  label: "📏 全班最高 1/5 → 不坐第一排" },
     tallfront:{ tier: "pri",  label: "📏 高個子又需坐前面 → 不坐中間欄" },
     mid:      { tier: "soft", label: "👓 視力 0.8–0.9 → 第 3–4 排" },
     wide:     { tier: "soft", label: "↔️ 體型較寬（BMI ≥19）→ 盡量兩旁、不坐第一排" },
     pos:      { tier: "soft", label: "💚 能互助 → 坐近" },
-    height:   { tier: "soft", label: "📐 其餘依身高：矮的前、高的後" },
+    height:   { tier: "pri",  label: "📐 依身高：矮的前、高的後（差一排內算做到）" },
     gender:   { tier: "soft", label: "男女梅花座" },
     history:  { tier: "soft", label: "不和上次同座" },
-    moved:    { tier: "soft", label: "🔄 不坐原位，換個位子" },
     side:     { tier: "soft", label: "↔️ 左右輪替（上次坐左邊這次換右邊，護眼）" },
     spread:   { tier: "soft", label: "🎓 小老師分散" },
   };
   const PEN = { must: 100, pri: 20, soft: 3 };
-  const HEIGHT_W = 2;                                       // 依身高：離「該坐的排」每差一排扣 2（低於 👓 視力稍弱的 6，特殊條件先滿足）              // 內部用，畫面不顯示數字
+  const HEIGHT_W = 2;                                       // 依身高：離「該坐的排」每差一排再加扣 2（差一排內的微調用；差兩排以上另算優先級違規）
   const SA = { RUNS: 3, STEPS: 6000, T0: 60, T_END_RATIO: 0.001 };
 
   const key2 = (a, b) => Math.min(a, b) + "-" + Math.max(a, b);
@@ -114,9 +113,16 @@
       }
       return { seat: Number(s.seat), sex: s.sex || "", tags, height, hRow: null };
     });
-    // 依身高算「該坐第幾排」：矮→高依序填，每排 cols 人（同高依座號）；沒填身高的人不參與（老師 11/07）
-    students.filter(s => s.height != null).sort((a, b) => a.height - b.height || a.seat - b.seat)
-      .forEach((s, k) => { s.hRow = Math.min(Math.floor(k / cols), rows - 1); });
+    // 依身高算「該坐第幾排」（老師 11/07、11/08：特殊條件先滿足，其餘依身高）：
+    // 桌位由前往後排（扣掉目前座位表的空格），需坐前面的人先佔最前面的桌位、不參與身高排序；
+    // 其餘有身高的人矮→高依序填剩下的桌位（同高依座號）；沒填身高的人不參與
+    const cur0 = input.current, need = rows * cols - students.length;
+    const curNull = cur0 && cur0.rows === rows && cur0.cols === cols && Array.isArray(cur0.assign) ? cur0.assign.map((v, i) => (v == null ? i : -1)).filter(i => i >= 0) : [];
+    const blankSet = new Set(curNull.length === need ? curNull : []);
+    const slots = [...Array(rows * cols).keys()].filter(i => !blankSet.has(i)).map(i => Math.floor(i / cols));
+    const nFront = students.filter(s => s.tags.has("front")).length;
+    students.filter(s => s.height != null && !s.tags.has("front")).sort((a, b) => a.height - b.height || a.seat - b.seat)
+      .forEach((s, k) => { s.hRow = slots[nFront + k] ?? rows - 1; });
     const bySeat = new Map(students.map(s => [s.seat, s]));
     if (bySeat.size !== students.length) throw new Error("學生名單有重複座號");
     // 同一對只留一筆（後寫蓋前寫，SPEC §2.2）
@@ -135,7 +141,7 @@
       const cur = input.current, cc = adjacency(cur.rows, cur.cols).CLOSE;
       for (const [i, j] of cc) if (cur.assign[i] != null && cur.assign[j] != null) histPairs.add(key2(cur.assign[i], cur.assign[j]));
     }
-    // 老師 11/08：上一版座位（目前座位表，大小相同才比）每人的桌位，用來「不坐原位」「左右輪替」
+    // 老師 11/08：上一版座位（目前座位表，大小相同才比）每人的桌位，用來「左右輪替」（「不坐原位」11/08 老師刪除）
     const prevPos = new Map();
     if (input.current && input.current.rows === rows && input.current.cols === cols)
       input.current.assign.forEach((s, i) => { if (s != null && bySeat.has(s)) prevPos.set(s, i); });
@@ -189,7 +195,7 @@
       if (t.has("distract")) {
         const door = ROOM.isDoor(r, c, rows, cols), ok = !ROOM.isWindow(c, cols) && !door;
         total += r * 2;                                     // 越前面越好（小扣分，不算違規）
-        add("distract", ok, [n], () => ok ? `座號${n} 易分心，坐中間第${r + 1}排` : `座號${n} 易分心，現在靠${door ? "門" : "窗（走廊）"}`);
+        add("distract", ok, [n], () => ok ? `座號${n} 易分心，坐中間第${r + 1}排` : `座號${n} 易分心，現在靠${door ? "門" : "窗（走廊）"}`, 2);   // 老師 11/08：降為盡量第 1 順位（同視力稍弱、BMI）
       }
       if (t.has("tall")) add("tall", r >= 1, [n], () => r >= 1 ? `座號${n} 身高高，沒坐第一排` : `座號${n} 身高高坐第一排，會擋後面`);
       if (t.has("mid")) {                                 // 老師 11/07：視力 0.8–0.9 盡可能坐第 3–4 排
@@ -205,18 +211,17 @@
         add("wide", !m && !f, [n], () => !m && !f ? `座號${n} 體型較寬，坐兩旁第${r + 1}排` : `座號${n} 體型較寬，現在${f ? "第一排" : ""}${m && f ? "、" : ""}${m ? "中間欄" : ""}，會擋後面`, 2 * (m + f));
         total += (rows - 1 - r) * 0.5;                       // 越後面越好（小扣分，不算違規）
       }
-      if (prevPos.has(n)) {                                // 老師 11/08：盡量不坐原位；左右輪替，不要一直坐同一邊（影響視力）
+      if (prevPos.has(n)) {                                // 老師 11/08：左右輪替，不要一直坐同一邊（影響視力）
         const p = prevPos.get(n), pc = p % cols, side = x => x < (cols - 1) / 2 ? "左" : x > (cols - 1) / 2 ? "右" : "";
-        add("moved", p !== i, [n], () => p !== i ? `座號${n} 換了位子` : `座號${n} 還坐原位`);
         if (side(pc)) {
           const ok = side(c) !== side(pc);
-          add("side", ok, [n], () => ok ? `座號${n} 上次坐${side(pc)}邊，這次換到${side(c) || "中間"}` : `座號${n} 上次也坐${side(pc)}邊`, 2);
+          add("side", ok, [n], () => ok ? `座號${n} 上次坐${side(pc)}邊，這次換到${side(c) || "中間"}` : `座號${n} 上次也坐${side(pc)}邊`, 1.5);   // 盡量第 4 順位
         }
       }
       if (s.hRow != null) {
         const d = Math.abs(r - s.hRow);
         total += HEIGHT_W * d;
-        add("height", d <= 1, [n], () => d <= 1 ? `座號${n} 依身高坐第${r + 1}排` : `座號${n} 依身高該在第${s.hRow + 1}排附近，現在第${r + 1}排`, 0);
+        add("height", d <= 1, [n], () => d <= 1 ? `座號${n} 依身高坐第${r + 1}排` : `座號${n} 依身高該在第${s.hRow + 1}排附近，現在第${r + 1}排`, d - 1);   // 老師 11/08：升為優先；差一排內算做到，多差一排扣一次
       }
       if (t.has("needhelp")) {
         const h = students.find(o => o.seat !== n && o.tags.has("tutor") && pos.has(o.seat) && ADJ[i][pos.get(o.seat)] >= CLOSE_MIN);
@@ -233,13 +238,13 @@
         const bad = NEAR2[ia][ib];
         add("conflict", !bad, [rl.a, rl.b], () => !bad ? `${pair}（易衝突）已隔開` : `${pair} 易衝突，現在${adjWord(v)}`, v ? 1.5 : 1);
       } else
-        add("pos", v >= CLOSE_MIN, [rl.a, rl.b], () => v >= CLOSE_MIN ? `${pair} ${adjWord(v)}，能互助` : `${pair} 能互助，這次沒坐近`, 1.5);
+        add("pos", v >= CLOSE_MIN, [rl.a, rl.b], () => v >= CLOSE_MIN ? `${pair} ${adjWord(v)}，能互助` : `${pair} 能互助，這次沒坐近`);   // 盡量第 5 順位（同男女、小老師分散）
     }
     for (const [i, j, v] of CLOSE) {
       const a = assign[i], b = assign[j]; if (a == null || b == null) continue;
       const A = bySeat.get(a), B = bySeat.get(b); if (!A || !B) continue;
       if (A.sex && B.sex && A.sex === B.sex) add("gender", false, [a, b], () => `座號${a}、${b} 同性${adjWord(v)}`, v);
-      if (histPairs.has(key2(a, b))) add("history", false, [a, b], () => `座號${a}、${b} 上次也坐一起`);
+      if (histPairs.has(key2(a, b))) add("history", false, [a, b], () => `座號${a}、${b} 上次也坐一起`, 2 / 3);   // 盡量最後（第 6 順位）
       if (A.tags.has("tutor") && B.tags.has("tutor")) add("spread", false, [a, b], () => `小老師座號${a}、${b} 擠在一起`);
     }
     return { total, items, counts };
