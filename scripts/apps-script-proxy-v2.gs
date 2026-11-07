@@ -1,6 +1,15 @@
 /**
- * 班網教師專區代理 v2.13（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關
+ * 班網教師專區代理 v2.14（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.14 升級步驟（2026-11-07，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.14 新增（排座頁，DJ 線 SPEC_座位編排.md §6，驗教師口令）：
+ *   ① seat_get → 讀名冊（座號、姓名、性別）、「座位表」列、「🪑 座位條件」有效列；
+ *   ② seat_apply → 驗格式（座號在名冊、無重複、人數相符，不合就整筆不寫）→ 舊座位表封存成「座位表（X月）」
+ *      → 寫新「座位表」並回讀 → 條件比對（新增建列、不在清單的改「已取消」，不刪列）→ 觸發班網同步。
+ *   健康類（需坐前面）只存老師電腦瀏覽器，收到就整筆拒絕。
+ *   若回「讀不到🪑座位條件」：Notion 打開該資料庫 → ⋯ → 連線 → 加入代理用的整合。
  *
  * ── v2.13 升級步驟（2026-10-18，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -168,6 +177,8 @@ function doPost(e) {
       case "proposal_review_result": return out_(proposalReviewResult_(props, body));
       case "sync_pair":    return out_(syncPair_(props));
       case "quiz_exams":   return out_(quizExams_(props));
+      case "seat_get":     return out_(seatGet_(props));
+      case "seat_apply":   return out_(seatApply_(props, body));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -1619,6 +1630,275 @@ function sanitizeFilename_(name) {
 function stampName_(name) {
   const ts = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyyMMdd-HHmmss");
   return ts + "_" + name;
+}
+
+// ---------- 動作：🪑 排座頁（v2.14，DJ 線，SPEC_座位編排.md §5／§6） ----------
+// seat_get：讀名冊（座號、姓名、性別）、「座位表」列、🪑 座位條件（有效＋現行學年）。
+// seat_apply：驗格式 → 封存舊座位表成「座位表（X月）」→ 寫新座位表並回讀 → 條件比對（新增建列、不在清單的改「已取消」）→ 觸發同步。
+// ⚠️ 健康類（front 需坐前面）只存老師電腦瀏覽器：收到任何不在白名單的代碼，整筆拒絕（不寫任何東西）。
+const DS_SETTINGS = "166cce91-e6f1-456e-9275-097d71207b9b"; // ⚙️ 網站設定與關於我們
+const DS_SEATCOND = "a98130b0-26ff-4599-b830-83aaa8049fe0"; // 🪑 座位條件（私有，sync 不讀）
+const SEAT_GRID_ITEM = "座位表";
+const SEAT_SOLO = { distract: "易分心", tall: "身高高", needhelp: "需協助", tutor: "小老師" };
+const SEAT_PAIR = { chat: "愛聊天", conflict: "易衝突", pos: "能互助" };
+const SEAT_MONTH = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
+
+function plain_(prop) {
+  if (!prop) return "";
+  const arr = prop.title || prop.rich_text || [];
+  return arr.map(function (x) { return x.plain_text != null ? x.plain_text : ((x.text || {}).content || ""); }).join("");
+}
+
+// 分頁撈完整個查詢；任何一頁失敗回 null（呼叫端要擋下，不可當成「沒有資料」）
+function queryAllDS_(token, dsId, payload) {
+  const rows = [];
+  let cursor = null;
+  do {
+    const p = JSON.parse(JSON.stringify(payload || {}));
+    p.page_size = 100;
+    if (cursor) p.start_cursor = cursor;
+    const res = queryDS_(token, dsId, p);
+    if (res.code !== 200) return null;
+    (res.data.results || []).forEach(function (r) { rows.push(r); });
+    cursor = res.data.has_more ? res.data.next_cursor : null;
+  } while (cursor);
+  return rows;
+}
+
+// 現行學年在學名冊：[{seat, name, sex, id}]；失敗回 null
+function seatRoster_(token, year) {
+  const rows = queryAllDS_(token, DS_ROSTER, { filter: { and: [
+    { property: "在學", checkbox: { equals: true } },
+    { property: "學年", select: { equals: year } },
+  ] } });
+  if (!rows) return null;
+  return rows.map(function (pg) {
+    const p = pg.properties || {};
+    return { seat: Number((p["座號"] || {}).number), name: plain_(p["姓名"]), sex: (((p["性別"] || {}).select) || {}).name || "", id: pg.id };
+  }).filter(function (s) { return Number.isInteger(s.seat) && s.seat > 0; })
+    .sort(function (a, b) { return a.seat - b.seat; });
+}
+
+// 「⚙️ 網站設定」所有「座位表…」列（含封存列，用來判斷封存名是否已存在）
+function seatSettingRows_(token) {
+  const rows = queryAllDS_(token, DS_SETTINGS, { filter: { property: "項目", title: { starts_with: SEAT_GRID_ITEM } } });
+  if (!rows) return null;
+  return rows.map(function (pg) {
+    const p = pg.properties || {};
+    return { id: pg.id, item: plain_(p["項目"]).trim(), content: plain_(p["內容"]) };
+  });
+}
+
+function seatCondRows_(token, year) {
+  return queryAllDS_(token, DS_SEATCOND, { filter: { and: [
+    { property: "狀態", select: { equals: "有效" } },
+    { property: "學年", select: { equals: year } },
+  ] } });
+}
+
+function relIds_(prop) { return ((prop || {}).relation || []).map(function (r) { return normId_(r.id); }); }
+
+function seatGet_(props) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const year = schoolYear_();
+  const roster = seatRoster_(token, year);
+  if (!roster) return { ok: false, error: "讀不到👥學生名冊" };
+  if (!roster.length) return { ok: false, error: "名冊沒有 " + year + " 學年在學的學生" };
+  const settings = seatSettingRows_(token);
+  if (!settings) return { ok: false, error: "讀不到⚙️網站設定" };
+  const gridRow = settings.filter(function (r) { return r.item === SEAT_GRID_ITEM; })[0];
+  const condRows = seatCondRows_(token, year);
+  if (!condRows) return { ok: false, error: "讀不到🪑座位條件（Notion 打開該資料庫 → ⋯ → 連線 → 加入代理用的整合）" };
+  const seatOf = {};
+  roster.forEach(function (s) { seatOf[normId_(s.id)] = s.seat; });
+  const KIND = {};
+  Object.keys(SEAT_SOLO).forEach(function (k) { KIND[SEAT_SOLO[k]] = k; });
+  Object.keys(SEAT_PAIR).forEach(function (k) { KIND[SEAT_PAIR[k]] = k; });
+  const conditions = [], skipped = [];
+  condRows.forEach(function (pg) {
+    const p = pg.properties || {};
+    const kind = KIND[(((p["條件"] || {}).select) || {}).name || ""];
+    const a = seatOf[relIds_(p["學生"])[0]], b = seatOf[relIds_(p["對象"])[0]];
+    const title = plain_(p["名稱"]);
+    // 對不到人（轉出、關聯空白）或條件不認得 → 不猜，列出來給老師看
+    if (!kind || !a || (SEAT_PAIR[kind] && !b)) { skipped.push(title || pg.id); return; }
+    conditions.push(SEAT_PAIR[kind] ? { seat: a, kind: kind, other: b } : { seat: a, kind: kind });
+  });
+  return {
+    ok: true, year: year,
+    students: roster.map(function (s) { return { seat: s.seat, name: s.name, sex: s.sex }; }),
+    grid: gridRow ? gridRow.content : "",
+    gridMissing: !gridRow,
+    conditions: conditions,
+    skipped: skipped,
+  };
+}
+
+// 座位表文字 → 座號陣列（格式同 build-duties.mjs／seat-plan-core.js）；錯誤丟白話訊息
+function seatParseGrid_(text) {
+  const lines = String(text || "").split(/\r?\n+/).map(function (l) { return l.trim(); }).filter(Boolean);
+  if (!lines.length) throw new Error("座位表是空的");
+  const seats = [];
+  lines.forEach(function (line, r) {
+    line.split(/[,，]/).forEach(function (c) {
+      c = c.trim();
+      if (!c || c === "-" || c === "－") return;
+      const n = Number(c);
+      if (!Number.isInteger(n) || n <= 0) throw new Error("座位表第" + (r + 1) + "行的「" + c + "」不是座號");
+      seats.push(n);
+    });
+  });
+  return { lines: lines, seats: seats };
+}
+
+// 驗條件清單 → 去重後的 [{seat, kind, other?, key}]；不合格丟白話訊息（整筆拒絕）
+function seatNormConditions_(list, rosterSeats) {
+  if (!Array.isArray(list)) throw new Error("條件清單格式錯誤");
+  const out = {};
+  list.forEach(function (c) {
+    const kind = String((c || {}).kind || ""), seat = Number((c || {}).seat);
+    if (!SEAT_SOLO[kind] && !SEAT_PAIR[kind]) throw new Error("條件代碼「" + kind + "」不能存雲端（健康類只存老師電腦），整筆未寫入");
+    if (!rosterSeats[seat]) throw new Error("條件裡的座號" + seat + " 不在名冊");
+    if (SEAT_SOLO[kind]) {
+      if (c.other != null) throw new Error("「" + SEAT_SOLO[kind] + "」不用填對象");
+      out[seat + "|" + kind] = { seat: seat, kind: kind, key: seat + "|" + kind };
+      return;
+    }
+    const other = Number(c.other);
+    if (!rosterSeats[other]) throw new Error("人際對象座號" + c.other + " 不在名冊");
+    if (other === seat) throw new Error("座號" + seat + " 不能和自己配對");
+    const key = Math.min(seat, other) + "↔" + Math.max(seat, other);   // 同一對只留一筆（後寫蓋前寫）
+    out[key] = { seat: seat, kind: kind, other: other, key: key };
+  });
+  return Object.keys(out).map(function (k) { return out[k]; });
+}
+
+// 封存名：套用日的上個月（國字，沿用「座位表（九月）」慣例）；已存在就加（2）（3）
+function seatPrevMonth_(todayYmd) {
+  const y = Number(String(todayYmd).slice(0, 4)), m = Number(String(todayYmd).slice(5, 7));
+  const pm = m === 1 ? 12 : m - 1, py = m === 1 ? y - 1 : y;
+  return { label: SEAT_MONTH[pm - 1] + "月", year: String(py - 1911 - (pm < 8 ? 1 : 0)) };
+}
+function seatArchiveName_(todayYmd, existingItems) {
+  const base = SEAT_GRID_ITEM + "（" + seatPrevMonth_(todayYmd).label + "）";
+  const has = {};
+  existingItems.forEach(function (x) { has[x] = true; });
+  if (!has[base]) return base;
+  for (let i = 2; ; i++) if (!has[base + "（" + i + "）"]) return base + "（" + i + "）";
+}
+
+function seatCondTitle_(c) {
+  return SEAT_PAIR[c.kind] ? "座號" + c.seat + "↔" + c.other + " " + SEAT_PAIR[c.kind] : "座號" + c.seat + " " + SEAT_SOLO[c.kind];
+}
+
+function seatApply_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const year = schoolYear_(), today = today_();
+
+  // ① 驗格式（任何一項不合 → 什麼都不寫）
+  const roster = seatRoster_(token, year);
+  if (!roster) return { ok: false, error: "讀不到👥學生名冊，沒有寫入任何東西" };
+  const rosterSeats = {}, idOf = {};
+  roster.forEach(function (s) { rosterSeats[s.seat] = true; idOf[s.seat] = s.id; });
+  let parsed, wanted;
+  try {
+    parsed = seatParseGrid_(body.grid);
+    const seen = {};
+    parsed.seats.forEach(function (n) {
+      if (!rosterSeats[n]) throw new Error("座位表的座號" + n + " 不在名冊");
+      if (seen[n]) throw new Error("座位表的座號" + n + " 重複");
+      seen[n] = true;
+    });
+    if (parsed.seats.length !== roster.length) {
+      const miss = roster.filter(function (s) { return !seen[s.seat]; }).map(function (s) { return s.seat; });
+      throw new Error("座位表 " + parsed.seats.length + " 人，名冊 " + roster.length + " 人" + (miss.length ? "（沒排到：座號" + miss.join("、") + "）" : ""));
+    }
+    wanted = seatNormConditions_(body.conditions, rosterSeats);
+  } catch (err) {
+    return { ok: false, error: err.message + "，沒有寫入任何東西" };
+  }
+  const gridText = parsed.lines.join("\n");
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const settings = seatSettingRows_(token);
+    if (!settings) return { ok: false, error: "讀不到⚙️網站設定，沒有寫入任何東西" };
+    const gridRow = settings.filter(function (r) { return r.item === SEAT_GRID_ITEM; })[0];
+    if (!gridRow) return { ok: false, error: "⚙️網站設定找不到「座位表」列，沒有寫入任何東西" };
+    const condRows = seatCondRows_(token, year);
+    if (!condRows) return { ok: false, error: "讀不到🪑座位條件，沒有寫入任何東西" };
+
+    // ② 封存舊座位表（內容沒變就不封存）
+    let archived = null;
+    const oldText = String(gridRow.content || "").split(/\r?\n+/).map(function (l) { return l.trim(); }).filter(Boolean).join("\n");
+    if (oldText && oldText !== gridText) {
+      archived = seatArchiveName_(today, settings.map(function (r) { return r.item; }));
+      const res = notionV_(token, "pages", "post", {
+        parent: { type: "data_source_id", data_source_id: DS_SETTINGS },
+        properties: {
+          "項目": { title: [{ text: { content: archived } }] },
+          "內容": rt_(oldText),
+          "說明": rt_("【封存・不公布】" + seatPrevMonth_(today).year + " 學年" + seatPrevMonth_(today).label + "座位表（" + today + " 排座頁換新時封存），供以後排座位參考。格式同「座位表」列。班網只讀「座位表」這一列，名稱不是「座位表」的列都不會公開；請勿把本列項目改名成「座位表」。"),
+        },
+      }, NOTION_VERSION_DS);
+      if (res.code !== 200) return { ok: false, error: "封存舊座位表失敗（Notion " + res.code + "），沒有改座位表" };
+    }
+
+    // ③ 寫新座位表並回讀比對
+    const up = notionV_(token, "pages/" + gridRow.id, "patch", { properties: { "內容": rt_(gridText) } }, NOTION_VERSION_DS);
+    if (up.code !== 200) return { ok: false, archived: archived, error: "寫入座位表失敗（Notion " + up.code + "）" + (archived ? "；舊座位表已封存成「" + archived + "」" : "") };
+    const back = notionV_(token, "pages/" + gridRow.id, "get", null, NOTION_VERSION_DS);
+    const backText = back.code === 200 ? plain_((back.data.properties || {})["內容"]).trim() : null;
+    if (backText !== gridText) return { ok: false, archived: archived, error: "座位表寫入後回讀不一致，請到 Notion 檢查「座位表」列" };
+
+    // ④ 條件比對：key 相同且條件相同 → 保留；其餘有效列改「已取消」；清單多出的建新列
+    const seatOf = {};
+    roster.forEach(function (s) { seatOf[normId_(s.id)] = s.seat; });
+    const LABEL2KIND = {};
+    Object.keys(SEAT_SOLO).forEach(function (k) { LABEL2KIND[SEAT_SOLO[k]] = k; });
+    Object.keys(SEAT_PAIR).forEach(function (k) { LABEL2KIND[SEAT_PAIR[k]] = k; });
+    const wantByKey = {};
+    wanted.forEach(function (c) { wantByKey[c.key] = c; });
+    const kept = {};
+    const errors = [];
+    let cancelled = 0, added = 0;
+    condRows.forEach(function (pg) {
+      const p = pg.properties || {};
+      const kind = LABEL2KIND[(((p["條件"] || {}).select) || {}).name || ""];
+      const a = seatOf[relIds_(p["學生"])[0]], b = seatOf[relIds_(p["對象"])[0]];
+      let key = null;
+      if (kind && a && SEAT_SOLO[kind]) key = a + "|" + kind;
+      else if (kind && a && b && SEAT_PAIR[kind]) key = Math.min(a, b) + "↔" + Math.max(a, b);
+      const w = key && wantByKey[key];
+      if (w && w.kind === kind && !kept[key]) { kept[key] = true; return; }
+      const res = notionV_(token, "pages/" + pg.id, "patch", { properties: { "狀態": { select: { name: "已取消" } } } }, NOTION_VERSION_DS);
+      if (res.code === 200) cancelled++; else errors.push("取消「" + plain_(p["名稱"]) + "」失敗（" + res.code + "）");
+    });
+    wanted.forEach(function (c) {
+      if (kept[c.key]) return;
+      const propsNew = {
+        "名稱": { title: [{ text: { content: seatCondTitle_(c) } }] },
+        "學生": { relation: [{ id: idOf[c.seat] }] },
+        "條件": { select: { name: SEAT_PAIR[c.kind] || SEAT_SOLO[c.kind] } },
+        "狀態": { select: { name: "有效" } },
+        "學年": { select: { name: year } },
+      };
+      if (SEAT_PAIR[c.kind]) propsNew["對象"] = { relation: [{ id: idOf[c.other] }] };
+      const res = notionV_(token, "pages", "post", { parent: { type: "data_source_id", data_source_id: DS_SEATCOND }, properties: propsNew }, NOTION_VERSION_DS);
+      if (res.code === 200) added++; else errors.push("新增「" + seatCondTitle_(c) + "」失敗（" + res.code + "）");
+    });
+
+    // ⑤ 同步班網
+    const sync = triggerSync_(props);
+    const result = { ok: errors.length === 0, archived: archived, added: added, cancelled: cancelled, sync: sync };
+    if (errors.length) result.error = "座位表已更新，但有 " + errors.length + " 筆條件沒寫進去：" + errors.join("；");
+    return result;
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 // ---------- 動作：檢核台跨電腦同步（v2.11） ----------
