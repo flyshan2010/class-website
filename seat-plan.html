@@ -135,8 +135,8 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 <main>
   <section class="panel" aria-label="編排條件">
     <h2><span class="step">1</span>個人狀況</h2>
-    <p class="hint">點標籤開關。<b>🦻 虛線＝健康資料</b>（聽力）；視力、身高在下方貼上。三者都不存 Notion、不送代理，只記在這台電腦的瀏覽器。<span id="healthState"></span>
-      <button class="btn ghost small" id="clearHealth">清除這台電腦的聽力、視力、身高</button></p>
+    <p class="hint">點標籤開關。<b>🦻 虛線＝健康資料</b>（聽力）；視力、身高、BMI 在下方貼上。全部不存 Notion、不送代理，只記在這台電腦的瀏覽器。<span id="healthState"></span>
+      <button class="btn ghost small" id="clearHealth">清除這台電腦的聽力、視力、身高、BMI</button></p>
     <div class="scroll" id="stuList"></div>
     <details class="hbox" id="vBox">
       <summary>👁️ 視力（≤0.7 坐前兩排、0.8–0.9 盡量第 3–4 排）<span id="vState"></span></summary>
@@ -149,6 +149,12 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
       <p class="hint">貼上「座號:身高」，空白、逗號或換行分隔都可以（例：<code>1:142.8 2:132.5</code>）。只記在這台電腦的瀏覽器，不存 Notion、不送代理；每學期體格檢查後重貼一次。</p>
       <textarea id="hIn" rows="3" aria-label="座號與身高"></textarea>
       <p style="margin:6px 0 0"><button class="btn small" id="hGo">套用身高</button> <button class="btn ghost small" id="hClear">清除這台電腦的身高</button></p>
+    </details>
+    <details class="hbox" id="bBox">
+      <summary>↔️ BMI（≥19＝體型較寬：盡量坐兩旁、不坐第一排，不擋後面視線）<span id="bState"></span></summary>
+      <p class="hint">貼上「座號:BMI」（例：<code>1:27.1 2:16.3</code>）。只記在這台電腦的瀏覽器；每學期體格檢查後重貼一次。</p>
+      <textarea id="bIn" rows="3" aria-label="座號與 BMI"></textarea>
+      <p style="margin:6px 0 0"><button class="btn small" id="bGo">套用 BMI</button> <button class="btn ghost small" id="bClear">清除這台電腦的 BMI</button></p>
     </details>
 
     <h2 style="margin-top:16px"><span class="step">2</span>人際關係</h2>
@@ -202,7 +208,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/seat-plan-core.js?v=20261108-4"></script>
-<script src="assets/js/seat-plan.js?v=20261108-4"></script>
+<script src="assets/js/seat-plan-core.js?v=20261108-5"></script>
+<script src="assets/js/seat-plan.js?v=20261108-5"></script>
 </body>
 </html>

@@ -141,6 +141,14 @@ test("由視力、身高推標籤：≤0.7 需坐前面、0.8–0.9 第 3–4 �
   assert.equal(tags(10), "");
 });
 
+test("體型較寬：BMI ≥19 推出 wide；坐第一排或中間欄算沒達成", () => {
+  const d = deriveTags([{ seat: 1, bmi: 19 }, { seat: 2, bmi: 18.9 }, { seat: 3, bmi: 30.3 }]);
+  assert.deepEqual([1, 2, 3].map(n => d.get(n).has("wide")), [true, false, true]);
+  const inp = { rows: 2, cols: 6, relations: [], students: [{ seat: 1, sex: "", tags: ["wide"] }] };
+  const bad = i => failed(evaluate(inp, at(2, 6, { [i]: 1 }), { detail: true }), "wide").length;
+  assert.deepEqual([0, 2, 6, 8, 11].map(bad), [1, 1, 0, 1, 0]);   // 第一排、中間欄都不行；第二排兩旁可以
+});
+
 test("示意資料 6 個種子：必須與優先全滿足，每人恰一個位子", () => {
   for (let seed = 1; seed <= 6; seed++) {
     const g = optimize(demo(), { seed });

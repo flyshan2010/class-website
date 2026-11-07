@@ -1,7 +1,7 @@
 /* 🪑 排座頁（DJ 線 P3，SPEC_座位編排.md §7）
  * 資料：代理 seat_get（名冊、座位表、座位條件）→ 本頁微調 → seat_apply（封存舊表、寫新表、更新條件、同步班網）。
  * 計算：window.SeatPlan（assets/js/seat-plan-core.js，與 node 測試同一支，不在這裡重寫規則）。
- * 健康（只存本機 localStorage，絕不送代理）：🦻 聽力「seatplan-hear-v1」（座號陣列）、視力「seatplan-vision-v1」、身高「seatplan-height-v1」（{座號: 數值}）。
+ * 健康（只存本機 localStorage，絕不送代理）：🦻 聽力「seatplan-hear-v1」（座號陣列）、視力「seatplan-vision-v1」、身高「seatplan-height-v1」、BMI「seatplan-bmi-v1」（{座號: 數值}）。
  *   視力、身高由老師貼上，👁️ 需坐前面／👓 第 3–4 排／📏 身高高由 SP.deriveTags 推出，不手勾（老師 11/07）。
  *   舊版手勾的「seatplan-health-v1／v2」（視力標籤）載入時清掉，改以貼上的視力為準。 */
 (function () {
@@ -12,6 +12,7 @@
   const NUM = {
     height: { key: "seatplan-height-v1", min: 80, max: 220, unit: "身高", box: "h" },
     vision: { key: "seatplan-vision-v1", min: 0.01, max: 2.0, unit: "視力", box: "v" },
+    bmi:    { key: "seatplan-bmi-v1", min: 10, max: 45, unit: "BMI", box: "b" },
   };
   // chip＝老師手勾；其餘由視力、身高推出（只顯示圖示）
   const TRAITS = {
@@ -22,6 +23,7 @@
     front:    { icon: "👁️", label: "視力≤0.7・需坐前面" },
     mid:      { icon: "👓", label: "視力0.8–0.9・第3–4排" },
     tall:     { icon: "📏", label: "全班最高1/5" },
+    wide:     { icon: "↔️", label: "體型較寬・兩旁往後" },
   };
   const REL = { chat: "🗣️ 愛聊天（不相鄰）", conflict: "⚡ 易衝突（隔開）", pos: "💚 能互助（坐近）" };
   const MONTH = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
@@ -102,7 +104,7 @@
   }
   // 實際送進計算的標籤＝手勾（🦻 聽力→需坐前面）＋由視力、身高推出
   let derived = new Map();
-  function rederive() { derived = SP.deriveTags(students.map(s => ({ seat: s.seat, vision: s.vision, height: s.height }))); }
+  function rederive() { derived = SP.deriveTags(students.map(s => ({ seat: s.seat, vision: s.vision, height: s.height, bmi: s.bmi }))); }
   function eff(s) {
     const t = new Set([...s.tags].map(x => x === "hear" ? "front" : x));
     (derived.get(s.seat) || []).forEach(x => t.add(x));
@@ -136,12 +138,14 @@
 
   // ── 畫面 ──
   function renderInputs() {
-    $("#stuList").innerHTML = students.map(s => `<div class="stu"><div class="who">${s.seat} ${esc(s.name)}<small>${esc(s.sex || "未填性別")}${s.height != null ? "・" + s.height : ""}${s.vision != null ? "・視" + s.vision : ""}${[...(derived.get(s.seat) || [])].map(t => " " + TRAITS[t].icon).join("")}</small></div><div class="chips">` +
+    $("#stuList").innerHTML = students.map(s => `<div class="stu"><div class="who">${s.seat} ${esc(s.name)}<small>${esc(s.sex || "未填性別")}${s.height != null ? "・" + s.height : ""}${s.vision != null ? "・視" + s.vision : ""}${s.bmi != null ? "・BMI" + s.bmi : ""}${[...(derived.get(s.seat) || [])].map(t => " " + TRAITS[t].icon).join("")}</small></div><div class="chips">` +
       Object.entries(TRAITS).filter(([, v]) => v.chip).map(([k, v]) => `<button class="chip${v.health ? " health" : ""}${s.tags.has(k) ? " on" : ""}" data-s="${s.seat}" data-t="${k}" aria-pressed="${s.tags.has(k)}">${v.icon} ${v.label}</button>`).join("") + `</div></div>`).join("");
     $("#healthState").textContent = healthSaved ? "（這台電腦已記住）" : "";
     const hn = students.filter(s => s.height != null).length, vn = students.filter(s => s.vision != null).length;
     $("#hState").textContent = hn ? `（已記 ${hn}／${students.length} 人）` : "（尚未設定，不依身高排）";
     $("#vState").textContent = vn ? `（已記 ${vn}／${students.length} 人）` : "（尚未設定）";
+    const bn = students.filter(s => s.bmi != null).length;
+    $("#bState").textContent = bn ? `（已記 ${bn}／${students.length} 人）` : "（尚未設定）";
     const nm = n => esc(bySeat.get(n) ? bySeat.get(n).name : "");
     $("#relList").innerHTML = relations.map((r, i) => `<li><span>座號${r.a} ${nm(r.a)} ↔ 座號${r.b} ${nm(r.b)}<br><small style="color:var(--muted)">${REL[r.k]}</small></span><button class="btn ghost small" data-del="${i}" aria-label="刪除這組">✕</button></li>`).join("") || `<li><span style="color:var(--muted)">還沒有記錄</span></li>`;
   }
@@ -206,7 +210,7 @@
     if (s == null) { d.innerHTML = `空位，${where}。再點一位學生，就把他移到這裡。`; d.classList.add("on"); return; }
     const st = bySeat.get(s), mine = e.items.filter(x => x.seats.includes(s));
     const cls = x => x.ok ? "okl" : x.tier === "must" ? "bdl" : "pril";
-    d.innerHTML = `<b>座號${s} ${esc(st.name)}</b>（${esc(st.sex || "未填性別")}）${where}　${shownTags(st).map(t => TRAITS[t].icon + TRAITS[t].label).join("　") || "沒有標狀況"}${st.height != null ? "　身高 " + st.height : ""}${st.vision != null ? "　視力 " + st.vision : ""}
+    d.innerHTML = `<b>座號${s} ${esc(st.name)}</b>（${esc(st.sex || "未填性別")}）${where}　${shownTags(st).map(t => TRAITS[t].icon + TRAITS[t].label).join("　") || "沒有標狀況"}${st.height != null ? "　身高 " + st.height : ""}${st.vision != null ? "　視力 " + st.vision : ""}${st.bmi != null ? "　BMI " + st.bmi : ""}
       <ul>${mine.map(x => `<li class="${cls(x)}">${x.ok ? "✅" : "⚠️"} ${esc(x.text)}</li>`).join("") || `<li class="okl">✅ 沒有特別的條件，前後左右也沒有衝突</li>`}</ul>
       <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn small" id="lockBtn">${locks.has(selected) ? "🔓 取消固定" : "🔒 固定這個位子"}</button>
       <small style="color:var(--muted)">固定後按「換一個建議」也不會動（例：行動不便要坐門邊）；固定只在這次頁面有效。再點另一格＝兩人互換。</small></div>`;
@@ -227,9 +231,9 @@
       regen();
     });
     $("#clearHealth").onclick = () => {
-      students.forEach(s => { s.tags.delete("hear"); s.height = null; s.vision = null; });
-      try { [HEAR_KEY, ...OLD_KEYS, NUM.height.key, NUM.vision.key].forEach(k => localStorage.removeItem(k)); } catch (e) {}
-      healthSaved = false; toast("已清除這台電腦的聽力、視力、身高"); regen();
+      students.forEach(s => { s.tags.delete("hear"); s.height = null; s.vision = null; s.bmi = null; });
+      try { [HEAR_KEY, ...OLD_KEYS, NUM.height.key, NUM.vision.key, NUM.bmi.key].forEach(k => localStorage.removeItem(k)); } catch (e) {}
+      healthSaved = false; toast("已清除這台電腦的聽力、視力、身高、BMI"); regen();
     };
     for (const kind of Object.keys(NUM)) {
       const b = NUM[kind].box, u = NUM[kind].unit;
@@ -290,7 +294,7 @@
     $("#applyMsg").innerHTML = nm ? `<span class="bdl">⚠️ 還有 ${nm} 件「必須」沒做到</span>，確定要用這份嗎？` : "這份建議「必須」的條件全部做到。按確認後：";
     $("#applySteps").innerHTML = (same ? `<li>座位和目前一樣，不封存、只更新條件。</li>` :
       `<li>現在的座位封存成「座位表（${prevMonthLabel()}）」（已有同名就加（2）），下次排座用來比對「不和上次同座」。</li><li>新座位寫入 Notion「⚙️ 網站設定」的「座位表」。</li>`) +
-      `<li>易分心、需協助、小老師與人際關係存進 Notion「🪑 座位條件」；<b>🦻 聽力、視力、身高不會送出</b>（只在這台電腦）。</li><li>班網約 1 分鐘後換新；班網只顯示座位和遮罩姓名。</li>`;
+      `<li>易分心、需協助、小老師與人際關係存進 Notion「🪑 座位條件」；<b>🦻 聽力、視力、身高、BMI 不會送出</b>（只在這台電腦）。</li><li>班網約 1 分鐘後換新；班網只顯示座位和遮罩姓名。</li>`;
     $("#dlgApply").showModal();
   }
 

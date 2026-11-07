@@ -27,7 +27,7 @@
   const ADJ_LR = 1, ADJ_FB = 0.7, ADJ_DIAG = 0.35;          // 相鄰程度：左右、前後、斜角
   const CLOSE_MIN = 0.7;                                    // 「前後左右」＝程度 ≥ 0.7
 
-  const TAGS = ["front", "mid", "distract", "tall", "needhelp", "tutor"];
+  const TAGS = ["front", "mid", "distract", "tall", "wide", "needhelp", "tutor"];
   const KINDS = ["chat", "conflict", "pos"];
   const TIER = { must: "必須", pri: "優先", soft: "盡量" };
   const RULES = {
@@ -39,6 +39,7 @@
     tall:     { tier: "pri",  label: "📏 全班最高 1/5 → 不坐第一排" },
     tallfront:{ tier: "pri",  label: "📏 高個子又需坐前面 → 不坐中間欄" },
     mid:      { tier: "soft", label: "👓 視力 0.8–0.9 → 第 3–4 排" },
+    wide:     { tier: "soft", label: "↔️ 體型較寬（BMI ≥19）→ 盡量兩旁、不坐第一排" },
     pos:      { tier: "soft", label: "💚 能互助 → 坐近" },
     height:   { tier: "soft", label: "📐 其餘依身高：矮的前、高的後" },
     gender:   { tier: "soft", label: "男女梅花座" },
@@ -136,8 +137,8 @@
 
   // ═════════ 由視力、身高推出標籤（老師 11/07：視力、身高照體格結果表貼上，不再手勾） ═════════
   // list = [{seat, vision?, height?}]；vision＝有效視力（有配鏡看戴鏡、沒配鏡看裸視，取較差眼）
-  // 回傳 Map(座號 → Set)：vision ≤0.7 → front；0.7 < vision ≤0.9 → mid；身高最高 round(n/5) 人 → tall
-  const DERIVE = { FRONT_MAX: 0.7, MID_MAX: 0.9, TALL_RATIO: 1 / 5 };
+  // 回傳 Map(座號 → Set)：vision ≤0.7 → front；0.7 < vision ≤0.9 → mid；身高最高 round(n/5) 人 → tall；BMI ≥19 → wide
+  const DERIVE = { FRONT_MAX: 0.7, MID_MAX: 0.9, TALL_RATIO: 1 / 5, WIDE_BMI: 19 };   // BMI 19＝與本班體格表「過重／超重」分界一致（11/07 核對 10 人全中）
   function deriveTags(list) {
     const out = new Map((list || []).map(s => [Number(s.seat), new Set()]));
     for (const s of list || []) {
@@ -145,6 +146,10 @@
       if (!Number.isFinite(v)) continue;
       if (v <= DERIVE.FRONT_MAX + 1e-9) out.get(Number(s.seat)).add("front");
       else if (v <= DERIVE.MID_MAX + 1e-9) out.get(Number(s.seat)).add("mid");
+    }
+    for (const s of list || []) {
+      const b = s.bmi == null || s.bmi === "" ? NaN : Number(s.bmi);
+      if (Number.isFinite(b) && b >= DERIVE.WIDE_BMI - 1e-9) out.get(Number(s.seat)).add("wide");
     }
     const hs = (list || []).filter(s => s.height != null && s.height !== "" && Number.isFinite(Number(s.height)))
       .sort((a, b) => Number(b.height) - Number(a.height) || a.seat - b.seat);
@@ -187,6 +192,11 @@
       if (t.has("tall") && t.has("front")) {               // 老師 11/07：高個子近視坐前面時靠兩側，不擋後面
         const ok = !ROOM.isMiddle(c, cols);
         add("tallfront", ok, [n], () => ok ? `座號${n} 身高高又需坐前面，坐在第${c + 1}欄（不在中間）` : `座號${n} 身高高又需坐前面，現在在中間欄，會擋後面`);
+      }
+      if (t.has("wide")) {                                // 老師 11/07：體型較寬不擋後面視線，盡量兩旁、往後
+        const m = ROOM.isMiddle(c, cols) ? 1 : 0, f = r === 0 ? 1 : 0;
+        add("wide", !m && !f, [n], () => !m && !f ? `座號${n} 體型較寬，坐兩旁第${r + 1}排` : `座號${n} 體型較寬，現在${f ? "第一排" : ""}${m && f ? "、" : ""}${m ? "中間欄" : ""}，會擋後面`, 2 * (m + f));
+        total += (rows - 1 - r) * 0.5;                       // 越後面越好（小扣分，不算違規）
       }
       if (s.hRow != null) {
         const d = Math.abs(r - s.hRow);
