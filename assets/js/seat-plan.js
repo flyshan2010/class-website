@@ -163,6 +163,11 @@
     for (const [i, n] of [...locks]) if (plan[i] !== n) locks.delete(i);   // 固定的人不在原格就取消固定
     toast(msg); render();
   }
+  function fillArchives() {
+    const sel = $("#fromArchive"); if (!sel) return;
+    sel.innerHTML = `<option value="">📂 從封存的座位表開始…</option>` + archives.map((a, i) => `<option value="${i}">${a.name.replace(/[<>&"]/g, "")}</option>`).join("");
+    sel.hidden = !archives.length;
+  }
   function beforeApply() {
     try { const d = JSON.parse(localStorage.getItem(BEFORE_KEY) || "null"); const g = d && SP.parseGrid(d.grid); return g && g.rows === room.rows && g.cols === room.cols ? { g, at: d.at } : null; }
     catch (e) { return null; }
@@ -353,6 +358,15 @@
       toast("已復原上一步"); render();
     };
     $("#backNow").onclick = () => setPlan(current.assign, "已把建議換回目前座位，可以從這裡手動調整");
+    $("#fromArchive").onchange = e => {
+      const a = archives[Number(e.target.value)]; e.target.value = "";
+      if (!a) return;
+      let g; try { g = SP.parseGrid(a.grid); } catch (err) { toast(`「${a.name}」讀不懂：${err.message}`); return; }
+      if (g.rows !== room.rows || g.cols !== room.cols) { toast(`「${a.name}」是 ${g.rows} 排 × ${g.cols} 欄，和現在教室 ${room.rows} × ${room.cols} 不同，不能套用`); return; }
+      const have = new Set(g.assign.filter(s => s != null)), gone = [...have].filter(s => !bySeat.has(s)), miss = students.map(s => s.seat).filter(s => !have.has(s));
+      if (gone.length || miss.length) { toast(`「${a.name}」和現在名冊對不上（${gone.length ? "多了座號 " + gone.join("、") : ""}${gone.length && miss.length ? "；" : ""}${miss.length ? "少了座號 " + miss.join("、") : ""}），不能直接套用`); return; }
+      setPlan(g.assign, `已換成「${a.name}」，可以從這裡手動調整；按「✅ 確認並更新班網」才會真的改`);
+    };
     $("#restoreBefore").onclick = () => {
       const b = beforeApply(); if (!b) return;
       setPlan(b.g.assign, `已換回 ${b.at} 套用前的座位；按「✅ 確認並更新班網」才會真的改回去`);
@@ -362,8 +376,10 @@
   }
 
   // 封存名由代理算（現行座位表寫入的月份），這裡只顯示；舊版代理沒回就退回上個月
-  let archiveLabel = "";
-  function prevMonthLabel() { if (archiveLabel) return archiveLabel; const m = new Date().getMonth(); return MONTH[(m + 11) % 12] + "月"; }
+  let archivePreview = "", archives = [];
+  const pad = n => String(n).padStart(2, "0");
+  function stampNow() { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`; }
+  function archiveName() { return archivePreview || `座位表（${MONTH[(new Date().getMonth() + 11) % 12]}月）`; }
 
   function openApply() {
     if (busy) return;
@@ -371,7 +387,7 @@
     const same = SP.formatGrid({ rows: room.rows, cols: room.cols, assign: plan }) === SP.formatGrid(current);
     $("#applyMsg").innerHTML = nm ? `<span class="bdl">⚠️ 還有 ${nm} 件「必須」沒做到</span>，確定要用這份嗎？` : "這份建議「必須」的條件全部做到。按確認後：";
     $("#applySteps").innerHTML = (same ? `<li>座位和目前一樣，不封存、只更新條件。</li>` :
-      `<li>現在的座位封存成「座位表（${prevMonthLabel()}）」（已有同名就加（2）），下次排座用來比對「不和上次同座」。</li><li>新座位寫入 Notion「⚙️ 網站設定」的「座位表」。</li>`) +
+      `<li>現在的座位封存成「${archiveName()}」（月份與時間＝這份座位開始使用的時候），下次排座用來比對「不和上次同座」。</li><li>新座位寫入 Notion「⚙️ 網站設定」的「座位表」。</li>`) +
       `<li>易分心、需協助、小老師與人際關係存進 Notion「🪑 座位條件」；<b>🦻 聽力、視力、身高、BMI 不會送出</b>（只在這台電腦）。</li><li>班網約 1 分鐘後換新；班網只顯示座位和遮罩姓名。</li>`;
     $("#dlgApply").showModal();
   }
@@ -386,9 +402,11 @@
       const r = await call({ action: "seat_apply", grid, conditions });
       $("#dlgApply").close();
       if (!r.ok) { setStatus("❌ " + (r.error || "更新失敗"), true); toast("沒有更新成功，畫面保留，可以再按一次"); return; }
+      const before = current;
       try { localStorage.setItem(BEFORE_KEY, JSON.stringify({ grid: SP.formatGrid(current), at: new Date().toLocaleString("zh-TW", { hour12: false }) })); } catch (e) {}
       current = { rows: room.rows, cols: room.cols, assign: plan.slice() };
-      archiveLabel = MONTH[new Date().getMonth()] + "月";   // 現行座位剛在本月寫入，下次封存就用本月
+      archivePreview = `座位表（${MONTH[new Date().getMonth()]}月）${stampNow()}`;   // 現行座位剛寫入，下次封存就用這個時間（約略，以代理為準）
+      if (r.archived) { archives.unshift({ name: r.archived, grid: SP.formatGrid(before) }); fillArchives(); }
       draftBase = condSig(conditions); try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}   // 已存進 Notion，草稿清掉
       const syncMsg = r.sync && r.sync.ok ? "班網同步已觸發，約 1 分鐘後換新" : "⚠️ 班網同步沒觸發成功，請到教師專區按「立即更新班網」";
       setStatus(`✅ 已更新座位表${r.archived ? `（舊座位封存成「${r.archived}」）` : "（座位沒變，未封存）"}；條件新增 ${r.added}、取消 ${r.cancelled}。${syncMsg}`, !(r.sync && r.sync.ok));
@@ -423,7 +441,7 @@
     const msgs = [];
     try {
       current = SP.parseGrid(r.grid);
-      archiveLabel = r.archiveLabel || "";
+      archivePreview = r.archivePreview || "";
       room = { rows: current.rows, cols: current.cols };
       const gone = current.assign.filter(s => s != null && !bySeat.has(s));
       if (gone.length) msgs.push(`目前座位表有名冊沒有的座號 ${gone.join("、")}（建議座位不會排他們）`);
@@ -432,6 +450,8 @@
       room = { rows: 5, cols: 6 };
       current = { rows: 5, cols: 6, assign: Array(30).fill(null) };
     }
+    archives = Array.isArray(r.archives) ? r.archives : [];
+    fillArchives();
     if (r.skipped && r.skipped.length) msgs.push(`有 ${r.skipped.length} 筆座位條件對不到在學學生，沒有用：${r.skipped.join("、")}`);
     setStatus(`${r.year} 學年・${students.length} 人・${room.rows} 排 × ${room.cols} 欄。` + (msgs.length ? "⚠️ " + msgs.join("；") : "") + (draftMsg ? "　📝 " + draftMsg : ""), msgs.length > 0);
     bind();

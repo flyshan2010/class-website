@@ -1,11 +1,17 @@
 /**
- * 班網教師專區代理 v2.15（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座
+ * 班網教師專區代理 v2.16（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.16 升級步驟（2026-11-08，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.16（老師 11/08 要求）：①封存名加上這份座位開始使用的時間，例「座位表（十一月）2026-11-08-0126」，方便查版本；
+ *   ②seat_get 另回 archives（所有封存座位表，新→舊）給排座頁「📂 從封存的座位表開始」；archivePreview＝確認框顯示的封存名。
+ *   部署後送 {"action":"version"} 回 2.16 才算新版上線。
  *
  * ── v2.15 升級步驟（2026-11-08，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
  *   v2.15 修正（老師 11/08 回報）：座位表封存名改用「現行座位表是哪個月寫進去的」（Notion 該列最後編輯時間，臺北時間），
- *   不再用「套用日的上個月」——同月微調不會再把十一月的座位誤標成「座位表（十月）（2）」。seat_get 另回 archiveLabel 給確認框顯示。
+ *   不再用「套用日的上個月」——同月微調不會再把十一月的座位誤標成「座位表（十月）（2）」。seat_get 另回 archiveLabel 給確認框顯示（v2.16 改成 archivePreview）。
  *   部署後送 {"action":"version"} 回 2.15 才算新版上線。
  *
  * ── v2.14 升級步驟（2026-11-07，約 2 分鐘）──
@@ -128,7 +134,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.15"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.16"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -1696,7 +1702,7 @@ function seatSettingRows_(token) {
   if (!rows) return null;
   return rows.map(function (pg) {
     const p = pg.properties || {};
-    return { id: pg.id, item: plain_(p["項目"]).trim(), content: plain_(p["內容"]), edited: pg.last_edited_time || "" };
+    return { id: pg.id, item: plain_(p["項目"]).trim(), content: plain_(p["內容"]), edited: pg.last_edited_time || "", created: pg.created_time || "" };
   });
 }
 
@@ -1741,7 +1747,12 @@ function seatGet_(props) {
     students: roster.map(function (s) { return { seat: s.seat, name: s.name, sex: s.sex }; }),
     grid: gridRow ? gridRow.content : "",
     gridMissing: !gridRow,
-    archiveLabel: gridRow ? seatArchiveMonth_(gridRow, today_()).label : "",   // 確認框顯示「封存成座位表（X月）」用，與 seat_apply 同一支
+    // 確認框顯示的封存名，與 seat_apply 同一支算法
+    archivePreview: gridRow ? seatArchiveName_(seatArchiveMonth_(gridRow, today_()), settings.map(function (r) { return r.item; })) : "",
+    // 封存座位表（新→舊）給「📂 從封存的座位表開始」；只回座號，不含姓名
+    archives: settings.filter(function (r) { return r.item !== SEAT_GRID_ITEM && r.item.indexOf(SEAT_GRID_ITEM + "（") === 0; })
+      .sort(function (a, b) { return a.created < b.created ? 1 : a.created > b.created ? -1 : 0; })
+      .map(function (r) { return { name: r.item, grid: r.content }; }),
     conditions: conditions,
     skipped: skipped,
   };
@@ -1797,14 +1808,20 @@ function seatPrevMonth_(todayYmd) {
   const y = Number(String(todayYmd).slice(0, 4)), m = Number(String(todayYmd).slice(5, 7));
   return seatMonthOf_(m === 1 ? (y - 1) + "-12" : y + "-" + ("0" + (m - 1)).slice(-2));
 }
+// v2.16：month 另帶 stamp＝這份座位開始使用的時間（臺北，yyyy-MM-dd-HHmm，老師 11/08 指定格式），讀不到就沒有
 function seatArchiveMonth_(gridRow, todayYmd) {
   const t = gridRow && gridRow.edited ? new Date(gridRow.edited) : null;
-  // 臺灣無日光節約，固定 +8 小時換成臺北日期（不經 Utilities，測試也能驗）
-  if (t && !isNaN(t.getTime())) return seatMonthOf_(new Date(t.getTime() + 8 * 3600e3).toISOString().slice(0, 10));
+  // 臺灣無日光節約，固定 +8 小時換成臺北時間（不經 Utilities，測試也能驗）
+  if (t && !isNaN(t.getTime())) {
+    const iso = new Date(t.getTime() + 8 * 3600e3).toISOString();   // 2026-11-08T01:26:00.000Z（已是臺北時刻）
+    const m = seatMonthOf_(iso.slice(0, 10));
+    m.stamp = iso.slice(0, 10) + "-" + iso.slice(11, 13) + iso.slice(14, 16);
+    return m;
+  }
   return seatPrevMonth_(todayYmd);
 }
 function seatArchiveName_(month, existingItems) {
-  const base = SEAT_GRID_ITEM + "（" + month.label + "）";
+  const base = SEAT_GRID_ITEM + "（" + month.label + "）" + (month.stamp || "");
   const has = {};
   existingItems.forEach(function (x) { has[x] = true; });
   if (!has[base]) return base;
