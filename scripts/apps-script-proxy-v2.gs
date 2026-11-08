@@ -1,6 +1,12 @@
 /**
- * 班網教師專區代理 v2.14（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座
+ * 班網教師專區代理 v2.15（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.15 升級步驟（2026-11-08，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.15 修正（老師 11/08 回報）：座位表封存名改用「現行座位表是哪個月寫進去的」（Notion 該列最後編輯時間，臺北時間），
+ *   不再用「套用日的上個月」——同月微調不會再把十一月的座位誤標成「座位表（十月）（2）」。seat_get 另回 archiveLabel 給確認框顯示。
+ *   部署後送 {"action":"version"} 回 2.15 才算新版上線。
  *
  * ── v2.14 升級步驟（2026-11-07，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -122,7 +128,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.14"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.15"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -1690,7 +1696,7 @@ function seatSettingRows_(token) {
   if (!rows) return null;
   return rows.map(function (pg) {
     const p = pg.properties || {};
-    return { id: pg.id, item: plain_(p["項目"]).trim(), content: plain_(p["內容"]) };
+    return { id: pg.id, item: plain_(p["項目"]).trim(), content: plain_(p["內容"]), edited: pg.last_edited_time || "" };
   });
 }
 
@@ -1735,6 +1741,7 @@ function seatGet_(props) {
     students: roster.map(function (s) { return { seat: s.seat, name: s.name, sex: s.sex }; }),
     grid: gridRow ? gridRow.content : "",
     gridMissing: !gridRow,
+    archiveLabel: gridRow ? seatArchiveMonth_(gridRow, today_()).label : "",   // 確認框顯示「封存成座位表（X月）」用，與 seat_apply 同一支
     conditions: conditions,
     skipped: skipped,
   };
@@ -1779,14 +1786,25 @@ function seatNormConditions_(list, rosterSeats) {
   return Object.keys(out).map(function (k) { return out[k]; });
 }
 
-// 封存名：套用日的上個月（國字，沿用「座位表（九月）」慣例）；已存在就加（2）（3）
+// 封存名（v2.15 老師 11/08 裁定）：用「現行座位表是哪個月寫進去的」命名＝「座位表」列的 last_edited_time（臺北時間）月份。
+// 例：11/08 套用的座位，同月再微調或 12 月換新時都封存成「座位表（十一月）」。讀不到編輯時間才退回「套用日的上個月」。
+// 國字月份沿用「座位表（九月）」慣例；已存在就加（2）（3）
+function seatMonthOf_(ymd) {
+  const y = Number(String(ymd).slice(0, 4)), m = Number(String(ymd).slice(5, 7));
+  return { label: SEAT_MONTH[m - 1] + "月", year: String(y - 1911 - (m < 8 ? 1 : 0)) };
+}
 function seatPrevMonth_(todayYmd) {
   const y = Number(String(todayYmd).slice(0, 4)), m = Number(String(todayYmd).slice(5, 7));
-  const pm = m === 1 ? 12 : m - 1, py = m === 1 ? y - 1 : y;
-  return { label: SEAT_MONTH[pm - 1] + "月", year: String(py - 1911 - (pm < 8 ? 1 : 0)) };
+  return seatMonthOf_(m === 1 ? (y - 1) + "-12" : y + "-" + ("0" + (m - 1)).slice(-2));
 }
-function seatArchiveName_(todayYmd, existingItems) {
-  const base = SEAT_GRID_ITEM + "（" + seatPrevMonth_(todayYmd).label + "）";
+function seatArchiveMonth_(gridRow, todayYmd) {
+  const t = gridRow && gridRow.edited ? new Date(gridRow.edited) : null;
+  // 臺灣無日光節約，固定 +8 小時換成臺北日期（不經 Utilities，測試也能驗）
+  if (t && !isNaN(t.getTime())) return seatMonthOf_(new Date(t.getTime() + 8 * 3600e3).toISOString().slice(0, 10));
+  return seatPrevMonth_(todayYmd);
+}
+function seatArchiveName_(month, existingItems) {
+  const base = SEAT_GRID_ITEM + "（" + month.label + "）";
   const has = {};
   existingItems.forEach(function (x) { has[x] = true; });
   if (!has[base]) return base;
@@ -1840,13 +1858,14 @@ function seatApply_(props, body) {
     let archived = null;
     const oldText = String(gridRow.content || "").split(/\r?\n+/).map(function (l) { return l.trim(); }).filter(Boolean).join("\n");
     if (oldText && oldText !== gridText) {
-      archived = seatArchiveName_(today, settings.map(function (r) { return r.item; }));
+      const month = seatArchiveMonth_(gridRow, today);
+      archived = seatArchiveName_(month, settings.map(function (r) { return r.item; }));
       const res = notionV_(token, "pages", "post", {
         parent: { type: "data_source_id", data_source_id: DS_SETTINGS },
         properties: {
           "項目": { title: [{ text: { content: archived } }] },
           "內容": rt_(oldText),
-          "說明": rt_("【封存・不公布】" + seatPrevMonth_(today).year + " 學年" + seatPrevMonth_(today).label + "座位表（" + today + " 排座頁換新時封存），供以後排座位參考。格式同「座位表」列。班網只讀「座位表」這一列，名稱不是「座位表」的列都不會公開；請勿把本列項目改名成「座位表」。"),
+          "說明": rt_("【封存・不公布】" + month.year + " 學年" + month.label + "座位表（" + today + " 排座頁換新時封存），供以後排座位參考。格式同「座位表」列。班網只讀「座位表」這一列，名稱不是「座位表」的列都不會公開；請勿把本列項目改名成「座位表」。"),
         },
       }, NOTION_VERSION_DS);
       if (res.code !== 200) return { ok: false, error: "封存舊座位表失敗（Notion " + res.code + "），沒有改座位表" };

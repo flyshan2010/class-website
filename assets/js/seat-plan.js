@@ -361,7 +361,9 @@
     $("#applyGo").onclick = doApply;
   }
 
-  function prevMonthLabel() { const m = new Date().getMonth(); return MONTH[(m + 11) % 12] + "月"; }
+  // 封存名由代理算（現行座位表寫入的月份），這裡只顯示；舊版代理沒回就退回上個月
+  let archiveLabel = "";
+  function prevMonthLabel() { if (archiveLabel) return archiveLabel; const m = new Date().getMonth(); return MONTH[(m + 11) % 12] + "月"; }
 
   function openApply() {
     if (busy) return;
@@ -386,6 +388,7 @@
       if (!r.ok) { setStatus("❌ " + (r.error || "更新失敗"), true); toast("沒有更新成功，畫面保留，可以再按一次"); return; }
       try { localStorage.setItem(BEFORE_KEY, JSON.stringify({ grid: SP.formatGrid(current), at: new Date().toLocaleString("zh-TW", { hour12: false }) })); } catch (e) {}
       current = { rows: room.rows, cols: room.cols, assign: plan.slice() };
+      archiveLabel = MONTH[new Date().getMonth()] + "月";   // 現行座位剛在本月寫入，下次封存就用本月
       draftBase = condSig(conditions); try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}   // 已存進 Notion，草稿清掉
       const syncMsg = r.sync && r.sync.ok ? "班網同步已觸發，約 1 分鐘後換新" : "⚠️ 班網同步沒觸發成功，請到教師專區按「立即更新班網」";
       setStatus(`✅ 已更新座位表${r.archived ? `（舊座位封存成「${r.archived}」）` : "（座位沒變，未封存）"}；條件新增 ${r.added}、取消 ${r.cancelled}。${syncMsg}`, !(r.sync && r.sync.ok));
@@ -420,6 +423,7 @@
     const msgs = [];
     try {
       current = SP.parseGrid(r.grid);
+      archiveLabel = r.archiveLabel || "";
       room = { rows: current.rows, cols: current.cols };
       const gone = current.assign.filter(s => s != null && !bySeat.has(s));
       if (gone.length) msgs.push(`目前座位表有名冊沒有的座號 ${gone.join("、")}（建議座位不會排他們）`);

@@ -1,5 +1,5 @@
 // 執行：node --test scripts/seat-proxy.test.mjs
-// 代理 v2.14 seat_get／seat_apply 的本機模擬（SPEC_座位編排.md §6）：
+// 代理 v2.15 seat_get／seat_apply 的本機模擬（SPEC_座位編排.md §6）：
 // 把 apps-script-proxy-v2.gs 原樣載入 vm，UrlFetchApp 換成記憶體裡的假 Notion，從 doPost 進去跑，不碰真資料。
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -12,15 +12,15 @@ const DS = { roster: "ad232b7a-c7f8-4a68-b224-5b2d5b16599a", settings: "166cce91
 const rt = s => [{ plain_text: s, text: { content: s } }];
 const sel = s => ({ select: s ? { name: s } : null });
 
-function makeWorld({ today = "2026-11-07", n = 6 } = {}) {
+function makeWorld({ today = "2026-11-07", n = 6, gridEdited = "2026-10-01T02:00:00.000Z" } = {}) {
   let seq = 0;
   const pages = new Map();                                     // id → { ds, properties }
-  const add = (ds, properties) => { const id = `pg-${++seq}`; pages.set(id, { ds, properties }); return id; };
+  const add = (ds, properties, edited) => { const id = `pg-${++seq}`; pages.set(id, { ds, properties, edited }); return id; };
   const stu = {};
   for (let i = 1; i <= n; i++)
     stu[i] = add(DS.roster, { 姓名: { title: rt(`學生${i}`) }, 座號: { number: i }, 性別: sel(i % 2 ? "男" : "女"), 在學: { checkbox: true }, 學年: sel("115") });
   add(DS.roster, { 姓名: { title: rt("轉出生") }, 座號: { number: 99 }, 性別: sel("男"), 在學: { checkbox: false }, 學年: sel("115") });
-  const gridId = add(DS.settings, { 項目: { title: rt("座位表") }, 內容: { rich_text: rt("1,2,3\n4,5,6") } });
+  const gridId = add(DS.settings, { 項目: { title: rt("座位表") }, 內容: { rich_text: rt("1,2,3\n4,5,6") } }, gridEdited);
   add(DS.settings, { 項目: { title: rt("座位表（九月）") }, 內容: { rich_text: rt("6,5,4\n3,2,1") } });
   add(DS.settings, { 項目: { title: rt("學年度") }, 內容: { rich_text: rt("115學年度") } });
   const calls = { writes: 0, dispatch: 0 };
@@ -52,7 +52,7 @@ function makeWorld({ today = "2026-11-07", n = 6 } = {}) {
       const path = url.replace("https://api.notion.com/v1/", ""), body = opts.payload ? JSON.parse(opts.payload) : null;
       let m;
       if ((m = path.match(/^data_sources\/([^/]+)\/query$/))) {
-        const rows = [...pages].filter(([, p]) => p.ds === m[1] && match(p.properties, body.filter)).map(([id, p]) => ({ id, properties: p.properties }));
+        const rows = [...pages].filter(([, p]) => p.ds === m[1] && match(p.properties, body.filter)).map(([id, p]) => ({ id, properties: p.properties, ...(p.edited ? { last_edited_time: p.edited } : {}) }));
         return resp(200, { results: rows, has_more: false });
       }
       if (path === "pages" && opts.method === "post") {
@@ -61,7 +61,7 @@ function makeWorld({ today = "2026-11-07", n = 6 } = {}) {
       }
       if ((m = path.match(/^pages\/(.+)$/))) {
         const pg = pages.get(m[1]); if (!pg) return resp(404, {});
-        if (opts.method === "patch") { calls.writes++; Object.assign(pg.properties, norm(body.properties)); }
+        if (opts.method === "patch") { calls.writes++; Object.assign(pg.properties, norm(body.properties)); pg.edited = `${today}T03:00:00.000Z`; }
         return resp(200, { id: m[1], properties: pg.properties });
       }
       return resp(400, { message: "假 Notion 未實作 " + path });
@@ -143,10 +143,11 @@ test("seat_apply：同一對換條件＝舊列改已取消＋建新列；拿掉�
   assert.deepEqual(st, { "座號1 小老師": "已取消", "座號2↔3 愛聊天": "已取消", "座號3↔2 能互助": "有效" });
 });
 
-test("封存名已存在就加（2）；1 月封存成十二月、學年算上個月", () => {
-  const w = makeWorld({ today: "2026-10-01" });                       // 上個月＝九月，已有「座位表（九月）」
+test("封存名已存在就加（2）；讀不到編輯時間才退回上個月（1 月→十二月）", () => {
+  const w = makeWorld({ today: "2026-10-01", gridEdited: "2026-09-01T01:00:00.000Z" });   // 現行表九月寫入，已有「座位表（九月）」
   assert.equal(w.post({ action: "seat_apply", grid: GOOD, conditions: [] }).archived, "座位表（九月）（2）");
-  assert.equal(w.ctx.seatArchiveName_("2027-01-04", []), "座位表（十二月）");
+  assert.equal(w.ctx.seatArchiveName_(w.ctx.seatArchiveMonth_({ edited: "" }, "2027-01-04"), []), "座位表（十二月）");
+  assert.equal(w.ctx.seatArchiveMonth_({ edited: "2026-10-31T16:30:00.000Z" }, "2026-12-01").label, "十一月");   // UTC 10/31 晚上＝臺北 11/1
   assert.deepEqual(JSON.parse(JSON.stringify(w.ctx.seatPrevMonth_("2026-08-03"))), { label: "七月", year: "114" });
 });
 
@@ -174,5 +175,23 @@ for (const [name, body, re] of [
 
 test("version 免口令，只回版本號", () => {
   const w = makeWorld();
-  assert.deepEqual(JSON.parse(w.ctx.doPost({ postData: { contents: JSON.stringify({ action: "version" }) } })), { ok: true, version: "2.14" });
+  assert.deepEqual(JSON.parse(w.ctx.doPost({ postData: { contents: JSON.stringify({ action: "version" }) } })), { ok: true, version: "2.15" });
+});
+
+test("老師 11/08 回報：同月再微調，封存名用現行座位寫入的月份（十一月），不是上個月", () => {
+  const w = makeWorld({ today: "2026-11-08", gridEdited: "2026-11-07T17:26:00.000Z" });   // 臺北 11/08 01:26 套用的座位
+  w.add(DS.settings, { 項目: { title: rt("座位表（十月）") }, 內容: { rich_text: rt("6,5,4\n3,2,1") } });
+  assert.equal(w.post({ action: "seat_get" }).archiveLabel, "十一月");
+  const r = w.post({ action: "seat_apply", grid: GOOD, conditions: [] });
+  assert.equal(r.ok, true, r.error);
+  assert.equal(r.archived, "座位表（十一月）");
+  const arc = w.items(DS.settings).find(p => w.text(p.properties.項目) === "座位表（十一月）");
+  assert.match(w.text(arc.properties.說明), /^【封存・不公布】115 學年十一月座位表（2026-11-08/);
+  // 同月再改一次：剛寫入的也是十一月 → 加（2）
+  assert.equal(w.post({ action: "seat_apply", grid: "1,2,3\n4,5,6", conditions: [] }).archived, "座位表（十一月）（2）");
+});
+
+test("12 月換新：現行表 11 月寫入 → 封存成十一月", () => {
+  const w = makeWorld({ today: "2026-12-01", gridEdited: "2026-11-08T05:00:00.000Z" });
+  assert.equal(w.post({ action: "seat_apply", grid: GOOD, conditions: [] }).archived, "座位表（十一月）");
 });
