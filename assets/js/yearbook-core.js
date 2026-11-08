@@ -131,9 +131,9 @@
     const h = history(essays, label);
     return (essays || []).filter(e => sem === "上" ? e.sem === "上" : !h.titles.has(normTitle(e.title)) && (!e.mark || e.mark === label));
   }
-  // 選取比重：未得獎過的學生「加一級」（甲 ≈ 甲上），同分時未得獎優先；
-  // 但「優」不受加權影響、永遠排最前（不排擠最優秀的作品）。AWARD_BONUS 調比重用。
-  const AWARD_BONUS = 1;
+  // 選取比重（老師 2026-11-08 裁定「同級才優先」）：同一等第時，本學年未入選過的學生排前面；
+  // 不跨級（未入選的甲不會擠掉入選過的甲上），「優」不受影響。AWARD_BONUS=0.5＝只在同級內往前。
+  const AWARD_BONUS = 0.5;
   function scoreOf(w, awarded) {
     const r = rankOf(w.grade);
     if (r === 0 || r >= 99 || awarded.has(w.seat)) return r;

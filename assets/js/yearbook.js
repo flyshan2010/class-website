@@ -69,7 +69,7 @@
         <div class="hd"><b>${esc(w.title || "（無題目）")}</b><span class="meta">座號 ${w.seat}・${esc(w.name || "？")}・${esc(w.genre || "—")}・等第 ${esc(w.grade || "—")}・${esc(w.date)}</span>
           <span class="sp"></span>
           <button class="btn small ${on ? "" : "primary"}" data-t="${w.id}" ${dis ? "disabled" : ""}>${on ? "移出" : dup ? "已有作品" : !w.name ? "需人工" : "選入"}</button></div>
-        <div class="badges">${badges(w)}${w.mark ? `<span class="tag ok">已交 ${esc(w.mark)}</span>` : ""}${aw.has(w.seat) ? `<span class="tag">🏅 本學年入選過</span>` : aw.size ? `<span class="tag ok">🌱 未入選過・建議時加一級</span>` : ""}</div>
+        <div class="badges">${badges(w)}${w.mark ? `<span class="tag ok">已交 ${esc(w.mark)}</span>` : ""}${aw.has(w.seat) ? `<span class="tag">🏅 本學年入選過</span>` : aw.size ? `<span class="tag ok">🌱 未入選過・同級優先</span>` : ""}</div>
         <details><summary>看全文</summary><pre>${esc(w.text)}</pre></details></div>`;
     }).join("");
     $("pool").querySelectorAll("[data-t]").forEach(b => b.onclick = () => toggle(b.dataset.t));
