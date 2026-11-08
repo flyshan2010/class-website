@@ -1,6 +1,10 @@
 /**
- * 班網教師專區代理 v2.16（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座
+ * 班網教師專區代理 v2.17（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.17 升級步驟（2026-11-08，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.17 新增：📰 校刊挑選 yearbook_list（讀本學年作文批改列＋名冊姓名）／yearbook_mark（繳交後回寫「校刊投稿」「校刊定稿」並回讀核對）。
  *
  * ── v2.16 升級步驟（2026-11-08，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -134,7 +138,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.16"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.17"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -196,6 +200,8 @@ function doPost(e) {
       case "quiz_exams":   return out_(quizExams_(props));
       case "seat_get":     return out_(seatGet_(props));
       case "seat_apply":   return out_(seatApply_(props, body));
+      case "yearbook_list": return out_(ybList_(props));
+      case "yearbook_mark": return out_(ybMark_(props, body));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -2076,4 +2082,129 @@ function out_(obj) {
 // 換權限後在編輯器手動執行一次，完成授權（之後不會再用到）
 function authorize() {
   Logger.log("授權完成");
+}
+
+// ---------- 動作：📰 校刊挑選（v2.17，SPEC_校刊挑選.md） ----------
+// yearbook_list：讀「📊 學生學習報告」本學年「作文批改」列（原文、題目、等第、文體）＋名冊姓名＋已繳交標記。
+// yearbook_mark：老師繳交後回寫——選入的列寫「校刊投稿」＝115上／115下、「校刊定稿」＝〔順序・主題〕、題目、定稿內文（各起一行）；
+//   同學期先前標過但這次沒選的列清空（重交以最後一次為準）。寫完回讀核對，對不上就回錯。
+// ⚠️ 作文含學生姓名與原文，只走教師口令；sync-notion 不讀這兩欄，不會進公開班網。
+const DS_REPORTS = "10dbe7ca-291b-4501-a2b4-2ac30f53a7f1"; // 📊 學生學習報告
+const YB_MARK = "校刊投稿", YB_FINAL = "校刊定稿";
+const YB_MIN = 2, YB_MAX = 5;
+
+// 學期：8–1 月＝上、2–7 月＝下（與學年欄位同一刀：8 月起算新學年）
+function ybSem_(ymd) {
+  const m = Number(String(ymd || "").slice(5, 7));
+  if (!m) return "";
+  return (m >= 8 || m === 1) ? "上" : "下";
+}
+
+// rich_text 每段上限 2000 字，切成 1900 一段
+function ybRich_(s) {
+  const out = [];
+  s = String(s || "");
+  for (let i = 0; i < s.length; i += 1900) out.push({ type: "text", text: { content: s.substr(i, 1900) } });
+  return out;
+}
+
+function ybEssays_(token, year) {
+  const roster = seatRoster_(token, year);
+  if (!roster) return { error: "讀不到👥學生名冊" };
+  const byId = {}, bySeat = {};
+  roster.forEach(function (s) { byId[normId_(s.id)] = s; bySeat[s.seat] = s; });
+  const rows = queryAllDS_(token, DS_REPORTS, { filter: { and: [
+    { property: "報告類型", select: { equals: "作文批改" } },
+    { property: "學年", select: { equals: year } },
+  ] } });
+  if (!rows) return { error: "讀不到📊學生學習報告（作文批改列）" };
+  const essays = rows.map(function (pg) {
+    const p = pg.properties || {};
+    // 學生以「學生檔案」關聯為準；關聯空白才退回座號欄
+    const stu = byId[relIds_(p["學生檔案"])[0]] || bySeat[Number((p["座號"] || {}).number)] || null;
+    const period = plain_(p["期間"]).trim();
+    let date = /^\d{4}-\d{2}-\d{2}/.test(period) ? period.slice(0, 10) : "";
+    if (!date && pg.created_time) date = new Date(new Date(pg.created_time).getTime() + 8 * 3600e3).toISOString().slice(0, 10);
+    return {
+      id: pg.id,
+      seat: stu ? stu.seat : (Number((p["座號"] || {}).number) || 0),
+      name: stu ? stu.name : "",                     // 空白＝對不到名冊，前端標「需人工」不給選
+      title: plain_(p["作文_題目"]).trim(),
+      genre: (((p["作文_文體"] || {}).select) || {}).name || "",
+      grade: (((p["作文_總評等第"] || {}).select) || {}).name || "",
+      date: date,
+      sem: ybSem_(date),
+      text: plain_(p["作文_原文"]),
+      mark: (((p[YB_MARK] || {}).select) || {}).name || "",
+      final: plain_(p[YB_FINAL]),
+    };
+  }).filter(function (e) { return e.text || e.final; });
+  return { essays: essays };
+}
+
+function ybList_(props) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const year = schoolYear_();
+  const r = ybEssays_(token, year);
+  if (r.error) return { ok: false, error: r.error };
+  return { ok: true, year: year, essays: r.essays };
+}
+
+function ybMark_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const sem = String(body.sem || "");
+  if (sem !== "上" && sem !== "下") return { ok: false, error: "學期只能是上或下" };
+  const items = Array.isArray(body.items) ? body.items : [];
+  if (items.length < YB_MIN || items.length > YB_MAX) return { ok: false, error: "篇數要 " + YB_MIN + "–" + YB_MAX + " 篇，整筆未寫入" };
+  const year = schoolYear_(), label = year + sem;
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    const cur = ybEssays_(token, year);
+    if (cur.error) return { ok: false, error: cur.error };
+    const byId = {};
+    cur.essays.forEach(function (e) { byId[normId_(e.id)] = e; });
+    // 先全部驗過才寫（任何一篇不合就整筆不寫）
+    const seats = {}, want = [];
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i] || {}, e = byId[normId_(it.id)];
+      if (!e) return { ok: false, error: "第 " + (i + 1) + " 篇不是本學年的作文批改列，整筆未寫入" };
+      if (!e.name) return { ok: false, error: "〈" + e.title + "〉對不到名冊學生，整筆未寫入" };
+      if (seats[e.seat]) return { ok: false, error: "座號 " + e.seat + " 選了兩篇（一人限一件），整筆未寫入" };
+      seats[e.seat] = true;
+      const title = String(it.title || "").trim(), text = String(it.text || "").replace(/\r/g, ""), theme = String(it.theme || "").trim();
+      if (!theme || theme.length > 30) return { ok: false, error: "第 " + (i + 1) + " 篇沒有選主題，整筆未寫入" };
+      if (!title || title.length > 60) return { ok: false, error: "第 " + (i + 1) + " 篇題目空白或太長，整筆未寫入" };
+      if (!text.trim() || text.length > 6000) return { ok: false, error: "第 " + (i + 1) + " 篇內文空白或太長，整筆未寫入" };
+      // 第一行〔順序・主題〕讓換電腦時帶回順序與主題，老師在 Notion 也看得懂
+      want.push({ id: e.id, final: "〔" + (i + 1) + "・" + theme + "〕\n" + title + "\n" + text });
+    }
+    const wantIds = {};
+    want.forEach(function (w) { wantIds[normId_(w.id)] = true; });
+    const clear = cur.essays.filter(function (e) { return e.mark === label && !wantIds[normId_(e.id)]; });
+    const fails = [];
+    clear.forEach(function (e) {
+      const res = notionV_(token, "pages/" + e.id, "patch", { properties: { [YB_MARK]: { select: null }, [YB_FINAL]: { rich_text: [] } } }, NOTION_VERSION_DS);
+      if (res.code !== 200) fails.push(e.title || e.id);
+    });
+    want.forEach(function (w) {
+      const res = notionV_(token, "pages/" + w.id, "patch", { properties: { [YB_MARK]: { select: { name: label } }, [YB_FINAL]: { rich_text: ybRich_(w.final) } } }, NOTION_VERSION_DS);
+      if (res.code !== 200) fails.push(w.id);
+    });
+    if (fails.length) return { ok: false, error: "有 " + fails.length + " 列沒寫進 Notion（" + fails.join("、") + "），請再按一次" };
+    // 回讀核對：本學期標記＝這次選的那幾篇，定稿逐字相同
+    const back = ybEssays_(token, year);
+    if (back.error) return { ok: false, error: "已寫入但回讀失敗：" + back.error };
+    const marked = back.essays.filter(function (e) { return e.mark === label; });
+    const bad = want.filter(function (w) {
+      const e = marked.filter(function (x) { return normId_(x.id) === normId_(w.id); })[0];
+      return !e || e.final !== w.final;
+    });
+    if (bad.length || marked.length !== want.length) return { ok: false, error: "回讀核對不符（標記 " + marked.length + " 篇／應為 " + want.length + " 篇），請重新整理後再交一次" };
+    return { ok: true, label: label, count: want.length, cleared: clear.length, at: Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd HH:mm") };
+  } finally {
+    lock.releaseLock();
+  }
 }
