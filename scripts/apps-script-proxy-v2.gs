@@ -1,6 +1,12 @@
 /**
- * 班網教師專區代理 v2.18（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
+ * 班網教師專區代理 v2.19（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.19 升級步驟（2026-11-08，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.19 新增：yearbook_mark 繳交成功後，每篇入選作品在「📝 班經與學習紀錄庫」寫一則亮點
+ *   「作文〈題目〉獲選校刊（115上）」金幣 +20（固定獎勵表・比賽獲獎校內），事件id＝yb:<作文列id> 防重複；
+ *   重交時被換掉的作品不自動扣回，回傳 coinWarn 請老師到紀錄庫處理（U63）。已入選其他學期的作品不可再交。
  *
  * ── v2.18 升級步驟（2026-11-08，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -143,7 +149,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.18"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.19"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -2133,6 +2139,7 @@ function ybEssays_(token, year) {
     if (!date && pg.created_time) date = new Date(new Date(pg.created_time).getTime() + 8 * 3600e3).toISOString().slice(0, 10);
     return {
       id: pg.id,
+      sid: stu ? stu.id : "",                        // v2.19 寫紀錄庫亮點用（學生關聯）
       seat: stu ? stu.seat : (Number((p["座號"] || {}).number) || 0),
       name: stu ? stu.name : "",                     // 空白＝對不到名冊，前端標「需人工」不給選
       title: plain_(p["作文_題目"]).trim(),
@@ -2179,6 +2186,7 @@ function ybMark_(props, body) {
       const it = items[i] || {}, e = byId[normId_(it.id)];
       if (!e) return { ok: false, error: "第 " + (i + 1) + " 篇不是本學年的作文批改列，整筆未寫入" };
       if (!e.name) return { ok: false, error: "〈" + e.title + "〉對不到名冊學生，整筆未寫入" };
+      if (e.mark && e.mark !== label) return { ok: false, error: "〈" + e.title + "〉已在 " + e.mark + " 入選過，整筆未寫入" };
       if (seats[e.seat]) return { ok: false, error: "座號 " + e.seat + " 選了兩篇（一人限一件），整筆未寫入" };
       seats[e.seat] = true;
       const title = String(it.title || "").trim(), text = String(it.text || "").replace(/\r/g, ""), theme = String(it.theme || "").trim();
@@ -2186,7 +2194,7 @@ function ybMark_(props, body) {
       if (!title || title.length > 60) return { ok: false, error: "第 " + (i + 1) + " 篇題目空白或太長，整筆未寫入" };
       if (!text.trim() || text.length > 6000) return { ok: false, error: "第 " + (i + 1) + " 篇內文空白或太長，整筆未寫入" };
       // 第一行〔順序・主題〕讓換電腦時帶回順序與主題，老師在 Notion 也看得懂
-      want.push({ id: e.id, final: "〔" + (i + 1) + "・" + theme + "〕\n" + title + "\n" + text });
+      want.push({ id: e.id, sid: e.sid, title: title, final: "〔" + (i + 1) + "・" + theme + "〕\n" + title + "\n" + text });
     }
     const wantIds = {};
     want.forEach(function (w) { wantIds[normId_(w.id)] = true; });
@@ -2210,10 +2218,53 @@ function ybMark_(props, body) {
       return !e || e.final !== w.final;
     });
     if (bad.length || marked.length !== want.length) return { ok: false, error: "回讀核對不符（標記 " + marked.length + " 篇／應為 " + want.length + " 篇），請重新整理後再交一次" };
-    return { ok: true, label: label, count: want.length, cleared: clear.length, at: Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd HH:mm") };
+    // v2.19 亮點＋加幣：寫紀錄庫（事件id 防重複；週結才入帳，仍走待入帳）
+    const coin = ybCoin_(token, year, label, want, clear);
+    return { ok: true, label: label, count: want.length, cleared: clear.length, at: Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd HH:mm"),
+      coinNew: coin.created, coinKept: coin.kept, coinFail: coin.fails, coinWarn: coin.warn };
   } finally {
     lock.releaseLock();
   }
+}
+
+// v2.19：入選＝比賽獲獎（校內）定額 +20（class-log SKILL 固定獎勵表），類別亮點 → 週報亮點、週結待入帳
+const YB_COIN = 20;
+function ybLogRow_(token, eid) {
+  const res = queryDS_(token, DS_LOG, { filter: { property: "事件id", rich_text: { equals: eid } }, page_size: 1 });
+  if (res.code !== 200) return null;
+  return (res.data.results || [])[0] || false;
+}
+function ybCoin_(token, year, label, want, clear) {
+  const out = { created: 0, kept: 0, fails: [], warn: [] };
+  const day = today_(), wk = weekLabel_(day);
+  want.forEach(function (w) {
+    const eid = "yb:" + normId_(w.id), cur = ybLogRow_(token, eid);
+    if (cur === null) { out.fails.push(w.title); return; }
+    if (cur) { out.kept++; return; }                          // 已記過（重交同一篇）→ 不重複發
+    const res = notionV_(token, "pages", "post", {
+      parent: { type: "data_source_id", data_source_id: DS_LOG },
+      properties: {
+        "事件描述": { title: [{ text: { content: ("作文〈" + w.title + "〉獲選校刊（" + label + "）").slice(0, 120) } }] },
+        "學生": { relation: [{ id: w.sid }] },
+        "日期": { date: { start: day } },
+        "週次": { rich_text: [{ text: { content: wk } }] },
+        "學年": { select: { name: year } },
+        "類別": { select: { name: "亮點" } },
+        "正負向": { select: { name: "＋" } },
+        "科目": { select: { name: "國語" } },
+        "金幣影響": { number: YB_COIN },
+        "事件id": { rich_text: [{ text: { content: eid } }] },
+        "備註": { rich_text: [{ text: { content: "📰 校刊挑選頁繳交時自動記錄（固定獎勵表・比賽獲獎校內 +" + YB_COIN + "）" } }] },
+      },
+    }, NOTION_VERSION_DS);
+    if (res.code === 200) out.created++; else out.fails.push(w.title);
+  });
+  // 重交時被換掉的作品：已發的亮點不自動扣回（可能已週結入帳），交給老師
+  clear.forEach(function (e) {
+    const cur = ybLogRow_(token, "yb:" + normId_(e.id));
+    if (cur) out.warn.push("座號 " + e.seat + "〈" + e.title + "〉");
+  });
+  return out;
 }
 
 // ---------- 動作：✨ 校刊一鍵微修（v2.18，SPEC_校刊挑選.md §7） ----------

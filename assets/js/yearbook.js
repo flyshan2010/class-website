@@ -44,7 +44,8 @@
   function save() { try { localStorage.setItem(dKey(), JSON.stringify(D)); } catch (e) {} }
   const teacher = () => $("tch").value.trim();
   const work = id => { const e = essays.find(x => x.id === id); return e ? Object.assign({}, e, D.edits[id] || {}) : null; };
-  const pool = () => essays.filter(e => e.sem === sem);
+  const pool = () => Y.poolOf(essays, sem, year + sem);
+  const awarded = () => Y.history(essays, year + sem).seats;
   const picked = () => D.pick.map(work).filter(Boolean);
 
   // ── 畫面 ──
@@ -58,6 +59,7 @@
   }
   function badges(w) { return Y.issues(w, cls.grade, sem).map(i => `<span class="tag ${i.lv}">${esc(i.m)}</span>`).join(""); }
   function renderPool() {
+    const aw = awarded();
     const list = pool().map(e => work(e.id)).sort((a, b) => Y.GRADE_ORDER.indexOf(a.grade) - Y.GRADE_ORDER.indexOf(b.grade) || a.seat - b.seat);
     $("poolEmpty").hidden = list.length > 0;
     $("pool").innerHTML = list.map(w => {
@@ -67,7 +69,7 @@
         <div class="hd"><b>${esc(w.title || "（無題目）")}</b><span class="meta">座號 ${w.seat}・${esc(w.name || "？")}・${esc(w.genre || "—")}・等第 ${esc(w.grade || "—")}・${esc(w.date)}</span>
           <span class="sp"></span>
           <button class="btn small ${on ? "" : "primary"}" data-t="${w.id}" ${dis ? "disabled" : ""}>${on ? "移出" : dup ? "已有作品" : !w.name ? "需人工" : "選入"}</button></div>
-        <div class="badges">${badges(w)}${w.mark ? `<span class="tag ok">已交 ${esc(w.mark)}</span>` : ""}</div>
+        <div class="badges">${badges(w)}${w.mark ? `<span class="tag ok">已交 ${esc(w.mark)}</span>` : ""}${aw.has(w.seat) ? `<span class="tag">🏅 本學年入選過</span>` : aw.size ? `<span class="tag ok">🌱 未入選過・建議時加一級</span>` : ""}</div>
         <details><summary>看全文</summary><pre>${esc(w.text)}</pre></details></div>`;
     }).join("");
     $("pool").querySelectorAll("[data-t]").forEach(b => b.onclick = () => toggle(b.dataset.t));
@@ -203,7 +205,7 @@
     $("pgbrk").onchange = () => { D.pgbrk = $("pgbrk").checked; save(); renderPaper(); };
     $("auto").onclick = () => {
       if (D.pick.length && !confirm("用建議清單取代目前選的作品？（修訂內容會保留）")) return;
-      D.pick = Y.suggest(pool(), cls.grade, sem); save(); renderAll();
+      D.pick = Y.suggest(pool(), cls.grade, sem, awarded()); save(); renderAll();
       toast(D.pick.length ? "建議選入 " + D.pick.length + " 篇，主題已依題目判斷，請確認、調整" : "沒有合規的作品可建議");
     };
     $("dl").onclick = () => {
@@ -215,12 +217,15 @@
     };
     $("done").onclick = async () => {
       const ws = picked();
-      if (!confirm(`確定已把 ${Y.fileName(cls.code, sem)}（${ws.length} 篇）交給教務處？\n會在 Notion 記錄「${year + sem}」繳交與定稿；同學期之前記錄的會被這次取代。`)) return;
+      if (!confirm(`確定已把 ${Y.fileName(cls.code, sem)}（${ws.length} 篇）交給教務處？\n會在 Notion 記錄「${year + sem}」繳交與定稿，並給入選學生記亮點＋20 幣（週結入帳）；同學期之前記錄的會被這次取代。`)) return;
       busy = true; renderChecks(); status("寫入 Notion 中…");
       try {
         const r = await call({ action: "yearbook_mark", sem: sem, items: ws.map(w => ({ id: w.id, title: w.title.trim(), text: w.text, theme: w.theme })) });
         if (!r.ok) { status("❌ " + r.error, true); return; }
-        status(`✅ 已記錄 ${r.label} 繳交 ${r.count} 篇（${r.at}）${r.cleared ? `，取代先前 ${r.cleared} 篇` : ""}`);
+        const coin = r.coinNew === undefined ? "" : `；亮點＋20 幣：新記 ${r.coinNew || 0} 人${r.coinKept ? `、已記過 ${r.coinKept} 人` : ""}`;
+        const warn = (r.coinFail || []).length ? `；⚠️ 這幾篇亮點沒寫進紀錄庫，請再按一次：${r.coinFail.join("、")}` : "";
+        const back = (r.coinWarn || []).length ? `；⚠️ 被換掉的作品先前已記亮點＋幣，請到紀錄庫作廢或補扣：${r.coinWarn.join("、")}` : "";
+        status(`✅ 已記錄 ${r.label} 繳交 ${r.count} 篇（${r.at}）${r.cleared ? `，取代先前 ${r.cleared} 篇` : ""}${coin}${warn}${back}`, !!(warn || back));
         await load(true);
       } catch (e) { if (e.message !== "口令錯誤") status("❌ 連線失敗：" + e.message, true); }
       finally { busy = false; renderChecks(); }

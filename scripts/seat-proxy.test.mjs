@@ -176,7 +176,7 @@ for (const [name, body, re] of [
 
 test("version 免口令，只回版本號", () => {
   const w = makeWorld();
-  assert.deepEqual(JSON.parse(w.ctx.doPost({ postData: { contents: JSON.stringify({ action: "version" }) } })), { ok: true, version: "2.17" });
+  assert.deepEqual(JSON.parse(w.ctx.doPost({ postData: { contents: JSON.stringify({ action: "version" }) } })), { ok: true, version: w.ctx.PROXY_VERSION ?? "2.19" });
 });
 
 test("老師 11/08 回報：同月再微調，封存名用現行座位寫入的月份（十一月），不是上個月", () => {

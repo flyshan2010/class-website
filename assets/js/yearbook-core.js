@@ -119,10 +119,32 @@
     return best || (list.indexOf("其他") >= 0 ? "其他" : "");
   }
 
-  // 建議挑選：合字數、無辨識不清、對得到名冊、一人一件，等第高者優先，最多 5 篇（主題留給老師選）
-  function suggest(pool, grade, sem) {
+  // 本學年「其他學期」已入選的紀錄（mark 有值且不是本次 label）：用過的題目、得獎過的座號（老師 2026-11-08 定）
+  const normTitle = t => String(t || "").replace(/[\s　〈〉《》「」]/g, "");
+  function history(essays, label) {
+    const titles = new Set(), seats = new Set();
+    (essays || []).forEach(e => { if (e.mark && e.mark !== label) { titles.add(normTitle(e.title)); if (e.seat) seats.add(e.seat); } });
+    return { titles, seats };
+  }
+  // 可挑的作品：上學期＝上學期作文；下學期＝全學年作文（一學年 8 篇），但排除上學期已入選過的題目
+  function poolOf(essays, sem, label) {
+    const h = history(essays, label);
+    return (essays || []).filter(e => sem === "上" ? e.sem === "上" : !h.titles.has(normTitle(e.title)) && (!e.mark || e.mark === label));
+  }
+  // 選取比重：未得獎過的學生「加一級」（甲 ≈ 甲上），同分時未得獎優先；
+  // 但「優」不受加權影響、永遠排最前（不排擠最優秀的作品）。AWARD_BONUS 調比重用。
+  const AWARD_BONUS = 1;
+  function scoreOf(w, awarded) {
+    const r = rankOf(w.grade);
+    if (r === 0 || r >= 99 || awarded.has(w.seat)) return r;
+    return Math.max(0.5, r - AWARD_BONUS);
+  }
+  // 建議挑選：合字數、無辨識不清、對得到名冊、一人一件，分數高者優先，最多 5 篇（主題依題目判斷）
+  function suggest(pool, grade, sem, awarded) {
+    awarded = awarded || new Set();
+    const fresh = w => awarded.has(w.seat) ? 1 : 0;
     const ok = pool.filter(w => !isPoem(w) && !issues(w, grade, sem).some(i => i.block))
-      .slice().sort((a, b) => rankOf(a.grade) - rankOf(b.grade) || b.date.localeCompare(a.date));
+      .slice().sort((a, b) => scoreOf(a, awarded) - scoreOf(b, awarded) || fresh(a) - fresh(b) || b.date.localeCompare(a.date));
     const pick = [], seats = {};
     ok.forEach(w => { if (pick.length < MAX_N && !seats[w.seat]) { pick.push(w.id); seats[w.seat] = true; } });
     return pick;
@@ -265,7 +287,7 @@
     return out;
   }
 
-  const api = { RULES, MIN_N, MAX_N, GRADE_ORDER, count, isPoem, unclear, parseClass, dueOf, themesOf, issues, checks, suggest, byline, fileName, buildDocx, splitFinal,
+  const api = { RULES, MIN_N, MAX_N, GRADE_ORDER, count, isPoem, unclear, parseClass, dueOf, themesOf, issues, checks, suggest, history, poolOf, scoreOf, AWARD_BONUS, byline, fileName, buildDocx, splitFinal,
     guessTheme, POLISH_MAX, plainOf, lev, editRatio, pct, polishGate, parsePolish, polishPending, polishDone, polishManual, diff };
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.Yearbook = api;

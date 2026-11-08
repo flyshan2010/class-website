@@ -62,6 +62,31 @@ test("建議挑選：只挑合規、一人一件、等第優先、最多 5 篇",
   assert.ok(!pick.includes("low") && !pick.includes("short") && !pick.includes("poem") && !pick.includes("blur"));
 });
 
+test("下學期：全學年作文、排除上學期入選題目；未入選學生加一級、優不受影響", () => {
+  const es = [
+    W({ id: "u1", seat: 1, title: "下課時間", sem: "上", mark: "115上", grade: "甲上" }),
+    W({ id: "u2", seat: 2, title: "下課時間", sem: "上", grade: "優" }),           // 同題目沒入選 → 也排除
+    W({ id: "u3", seat: 3, title: "我的家人", sem: "上", grade: "甲" }),            // 上學期沒入選的題目 → 可挑
+    W({ id: "d1", seat: 1, title: "遊記", sem: "下", grade: "甲上", theme: "遊記" }),
+    W({ id: "d4", seat: 4, title: "遊記", sem: "下", grade: "甲" }),
+  ];
+  assert.deepEqual(Y.poolOf(es, "下", "115下").map(e => e.id), ["u3", "d1", "d4"]);
+  assert.deepEqual(Y.poolOf(es, "上", "115上").map(e => e.id), ["u1", "u2", "u3"]);
+  const h = Y.history(es, "115下");
+  assert.ok(h.seats.has(1) && !h.seats.has(2));
+  // 未入選的甲（座號4）≈ 入選過的甲上（座號1），同分時未入選優先
+  const a = W({ id: "a", seat: 1, grade: "甲上" }), b = W({ id: "b", seat: 4, grade: "甲" });
+  assert.deepEqual(Y.suggest([a, b], 4, "下", h.seats), ["b", "a"]);
+  // 入選過的「優」不會被未入選的甲上擠下
+  const top = W({ id: "top", seat: 1, grade: "優" }), c = W({ id: "c", seat: 5, grade: "甲上" });
+  assert.deepEqual(Y.suggest([c, top], 4, "下", h.seats), ["top", "c"]);
+  // 加一級為上限：未入選的甲下仍排在入選過的甲上之後
+  const d = W({ id: "d", seat: 6, grade: "甲下" });
+  assert.deepEqual(Y.suggest([d, a], 4, "下", h.seats), ["a", "d"]);
+  // 上學期沒有得獎紀錄 → 照等第
+  assert.deepEqual(Y.suggest([b, a], 4, "上"), ["a", "b"]);
+});
+
 test("作者行與檔名", () => {
   assert.equal(Y.byline(W(), { grade: 4, cls: 4 }, "陳大頭"), "4 年 4 班 王小明/指導老師 陳大頭");
   assert.equal(Y.fileName("404", "上"), "404校刊投稿上.docx");

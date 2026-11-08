@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const SRC = readFileSync(new URL("./apps-script-proxy-v2.gs", import.meta.url), "utf8");
-const DS = { roster: "ad232b7a-c7f8-4a68-b224-5b2d5b16599a", reports: "10dbe7ca-291b-4501-a2b4-2ac30f53a7f1" };
+const DS = { roster: "ad232b7a-c7f8-4a68-b224-5b2d5b16599a", reports: "10dbe7ca-291b-4501-a2b4-2ac30f53a7f1", log: "eb529fa1-59e5-45ef-bfb4-79fc30de79e4" };
 const rt = s => [{ plain_text: s, text: { content: s } }];
 const sel = s => ({ select: s ? { name: s } : null });
 
@@ -39,6 +39,7 @@ function makeWorld({ today = "2026-12-20", failPatch = false } = {}) {
     const p = props[f.property];
     if (f.checkbox) return !!p?.checkbox === f.checkbox.equals;
     if (f.select) return p?.select?.name === f.select.equals;
+    if (f.rich_text) return (p?.rich_text || []).map(x => x.plain_text).join("") === f.rich_text.equals;
     throw new Error("假 Notion 不支援的篩選 " + JSON.stringify(f));
   };
   const norm = props => {
@@ -57,6 +58,11 @@ function makeWorld({ today = "2026-12-20", failPatch = false } = {}) {
       if ((m = path.match(/^data_sources\/([^/]+)\/query$/))) {
         const rows = [...pages].filter(([, p]) => p.ds === m[1] && match(p.properties, body.filter)).map(([id, p]) => ({ id, properties: p.properties, created_time: p.created }));
         return resp(200, { results: rows, has_more: false });
+      }
+      if (path === "pages" && opts.method === "post") {
+        if (failPatch) return resp(500, {});
+        calls.writes++; const id = add(body.parent.data_source_id, norm(body.properties));
+        return resp(200, { id });
       }
       if ((m = path.match(/^pages\/(.+)$/)) && opts.method === "patch") {
         if (failPatch) return resp(500, {});
@@ -162,4 +168,34 @@ test("yearbook_polish：不合規不寫、寫失敗回錯", () => {
   assert.equal(w.calls.writes, 0);
   const f = makeWorld({ failPatch: true });
   assert.match(f.post({ action: "yearbook_polish", items: [{ id: f.E.a, text: "x" }] }).error, /沒寫進/);
+});
+
+const logs = w => [...w.pages.values()].filter(p => p.ds === DS.log).map(p => p.properties);
+const txt = p => (p?.rich_text || p?.title || []).map(x => x.plain_text ?? x.text?.content).join("");
+
+test("v2.19 yearbook_mark：入選學生記亮點＋20、事件id 防重複、換掉的作品提醒老師", () => {
+  const w = makeWorld();
+  const two = [{ id: w.E.a, title: "下課十分鐘", text: "　　一。", theme: "校園生活" }, { id: w.E.b, title: "營養午餐", text: "　　二。", theme: "其他" }];
+  const r = w.post({ action: "yearbook_mark", sem: "上", items: two });
+  assert.equal(r.ok, true, r.error);
+  assert.equal(r.coinNew, 2); assert.equal(r.coinKept, 0); assert.deepEqual(r.coinWarn, []);
+  const L = logs(w);
+  assert.equal(L.length, 2);
+  assert.equal(txt(L[0].事件描述), "作文〈下課十分鐘〉獲選校刊（115上）");
+  assert.equal(L[0].金幣影響.number, 20); assert.equal(L[0].類別.select.name, "亮點"); assert.equal(L[0].正負向.select.name, "＋");
+  assert.equal(L[0].學年.select.name, "115"); assert.equal(L[0].學生.relation[0].id, w.pages.get(w.E.a).properties.學生檔案.relation[0].id);
+  assert.match(txt(L[0].事件id), /^yb:/);
+  // 重交同兩篇 → 不重複發
+  const r2 = w.post({ action: "yearbook_mark", sem: "上", items: two });
+  assert.equal(r2.coinNew, 0); assert.equal(r2.coinKept, 2); assert.equal(logs(w).length, 2);
+  // 把 b 換成 c（同座號 2 的另一篇）→ c 新記一筆，b 已發的不自動扣、回 coinWarn
+  const r3 = w.post({ action: "yearbook_mark", sem: "上", items: [two[0], { id: w.E.c, title: "第二篇", text: "　　三。", theme: "其他" }] });
+  assert.equal(r3.coinNew, 1); assert.equal(r3.coinWarn.length, 1); assert.match(r3.coinWarn[0], /營養午餐/);
+});
+
+test("v2.19 yearbook_mark：已在其他學期入選的作品不可再交", () => {
+  const w = makeWorld({ today: "2027-05-20" });
+  const r = w.post({ action: "yearbook_mark", sem: "下", items: [
+    { id: w.E.old, title: "舊選的", text: "　　x。", theme: "其他" }, { id: w.E.d, title: "春天", text: "　　y。", theme: "其他" }] });
+  assert.equal(r.ok, false); assert.match(r.error, /已在 115上 入選過/);
 });
