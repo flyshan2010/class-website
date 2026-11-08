@@ -217,14 +217,14 @@
     };
     $("done").onclick = async () => {
       const ws = picked();
-      if (!confirm(`確定已把 ${Y.fileName(cls.code, sem)}（${ws.length} 篇）交給教務處？\n會在 Notion 記錄「${year + sem}」繳交與定稿，並給入選學生記亮點＋20 幣（週結入帳）；同學期之前記錄的會被這次取代。`)) return;
+      if (!confirm(`確定已把 ${Y.fileName(cls.code, sem)}（${ws.length} 篇）交給教務處？\n會在 Notion 記錄「${year + sem}」繳交與定稿，並給入選學生記一則亮點（不加班幣）；同學期之前記錄的會被這次取代。`)) return;
       busy = true; renderChecks(); status("寫入 Notion 中…");
       try {
         const r = await call({ action: "yearbook_mark", sem: sem, items: ws.map(w => ({ id: w.id, title: w.title.trim(), text: w.text, theme: w.theme })) });
         if (!r.ok) { status("❌ " + r.error, true); return; }
-        const coin = r.coinNew === undefined ? "" : `；亮點＋20 幣：新記 ${r.coinNew || 0} 人${r.coinKept ? `、已記過 ${r.coinKept} 人` : ""}`;
+        const coin = r.coinNew === undefined ? "" : `；學生亮點：新記 ${r.coinNew || 0} 人${r.coinKept ? `、已記過 ${r.coinKept} 人` : ""}`;
         const warn = (r.coinFail || []).length ? `；⚠️ 這幾篇亮點沒寫進紀錄庫，請再按一次：${r.coinFail.join("、")}` : "";
-        const back = (r.coinWarn || []).length ? `；⚠️ 被換掉的作品先前已記亮點＋幣，請到紀錄庫作廢或補扣：${r.coinWarn.join("、")}` : "";
+        const back = (r.coinWarn || []).length ? `；⚠️ 被換掉的作品先前已記亮點，請到紀錄庫刪掉或改掉：${r.coinWarn.join("、")}` : "";
         status(`✅ 已記錄 ${r.label} 繳交 ${r.count} 篇（${r.at}）${r.cleared ? `，取代先前 ${r.cleared} 篇` : ""}${coin}${warn}${back}`, !!(warn || back));
         await load(true);
       } catch (e) { if (e.message !== "口令錯誤") status("❌ 連線失敗：" + e.message, true); }

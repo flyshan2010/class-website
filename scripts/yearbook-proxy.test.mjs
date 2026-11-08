@@ -173,7 +173,7 @@ test("yearbook_polish：不合規不寫、寫失敗回錯", () => {
 const logs = w => [...w.pages.values()].filter(p => p.ds === DS.log).map(p => p.properties);
 const txt = p => (p?.rich_text || p?.title || []).map(x => x.plain_text ?? x.text?.content).join("");
 
-test("v2.19 yearbook_mark：入選學生記亮點＋20、事件id 防重複、換掉的作品提醒老師", () => {
+test("v2.20 yearbook_mark：入選學生記亮點（金幣 0）、事件id 防重複、換掉的作品提醒老師", () => {
   const w = makeWorld();
   const two = [{ id: w.E.a, title: "下課十分鐘", text: "　　一。", theme: "校園生活" }, { id: w.E.b, title: "營養午餐", text: "　　二。", theme: "其他" }];
   const r = w.post({ action: "yearbook_mark", sem: "上", items: two });
@@ -182,7 +182,7 @@ test("v2.19 yearbook_mark：入選學生記亮點＋20、事件id 防重複、�
   const L = logs(w);
   assert.equal(L.length, 2);
   assert.equal(txt(L[0].事件描述), "作文〈下課十分鐘〉獲選校刊（115上）");
-  assert.equal(L[0].金幣影響.number, 20); assert.equal(L[0].類別.select.name, "亮點"); assert.equal(L[0].正負向.select.name, "＋");
+  assert.equal(L[0].金幣影響.number, 0); assert.equal(L[0].類別.select.name, "亮點"); assert.equal(L[0].正負向.select.name, "＋");
   assert.equal(L[0].學年.select.name, "115"); assert.equal(L[0].學生.relation[0].id, w.pages.get(w.E.a).properties.學生檔案.relation[0].id);
   assert.match(txt(L[0].事件id), /^yb:/);
   // 重交同兩篇 → 不重複發

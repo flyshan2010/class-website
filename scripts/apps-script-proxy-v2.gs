@@ -1,6 +1,10 @@
 /**
- * 班網教師專區代理 v2.19（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
+ * 班網教師專區代理 v2.20（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.20 升級步驟（2026-11-08，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.20：校刊入選只記亮點、不加班幣（老師 2026-11-08：只給學校獎勵＝獎狀＋家長會禮券），紀錄庫金幣影響＝0（週結略過）。
  *
  * ── v2.19 升級步驟（2026-11-08，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -149,7 +153,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.19"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.20"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -2227,8 +2231,8 @@ function ybMark_(props, body) {
   }
 }
 
-// v2.19：入選＝比賽獲獎（校內）定額 +20（class-log SKILL 固定獎勵表），類別亮點 → 週報亮點、週結待入帳
-const YB_COIN = 20;
+// v2.20：入選只記亮點（→ 週報亮點），不加班幣（老師 2026-11-08：只給學校獎勵）。金幣影響＝0，週結只撈 ≠0 的列，不會入帳
+const YB_COIN = 0;
 function ybLogRow_(token, eid) {
   const res = queryDS_(token, DS_LOG, { filter: { property: "事件id", rich_text: { equals: eid } }, page_size: 1 });
   if (res.code !== 200) return null;
@@ -2254,7 +2258,7 @@ function ybCoin_(token, year, label, want, clear) {
         "科目": { select: { name: "國語" } },
         "金幣影響": { number: YB_COIN },
         "事件id": { rich_text: [{ text: { content: eid } }] },
-        "備註": { rich_text: [{ text: { content: "📰 校刊挑選頁繳交時自動記錄（固定獎勵表・比賽獲獎校內 +" + YB_COIN + "）" } }] },
+        "備註": { rich_text: [{ text: { content: "📰 校刊挑選頁繳交時自動記錄；學校另發獎狀＋家長會禮券，不加班幣" } }] },
       },
     }, NOTION_VERSION_DS);
     if (res.code === 200) out.created++; else out.fails.push(w.title);
