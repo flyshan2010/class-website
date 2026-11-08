@@ -88,6 +88,7 @@
         <button class="btn small" data-mv="${k}" data-d="1" ${k === D.pick.length - 1 ? "disabled" : ""} aria-label="下移">↓</button>
         <button class="btn small" data-t="${w.id}" aria-label="移出">✕</button></div>
       <div class="row2"><select data-e="${w.id}" data-f="theme"><option value="">選主題…</option>${themes.map(t => `<option ${w.theme === t ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>
+        ${w.themeAuto ? `<span class="tag gold" title="依題目與內文關鍵字自動判斷，可直接改">🤖 依題目判斷</span>` : ""}
         <button class="btn small ghost" data-reset="${w.id}" title="把題目、內文還原成批改時的原文">↺ 還原原文</button>
         <button class="btn small" data-polish="${w.id}" title="把目前內文送去微修（改動 ≤5%）">✨ 微修</button></div>
       <div class="badges">${badges(w)}</div>
@@ -112,7 +113,10 @@
     });
     o.querySelectorAll("[data-skip]").forEach(b => b.onclick = () => seen(work(b.dataset.skip)));
     o.querySelectorAll("[data-e]").forEach(el => el.onchange = () => {
-      (D.edits[el.dataset.e] = D.edits[el.dataset.e] || {})[el.dataset.f] = el.value; save(); renderAll();
+      const ed = (D.edits[el.dataset.e] = D.edits[el.dataset.e] || {});
+      ed[el.dataset.f] = el.value;
+      if (el.dataset.f === "theme") delete ed.themeAuto;   // 老師自己選過＝不再標自動
+      save(); renderAll();
     });
   }
   let ok = false;
@@ -138,7 +142,19 @@
       : `尚未記錄 ${esc(label)} 繳交`;
     $("fromNotion").hidden = !D.fromNotion;
   }
-  function renderAll() { renderRule(); renderPool(); renderOrder(); renderChecks(); renderPaper(); }
+  // 選入但還沒有主題的作品 → 依題目自動判斷（Y.guessTheme）並標記 themeAuto；老師改過選單就清掉標記
+  function autoTheme() {
+    let changed = false;
+    D.pick.forEach(id => {
+      const w = work(id);
+      if (!w || w.theme) return;
+      const t = Y.guessTheme(w, cls.grade, sem);
+      if (!t) return;
+      D.edits[id] = Object.assign(D.edits[id] || {}, { theme: t, themeAuto: true }); changed = true;
+    });
+    if (changed) save();
+  }
+  function renderAll() { autoTheme(); renderRule(); renderPool(); renderOrder(); renderChecks(); renderPaper(); }
 
   // ── ✨ 一鍵微修（SPEC_校刊挑選.md §7）──
   // 看過（採用或不採用）的建議記在草稿 polishSeen，Notion 欄位不動；欄位內容變了（再送一次）就會再出現
@@ -188,7 +204,7 @@
     $("auto").onclick = () => {
       if (D.pick.length && !confirm("用建議清單取代目前選的作品？（修訂內容會保留）")) return;
       D.pick = Y.suggest(pool(), cls.grade, sem); save(); renderAll();
-      toast(D.pick.length ? "建議選入 " + D.pick.length + " 篇，請再選主題、調整" : "沒有合規的作品可建議");
+      toast(D.pick.length ? "建議選入 " + D.pick.length + " 篇，主題已依題目判斷，請確認、調整" : "沒有合規的作品可建議");
     };
     $("dl").onclick = () => {
       const bytes = Y.buildDocx(picked(), cls, teacher(), D.pgbrk);

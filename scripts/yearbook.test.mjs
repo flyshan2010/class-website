@@ -115,6 +115,15 @@ test("微修：改動比例、辨識標記不算改動、程式把關", () => {
   assert.equal(Y.pct(0.0315), "3.2%"); assert.equal(Y.pct(0.0325), "3.3%");          // 四捨五入不用銀行家捨入
 });
 
+test("主題依題目自動判斷：題目優先、沒命中填其他、1–2 年級沒其他留空", () => {
+  assert.equal(Y.guessTheme({ title: "下課時間", text: "大家衝去合作社買飲料" }, 4, "上"), "校園生活");
+  assert.equal(Y.guessTheme({ title: "我最喜歡的一堂課", text: "" }, 4, "上"), "校園生活");
+  assert.equal(Y.guessTheme({ title: "營養午餐", text: "同學排隊打菜" }, 4, "上"), "食安相關之議題");
+  assert.equal(Y.guessTheme({ title: "我的夢想", text: "" }, 4, "上"), "其他");
+  assert.equal(Y.guessTheme({ title: "墾丁三天兩夜", text: "這次旅行很開心" }, 4, "下"), "遊記");
+  assert.equal(Y.guessTheme({ title: "我的夢想", text: "" }, 2, "上"), "");
+});
+
 test("微修：Notion 欄位三態格式來回", () => {
   const b = "　　第一段。\n　　第二段。", r = "　　第一段！\n　　第二段。";
   assert.deepEqual(Y.parsePolish(Y.polishPending(b, "2026-11-08 15:30")), { state: "pending", at: "2026-11-08 15:30", base: b });

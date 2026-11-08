@@ -141,7 +141,7 @@ ol.order textarea{width:100%;font:inherit;font-size:14px;margin-top:6px;padding:
 
     <section class="panel">
       <h2><span class="step">3</span>檢查並微修</h2>
-      <p class="hint">順序＝Word 裡的順序。每篇要選主題；題目、內文可直接改成老師批閱後的定稿（只存這台電腦，按「標記已繳交」才寫進 Notion）。<br>✨ 微修＝只改錯字、標點、贅字、語序讓文章通順，<b>改動不超過 5%（程式把關）</b>：按「✨ 微修」送出 → 對 Claude Code 說「校刊微修」→ 回來按「🔄 讀取微修結果」，紅綠對照後逐篇採用。</p>
+      <p class="hint">順序＝Word 裡的順序。主題會依題目自動判斷（標「🤖 依題目判斷」，可直接改）；題目、內文可直接改成老師批閱後的定稿（只存這台電腦，按「標記已繳交」才寫進 Notion）。<br>✨ 微修＝只改錯字、標點、贅字、語序讓文章通順，<b>改動不超過 5%（程式把關）</b>：按「✨ 微修」送出 → 對 Claude Code 說「校刊微修」→ 回來按「🔄 讀取微修結果」，紅綠對照後逐篇採用。</p>
       <div class="bar"><button class="btn small" id="polishAll">✨ 全部微修</button><button class="btn small" id="polishLoad">🔄 讀取微修結果</button></div>
       <p class="note tag ok" id="fromNotion" hidden>已從 Notion 帶回上次繳交的定稿</p>
       <ol class="order" id="order"></ol>
@@ -172,7 +172,7 @@ ol.order textarea{width:100%;font:inherit;font-size:14px;margin-top:6px;padding:
 </main>
 </div>
 <div class="toast" id="toast"></div>
-<script src="assets/js/yearbook-core.js?v=20261108-15"></script>
-<script src="assets/js/yearbook.js?v=20261108-15"></script>
+<script src="assets/js/yearbook-core.js?v=20261108-16"></script>
+<script src="assets/js/yearbook.js?v=20261108-16"></script>
 </body>
 </html>

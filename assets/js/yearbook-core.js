@@ -81,6 +81,44 @@
     return out;
   }
 
+  // 主題自動判斷（老師 2026-11-08 要求）：題目命中關鍵字權重 5、內文命中各 1，取本學期清單裡分數最高者；
+  // 都沒命中 → 清單有「其他」就填其他，沒有（1–2 年級）就留空讓老師選。頁面標「🤖 依題目判斷」，老師可改。
+  const THEME_KW = {
+    "食安相關之議題": ["食安", "食物", "午餐", "早餐", "晚餐", "零食", "飲料", "營養", "吃", "餐"],
+    "校園生活": ["校園", "學校", "下課", "上課", "教室", "同學", "老師", "課", "操場", "合作社", "運動會", "校外教學", "班"],
+    "學校趣": ["校園", "學校", "下課", "上課", "教室", "同學", "老師", "課", "操場"],
+    "小一嘰嘰喳喳": ["一年級", "小一", "新生"],
+    "家庭生活": ["家人", "家庭", "爸爸", "媽媽", "哥哥", "姊姊", "姐姐", "弟弟", "妹妹", "爺爺", "奶奶", "我的家"],
+    "生活記趣": ["趣事", "生活", "有趣"],
+    "閱讀分享": ["閱讀", "讀書", "書", "故事"],
+    "閱讀相關之議題": ["閱讀", "讀書", "書", "故事"],
+    "環境教育相關之議題": ["環境", "環保", "垃圾", "回收", "地球", "污染", "汙染", "減塑", "節能"],
+    "美好時光": ["時光", "回憶", "難忘", "快樂的一天"],
+    "生命教育相關之議題": ["生命", "成長", "珍惜"],
+    "我愛動物": ["動物", "寵物", "狗", "貓", "鳥", "魚", "兔"],
+    "孝親相關之議題": ["孝", "父母", "感恩", "報答"],
+    "孝道教育相關之議題": ["孝", "父母", "感恩", "報答"],
+    "我的寶貝": ["寶貝", "珍藏", "收藏"],
+    "遊記": ["遊記", "旅行", "旅遊", "出遊", "露營", "一日遊", "參觀"],
+    "旅遊記趣": ["遊記", "旅行", "旅遊", "出遊", "露營", "一日遊", "參觀"],
+    "運動與我（健促相關）": ["運動", "球", "跑步", "游泳", "體育", "健康", "跳繩"],
+    "品格教育相關之議題": ["品格", "誠實", "禮貌", "勇敢", "負責", "尊重", "友誼", "分享", "助人"],
+    "話我家鄉": ["家鄉", "故鄉", "老家"],
+    "毒品防制相關之議題": ["毒品", "拒毒", "反毒"],
+    "生涯規劃": ["夢想", "未來", "職業", "長大", "志願"],
+    "性別平等相關之議題": ["性別", "平等", "男生女生"],
+    "交通安全相關之議題": ["交通", "過馬路", "紅綠燈", "斑馬線", "安全帽"],
+  };
+  function guessTheme(w, grade, sem) {
+    const list = themesOf(grade, sem), title = String(w.title || ""), text = String(w.text || "");
+    let best = "", top = 0;
+    list.forEach(t => {
+      const s = (THEME_KW[t] || []).reduce((n, k) => n + (title.indexOf(k) >= 0 ? 5 : 0) + text.split(k).length - 1, 0);
+      if (s > top) { top = s; best = t; }   // 同分取清單前面的
+    });
+    return best || (list.indexOf("其他") >= 0 ? "其他" : "");
+  }
+
   // 建議挑選：合字數、無辨識不清、對得到名冊、一人一件，等第高者優先，最多 5 篇（主題留給老師選）
   function suggest(pool, grade, sem) {
     const ok = pool.filter(w => !isPoem(w) && !issues(w, grade, sem).some(i => i.block))
@@ -228,7 +266,7 @@
   }
 
   const api = { RULES, MIN_N, MAX_N, GRADE_ORDER, count, isPoem, unclear, parseClass, dueOf, themesOf, issues, checks, suggest, byline, fileName, buildDocx, splitFinal,
-    POLISH_MAX, plainOf, lev, editRatio, pct, polishGate, parsePolish, polishPending, polishDone, polishManual, diff };
+    guessTheme, POLISH_MAX, plainOf, lev, editRatio, pct, polishGate, parsePolish, polishPending, polishDone, polishManual, diff };
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.Yearbook = api;
 })(typeof window !== "undefined" ? window : this);
