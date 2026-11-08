@@ -84,6 +84,7 @@
       { icon: "📝", label: "錯題紀錄表", href: "quiz.html", color: "#E17055" }, // 平時卷錯題登記（2026-10-18 從班級管理系統搬來）
       { icon: "🪑", label: "排座位", href: "seat-plan.html", color: "#2f6f5e" }, // DJ 線 2026-11-07：建議→微調→確認→更新班網座位表
       { icon: "📰", label: "校刊挑選", href: "yearbook.html", color: "#a9731a" }, // DL 線 2026-11-08：挑作文→編排→下載 Word→記錄繳交
+      { icon: "✍️", label: "作文說明單", href: "#sec-essay", color: "#c2185b" }, // DM 線 2026-11-09：三版下載＋分層名單（加密）
       { icon: "💬", label: "一句話交辦", href: "#sec-task", color: "#FF9F43" },
       { icon: "📋", label: "任務狀態", href: "#sec-status", color: "#48DBFB" },
       { icon: "🛒", label: "兌換申請", href: "#sec-redeem", color: "#F0932B" },
@@ -110,6 +111,12 @@
             <label class="meta">週次 <select id="dash-week" hidden></select></label></div>
           <div id="dash-body"></div>
         </details>
+      </section>
+
+      <section class="card" id="sec-essay" style="--accent:#c2185b">
+        <h2>📝 作文說明單</h2>
+        <p class="meta">三版 A3 直書說明單：⬇️ PDF 列印、🌐 網頁版給學生看。做新的一課：在下方「一句話交辦」輸入「作文說明單：第○課〈題目〉」（沒寫文體就照課文文體；附範本就照範本文體）。</p>
+        <div id="essay-body"><p class="empty-hint">載入中…</p></div>
       </section>
 
       <section class="card" id="sec-task" style="--accent:#FF9F43">
@@ -190,6 +197,7 @@
 
     // 📊 全班學習儀表板（assets/js/teacher-dash.js）：預設收合，展開才解密載入
     if (window.TeacherDash) window.TeacherDash.mount();
+    if (window.EssaySheets) window.EssaySheets.mount();
 
     // 快速鍵：帶入範本，游標停在「＿」處
     const ta = document.getElementById("task-text");

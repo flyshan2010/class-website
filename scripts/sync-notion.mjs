@@ -54,6 +54,7 @@ const DS = {
   proposals: "35cb027e-1465-47a2-ad91-e66fb5e83c7a", // 🧪 創造提案（學生線上填；只進加密學習報告，公開檔零洩漏）
   log: "eb529fa1-59e5-45ef-bfb4-79fc30de79e4", // 📝 班經與學習紀錄庫（教師儀表板數筆數；課堂作答／評量只進加密檔，內容不進公開 JSON）
   quizExams: "51c1c08f-78b4-4352-85f6-e45fb7361c2a", // 📝 平時卷（含答案；只算錯題分析進加密報告，開放日前不輸出答案）
+  essaySheets: "56117636-5b3f-4328-8e21-43edc867a266", // 📝 作文說明單（一列＝一個作文題目；分層名單只進教師加密檔 essay-tiers.json）
   reviewCards: "74bfc789-192e-425e-b7c6-477033bec302", // 📚 觀念複習卡（一列＝一個知識點；只有「上架」輸出到公開 data/review-cards.json）
 };
 
@@ -68,7 +69,7 @@ const YEAR_FIELD = "學年";
 // 需按學年過濾的庫
 const YEAR_FILTERED = new Set(["roster", "weekly", "reports", "bank", "portfolio", "redeem", "dailyPlan", "proposals", "quizExams"].map(k => DS[k]));
 // 有「學年」欄但**刻意不過濾**：教材是跨學年資產，過濾掉會讓升學年後既有課程頁全部消失
-const YEAR_EXEMPT = new Set([DS.lessons, DS.reviewCards]);
+const YEAR_EXEMPT = new Set([DS.lessons, DS.reviewCards, DS.essaySheets]);
 const DS_NAME = Object.fromEntries(Object.entries(DS).map(([k, v]) => [v, k]));
 
 let CURRENT_YEAR = null;        // 例：'115'
@@ -1265,6 +1266,35 @@ async function syncReports() {
   console.log(`✅ reports/（${Object.keys(bySeat).length} 位學生，已加密）`);
 }
 
+// ── 📝 教師專區「作文說明單」（SPEC_作文說明單 §4，老師 2026-11-09）──
+// 公開檔 essay-sheets.json：只有「已上線」列的題目、課次、文體與教材庫檔名（三版 PDF／網頁版都在 lessons，無個資）。
+// 加密檔 essay-tiers.json：分層名單（只有座號＋最弱步驟），與全班儀表板同一把教師口令（TEACHER_DASH_PW）。
+// 分層名單 JSON 解析失敗 → 該題標「需人工」，不猜（fail-closed）。
+async function syncEssaySheets() {
+  const rows = (await queryDataSource(DS.essaySheets)).map(props)
+    .filter(r => r["狀態"] === "已上線" && r["名稱"] && r["教材庫資料夾"] && String(r["檔名"] || "").includes("{版}"))
+    .sort((a, b) => String(b["日期"]?.start || "").localeCompare(String(a["日期"]?.start || "")) || a["名稱"].localeCompare(b["名稱"]));
+  const id = r => r._id.replace(/-/g, "").slice(0, 12);
+  const sheets = rows.map(r => ({ id: id(r), name: r["名稱"], grade: r["年段"] || "", lesson: r["課次"] || "",
+    topic: r["題目"] || "", genre: r["文體"] || "", folder: r["教材庫資料夾"], file: r["檔名"], date: r["日期"]?.start || "" }));
+  await writeFile(path.join(DATA_DIR, "essay-sheets.json"), JSON.stringify({ generatedAt: new Date().toISOString(), sheets }, null, 1) + "\n", "utf8");
+  const PW = String(process.env.TEACHER_DASH_PW || "").trim();
+  if (!PW) { console.warn("⚠️ essay-tiers：未設定 TEACHER_DASH_PW，略過分層名單加密檔"); console.log(`✅ essay-sheets.json（${sheets.length} 題）`); return; }
+  const tiers = {};
+  for (const r of rows) {
+    let t = null;
+    try {
+      const j = JSON.parse(r["分層名單"] || "null");
+      if (j && typeof j === "object" && Object.values(j).every(v => Array.isArray(v) && v.every(x => Number.isFinite(Number(x?.[0])))))
+        t = Object.fromEntries(Object.entries(j).map(([k, v]) => [k, v.map(x => [Number(x[0]), String(x[1] ?? "")])]));
+    } catch { /* 下面標需人工 */ }
+    tiers[id(r)] = t ? { tiers: t, note: r["分層說明"] || "" } : { error: "分層名單空白或格式不對，請在 Notion「📝 作文說明單」檢查（需人工）" };
+  }
+  const payload = await encryptReport({ v: 1, generatedAt: new Date().toISOString(), tiers }, PW, "teacher");
+  await writeFile(path.join(DATA_DIR, "essay-tiers.json"), JSON.stringify(payload) + "\n", "utf8");
+  console.log(`✅ essay-sheets.json（${sheets.length} 題）＋ essay-tiers.json（已用教師口令加密）`);
+}
+
 // ── 📊 教師專區「全班學習儀表板」彙總檔（BR 線 P2，老師 2026-10-16 定案）──
 // 隱私：只放座號、不放姓名／查詢碼；整份用教師口令 AES-GCM 加密（與學生報告同一支 encryptReport，
 //       金鑰材料＝「teacher:口令」），口令只放 GitHub secret TEACHER_DASH_PW，不進 repo。
@@ -1906,6 +1936,7 @@ await Promise.all([
   syncReports(),
   syncReviewCards(),
   syncTeacherDashboard(),
+  syncEssaySheets(),
   syncStore(),
   syncBank(),
   syncClassGoal(),

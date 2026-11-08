@@ -179,8 +179,22 @@
     document.getElementById("dash-pw").onkeydown = e => { if (e.key === "Enter") go(); };
   }
 
+  // 其他教師區塊共用的解密（作文說明單分層名單等；同一把教師口令，不另寫一套，U83）。
+  // 回傳 { data } 解開；{ need: true } 已存口令解不開；檔案不存在丟錯。
+  async function unlock(url, pw) {
+    const res = await fetch(`${url}?t=${Date.now()}`, { cache: "no-cache" });
+    if (!res.ok) throw new Error(String(res.status));
+    const payload = await res.json();
+    const pws = pw ? [pw] : [sessionStorage.getItem("teacherDashPw"), sessionStorage.getItem("teacherPw")].filter(Boolean);
+    for (const p of pws) {
+      try { const data = await decrypt(payload, p); if (pw) sessionStorage.setItem("teacherDashPw", pw); return { data }; } catch { /* 試下一組 */ }
+    }
+    return { need: true };
+  }
+
   // 掛到教師專區：<details id="dash-details"> 第一次展開才載入
   window.TeacherDash = {
+    unlock,
     mount() {
       const det = document.getElementById("dash-details"), body = document.getElementById("dash-body");
       if (!det || !body) return;
