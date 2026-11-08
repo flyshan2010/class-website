@@ -72,6 +72,11 @@ main{padding-top:8px;padding-bottom:40px;display:grid;gap:12px}
 @media (prefers-color-scheme:dark){.btn.primary{color:#0f1a17}}
 .btn.small{padding:2px 8px;font-size:12.5px}
 .btn.ghost{border-color:transparent;background:none;color:var(--muted)}
+.polish{margin-top:6px;border:1px dashed var(--line);border-radius:8px;padding:6px 8px;font-size:13.5px}
+.polish .diff{white-space:pre-wrap;background:var(--bg);padding:6px 8px;border-radius:6px;margin:4px 0;max-height:260px;overflow:auto}
+.polish del{background:var(--warn-soft);color:var(--warn);text-decoration:line-through}
+.polish ins{background:var(--ok-soft);color:var(--ok);text-decoration:none;font-weight:700}
+.polish .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
 ol.order{list-style:none;margin:0;padding:0;counter-reset:n}
 ol.order li{counter-increment:n;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:8px}
@@ -127,7 +132,7 @@ ol.order textarea{width:100%;font:inherit;font-size:14px;margin-top:6px;padding:
 
   <div class="cols">
     <section class="panel">
-      <h2><span class="step">2</span>候選作品（本學期已批改的作文）</h2>
+      <h2><span class="step">2</span>挑選符合條件的文章</h2>
       <p class="hint">來源＝📊 學習報告「作文批改」列的學生原文。點「選入」加到右邊；不合規的會標紅，選入後仍可修改。</p>
       <div class="bar"><button class="btn small" id="auto">⚡ 依規則建議挑選</button></div>
       <div class="scroll" id="pool"></div>
@@ -135,8 +140,9 @@ ol.order textarea{width:100%;font:inherit;font-size:14px;margin-top:6px;padding:
     </section>
 
     <section class="panel">
-      <h2><span class="step">3</span>編排與修訂</h2>
-      <p class="hint">順序＝Word 裡的順序。每篇要選主題；題目、內文可直接改成老師批閱後的定稿（只存這台電腦，按「標記已繳交」才寫進 Notion）。</p>
+      <h2><span class="step">3</span>檢查並微修</h2>
+      <p class="hint">順序＝Word 裡的順序。每篇要選主題；題目、內文可直接改成老師批閱後的定稿（只存這台電腦，按「標記已繳交」才寫進 Notion）。<br>✨ 微修＝只改錯字、標點、贅字、語序讓文章通順，<b>改動不超過 5%（程式把關）</b>：按「✨ 微修」送出 → 對 Claude Code 說「校刊微修」→ 回來按「🔄 讀取微修結果」，紅綠對照後逐篇採用。</p>
+      <div class="bar"><button class="btn small" id="polishAll">✨ 全部微修</button><button class="btn small" id="polishLoad">🔄 讀取微修結果</button></div>
       <p class="note tag ok" id="fromNotion" hidden>已從 Notion 帶回上次繳交的定稿</p>
       <ol class="order" id="order"></ol>
       <div class="empty" id="orderEmpty">尚未選入作品</div>
@@ -144,12 +150,12 @@ ol.order textarea{width:100%;font:inherit;font-size:14px;margin-top:6px;padding:
   </div>
 
   <section class="panel">
-    <h2><span class="step">4</span>繳交前檢核</h2>
+    <h2><span class="step">4</span>確認：繳交前檢核</h2>
     <ul class="checks" id="checks"></ul>
   </section>
 
   <section class="panel">
-    <h2><span class="step">5</span>Word 預覽與繳交</h2>
+    <h2><span class="step">5</span>輸出檔案：Word 預覽與繳交</h2>
     <div class="bar">
       <label style="font-size:14px"><input type="checkbox" id="pgbrk" checked> 每篇另起一頁</label>
       <span class="sp"></span>
@@ -166,7 +172,7 @@ ol.order textarea{width:100%;font:inherit;font-size:14px;margin-top:6px;padding:
 </main>
 </div>
 <div class="toast" id="toast"></div>
-<script src="assets/js/yearbook-core.js?v=20261108-14"></script>
-<script src="assets/js/yearbook.js?v=20261108-14"></script>
+<script src="assets/js/yearbook-core.js?v=20261108-15"></script>
+<script src="assets/js/yearbook.js?v=20261108-15"></script>
 </body>
 </html>

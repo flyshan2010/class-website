@@ -158,7 +158,77 @@
     return o;
   }
 
-  const api = { RULES, MIN_N, MAX_N, GRADE_ORDER, count, isPoem, unclear, parseClass, dueOf, themesOf, issues, checks, suggest, byline, fileName, buildDocx, splitFinal };
+  // ── ✨ 一鍵微修（SPEC_校刊挑選.md §7）：改動量由程式把關，Claude 寫回前（scripts/yearbook-polish-check.mjs）與頁面採用前各驗一次 ──
+  // Notion「校刊微修建議」欄三種狀態（第一行是狀態，其後是老師送出的底稿；有建議時再接〔建議〕一行與建議稿）：
+  //   〔待微修・2026-11-08 15:30〕\n底稿
+  //   〔微修・2026-11-08 15:40・改動 3.1%〕\n底稿\n〔建議〕\n建議稿
+  //   〔需人工・原因〕\n底稿
+  const POLISH_MAX = 0.05, SEP = "\n〔建議〕\n";
+  // 辨識標記不算學生的字：[？疑似：某字]→某字、國字(原寫注音)→國字；定了疑似字不算改動
+  const plainOf = t => String(t || "").replace(/\r/g, "").replace(/\[？疑似：([^\]]*)\]/g, "$1").replace(/[(（]原寫[^)）]*[)）]/g, "");
+  // 逐字編輯距離（插入、刪除、替換各算 1）；空白與換行也算（改段落要算進去）
+  function lev(a, b) {
+    a = Array.from(a); b = Array.from(b);
+    let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  // 改動比例＝編輯距離／底稿字數（去空白、標點算字，與字數規則同一把尺）
+  function editRatio(base, revised) {
+    const a = plainOf(base), n = count(a);
+    return n ? lev(a, plainOf(revised)) / n : (plainOf(revised) ? 1 : 0);
+  }
+  const pct = r => (Math.floor(r * 1000 + 0.5) / 10).toFixed(1) + "%";   // 四捨五入到 0.1%（不用銀行家捨入）
+  // 建議稿的程式把關：[{ok, m}]，任一 ok=false 就不得寫回／不得採用
+  function polishGate(base, revised) {
+    const out = [], r = editRatio(base, revised);
+    out.push({ ok: r <= POLISH_MAX, m: "改動 " + pct(r) + "（上限 " + pct(POLISH_MAX) + "）" });
+    if (!String(revised || "").trim()) out.push({ ok: false, m: "建議稿是空的" });
+    if (String(revised || "").indexOf("〔建議〕") >= 0) out.push({ ok: false, m: "建議稿不可含〔建議〕分隔字" });
+    const pa = plainOf(base).split("\n").length, pb = String(revised || "").replace(/\r/g, "").split("\n").length;
+    if (pa !== pb) out.push({ ok: false, m: "段落數變了（" + pa + "→" + pb + "），微修不動分段" });
+    return out;
+  }
+  // 解析 Notion 欄位 → {state: ""|pending|done|manual, at, ratio, reason, base, revised}
+  function parsePolish(s) {
+    s = String(s || "").replace(/\r/g, "");
+    const m = s.match(/^〔(待微修|微修|需人工)・([^〕]*)〕\n?/);
+    if (!m) return { state: "" };
+    const rest = s.slice(m[0].length), o = { state: { 待微修: "pending", 微修: "done", 需人工: "manual" }[m[1]] };
+    if (o.state === "manual") { o.reason = m[2]; o.base = rest; return o; }
+    o.at = m[2].split("・")[0];
+    if (o.state === "pending") { o.base = rest; return o; }
+    const k = rest.indexOf(SEP);
+    if (k < 0) return { state: "manual", reason: "建議格式壞了（找不到〔建議〕）", base: rest };
+    o.base = rest.slice(0, k); o.revised = rest.slice(k + SEP.length);
+    return o;
+  }
+  const polishPending = (base, at) => "〔待微修・" + at + "〕\n" + String(base).replace(/\r/g, "");
+  const polishDone = (base, revised, at) => "〔微修・" + at + "・改動 " + pct(editRatio(base, revised)) + "〕\n" + String(base).replace(/\r/g, "") + SEP + String(revised).replace(/\r/g, "");
+  const polishManual = (base, reason) => "〔需人工・" + String(reason).replace(/[〕\n]/g, " ").slice(0, 60) + "〕\n" + String(base).replace(/\r/g, "");
+  // 紅綠對照用：逐字 LCS 差異 → [{t:"="|"-"|"+", s}]
+  function diff(a, b) {
+    a = Array.from(String(a || "")); b = Array.from(String(b || ""));
+    const n = a.length, m = b.length, L = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) L[i][j] = a[i] === b[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+    const out = [], push = (t, s) => { const z = out[out.length - 1]; if (z && z.t === t) z.s += s; else out.push({ t: t, s: s }); };
+    let i = 0, j = 0;
+    while (i < n && j < m) {
+      if (a[i] === b[j]) { push("=", a[i]); i++; j++; }
+      else if (L[i + 1][j] >= L[i][j + 1]) push("-", a[i++]);
+      else push("+", b[j++]);
+    }
+    while (i < n) push("-", a[i++]);
+    while (j < m) push("+", b[j++]);
+    return out;
+  }
+
+  const api = { RULES, MIN_N, MAX_N, GRADE_ORDER, count, isPoem, unclear, parseClass, dueOf, themesOf, issues, checks, suggest, byline, fileName, buildDocx, splitFinal,
+    POLISH_MAX, plainOf, lev, editRatio, pct, polishGate, parsePolish, polishPending, polishDone, polishManual, diff };
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.Yearbook = api;
 })(typeof window !== "undefined" ? window : this);

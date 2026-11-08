@@ -88,9 +88,10 @@
         <button class="btn small" data-mv="${k}" data-d="1" ${k === D.pick.length - 1 ? "disabled" : ""} aria-label="下移">↓</button>
         <button class="btn small" data-t="${w.id}" aria-label="移出">✕</button></div>
       <div class="row2"><select data-e="${w.id}" data-f="theme"><option value="">選主題…</option>${themes.map(t => `<option ${w.theme === t ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>
-        <button class="btn small ghost" data-reset="${w.id}" title="把題目、內文還原成批改時的原文">↺ 還原原文</button></div>
+        <button class="btn small ghost" data-reset="${w.id}" title="把題目、內文還原成批改時的原文">↺ 還原原文</button>
+        <button class="btn small" data-polish="${w.id}" title="把目前內文送去微修（改動 ≤5%）">✨ 微修</button></div>
       <div class="badges">${badges(w)}</div>
-      <textarea data-e="${w.id}" data-f="text">${esc(w.text)}</textarea></li>`).join("");
+      <textarea data-e="${w.id}" data-f="text">${esc(w.text)}</textarea>${polishBox(w)}</li>`).join("");
     const o = $("order");
     o.querySelectorAll("[data-t]").forEach(b => b.onclick = () => toggle(b.dataset.t));
     o.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => {
@@ -102,6 +103,14 @@
       const th = (D.edits[b.dataset.reset] || {}).theme;
       D.edits[b.dataset.reset] = th ? { theme: th } : {}; save(); renderAll();
     });
+    o.querySelectorAll("[data-polish]").forEach(b => b.onclick = () => sendPolish([b.dataset.polish]));
+    o.querySelectorAll("[data-adopt]").forEach(b => b.onclick = () => {
+      const w = work(b.dataset.adopt), p = Y.parsePolish(w.polish);
+      if (!Y.polishGate(p.base, p.revised).every(g => g.ok)) return toast("建議稿沒過把關，不能採用");
+      if (w.text !== p.base && !confirm("送出微修後你又改過這篇內文；採用會以建議稿取代目前內文，確定？")) return;
+      (D.edits[w.id] = D.edits[w.id] || {}).text = p.revised; seen(w); toast("已採用微修建議");
+    });
+    o.querySelectorAll("[data-skip]").forEach(b => b.onclick = () => seen(work(b.dataset.skip)));
     o.querySelectorAll("[data-e]").forEach(el => el.onchange = () => {
       (D.edits[el.dataset.e] = D.edits[el.dataset.e] || {})[el.dataset.f] = el.value; save(); renderAll();
     });
@@ -131,6 +140,35 @@
   }
   function renderAll() { renderRule(); renderPool(); renderOrder(); renderChecks(); renderPaper(); }
 
+  // ── ✨ 一鍵微修（SPEC_校刊挑選.md §7）──
+  // 看過（採用或不採用）的建議記在草稿 polishSeen，Notion 欄位不動；欄位內容變了（再送一次）就會再出現
+  function seen(w) { (D.polishSeen = D.polishSeen || {})[w.id] = w.polish; save(); renderAll(); }
+  function polishBox(w) {
+    const p = Y.parsePolish(w.polish);
+    if (!p.state || (D.polishSeen || {})[w.id] === w.polish) return "";
+    if (p.state === "pending") return `<div class="polish">⏳ 已送出微修（${esc(p.at)}）：請對 Claude Code 說「校刊微修」，完成後按「🔄 讀取微修結果」。</div>`;
+    if (p.state === "manual") return `<div class="polish"><span class="tag warn">需人工</span> ${esc(p.reason)}（請自己在上面改） <button class="btn small ghost" data-skip="${w.id}">知道了</button></div>`;
+    const gate = Y.polishGate(p.base, p.revised), pass = gate.every(g => g.ok);
+    const html = Y.diff(p.base, p.revised).map(o => o.t === "=" ? esc(o.s) : o.t === "-" ? `<del>${esc(o.s)}</del>` : `<ins>${esc(o.s)}</ins>`).join("");
+    return `<div class="polish"><div class="row"><b>✨ 微修建議</b><span class="meta">${esc(p.at)}</span>` +
+      gate.map(g => `<span class="tag ${g.ok ? "ok" : "warn"}">${esc(g.m)}</span>`).join("") +
+      (w.text !== p.base ? `<span class="tag gold">送出後內文又改過</span>` : "") + `</div>` +
+      `<div class="diff">${html}</div><div class="row">` +
+      (pass ? `<button class="btn small primary" data-adopt="${w.id}">採用</button>` : `<span class="tag warn">⛔ 沒過程式把關，不能採用</span>`) +
+      `<button class="btn small" data-skip="${w.id}">不採用</button><span class="meta">紅色刪掉、綠色新增</span></div></div>`;
+  }
+  async function sendPolish(ids) {
+    const ws = ids.map(work).filter(Boolean);
+    if (!ws.length) return toast("尚未選入作品");
+    status("送出微修中…");
+    try {
+      const r = await call({ action: "yearbook_polish", items: ws.map(w => ({ id: w.id, text: w.text })) });
+      if (!r.ok) return status("❌ " + r.error, true);
+      await load(true);
+      status(`✨ 已送出 ${r.count} 篇微修（${r.at}）：請對 Claude Code 說「校刊微修」，完成後按「🔄 讀取微修結果」`);
+    } catch (e) { if (e.message !== "口令錯誤") status("❌ 連線失敗：" + e.message, true); }
+  }
+
   // ── 動作 ──
   function switchSem(s) {
     sem = s; D = loadDraft();
@@ -141,6 +179,11 @@
     document.querySelectorAll("#semSeg button").forEach(b => b.onclick = () => switchSem(b.dataset.s));
     try { $("tch").value = localStorage.getItem(TCH_KEY) || ""; } catch (e) {}
     $("tch").oninput = () => { try { localStorage.setItem(TCH_KEY, $("tch").value); } catch (e) {} renderChecks(); renderPaper(); };
+    $("polishAll").onclick = () => sendPolish(D.pick.slice());
+    $("polishLoad").onclick = async () => {
+      try { if (await load(true)) { const n = picked().filter(w => Y.parsePolish(w.polish).state === "done").length; status(`已讀取：選入的作品有 ${n} 篇微修建議`); } }
+      catch (e) { if (e.message !== "口令錯誤") status("❌ 連線失敗：" + e.message, true); }
+    };
     $("pgbrk").onchange = () => { D.pgbrk = $("pgbrk").checked; save(); renderPaper(); };
     $("auto").onclick = () => {
       if (D.pick.length && !confirm("用建議清單取代目前選的作品？（修訂內容會保留）")) return;

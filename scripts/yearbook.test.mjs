@@ -99,3 +99,38 @@ test("Word：三個必要檔、標楷體 16 粗／14、換頁、特殊字元跳�
   const noBreak = unzip(Y.buildDocx(ws, { grade: 4, cls: 4 }, "林老師", false))["word/document.xml"];
   assert.equal((noBreak.match(/w:type="page"/g) || []).length, 0);
 });
+
+test("微修：改動比例、辨識標記不算改動、程式把關", () => {
+  const base = "　　今天我們去公園玩，天氣很好，我很開心。\n　　我們在草地上[？疑似：跑]步，還一起玩捉迷藏，最後坐在樹下吃媽媽準備的點心，大家都說這是最棒的一天。";
+  assert.equal(Y.editRatio(base, base), 0);
+  assert.equal(Y.editRatio(base, base.replace("[？疑似：跑]", "跑")), 0);          // 定疑似字不算
+  const one = base.replace("很好", "晴朗");                                          // 2 字替換
+  assert.equal(Y.lev(Y.plainOf(base), Y.plainOf(one)), 2);
+  assert.ok(Y.polishGate(base, one).every(g => g.ok));
+  const many = base.replace("今天我們去公園玩", "昨天大家到河濱散步");
+  assert.ok(Y.editRatio(base, many) > Y.POLISH_MAX);
+  assert.equal(Y.polishGate(base, many)[0].ok, false);
+  assert.ok(Y.polishGate(base, base.replace("\n", "")).some(g => !g.ok && /段落/.test(g.m)));
+  assert.ok(Y.polishGate(base, "").some(g => !g.ok));
+  assert.equal(Y.pct(0.0315), "3.2%"); assert.equal(Y.pct(0.0325), "3.3%");          // 四捨五入不用銀行家捨入
+});
+
+test("微修：Notion 欄位三態格式來回", () => {
+  const b = "　　第一段。\n　　第二段。", r = "　　第一段！\n　　第二段。";
+  assert.deepEqual(Y.parsePolish(Y.polishPending(b, "2026-11-08 15:30")), { state: "pending", at: "2026-11-08 15:30", base: b });
+  const d = Y.parsePolish(Y.polishDone(b, r, "2026-11-08 15:40"));
+  assert.equal(d.state, "done"); assert.equal(d.base, b); assert.equal(d.revised, r); assert.equal(d.at, "2026-11-08 15:40");
+  assert.match(Y.polishDone(b, r, "x"), /^〔微修・x・改動 \d+\.\d%〕\n/);
+  const m = Y.parsePolish(Y.polishManual(b, "改到 7.2% 仍超過"));
+  assert.equal(m.state, "manual"); assert.equal(m.reason, "改到 7.2% 仍超過"); assert.equal(m.base, b);
+  assert.equal(Y.parsePolish("").state, "");
+  assert.equal(Y.parsePolish("〔微修・x・改動 1%〕\n壞掉").state, "manual");
+});
+
+test("微修：紅綠差異拼回兩邊原文", () => {
+  const a = "我很開心的去學校", b = "我很開心地去學校。";
+  const ops = Y.diff(a, b);
+  assert.equal(ops.filter(o => o.t !== "+").map(o => o.s).join(""), a);
+  assert.equal(ops.filter(o => o.t !== "-").map(o => o.s).join(""), b);
+  assert.deepEqual(ops.filter(o => o.t !== "=").map(o => o.t + o.s), ["-的", "+地", "+。"]);
+});

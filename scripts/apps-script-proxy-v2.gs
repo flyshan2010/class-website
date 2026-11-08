@@ -1,6 +1,11 @@
 /**
- * 班網教師專區代理 v2.17（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
+ * 班網教師專區代理 v2.18（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.18 升級步驟（2026-11-08，約 2 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
+ *   v2.18 新增：📰 校刊「✨ 一鍵微修」yearbook_polish（把老師目前的底稿寫進「校刊微修建議」欄＝〔待微修〕，回讀核對）；
+ *   yearbook_list 多回 polish（該欄全文）。Claude Code「校刊微修」skill 寫回建議，頁面紅綠對照逐篇採用。
  *
  * ── v2.17 升級步驟（2026-11-08，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -138,7 +143,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.17"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.18"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -202,6 +207,7 @@ function doPost(e) {
       case "seat_apply":   return out_(seatApply_(props, body));
       case "yearbook_list": return out_(ybList_(props));
       case "yearbook_mark": return out_(ybMark_(props, body));
+      case "yearbook_polish": return out_(ybPolish_(props, body));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -2090,7 +2096,7 @@ function authorize() {
 //   同學期先前標過但這次沒選的列清空（重交以最後一次為準）。寫完回讀核對，對不上就回錯。
 // ⚠️ 作文含學生姓名與原文，只走教師口令；sync-notion 不讀這兩欄，不會進公開班網。
 const DS_REPORTS = "10dbe7ca-291b-4501-a2b4-2ac30f53a7f1"; // 📊 學生學習報告
-const YB_MARK = "校刊投稿", YB_FINAL = "校刊定稿";
+const YB_MARK = "校刊投稿", YB_FINAL = "校刊定稿", YB_POLISH = "校刊微修建議";
 const YB_MIN = 2, YB_MAX = 5;
 
 // 學期：8–1 月＝上、2–7 月＝下（與學年欄位同一刀：8 月起算新學年）
@@ -2137,6 +2143,7 @@ function ybEssays_(token, year) {
       text: plain_(p["作文_原文"]),
       mark: (((p[YB_MARK] || {}).select) || {}).name || "",
       final: plain_(p[YB_FINAL]),
+      polish: plain_(p[YB_POLISH]),                  // v2.18 一鍵微修（格式見 yearbook-core.js parsePolish）
     };
   }).filter(function (e) { return e.text || e.final; });
   return { essays: essays };
@@ -2204,6 +2211,51 @@ function ybMark_(props, body) {
     });
     if (bad.length || marked.length !== want.length) return { ok: false, error: "回讀核對不符（標記 " + marked.length + " 篇／應為 " + want.length + " 篇），請重新整理後再交一次" };
     return { ok: true, label: label, count: want.length, cleared: clear.length, at: Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd HH:mm") };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// ---------- 動作：✨ 校刊一鍵微修（v2.18，SPEC_校刊挑選.md §7） ----------
+// 老師在編排區按「✨ 微修」→ 把目前底稿（含老師已改過的字）寫進「校刊微修建議」＝「〔待微修・時間〕\n底稿」；
+// 之後老師對 Claude Code 說「校刊微修」，skill 讀〔待微修〕列、改完過程式把關（改動 ≤5%）才寫回〔微修〕。
+// 格式必須與 assets/js/yearbook-core.js 的 polishPending 一致（scripts/yearbook-proxy.test.mjs 交叉驗證）。
+function ybPolish_(props, body) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return { ok: false, error: "尚未設定 NOTION_TOKEN" };
+  const items = Array.isArray(body.items) ? body.items : [];
+  if (!items.length || items.length > YB_MAX) return { ok: false, error: "一次送 1–" + YB_MAX + " 篇，未送出" };
+  const year = schoolYear_();
+  const at = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd HH:mm");
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    const cur = ybEssays_(token, year);
+    if (cur.error) return { ok: false, error: cur.error };
+    const byId = {};
+    cur.essays.forEach(function (e) { byId[normId_(e.id)] = e; });
+    const want = [];
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i] || {}, e = byId[normId_(it.id)];
+      if (!e) return { ok: false, error: "第 " + (i + 1) + " 篇不是本學年的作文批改列，未送出" };
+      if (!e.name) return { ok: false, error: "〈" + e.title + "〉對不到名冊學生，未送出" };
+      const text = String(it.text || "").replace(/\r/g, "");
+      if (!text.trim() || text.length > 3000) return { ok: false, error: "〈" + e.title + "〉內文空白或太長，未送出" };
+      want.push({ id: e.id, title: e.title, v: "〔待微修・" + at + "〕\n" + text });
+    }
+    const fails = [];
+    want.forEach(function (w) {
+      const res = notionV_(token, "pages/" + w.id, "patch", { properties: { [YB_POLISH]: { rich_text: ybRich_(w.v) } } }, NOTION_VERSION_DS);
+      if (res.code !== 200) fails.push(w.title || w.id);
+    });
+    if (fails.length) return { ok: false, error: "有 " + fails.length + " 篇沒寫進 Notion（" + fails.join("、") + "），請再按一次" };
+    const back = ybEssays_(token, year);
+    if (back.error) return { ok: false, error: "已寫入但回讀失敗：" + back.error };
+    const map = {};
+    back.essays.forEach(function (e) { map[normId_(e.id)] = e.polish; });
+    const bad = want.filter(function (w) { return map[normId_(w.id)] !== w.v; });
+    if (bad.length) return { ok: false, error: "回讀核對不符 " + bad.length + " 篇，請重新整理後再送一次" };
+    return { ok: true, count: want.length, at: at };
   } finally {
     lock.releaseLock();
   }

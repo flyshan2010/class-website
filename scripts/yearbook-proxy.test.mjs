@@ -138,3 +138,28 @@ test("長定稿切段（每段 ≤1900）且回讀拼回原文", () => {
   const segs = w.pages.get(w.E.a).properties.校刊定稿.rich_text;
   assert.ok(segs.length === 3 && segs.every(s => s.plain_text.length <= 1900));
 });
+
+// ── v2.18 ✨ 一鍵微修 ──
+import { createRequire } from "node:module";
+const Yc = createRequire(import.meta.url)("../assets/js/yearbook-core.js");
+
+test("yearbook_polish：寫〔待微修〕底稿、格式與前端核心一致、list 帶回", () => {
+  const w = makeWorld();
+  const base = "　　老師改過的底稿。\n　　第二段。";
+  const r = w.post({ action: "yearbook_polish", items: [{ id: w.E.a, text: base }] });
+  assert.equal(r.ok, true, r.error); assert.equal(r.count, 1);
+  const got = w.pages.get(w.E.a).properties.校刊微修建議.rich_text.map(x => x.plain_text).join("");
+  assert.equal(got, Yc.polishPending(base, r.at));
+  const p = Yc.parsePolish(w.post({ action: "yearbook_list" }).essays.find(e => e.id === w.E.a).polish);
+  assert.equal(p.state, "pending"); assert.equal(p.base, base);
+});
+
+test("yearbook_polish：不合規不寫、寫失敗回錯", () => {
+  const w = makeWorld();
+  assert.match(w.post({ action: "yearbook_polish", items: [] }).error, /1–5/);
+  assert.match(w.post({ action: "yearbook_polish", items: [{ id: "pg-999", text: "x" }] }).error, /不是本學年/);
+  assert.match(w.post({ action: "yearbook_polish", items: [{ id: w.E.a, text: "  " }] }).error, /空白/);
+  assert.equal(w.calls.writes, 0);
+  const f = makeWorld({ failPatch: true });
+  assert.match(f.post({ action: "yearbook_polish", items: [{ id: f.E.a, text: "x" }] }).error, /沒寫進/);
+});
