@@ -41,6 +41,8 @@
   // ── 狀態 ──
   let students = [], bySeat = new Map(), relations = [], current = null, room = { rows: 5, cols: 6 };
   let plan = null, seed = 1, view = "plan", selected = null, healthSaved = false, busy = false;
+  // 正在編輯的座位表叫什麼（老師 11/08：要看得到名稱）；edited＝起點之後有手動互換
+  let planSrc = { name: "系統建議（第 1 份）", edited: false, arc: null };
   const locks = new Map();                                     // 桌 index → 座號（只存在本次頁面）
   let proxyUrl = null;
 
@@ -156,10 +158,11 @@
   // ── 復原 ──
   function snap() {
     if (!plan) return;
-    undoStack.push(plan.slice()); if (undoStack.length > 50) undoStack.shift();
+    undoStack.push({ a: plan.slice(), src: { ...planSrc } }); if (undoStack.length > 50) undoStack.shift();
   }
-  function setPlan(arr, msg) {
+  function setPlan(arr, msg, src) {
     snap(); plan = arr.slice(); view = "plan"; selected = null;
+    planSrc = { name: src.name, edited: false, arc: src.arc ?? null };
     for (const [i, n] of [...locks]) if (plan[i] !== n) locks.delete(i);   // 固定的人不在原格就取消固定
     toast(msg); render();
   }
@@ -192,6 +195,7 @@
       saveDraft();
       snap();
       plan = SP.optimize(input(), { seed, locks }).assign;
+      planSrc = { name: `系統建議（第 ${seed} 份）`, edited: false, arc: null };
       selected = null; render();
     } catch (err) { setStatus("排不出座位：" + err.message, true); }
   }
@@ -247,8 +251,18 @@
     return h + `</div>`;
   }
 
+  // 現行座位表的名稱＝之後封存會用的名稱（月份＋開始使用時間），前面加「現行」
+  function curName() { return archivePreview ? archivePreview.replace(/^座位表/, "現行座位表") : "現行座位表"; }
+  function renderSrc() {
+    const el = $("#srcName"); if (!el) return;
+    el.innerHTML = view === "now"
+      ? `📄 <b>${esc(curName())}</b>（班網正在顯示）`
+      : `📄 正在編輯：<b>${esc(planSrc.name)}</b>${planSrc.edited ? "（已手動調整）" : ""}${view === "pub" ? "・學生看到的樣子" : ""}`;
+    const sel = $("#fromArchive"); if (sel) sel.value = planSrc.arc == null ? "" : String(planSrc.arc);
+  }
   function render() {
     renderInputs();
+    renderSrc();
     const assign = view === "now" ? current.assign : plan;
     const e = SP.evaluate(input(), assign, { detail: true });
     $("#room").innerHTML = roomHTML(assign, view, e);
@@ -344,6 +358,7 @@
       const a = plan[selected], b = plan[i];
       snap();
       [plan[selected], plan[i]] = [b, a];
+      planSrc.edited = true;
       toast(`${a ? "座號" + a : "空位"} ⇄ ${b ? "座號" + b : "空位"}`); selected = null; render();
     };
     $("#room").addEventListener("click", ev => pick(ev.target.closest(".desk")));
@@ -353,23 +368,24 @@
     $("#apply").onclick = openApply;
     $("#undo").onclick = () => {
       if (!undoStack.length) return;
-      plan = undoStack.pop(); view = "plan"; selected = null;
+      const u = undoStack.pop(); plan = u.a; planSrc = u.src; view = "plan"; selected = null;
       for (const [i, n] of [...locks]) if (plan[i] !== n) locks.delete(i);
       toast("已復原上一步"); render();
     };
-    $("#backNow").onclick = () => setPlan(current.assign, "已把建議換回目前座位，可以從這裡手動調整");
+    $("#backNow").onclick = () => setPlan(current.assign, "已把建議換回目前座位，可以從這裡手動調整", { name: curName() });
     $("#fromArchive").onchange = e => {
-      const a = archives[Number(e.target.value)]; e.target.value = "";
+      const idx = Number(e.target.value), a = archives[idx];
       if (!a) return;
+      e.target.value = planSrc.arc == null ? "" : String(planSrc.arc);   // 擋下時選單回到原本顯示
       let g; try { g = SP.parseGrid(a.grid); } catch (err) { toast(`「${a.name}」讀不懂：${err.message}`); return; }
       if (g.rows !== room.rows || g.cols !== room.cols) { toast(`「${a.name}」是 ${g.rows} 排 × ${g.cols} 欄，和現在教室 ${room.rows} × ${room.cols} 不同，不能套用`); return; }
       const have = new Set(g.assign.filter(s => s != null)), gone = [...have].filter(s => !bySeat.has(s)), miss = students.map(s => s.seat).filter(s => !have.has(s));
       if (gone.length || miss.length) { toast(`「${a.name}」和現在名冊對不上（${gone.length ? "多了座號 " + gone.join("、") : ""}${gone.length && miss.length ? "；" : ""}${miss.length ? "少了座號 " + miss.join("、") : ""}），不能直接套用`); return; }
-      setPlan(g.assign, `已換成「${a.name}」，可以從這裡手動調整；按「✅ 確認並更新班網」才會真的改`);
+      setPlan(g.assign, `已換成「${a.name}」，可以從這裡手動調整；按「✅ 確認並更新班網」才會真的改`, { name: a.name, arc: idx });
     };
     $("#restoreBefore").onclick = () => {
       const b = beforeApply(); if (!b) return;
-      setPlan(b.g.assign, `已換回 ${b.at} 套用前的座位；按「✅ 確認並更新班網」才會真的改回去`);
+      setPlan(b.g.assign, `已換回 ${b.at} 套用前的座位；按「✅ 確認並更新班網」才會真的改回去`, { name: `套用前的座位（${b.at}）` });
     };
     document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
     $("#applyGo").onclick = doApply;
@@ -406,6 +422,7 @@
       try { localStorage.setItem(BEFORE_KEY, JSON.stringify({ grid: SP.formatGrid(current), at: new Date().toLocaleString("zh-TW", { hour12: false }) })); } catch (e) {}
       current = { rows: room.rows, cols: room.cols, assign: plan.slice() };
       archivePreview = `座位表（${MONTH[new Date().getMonth()]}月）${stampNow()}`;   // 現行座位剛寫入，下次封存就用這個時間（約略，以代理為準）
+      planSrc = { name: curName(), edited: false, arc: null };
       if (r.archived) { archives.unshift({ name: r.archived, grid: SP.formatGrid(before) }); fillArchives(); }
       draftBase = condSig(conditions); try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}   // 已存進 Notion，草稿清掉
       const syncMsg = r.sync && r.sync.ok ? "班網同步已觸發，約 1 分鐘後換新" : "⚠️ 班網同步沒觸發成功，請到教師專區按「立即更新班網」";

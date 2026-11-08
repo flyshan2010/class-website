@@ -103,6 +103,7 @@ select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--line);
 .tier ul{list-style:none;margin:0;padding:0;font-size:13px}
 .tier li{padding:3px 0}
 .head{font-size:15px;font-weight:700;margin:12px 0 0}
+.srcname{font-size:14.5px;margin:10px 0 6px;padding:6px 10px;border-left:4px solid var(--accent);background:var(--panel);border-radius:6px;overflow-wrap:anywhere}
 .gate{padding-top:40px}
 .gate .panel{max-width:520px;margin:0 auto}
 dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);max-width:min(560px,94vw);width:100%;padding:0}
@@ -183,6 +184,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
       <button class="btn" id="again">🔄 換一個建議</button>
       <button class="btn primary" id="apply">✅ 確認並更新班網</button>
     </div>
+    <div class="srcname" id="srcName" aria-live="polite"></div>
     <div class="roomwrap"><div class="room" id="room"></div></div>
     <div class="legend">
       <span><i style="background:var(--boy);border-radius:2px;height:4px"></i>男</span>
@@ -212,7 +214,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/seat-plan-core.js?v=20261108-12"></script>
-<script src="assets/js/seat-plan.js?v=20261108-12"></script>
+<script src="assets/js/seat-plan-core.js?v=20261108-13"></script>
+<script src="assets/js/seat-plan.js?v=20261108-13"></script>
 </body>
 </html>
