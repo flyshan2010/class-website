@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { webcrypto as crypto } from "node:crypto";
 import { uniqueMaskNames } from "./lib/mask-name.mjs";
+import { analyzeEssays } from "./lib/essay-analysis.mjs";
 import { buildDutyData } from "./lib/build-duties.mjs";
 import { GOAL_TIER, backersNeededOf, inWindow, goalPrefix, tallyGoal } from "./lib/class-goal.mjs";
 import { quizRange, toQuiz, toTermExam, inRange, summarize, reviewTip } from "./classos/lib/term-quiz.mjs";
@@ -1281,6 +1282,10 @@ async function syncEssaySheets() {
   await writeFile(path.join(DATA_DIR, "essay-sheets.json"), JSON.stringify({ generatedAt: new Date().toISOString(), sheets }, null, 1) + "\n", "utf8");
   const PW = String(process.env.TEACHER_DASH_PW || "").trim();
   if (!PW) { console.warn("⚠️ essay-tiers：未設定 TEACHER_DASH_PW，略過分層名單加密檔"); console.log(`✅ essay-sheets.json（${sheets.length} 題）`); return; }
+  // 作文分析（老師 2026-11-09 定案範本）：同題目的「作文批改」報告列彙整成全班分析，只有座號，跟分層名單一起加密
+  const seats = (await queryDataSource(DS.roster)).map(props)
+    .filter(r => r["在學"] && r["座號"] !== "").map(r => Number(r["座號"])).filter(Number.isFinite).sort((a, b) => a - b);
+  const essayRows = (await queryDataSource(DS.reports)).map(props).filter(r => r["報告類型"] === "作文批改");
   const tiers = {};
   for (const r of rows) {
     let t = null;
@@ -1290,6 +1295,8 @@ async function syncEssaySheets() {
         t = Object.fromEntries(Object.entries(j).map(([k, v]) => [k, v.map(x => [Number(x[0]), String(x[1] ?? "")])]));
     } catch { /* 下面標需人工 */ }
     tiers[id(r)] = t ? { tiers: t, note: r["分層說明"] || "" } : { error: "分層名單空白或格式不對，請在 Notion「📝 作文說明單」檢查（需人工）" };
+    const analysis = analyzeEssays({ topic: r["題目"] || "", rows: essayRows, seats, tiers: t });
+    if (analysis) tiers[id(r)].analysis = analysis;
   }
   const payload = await encryptReport({ v: 1, generatedAt: new Date().toISOString(), tiers }, PW, "teacher");
   await writeFile(path.join(DATA_DIR, "essay-tiers.json"), JSON.stringify(payload) + "\n", "utf8");
