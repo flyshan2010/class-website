@@ -504,15 +504,6 @@
     "notes": ""
   },
   {
-    "title": "彩虹劇團聖誕劇活動",
-    "date": "2026-12-17",
-    "endDate": "",
-    "startTime": "10:30",
-    "endTime": "11:20",
-    "type": "活動",
-    "notes": ""
-  },
-  {
     "title": "搓湯圓吃湯圓活動",
     "date": "2026-12-17",
     "endDate": "",
@@ -520,6 +511,15 @@
     "endTime": "11:10",
     "type": "活動",
     "notes": "401、404、410"
+  },
+  {
+    "title": "彩虹劇團聖誕劇活動",
+    "date": "2026-12-17",
+    "endDate": "",
+    "startTime": "10:30",
+    "endTime": "11:20",
+    "type": "活動",
+    "notes": ""
   },
   {
     "title": "線上升旗-耶誕活動",
@@ -855,18 +855,18 @@
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
