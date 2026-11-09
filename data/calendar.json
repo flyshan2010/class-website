@@ -459,15 +459,6 @@
     "notes": ""
   },
   {
-    "title": "英語歌唱比賽",
-    "date": "2026-11-25",
-    "endDate": "",
-    "startTime": "08:00",
-    "endTime": "09:20",
-    "type": "活動",
-    "notes": "歌曲：If you’re happy"
-  },
-  {
     "title": "校刊徵稿",
     "date": "2026-12-01",
     "endDate": "2026-12-31",
@@ -513,15 +504,6 @@
     "notes": ""
   },
   {
-    "title": "彩虹劇團聖誕劇活動",
-    "date": "2026-12-17",
-    "endDate": "",
-    "startTime": "10:30",
-    "endTime": "11:20",
-    "type": "活動",
-    "notes": ""
-  },
-  {
     "title": "搓湯圓吃湯圓活動",
     "date": "2026-12-17",
     "endDate": "",
@@ -531,6 +513,15 @@
     "notes": "401、404、410"
   },
   {
+    "title": "彩虹劇團聖誕劇活動",
+    "date": "2026-12-17",
+    "endDate": "",
+    "startTime": "10:30",
+    "endTime": "11:20",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "線上升旗-耶誕活動",
     "date": "2026-12-22",
     "endDate": "",
@@ -538,6 +529,15 @@
     "endTime": "08:30",
     "type": "活動",
     "notes": ""
+  },
+  {
+    "title": "英語歌唱比賽",
+    "date": "2026-12-23",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "09:20",
+    "type": "活動",
+    "notes": "歌曲： Jingle Bells (歌曲長度2:35)\n\nhttps://www.youtube.com/watch?v=4YBGRGBj7_w"
   },
   {
     "title": "行憲紀念日連假",
