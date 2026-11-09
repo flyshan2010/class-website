@@ -1274,7 +1274,8 @@ async function syncEssaySheets() {
   const rows = (await queryDataSource(DS.essaySheets)).map(props)
     .filter(r => r["狀態"] === "已上線" && r["名稱"] && r["教材庫資料夾"] && String(r["檔名"] || "").includes("{版}"))
     .sort((a, b) => String(b["日期"]?.start || "").localeCompare(String(a["日期"]?.start || "")) || a["名稱"].localeCompare(b["名稱"]));
-  const id = r => r._id.replace(/-/g, "").slice(0, 12);
+  // 題目代號＝完整 Notion id（2026-11-09 修：只取前 12 碼時，同時段建立的列前綴相同 → 第八、九、十課撞號，分層名單互蓋）
+  const id = r => r._id.replace(/-/g, "");
   const sheets = rows.map(r => ({ id: id(r), name: r["名稱"], grade: r["年段"] || "", lesson: r["課次"] || "",
     topic: r["題目"] || "", genre: r["文體"] || "", folder: r["教材庫資料夾"], file: r["檔名"], date: r["日期"]?.start || "" }));
   await writeFile(path.join(DATA_DIR, "essay-sheets.json"), JSON.stringify({ generatedAt: new Date().toISOString(), sheets }, null, 1) + "\n", "utf8");
