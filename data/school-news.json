@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-11-09T21:44:45.105Z",
+  "fetchedAt": "2026-11-10T04:32:29.060Z",
   "items": [
+    {
+      "date": "2026-11-10",
+      "title": "內政部移民署「第13屆新住民及子女築夢計畫」，請符合資格之新住民家庭踴躍報名",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1125&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
+    {
+      "date": "2026-11-10",
+      "title": "財團法人福智文教基金會辦理「2027第35屆教師生命成長營」",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1124&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
     {
       "date": "2026-11-09",
       "title": "轉知財團法人均一平台教育基金會辦理「2026星空探險隊」活動，請鼓勵師生踴躍參與。",
@@ -48,18 +60,6 @@
       "title": "轉知臺灣大學辦理2026冬季論壇：社會情緒學習教學經驗交流暨PILOT課程成果分享，請教師踴躍參與。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1109&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-11-04",
-      "title": "臺南市編彙「數位融入課中差異化教學全攻略」國中小國語、英語及數學共六冊電子書，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1106&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-11-04",
-      "title": "轉知親子天下推出之線上課程「最強國中生父母攻略課」學校專屬優惠代碼資訊。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1105&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
