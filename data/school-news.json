@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-11-10T04:32:29.060Z",
+  "fetchedAt": "2026-11-10T11:47:16.545Z",
   "items": [
+    {
+      "date": "2026-11-10",
+      "title": "有關嘉義市第45屆科學展覽會徵聘評審一案，詳如說明。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1129&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
+    {
+      "date": "2026-11-10",
+      "title": "轉知國教署委託國立東華大學「115學年度原住民族文化與科學展覽會」計畫競賽徵件說明會，請查照。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1128&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-11-10",
       "title": "內政部移民署「第13屆新住民及子女築夢計畫」，請符合資格之新住民家庭踴躍報名",
@@ -48,18 +60,6 @@
       "title": "賀！本校學生參加臺南市115學年度青少年認識國防書藝比賽榮獲佳績！！",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1113&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-11-06",
-      "title": "臺南市行動英語村(博愛村)2027年冬令營計畫招生簡章，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1112&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-11-06",
-      "title": "轉知臺灣大學辦理2026冬季論壇：社會情緒學習教學經驗交流暨PILOT課程成果分享，請教師踴躍參與。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1109&type=news&from_op=school_department_show",
-      "dept": "輔導室"
     }
   ]
 }
