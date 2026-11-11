@@ -1,5 +1,9 @@
 /* 教師專區「📝 作文說明單」（SPEC_作文說明單 §4，老師 2026-11-09）
- * - 題目清單＝data/essay-sheets.json（公開、無個資）：三版 PDF 下載＋網頁版連結，檔案都在教材庫 lessons/。依課次排序。
+ * - 題目清單＝data/essay-sheets.json（公開、無個資）：三版 PDF 下載＋網頁版連結，檔案都在教材庫 lessons/。
+ * - 收合＋搜尋排序（老師 2026-11-11 定案範本）：每題收成一行，預設只展開「📌 下一篇」（今天以後最近的說明日）；
+ *   日期跟課程進度走（date＝週四說明、hw＝週五當作業，sync 端算好；暑假作文 08/31）。
+ *   排序：說明日期舊→新（預設）／新→舊／待批改優先／依文體分組；搜尋題目、課次、文體；篩狀態（解開後才有）、文體。
+ *   排序、篩選、展開狀態記在本機 localStorage（只是便利，讀不到照預設）。
  * - 分層名單＋作文分析＝data/essay-tiers.json（教師口令加密，只有座號）。
  *   已登入（sessionStorage 有口令）就自動解開：卡片上方顯示全班彙總（不含座號，投影也安全）；
  *   含座號的分析細節與「誰用哪一版」一律收合，點開才顯示。
@@ -19,9 +23,10 @@
   const pct = v => Math.max(0, Math.min(100, (v - 2) / 6 * 100)); // 乙下2～優8
   const g2 = x => VG[Math.floor(x + 0.5)] || "";
 
-  // 「第十二課」→ 12；認不得排最後
+  // 「第十二課」→ 12；暑假作文排第一課之前；認不得排最後
   const CN = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
   function lessonNo(s) {
+    if (s.lesson === "暑假作文") return 0;
     const m = String(s.lesson || s.name || "").match(/第([一二三四五六七八九十\d]+)課/);
     if (!m) return 999;
     if (/^\d+$/.test(m[1])) return Number(m[1]);
@@ -41,12 +46,20 @@
       <div class="es-seats meta" data-tier="${tier}" style="margin-top:4px"></div>
     </div>`;
 
-  const card = s => `
-    <div class="es-sheet" data-id="${esc(s.id)}" style="border:1px solid #eee;border-radius:10px;padding:10px 12px;margin-top:10px">
-      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline">
-        <div><span style="background:#333;color:#fff;border-radius:6px;padding:0 8px;margin-right:6px;font-size:.9em">${esc(s.lesson || "")}</span><b>${esc(s.topic || s.name)}</b></div>
-        <span class="meta">${esc(s.genre)} <span class="es-status"></span></span>
-      </div>
+  const md = d => String(d || "").slice(5).replace("-", "/");
+  const dateTxt = s => s.hw ? `📣 ${md(s.date)} 說明・✏️ ${md(s.hw)} 作業` : s.date ? `📅 ${md(s.date)}` : "";
+  const card = (s, open, next, hl) => `
+    <details class="es-sheet" data-id="${esc(s.id)}" ${open ? "open" : ""}>
+      <summary>
+        <span class="es-chev">▶</span>
+        <span class="es-lesson">${hl(s.lesson || "")}</span><b class="es-topic">${hl(s.topic || s.name)}</b>
+        ${next ? `<span class="es-next">📌 下一篇</span>` : ""}
+        <span class="es-right">
+          <span class="es-quick">${TIERS.map(t => `<a href="${href(s, t, ".pdf")}" download="${esc(fileOf(s, t))}.pdf" style="background:${COL[t]}" title="${t} PDF">${t[0]}</a>`).join("")}</span>
+          <span class="meta">${hl(s.genre)}</span><span class="es-status"></span><span class="es-date" title="課程進度日期">${dateTxt(s)}</span>
+        </span>
+      </summary>
+      <div class="es-body">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:8px">
         ${TIERS.map(t => tierCol(s, t)).join("")}
       </div>
@@ -59,7 +72,8 @@
         <summary class="meta" style="cursor:pointer">👥 誰用哪一版（點開才顯示；只顯示座號）</summary>
         <div class="es-who-body meta" style="margin-top:6px"></div>
       </details>
-    </div>`;
+      </div>
+    </details>`;
 
   // ── 作文分析 ──
   const kpiTile = (label, val, sub, warn) => `<div style="background:#fafafa;border-radius:8px;padding:6px 10px">
@@ -163,7 +177,7 @@
       const pw = body.querySelector(".es-pw").value.trim(); if (!pw) return;
       const r2 = await window.TeacherDash.unlock("data/essay-tiers.json", pw).catch(() => ({ need: true }));
       if (!r2.data) { body.querySelector(".es-pw").value = ""; body.querySelector(".es-pw").placeholder = "口令不正確"; return; }
-      tiersP = Promise.resolve(r2); tiersData = r2.data; applyAll(root);
+      tiersP = Promise.resolve(r2); tiersData = r2.data; applyAll(root); window.EssaySheets._rerender?.(); // 出現「狀態」篩選
     };
     body.querySelector(".es-pw-btn").onclick = go;
     body.querySelector(".es-pw").onkeydown = e => { if (e.key === "Enter") go(); };
@@ -181,18 +195,118 @@
     if (det.classList.contains("es-who")) fillTiers(box, tiersData.tiers?.[box.dataset.id]);
   }
 
+  // ── 收合＋搜尋排序 ──
+  const CSS = `
+    #essay-body .es-bar{position:sticky;top:0;z-index:3;background:var(--card,#fff);padding:8px 0;border-bottom:1px solid #eee;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    #essay-body .es-bar input{flex:1 1 220px;min-width:0;padding:6px 10px;border:1px solid #ccc;border-radius:8px;font-size:1em}
+    #essay-body .es-bar select,#essay-body .es-btn{padding:6px 8px;border:1px solid #ccc;border-radius:8px;background:#fff;font-size:.92em;cursor:pointer;color:inherit}
+    #essay-body .es-chips{display:flex;flex-wrap:wrap;gap:6px;width:100%;align-items:center;font-size:.85em}
+    #essay-body .es-chip{border:1px solid #d0d5db;background:#fff;border-radius:99px;padding:1px 10px;cursor:pointer;color:inherit;font-size:1em}
+    #essay-body .es-chip[aria-pressed=true]{background:#333;color:#fff;border-color:#333}
+    #essay-body .es-count{margin-left:auto}
+    #essay-body details.es-sheet{border:1px solid #eee;border-radius:10px;margin-top:8px}
+    #essay-body details.es-sheet>summary{list-style:none;cursor:pointer;padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    #essay-body details.es-sheet>summary::-webkit-details-marker{display:none}
+    #essay-body details.es-sheet[open]>summary{border-bottom:1px solid #eee}
+    #essay-body .es-chev{color:#999;transition:transform .15s;display:inline-block}
+    #essay-body details.es-sheet[open] .es-chev{transform:rotate(90deg)}
+    #essay-body .es-lesson{background:#333;color:#fff;border-radius:6px;padding:0 8px;font-size:.9em;white-space:nowrap}
+    #essay-body .es-next{background:#fff3bf;color:#b35c00;border-radius:99px;padding:1px 8px;font-size:.82em;white-space:nowrap}
+    #essay-body .es-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.92em}
+    #essay-body .es-quick{display:flex;gap:4px}
+    #essay-body .es-quick a{font-size:.78em;border-radius:6px;padding:0 6px;color:#fff;text-decoration:none}
+    #essay-body .es-date{font-size:.85em;color:#888;white-space:nowrap}
+    #essay-body .es-body{padding:10px 12px}
+    #essay-body .es-grp{margin:14px 0 0;font-size:.95em;color:#555;border-left:4px solid #999;padding-left:8px}
+    #essay-body mark{background:#ffe066;padding:0}
+    @media (max-width:600px){#essay-body .es-right{margin-left:0;width:100%}#essay-body .es-quick{display:none}}`;
+
+  const KEY = "essaySheetsUI";
+  const ui = { q: "", sort: "dateAsc", st: "全部", genre: "全部", open: null };
+  try { Object.assign(ui, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { /* 用預設 */ }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ sort: ui.sort, st: ui.st, genre: ui.genre, open: ui.open })); } catch { /* 略過 */ } };
+  ui.q = ""; // 搜尋字不記
+  const genreMain = g => String(g || "").replace(/（.*$/, "");
+  const graded = s => !!tiersData?.tiers?.[s.id]?.analysis;
+  const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  const byDate = (a, b) => String(a.date).localeCompare(String(b.date)) || lessonNo(a) - lessonNo(b) || String(a.topic).localeCompare(String(b.topic), "zh-Hant");
+  const SORTERS = {
+    dateAsc: byDate,
+    dateDesc: (a, b) => -byDate(a, b),
+    pending: (a, b) => (graded(a) - graded(b)) || byDate(a, b),
+    genre: (a, b) => String(a.genre).localeCompare(String(b.genre), "zh-Hant") || byDate(a, b),
+  };
+
+  function chips(sheets) {
+    const c = (g, v) => `<button type="button" class="es-chip" data-g="${g}" data-v="${esc(v)}" aria-pressed="${ui[g] === v}">${esc(v)}</button>`;
+    const genres = ["全部", ...new Set(sheets.map(s => genreMain(s.genre)).filter(Boolean))];
+    return (tiersData ? `<span class="meta">狀態</span>${["全部", "尚未批改", "已批改"].map(v => c("st", v)).join("")}<span style="width:6px"></span>` : "")
+      + `<span class="meta">文體</span>${genres.map(v => c("genre", v)).join("")}<span class="meta es-count"></span>`;
+  }
+
+  function render(el, sheets) {
+    const q = ui.q.trim();
+    const hl = text => { const t = esc(text); if (!q) return t; const e = esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); return t.replace(new RegExp(e, "g"), m => `<mark>${m}</mark>`); };
+    const list = sheets.filter(s =>
+      (!q || [s.lesson, s.topic, s.genre].join(" ").includes(q)) &&
+      (!tiersData || ui.st === "全部" || (ui.st === "已批改") === graded(s)) &&
+      (ui.genre === "全部" || genreMain(s.genre) === ui.genre)).sort(SORTERS[ui.sort] || byDate);
+    const td = today();
+    const next = [...sheets].filter(s => s.date >= td).sort(byDate)[0];
+    const openSet = new Set(q ? list.map(s => s.id) : (ui.open ?? (next ? [next.id] : [])));
+    let html = "", lastG = null;
+    for (const s of list) {
+      if (ui.sort === "genre" && s.genre !== lastG) { html += `<h3 class="es-grp">${esc(s.genre)}</h3>`; lastG = s.genre; }
+      html += card(s, openSet.has(s.id), next && s.id === next.id, hl);
+    }
+    const box = el.querySelector(".es-list");
+    box.innerHTML = html || `<p class="empty-hint">找不到符合的說明單。</p>`;
+    el.querySelector(".es-chips").innerHTML = chips(sheets);
+    el.querySelector(".es-count").textContent = `顯示 ${list.length}／${sheets.length} 篇`;
+    box.querySelectorAll("details.es-sheet").forEach(d => d.addEventListener("toggle", () => {
+      if (ui.q.trim()) return;
+      ui.open = [...box.querySelectorAll("details.es-sheet[open]")].map(x => x.dataset.id); save();
+    }));
+    box.querySelectorAll(".es-quick a").forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+    box.querySelectorAll(".es-ana, .es-who").forEach(det =>
+      det.addEventListener("toggle", () => { if (det.open) onOpen(det, box); }));
+    if (tiersData) applyAll(box);
+  }
+
   window.EssaySheets = {
     async mount() {
       const el = document.getElementById("essay-body");
       if (!el) return;
       let sheets = [];
       try { sheets = (await App.fetchJSON("data/essay-sheets.json")).sheets || []; } catch { /* 下面顯示空 */ }
-      sheets.sort((a, b) => lessonNo(a) - lessonNo(b) || String(a.name).localeCompare(String(b.name)));
-      el.innerHTML = sheets.length ? sheets.map(card).join("") : `<p class="empty-hint">還沒有已上線的作文說明單。</p>`;
-      el.querySelectorAll(".es-ana, .es-who").forEach(det =>
-        det.addEventListener("toggle", () => { if (det.open) onOpen(det, el); }));
-      // 已登入就自動解開，卡片上方直接顯示全班彙總（不含座號）
-      if (sheets.length && (await tryAuto()) === "ok") applyAll(el);
+      if (!sheets.length) { el.innerHTML = `<p class="empty-hint">還沒有已上線的作文說明單。</p>`; return; }
+      if (!SORTERS[ui.sort]) ui.sort = "dateAsc";
+      el.innerHTML = `<style>${CSS}</style>
+        <div class="es-bar">
+          <input type="search" class="es-q" placeholder="🔍 搜尋題目、課次、文體（例：海洋、第十、書信）" aria-label="搜尋作文說明單">
+          <select class="es-sort" aria-label="排序">
+            <option value="dateAsc">說明日期：舊→新</option><option value="dateDesc">說明日期：新→舊</option>
+            <option value="pending">待批改優先</option><option value="genre">依文體分組</option>
+          </select>
+          <button type="button" class="es-btn" data-act="open">全部展開</button><button type="button" class="es-btn" data-act="close">全部收合</button>
+          <div class="es-chips"></div>
+        </div>
+        <div class="es-list"></div>`;
+      const qEl = el.querySelector(".es-q"), sEl = el.querySelector(".es-sort");
+      sEl.value = ui.sort;
+      qEl.addEventListener("input", () => { ui.q = qEl.value; render(el, sheets); });
+      sEl.addEventListener("change", () => { ui.sort = sEl.value; ui.open = null; save(); render(el, sheets); });
+      el.querySelector(".es-chips").addEventListener("click", e => {
+        const b = e.target.closest(".es-chip"); if (!b) return;
+        ui[b.dataset.g] = b.dataset.v; save(); render(el, sheets);
+      });
+      el.querySelectorAll(".es-btn").forEach(b => b.addEventListener("click", () => {
+        ui.open = b.dataset.act === "open" ? sheets.map(s => s.id) : []; save(); render(el, sheets);
+      }));
+      render(el, sheets);
+      // 已登入就自動解開：狀態、彙總填好，並出現「狀態」篩選
+      if ((await tryAuto()) === "ok") render(el, sheets);
+      window.EssaySheets._rerender = () => render(el, sheets);
     },
   };
 })();

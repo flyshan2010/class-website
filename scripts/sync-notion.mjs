@@ -1277,8 +1277,16 @@ async function syncEssaySheets() {
     .sort((a, b) => String(b["日期"]?.start || "").localeCompare(String(a["日期"]?.start || "")) || a["名稱"].localeCompare(b["名稱"]));
   // 題目代號＝完整 Notion id（2026-11-09 修：只取前 12 碼時，同時段建立的列前綴相同 → 第八、九、十課撞號，分層名單互蓋）
   const id = r => r._id.replace(/-/g, "");
-  const sheets = rows.map(r => ({ id: id(r), name: r["名稱"], grade: r["年段"] || "", lesson: r["課次"] || "",
-    topic: r["題目"] || "", genre: r["文體"] || "", folder: r["教材庫資料夾"], file: r["檔名"], date: r["日期"]?.start || "" }));
+  // 作文日期（老師 2026-11-11）：週四說明、週五當作業，跟課程進度走——教材庫資料夾的「國L○-4」單元在
+  // 「📅 每日課程進度」排到的第一天＝說明日（date）、最後一天＝作業日（hw）。對不到單元（如暑假作文）就用 Notion「日期」。
+  const planDates = await unitDatesFromPlan();
+  const sheets = rows.map(r => {
+    const code = (String(r["教材庫資料夾"]).match(/國L\d+-\d+/) || [])[0];
+    const d = code && planDates.get(code);
+    return { id: id(r), name: r["名稱"], grade: r["年段"] || "", lesson: r["課次"] || "",
+      topic: r["題目"] || "", genre: r["文體"] || "", folder: r["教材庫資料夾"], file: r["檔名"],
+      date: d?.first || r["日期"]?.start || "", hw: d && d.last !== d.first ? d.last : "" };
+  });
   await writeFile(path.join(DATA_DIR, "essay-sheets.json"), JSON.stringify({ generatedAt: new Date().toISOString(), sheets }, null, 1) + "\n", "utf8");
   const PW = String(process.env.TEACHER_DASH_PW || "").trim();
   if (!PW) { console.warn("⚠️ essay-tiers：未設定 TEACHER_DASH_PW，略過分層名單加密檔"); console.log(`✅ essay-sheets.json（${sheets.length} 題）`); return; }
