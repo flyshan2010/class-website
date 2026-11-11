@@ -34,7 +34,10 @@ jobs:
         with:
           node-version: 20
 
+      # apt 映像站偶爾卡住（2026-11-11 兩輪各卡 13 分鐘以上）：限時 4 分鐘、失敗照跑——沒裝到只會讓本輪 HEIC 照片略過，下一輪再補
       - name: 安裝 HEIC 轉檔工具（iPhone 照片轉 JPG）
+        timeout-minutes: 4
+        continue-on-error: true
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq libheif-examples libheif-plugin-libde265 imagemagick > /dev/null
