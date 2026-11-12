@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-11-12T03:42:01.951Z",
+  "fetchedAt": "2026-11-12T10:13:06.557Z",
   "items": [
+    {
+      "date": "2026-11-12",
+      "title": "本市消防局防災教育館及消防史料館整建開幕，歡迎踴躍上網預約參觀",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1138&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
+    {
+      "date": "2026-11-12",
+      "title": "有關民眾反映疑似不肖人士欲假借本市學生糾紛之由行詐騙行為",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1137&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-11-12",
       "title": "「影響·新劇場」劇團辦理執行「《海喲海喲來冒險》兒童劇場」之「公益校園 推廣場」,檢附活動簡章",
@@ -48,18 +60,6 @@
       "title": "內政部移民署「第13屆新住民及子女築夢計畫」，請符合資格之新住民家庭踴躍報名",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1125&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-11-10",
-      "title": "財團法人福智文教基金會辦理「2027第35屆教師生命成長營」",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1124&type=news&from_op=school_department_show",
-      "dept": "輔導室"
-    },
-    {
-      "date": "2026-11-09",
-      "title": "轉知財團法人均一平台教育基金會辦理「2026星空探險隊」活動，請鼓勵師生踴躍參與。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1121&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
