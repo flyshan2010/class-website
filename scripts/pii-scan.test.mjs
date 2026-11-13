@@ -78,16 +78,16 @@ test("每位學生產生姓名＋查詢碼；兩個字的姓名不當比對字�
 
 test(".json 出現名為「查詢碼」的欄位就擋，不看值；其他副檔名不套", () => {
   const buf = Buffer.from('{"查詢碼" : ""}');
-  assert.deepEqual(scanFile("data/x.json", buf, N), { block: ["data/x.json:1：出現名為「查詢碼」的欄位"], weak: 0 });
-  assert.deepEqual(scanFile("docs/x.md", buf, N), { block: [], weak: 0 });
+  assert.deepEqual(scanFile("data/x.json", buf, N), { block: ["data/x.json:1：出現名為「查詢碼」的欄位"], weak: 0, format: 0 });
+  assert.deepEqual(scanFile("docs/x.md", buf, N), { block: [], weak: 0, format: 0 });
 });
 
 test("二進位檔（前 8000 位元組含 NUL）不掃內容，但檔名照比對", () => {
   const bin = Buffer.concat([Buffer.from([0xff, 0xd8, 0x00]), Buffer.from(" 查詢碼 7391 測試甲")]);
   assert.equal(isBinary(bin), true);
-  assert.deepEqual(scanFile("data/uploads/a.jpg", bin, N), { block: [], weak: 0 });
+  assert.deepEqual(scanFile("data/uploads/a.jpg", bin, N), { block: [], weak: 0, format: 0 });
   assert.deepEqual(scanFile("data/uploads/測試甲.jpg", bin, N).block, ["檔名含座號 1 的姓名"]);
-  assert.deepEqual(scanFile("data/uploads/7391.jpg", bin, N), { block: [], weak: 1 });
+  assert.deepEqual(scanFile("data/uploads/7391.jpg", bin, N), { block: [], weak: 1, format: 0 });
 });
 
 test("命中的說明帶行號與原因，不含姓名與查詢碼；弱命中只有數量", () => {
@@ -95,6 +95,7 @@ test("命中的說明帶行號與原因，不含姓名與查詢碼；弱命中�
   assert.deepEqual(r, {
     block: ["data/x.json:1：座號 1 的姓名", "data/x.json:2：座號 2 的查詢碼（附近有「查詢碼／密碼」字樣）"],
     weak: 1,
+    format: 0,
   });
   assert.ok(!/測試甲|8264|5027/.test(JSON.stringify(r)));
 });
@@ -126,7 +127,7 @@ test("姓名寫成 JSON 跳脫、網址編碼、HTML 實體也要掃得到", () 
   };
   for (const [label, text] of Object.entries(forms)) {
     assert.ok(!text.includes(name), label);
-    assert.deepEqual(scanFile("data/x.md", Buffer.from(text), N), { block: ["data/x.md:1：座號 1 的姓名"], weak: 0 }, label);
+    assert.deepEqual(scanFile("data/x.md", Buffer.from(text), N), { block: ["data/x.md:1：座號 1 的姓名"], weak: 0, format: 0 }, label);
   }
   assert.deepEqual(variants("今天教室很熱 100% 完成"), ["今天教室很熱 100% 完成"]);
   // 一段網址編碼裡夾了壞位元組，前面的姓名照樣解得出來
@@ -137,9 +138,14 @@ test("姓名寫成 JSON 跳脫、網址編碼、HTML 實體也要掃得到", () 
   assert.equal(scanFile("data/x.md", Buffer.from("總共 7391 元 %E5%85%83"), N).weak, 1);
 });
 
-test("手機號碼、身分證字號：說明不帶座號；檢查碼與正規化", () => {
+test("手機號碼、身分證字號：只通報不擋（只給數量）；檢查碼與正規化", () => {
   assert.deepEqual(scanFile("data/x.md", Buffer.from("電話 " + MOB + "\n字號 " + ID_GOOD), N),
-    { block: ["data/x.md:1：手機號碼格式", "data/x.md:2：身分證字號格式"], weak: 0 });
+    { block: [], weak: 0, format: 2 });
+  // 同一檔同時有姓名：姓名照擋，格式另外計數；檔名裡的也算
+  assert.deepEqual(scanFile("data/" + MOB + ".md", Buffer.from("測試甲 " + MOB), N),
+    { block: ["data/" + MOB + ".md:1：座號 1 的姓名"], weak: 0, format: 2 });
+  // 編碼寫法反解後是同一個號碼，不重複計數
+  assert.equal(scanFile("data/x.md", Buffer.from("電話 " + MOB + " %E5%85%83"), N).format, 1);
   assert.equal(idValid("A123456789"), true);
   assert.equal(idValid(ID_GOOD), true);
   assert.equal(idValid("B123456781"), false);

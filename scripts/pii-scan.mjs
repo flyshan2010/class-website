@@ -20,7 +20,9 @@
  *       ② 連字號另一邊不是半形英數字也不是連字號（小明-7391、7391-甲、全形數字、行首行尾）照算，一般分級
  *   ・.json 檔出現名為「查詢碼」的欄位就擋，不看值
  *   ・手機號碼格式（09xx-xxx-xxx、連寫、空白分隔、+886 9xx…）與身分證字號格式（英文字母＋1/2/8/9＋8 碼且檢查碼正確）
- *     出現就擋，不必對得上名冊（2026-11-14）。公認的範例值不擋（SAMPLE_OK）；前後緊鄰英數字、底線、連字號的不算
+ *     不必對得上名冊。公認的範例值不算（SAMPLE_OK）；前後緊鄰英數字、底線、連字號的不算。
+ *     **這邊只通報不擋**（老師 2026-11-14 裁定：無人看管的同步不因一則含聯絡手機的公告就整次中止）：
+ *     只印筆數（Actions 的 warning 註記），明細由每週系統健檢在本機用 pii-gate.py 看——本機那支是擋
  *   ・除了原文，另外把三種編碼寫法反解後各掃一份：\uXXXX（JSON 跳脫）、%XX（網址編碼）、&#NNN;／&#xHH;（HTML 實體）
  *   ・二進位檔（前 8000 位元組含 NUL，與 git 同一判法）只比對檔名
  *   ・文字檔一律當 UTF-8：這裡只掃同步腳本自己產的 JSON 與 Markdown。
@@ -178,22 +180,27 @@ const describe = h => h.kind === "欄位" ? "出現名為「查詢碼」的欄�
   : h.seat === undefined ? h.kind // 手機號碼、身分證字號格式：不對名冊，沒有座號
   : `座號 ${h.seat} 的${h.kind}${h.why ? `（${h.why}）` : ""}`;
 
-/** 掃一個檔（路徑＋內容），回傳 { block: 可直接印出的說明（不含姓名與查詢碼）, weak: 弱命中數量 }。 */
+const isFormat = h => h.kind === KIND_MOBILE || h.kind === KIND_ID;
+
+/** 掃一個檔（路徑＋內容），回傳 { block: 可直接印出的說明（不含姓名與查詢碼）, weak: 弱命中數量, format: 手機與證號格式的數量（只通報不擋） }。 */
 export function scanFile(file, buf, nd) {
   const inName = classify(file, nd);
-  const out = inName.block.map(h => `檔名含${describe(h)}`);
+  const out = inName.block.filter(h => !isFormat(h)).map(h => `檔名含${describe(h)}`);
   let weak = inName.weak;
+  let format = inName.block.filter(isFormat).length;
   if (!isBinary(buf)) {
     // 原文與反解後的各版本都掃；弱命中取最多的那一份（各份是同一批數字，不重複加）
-    let w = 0;
+    let w = 0, f = 0;
     for (const text of variants(buf.toString("utf8"))) {
       const r = classify(text, nd, file.toLowerCase().endsWith(".json"));
       w = Math.max(w, r.weak);
-      for (const h of r.block) out.push(`${file}:${text.slice(0, h.pos).split("\n").length}：${describe(h)}`);
+      f = Math.max(f, r.block.filter(isFormat).length);
+      for (const h of r.block) if (!isFormat(h)) out.push(`${file}:${text.slice(0, h.pos).split("\n").length}：${describe(h)}`);
     }
     weak += w;
+    format += f;
   }
-  return { block: [...new Set(out)], weak }; // 同一行同一項只報一次
+  return { block: [...new Set(out)], weak, format }; // 同一行同一項只報一次
 }
 
 async function fetchRoster(token) {
@@ -234,10 +241,10 @@ function changedFiles() {
   return [...new Set(out.toString("utf8").split("\0").filter(Boolean))];
 }
 
-/** 掃這次要提交的每個檔，回傳 { scanned, binary, hits, weak }。 */
+/** 掃這次要提交的每個檔，回傳 { scanned, binary, hits, weak, format }。 */
 export async function scanChanged(needles) {
   const hits = [];
-  let scanned = 0, binary = 0, weak = 0;
+  let scanned = 0, binary = 0, weak = 0, format = 0;
   for (const f of changedFiles()) {
     let buf;
     try { buf = await readFile(path.join(ROOT, f)); } catch { continue; } // 這次被刪掉的檔，沒有內容可掃
@@ -246,8 +253,9 @@ export async function scanChanged(needles) {
     const r = scanFile(f, buf, needles);
     hits.push(...r.block);
     weak += r.weak;
+    format += r.format;
   }
-  return { scanned, binary, hits, weak };
+  return { scanned, binary, hits, weak, format };
 }
 
 async function main() {
@@ -260,7 +268,9 @@ async function main() {
     console.error(`⛔ pii-scan：讀不到名冊（${e.message}），無法確認有沒有個資，這次不提交。`);
     process.exit(2);
   }
-  const { scanned, binary, hits, weak } = await scanChanged(needles);
+  const { scanned, binary, hits, weak, format } = await scanChanged(needles);
+  // 手機、證號格式只通報不擋；紀錄公開，只印筆數（::warning:: 會顯示在該次執行的摘要頁）
+  if (format) console.log(`::warning::pii-scan：這次要提交的檔案裡有手機號碼或身分證字號格式 ${format} 處（只通報不擋；明細請在本機 class-website/ 跑 pii-gate.py 看）`);
   // 弱命中只印數量：紀錄公開，印檔名行號等於公告哪個數字是查詢碼
   const weakNote = weak ? `查詢碼弱命中 ${weak} 處（孤零零的同值數字，不擋；明細由每週系統健檢在本機看）` : "查詢碼弱命中 0 處";
   if (hits.length) {
