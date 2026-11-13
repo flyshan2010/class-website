@@ -19,9 +19,13 @@
  *          那個數字是同一位學生的座號＝強命中 (b)，不是就照一般的查詢碼分級（成名單才擋）
  *       ② 連字號另一邊不是半形英數字也不是連字號（小明-7391、7391-甲、全形數字、行首行尾）照算，一般分級
  *   ・.json 檔出現名為「查詢碼」的欄位就擋，不看值
+ *   ・手機號碼格式（09xx-xxx-xxx、連寫、空白分隔、+886 9xx…）與身分證字號格式（英文字母＋1/2/8/9＋8 碼且檢查碼正確）
+ *     出現就擋，不必對得上名冊（2026-11-14）。公認的範例值不擋（SAMPLE_OK）；前後緊鄰英數字、底線、連字號的不算
+ *   ・除了原文，另外把三種編碼寫法反解後各掃一份：\uXXXX（JSON 跳脫）、%XX（網址編碼）、&#NNN;／&#xHH;（HTML 實體）
  *   ・二進位檔（前 8000 位元組含 NUL，與 git 同一判法）只比對檔名
  *   ・文字檔一律當 UTF-8：這裡只掃同步腳本自己產的 JSON 與 Markdown。
- *     本機 pii-gate.py 另外會解 UTF-16 與 Big5（老師手動放進 repo 的 CSV），這邊沒有那一段
+ *     本機 pii-gate.py 另外會解 UTF-16 與 Big5（老師手動放進 repo 的 CSV）、解開 Office 檔掃 XML，這邊沒有那兩段
+ *   ・已知限制（擋不到）：只寫名不寫姓、兩個字的姓名單獨出現、姓名字間夾空白或符號；市話與地址沒有固定格式，不比對
  *
  * Actions 紀錄是公開的：強命中只印檔名、行號、座號，不印姓名與查詢碼；
  * 弱命中的資料已經上站，連檔名、行號、座號都不印（印了等於公告哪個數字是查詢碼）。
@@ -45,6 +49,43 @@ const FIELD_RE = /"查詢碼"\s*:/g; // .json 裡名為「查詢碼」的欄位
 const WHY_KEYWORD = "附近有「查詢碼／密碼」字樣";
 const WHY_OWNER = "緊鄰同一位學生的姓名或座號";
 const WHY_LIST = `一小段內有 ${LIST_MIN} 個以上不同學生的查詢碼`;
+
+// 手機號碼、身分證字號格式（不必對得上名冊）。前後緊鄰英數字、底線、連字號的不算（雜湊、編號的片段）
+const MOBILE_RE = /(?<![0-9A-Za-z_-])(?:09|\+886[- ]?9)[0-9]{2}[- ]?[0-9]{3}[- ]?[0-9]{3}(?![0-9A-Za-z_-])/g;
+const ID_RE = /(?<![0-9A-Za-z_-])[A-Z][1289][0-9]{8}(?![0-9A-Za-z_-])/g;
+const ID_LETTER = [10, 11, 12, 13, 14, 15, 16, 17, 34, 18, 19, 20, 21, 22, 35, 23, 24, 25, 26, 27, 28, 29, 32, 30, 31, 33];
+// 公認的範例值（教材、規格書、測試常用），不擋；手機先去掉符號、+886 換成 0 再比
+const SAMPLE_OK = new Set(["0912345678", "0900123456", "0900000000", "A123456789"]);
+const KIND_MOBILE = "手機號碼格式";
+const KIND_ID = "身分證字號格式";
+
+export function mobileKey(s) {
+  const d = s.replace(/[^0-9]/g, "");
+  return d.startsWith("886") ? "0" + d.slice(3) : d;
+}
+
+/** 身分證／新式居留證字號的檢查碼。 */
+export function idValid(s) {
+  const n = ID_LETTER[s.charCodeAt(0) - 65];
+  const digits = [Math.floor(n / 10), n % 10, ...[...s.slice(1)].map(Number)];
+  return digits.reduce((sum, d, i) => sum + d * [1, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1][i], 0) % 10 === 0;
+}
+
+/** 原文＋三種編碼寫法反解後的版本（\uXXXX、%XX、&#NNN;）；沒有那種寫法或反解後沒變就不多掃。 */
+export function variants(text) {
+  const out = [text];
+  if (text.includes("\\u")) out.push(text.replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16))));
+  if (/%[0-9A-Fa-f]{2}/.test(text)) {
+    // 不用 decodeURIComponent：一段裡有一個壞位元組就整段丟錯，姓名會漏
+    out.push(text.replace(/(?:%[0-9A-Fa-f]{2})+/g, s =>
+      new TextDecoder().decode(Uint8Array.from(s.slice(1).split("%"), h => parseInt(h, 16)))));
+  }
+  if (text.includes("&#")) {
+    out.push(text.replace(/&#(?:[xX]([0-9a-fA-F]{1,6})|([0-9]{1,7}));/g,
+      (_, h, d) => String.fromCodePoint(Math.min(h ? parseInt(h, 16) : Number(d), 0x10ffff))));
+  }
+  return [...new Set(out)];
+}
 
 const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -107,6 +148,8 @@ export function classify(text, nd, isJson = false) {
   for (const { name, seat } of nd.names) {
     for (let i = text.indexOf(name); i !== -1; i = text.indexOf(name, i + 1)) block.push({ pos: i, seat, kind: "姓名" });
   }
+  for (const m of text.matchAll(MOBILE_RE)) if (!SAMPLE_OK.has(mobileKey(m[0]))) block.push({ pos: m.index, kind: KIND_MOBILE });
+  for (const m of text.matchAll(ID_RE)) if (!SAMPLE_OK.has(m[0]) && idValid(m[0])) block.push({ pos: m.index, kind: KIND_ID });
   const occ = [...text.matchAll(nd.codeRe)].map(m => (
     { start: m.index + m[0].length - m[2].length, end: m.index + m[0].length, code: m[2], seats: [m[1], m[3]] }));
   const listed = new Set();
@@ -131,7 +174,9 @@ export function classify(text, nd, isJson = false) {
   return { block: block.sort((a, b) => a.pos - b.pos), weak };
 }
 
-const describe = h => h.kind === "欄位" ? "出現名為「查詢碼」的欄位" : `座號 ${h.seat} 的${h.kind}${h.why ? `（${h.why}）` : ""}`;
+const describe = h => h.kind === "欄位" ? "出現名為「查詢碼」的欄位"
+  : h.seat === undefined ? h.kind // 手機號碼、身分證字號格式：不對名冊，沒有座號
+  : `座號 ${h.seat} 的${h.kind}${h.why ? `（${h.why}）` : ""}`;
 
 /** 掃一個檔（路徑＋內容），回傳 { block: 可直接印出的說明（不含姓名與查詢碼）, weak: 弱命中數量 }。 */
 export function scanFile(file, buf, nd) {
@@ -139,10 +184,14 @@ export function scanFile(file, buf, nd) {
   const out = inName.block.map(h => `檔名含${describe(h)}`);
   let weak = inName.weak;
   if (!isBinary(buf)) {
-    const text = buf.toString("utf8");
-    const r = classify(text, nd, file.toLowerCase().endsWith(".json"));
-    weak += r.weak;
-    for (const h of r.block) out.push(`${file}:${text.slice(0, h.pos).split("\n").length}：${describe(h)}`);
+    // 原文與反解後的各版本都掃；弱命中取最多的那一份（各份是同一批數字，不重複加）
+    let w = 0;
+    for (const text of variants(buf.toString("utf8"))) {
+      const r = classify(text, nd, file.toLowerCase().endsWith(".json"));
+      w = Math.max(w, r.weak);
+      for (const h of r.block) out.push(`${file}:${text.slice(0, h.pos).split("\n").length}：${describe(h)}`);
+    }
+    weak += w;
   }
   return { block: [...new Set(out)], weak }; // 同一行同一項只報一次
 }

@@ -3,7 +3,7 @@
 // CASES 與 Project/Claude/dotclaude/scripts/test_pii_gate.py 的 CASES 是同一張表，改規則兩邊一起改。
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildNeedles, isBinary, classify, scanFile, NEAR, LIST_SPAN } from "./pii-scan.mjs";
+import { buildNeedles, isBinary, classify, scanFile, variants, idValid, mobileKey, NEAR, LIST_SPAN } from "./pii-scan.mjs";
 
 const ROWS = [
   { 座號: 1, 姓名: "測試甲", 查詢碼: "7391", 在學: true },
@@ -14,6 +14,10 @@ const ROWS = [
 ];
 const N = buildNeedles(ROWS);
 const pad = n => "。".repeat(n);
+
+// 手機、證號的測試值一律拆開寫：本檔自己也要過本機的推送前關卡（公認範例值 0912-345-678、A123456789 不擋，可以直接寫）
+const MOB = "09" + "87654321";
+const ID_GOOD = "B" + "123456780"; // 檢查碼正確的虛構字號
 
 // [說明, 文字, 要擋幾處, 弱命中幾處]
 const CASES = [
@@ -52,6 +56,12 @@ const CASES = [
   ["連字號：另一邊是英文字母或 3 位以上數字不算", "A1-7391 7391-1a abc-8264 8264-abc 001-5027 5027-001", 0, 0],
   ["連字號：日期、UUID、雜湊片段、查詢碼相連不算",
     "2026-10-7391 7391-10-05 10-05-7391 3f2a7391-8264-5027-6158-7391aaaa8264 abc-7391 7391-8264", 0, 0],
+  ["手機：加連字號", "家長電話 09" + "87-654-321", 1, 0],
+  ["手機：連寫、空白分隔、+886 開頭", MOB + "／09" + "87 654 321／+886" + "-987-654-321", 3, 0],
+  ["手機：公認範例號碼不擋", "0912-345-678、0900123456", 0, 0],
+  ["手機：緊鄰英數字或連字號、位數不對不算", "a" + MOB + " " + MOB + "0 x-" + MOB + " 0987-654-32", 0, 0],
+  ["身分證字號格式（檢查碼正確）就擋", "身分證 " + ID_GOOD, 1, 0],
+  ["身分證：檢查碼不對、公認範例、緊鄰英數字不算", "B123456781 A123456789 X" + ID_GOOD + " " + ID_GOOD + "9", 0, 0],
 ];
 assert.equal(4 + 96 + 4 + 96, LIST_SPAN); // 上面兩列的間距是照 LIST_SPAN 算的
 
@@ -101,4 +111,37 @@ test("名冊不對就丟錯（fail-closed）", () => {
   assert.equal(buildNeedles([ok, { 座號: 4, 姓名: "王戊", 查詢碼: "6158", 在學: true }]).count, 3);
   assert.equal(buildNeedles([ok, { 座號: "", 姓名: "轉出己", 查詢碼: "", 在學: false }]).count, 3); // 已轉出的不把關（姓名照樣比對）
   assert.throws(() => buildNeedles([{ 座號: 4, 姓名: "測試戊", 查詢碼: "12-4", 在學: true }]), /座號 4 的查詢碼不是純英數字/);
+});
+
+test("姓名寫成 JSON 跳脫、網址編碼、HTML 實體也要掃得到", () => {
+  const name = "測試甲";
+  const esc = [...name].map(c => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0")).join("");
+  const forms = {
+    "JSON 跳脫": `{"n":"${esc}"}`,
+    "JSON 跳脫（大寫）": `{"n":"${esc.toUpperCase().replaceAll("\\U", "\\u")}"}`,
+    "網址編碼": `[連結](https://example.com/${encodeURIComponent(name)})`,
+    "網址編碼（小寫）": encodeURIComponent(name).toLowerCase(),
+    "HTML 十進位實體": `<p>${[...name].map(c => `&#${c.charCodeAt(0)};`).join("")}</p>`,
+    "HTML 十六進位實體": [...name].map(c => `&#x${c.charCodeAt(0).toString(16).toUpperCase()};`).join(""),
+  };
+  for (const [label, text] of Object.entries(forms)) {
+    assert.ok(!text.includes(name), label);
+    assert.deepEqual(scanFile("data/x.md", Buffer.from(text), N), { block: ["data/x.md:1：座號 1 的姓名"], weak: 0 }, label);
+  }
+  assert.deepEqual(variants("今天教室很熱 100% 完成"), ["今天教室很熱 100% 完成"]);
+  // 一段網址編碼裡夾了壞位元組，前面的姓名照樣解得出來
+  assert.equal(scanFile("data/x.md", Buffer.from(encodeURIComponent(name) + "%FF"), N).block.length, 1);
+  // 編碼寫的欄位名也算
+  assert.deepEqual(scanFile("data/x.json", Buffer.from('{"\\u67e5\\u8a62\\u78bc":""}'), N).block, ["data/x.json:1：出現名為「查詢碼」的欄位"]);
+  // 反解後的各份是同一批數字，弱命中不重複加
+  assert.equal(scanFile("data/x.md", Buffer.from("總共 7391 元 %E5%85%83"), N).weak, 1);
+});
+
+test("手機號碼、身分證字號：說明不帶座號；檢查碼與正規化", () => {
+  assert.deepEqual(scanFile("data/x.md", Buffer.from("電話 " + MOB + "\n字號 " + ID_GOOD), N),
+    { block: ["data/x.md:1：手機號碼格式", "data/x.md:2：身分證字號格式"], weak: 0 });
+  assert.equal(idValid("A123456789"), true);
+  assert.equal(idValid(ID_GOOD), true);
+  assert.equal(idValid("B123456781"), false);
+  assert.equal(mobileKey("+886" + "-987 654-321"), MOB);
 });
