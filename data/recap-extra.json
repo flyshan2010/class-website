@@ -145,8 +145,8 @@
   },
   "economy": {
     "totals": {
-      "supply": 14961,
-      "txCount": 3288,
+      "supply": 14986,
+      "txCount": 3292,
       "spend": 8381
     },
     "weeks": [
@@ -264,7 +264,7 @@
         "week": 11,
         "label": "四上第11週(11/9-11/13)",
         "salary": 1178,
-        "reward": 1115,
+        "reward": 1140,
         "penalty": 270,
         "interest": 0,
         "spend": 810,
