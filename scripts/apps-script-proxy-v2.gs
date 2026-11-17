@@ -2613,14 +2613,18 @@ function soNorm_(s) { return String(s == null ? "" : s).toUpperCase().replace(/\
 function soPairs_(s) { const o = {}; soNorm_(s).split(",").forEach(function (x) { if (x) o[x.slice(0, -1)] = x.slice(-1); }); return o; }
 function soJudge_(ans, opt) {
   if (String(ans).indexOf(",") < 0) return soNorm_(ans) === soNorm_(opt);
-  const a = soPairs_(ans), o = soPairs_(opt);
-  return Object.keys(a).every(function (k) { return a[k] === o[k]; }) && Object.keys(o).length === Object.keys(a).length;
+  const a = soPairs_(ans), o = soPairs_(opt), ko = Object.keys(o);
+  if (ko.length === 1 && Object.keys(a).length > 1) return a[ko[0]] === o[ko[0]]; // 配合題一對一筆（前台一對一盞燈，P1 §9 第 4 項）
+  return Object.keys(a).every(function (k) { return a[k] === o[k]; }) && ko.length === Object.keys(a).length;
 }
-// 答錯時要發哪些盲點卡：選擇題＝選到的錯誤選項；配合題＝每個配錯的左項
+// 答錯時要發哪些盲點卡：選擇題＝選到的錯誤選項；配合題＝每個配錯的左項（只送一對時只看那一對）
 function soWrongBs_(ans, opt, ob) {
   let keys;
   if (String(ans).indexOf(",") < 0) keys = [soNorm_(opt)];
-  else { const a = soPairs_(ans), o = soPairs_(opt); keys = Object.keys(a).filter(function (k) { return a[k] !== o[k]; }); }
+  else {
+    const a = soPairs_(ans), o = soPairs_(opt), ko = Object.keys(o);
+    keys = (ko.length < Object.keys(a).length ? ko : Object.keys(a)).filter(function (k) { return a[k] !== o[k]; });
+  }
   const out = [];
   keys.forEach(function (k) { const b = ob[k]; if (b && out.indexOf(b) < 0) out.push(b); });
   return out;
@@ -2664,7 +2668,13 @@ function soFold_(cell, book, events, ak, me, today) {
       let light;
       if (nth === 1) {
         if (ok) light = slotLight({ first: true, hinted: hints > 0, fast: isFast(sec) }).light;
-        else { light = "dark"; const bs = soWrongBs_(ans, opt, ak[qid][1]); bs.forEach(function (b) { card(b, "t"); }); rr.pend[slot] = bs; }
+        else {
+          light = "dark";
+          // 一題最多發兩張卡（配合題逐對送，跨事件累計；與前台 cardsFor 同一套）
+          const got = (rr.qc = rr.qc || {})[qid] = rr.qc[qid] || [];
+          const bs = soWrongBs_(ans, opt, ak[qid][1]).filter(function (b) { if (got.indexOf(b) >= 0) return true; if (got.length >= 2) return false; got.push(b); return true; });
+          bs.forEach(function (b) { card(b, "t"); }); rr.pend[slot] = bs;
+        }
       } else {
         light = ok ? "silver" : "dark";
         if (ok) (rr.pend[slot] || []).forEach(function (b) { card(b, "d"); });

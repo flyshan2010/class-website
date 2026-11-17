@@ -511,6 +511,33 @@ test("暫停開關、鎖拿不到、版本號", () => {
   assert.equal(w.login(3).paused, true);
 });
 
+test("配合題：一對一筆事件逐對判；配錯的對發卡、一題最多兩張；再挑戰只算原本錯的對", () => {
+  const w = makeWorld(), c = w.ctx;
+  // 判題：整題（卡冊送整串）與單一對（闖關一對一筆）
+  assert.equal(c.soJudge_("1B,2D,3A,4C", "1B,2D,3A,4C"), true);
+  assert.equal(c.soJudge_("1B,2D,3A,4C", "1B,2D,3C,4A"), false);
+  assert.equal(c.soJudge_("1B,2D,3A,4C", "2D"), true);
+  assert.equal(c.soJudge_("1B,2D,3A,4C", "3C"), false);
+  const ob = { 1: "1-1-B1", 2: "1-1-B2", 3: "1-1-B3", 4: "1-1-B4" };
+  assert.deepEqual([...c.soWrongBs_("1B,2D,3A,4C", "3C", ob)], ["1-1-B3"]);
+  assert.deepEqual([...c.soWrongBs_("1B,2D,3A,4C", "2D", ob)], []);
+  assert.deepEqual([...c.soWrongBs_("1B,2D,3A,4C", "1A,2B,3A,4C", ob)], ["1-1-B1", "1-1-B2"]);
+  // 折算：配合題占 1–4 格，第 1、3、4 對配錯 → 只發兩張；再挑戰第 1、3、4 對換另一題，答對 1、3
+  const ak = { M1: ["1B,2D,3A,4C", ob], M2: ["1C,2A,3D,4B", ob] };
+  for (let s = 5; s <= 7; s++) ak["X" + s] = ["A", {}];
+  const cell = { save: c.encodeSave(c.decodeSave(null)), ds: {}, ver: 0 };
+  const me = { today: { done: [] }, streak: 0, last: "" };
+  const ev = [["a", "1-1", 1, "M1", "1A", 0, 9, 1], ["a", "1-1", 2, "M1", "2D", 0, 9, 1], ["a", "1-1", 3, "M1", "3B", 0, 9, 1], ["a", "1-1", 4, "M1", "4D", 0, 9, 1],
+    ["a", "1-1", 1, "M2", "1C", 0, 9, 2], ["a", "1-1", 3, "M2", "3D", 0, 9, 2], ["a", "1-1", 4, "M2", "4A", 0, 9, 2]];
+  for (let s = 5; s <= 7; s++) ev.push(["a", "1-1", s, "X" + s, "A", 0, 9, 1]);
+  c.soFold_(cell, "m-h-4a", ev, ak, me, "2026-11-20");
+  assert.equal(cell.rr.L, "sgsxggg"); // 第 2 對第一次就對＝金；1、3 再挑戰對＝銀；4 再挑戰又錯＝不亮
+  const m = decodeSave(cell.save);
+  assert.deepEqual(Object.keys(m.cd).sort(), ["1-1-B1", "1-1-B3"]); // 只發兩張（第 4 對的卡被上限擋掉）
+  assert.deepEqual(m.cd["1-1-B1"][0], "d"); // 再挑戰對＝已克服
+  assert.deepEqual(m.cd["1-1-B3"][0], "d");
+});
+
 test("代理的 rules 區塊＝rules.mjs 正本（不准手改）", () => {
   const { current, block } = build();
   assert.equal(current, block);
