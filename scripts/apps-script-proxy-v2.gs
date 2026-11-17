@@ -1,6 +1,15 @@
 /**
- * 班網教師專區代理 v2.20（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選
+ * 班網教師專區代理 v2.21（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.21 升級步驟（2026-11-17，約 3 分鐘）──
+ *   全選覆蓋 → 上方函式選單選「authorize」→ 執行 → 跳出授權視窗按「允許」（這版多一項「管理觸發器」權限，落地要用）
+ *   → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。
+ *   壓力測試期間另在指令碼屬性加 SO_TEST_KEY（AI 在對話裡給一次）；測完刪掉。SO_SECRET 代理自己產生，不必設。
+ *   v2.21 新增（SPEC_自學星圖_P2前台與線上紀錄.md §5–§6，不驗教師口令）：so_login／so_pull／so_push／so_rank／so_test_clear，
+ *   暫存區（指令碼屬性 so:*）＋時間觸發器 soFlush 每分鐘落地到 Notion「💾 自學進度」「🛰️ 自學紀錄」。
+ *   觸發器沒工作 10 分鐘或過 17:00 全部落地完會自己刪掉，下次有學生上傳再自己建。要暫停：指令碼屬性 SO_PAUSED＝1。
+ *   ⚠️ 檔尾「rules.mjs（自動產生）」區塊由 scripts/build-so-proxy.mjs 產生，不要手改。
  *
  * ── v2.20 升級步驟（2026-11-08，約 2 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必新增指令碼屬性。
@@ -153,7 +162,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.20"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.21"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -186,6 +195,9 @@ function doPost(e) {
     if (body.action === "proposal_get") return out_(proposalGet_(props, body));
     if (body.action === "proposal_save") return out_(proposalWrite_(props, body, false));
     if (body.action === "proposal_submit") return out_(proposalWrite_(props, body, true));
+
+    // 🌌 自學星圖（v2.21）：只驗登入憑證，不驗教師口令
+    if (String(body.action || "").indexOf("so_") === 0) return out_(soRoute_(props, body));
 
     // 檢核台同步（v2.11）：只驗裝置憑證，不驗教師口令（投影頁沒有口令可用）
     if (body.action === "state_get") return out_(stateGet_(props, body));
@@ -2097,6 +2109,7 @@ function out_(obj) {
 
 // 換權限後在編輯器手動執行一次，完成授權（之後不會再用到）
 function authorize() {
+  ScriptApp.getProjectTriggers(); // v2.21：讓授權視窗一起要「管理觸發器」權限（自學星圖落地用）
   Logger.log("授權完成");
 }
 
@@ -2315,3 +2328,942 @@ function ybPolish_(props, body) {
     lock.releaseLock();
   }
 }
+
+// =====================================================================================
+// ---------- 🌌 自學星圖 so_*（v2.21，SPEC_自學星圖_P2前台與線上紀錄.md §5–§6）----------
+// 學生載具 → so_push 寫進「暫存區」（指令碼屬性）立刻回覆；時間觸發器 soFlush 每分鐘把暫存區落地到 Notion。
+// 學生動作不驗教師口令，改驗登入憑證（so_login 用座號＋查詢碼換）。查詢碼本身不存在載具、也不存在暫存區（只存指紋）。
+// 燈色、星等、秘笈卡、排行一律用下方「rules.mjs（自動產生）」區塊的同一支函式（U83），不在這裡重寫規則。
+// 退路：指令碼屬性 SO_PAUSED＝1 → 所有 so_* 回「暫停中」，前台退回試玩模式。
+// =====================================================================================
+const SO_SITE = "https://flyshan2010.github.io/class-website/data/";
+const DS_SO_BOOK = "41ab1f9d-7e45-8171-bb0d-000be3c15679";     // 📚 題本
+const DS_SO_PROG = "41ab1f9d-7e45-819c-90b8-000b0870e17e";     // 💾 自學進度
+const DS_SO_LOG = "41ab1f9d-7e45-814c-83c1-000b89fcfdf0";      // 🛰️ 自學紀錄
+const DS_SO_PROG_SIM = "41bb1f9d-7e45-8171-8630-000b4c3f9633"; // 💾 自學進度（模擬）：只收測試座號
+const DS_SO_LOG_SIM = "41bb1f9d-7e45-8188-a73b-000b5f24b177";  // 🛰️ 自學紀錄（模擬）
+const SO_TEST_MIN = 901, SO_TEST_MAX = 954;   // 壓力測試座號（§10.3），查詢碼＝指令碼屬性 SO_TEST_KEY
+const SO_TOKEN_DAYS = 180;
+const SO_MAX_DEV = 5;                          // 每格最多記幾台載具的 seq
+const SO_MAX_WAIT = 400;                       // 答案鍵讀不到時最多暫存幾筆待判事件
+const SO_CELL_LIMIT = 9000;                    // 指令碼屬性單格上限（bytes）
+const SO_GUARD_HIGH = 400 * 1024, SO_GUARD_LOW = 300 * 1024;
+const SO_IDLE_DAYS = 14;
+const SO_BUSY = { ok: false, retry: true, error: "系統忙碌，稍後自動重送" };
+const SO_BAD_LOGIN = { ok: false, error: "座號或查詢碼不正確" };
+
+function soRoute_(props, body) {
+  if (props.getProperty("SO_PAUSED") === "1") return { ok: false, paused: true, error: "自學星圖暫停中，現在只能試玩、不會記錄" };
+  switch (body.action) {
+    case "so_login": return soLogin_(props, body);
+    case "so_pull": return soPull_(props, body);
+    case "so_push": return soPush_(props, body);
+    case "so_rank": return soRank_(props, body);
+    case "so_test_clear": return soTestClear_(props, body);
+    default: return { ok: false, error: "未知的動作：" + body.action };
+  }
+}
+
+// ---------- 小工具 ----------
+function soIsTest_(seat) { return seat >= SO_TEST_MIN && seat <= SO_TEST_MAX; }
+function soPad_(seat) { return seat < 10 ? "0" + seat : String(seat); }
+function soYearOf_(ymd) { const y = Number(ymd.slice(0, 4)), m = Number(ymd.slice(5, 7)); return String(y - 1911 - (m < 8 ? 1 : 0)); }
+function soHour_() { return Number(Utilities.formatDate(new Date(), "Asia/Taipei", "HH")); }
+function soBytes_(s) { // UTF-8 位元組數（屬性額度以位元組計）
+  let n = 0; s = String(s);
+  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); n += c < 0x80 ? 1 : c < 0x800 ? 2 : (c >= 0xd800 && c < 0xdc00) ? (i++, 4) : 3; }
+  return n;
+}
+function soHex_(bytes) { return bytes.map(function (b) { return ((b + 256) % 256).toString(16).padStart(2, "0"); }).join(""); }
+function soJson_(s, dflt) { if (!s) return dflt; try { return JSON.parse(s); } catch (e) { return dflt; } }
+function soChunks_(text) { // Notion 文字欄一段 ≤2,000 字：切成 ≤1,900 字，盡量切在換行
+  const out = []; let s = String(text || "");
+  while (s.length > 1900) { let cut = s.lastIndexOf("\n", 1900); if (cut < 1000) cut = 1900; else cut += 1; out.push(s.slice(0, cut)); s = s.slice(cut); }
+  if (s) out.push(s);
+  return out.map(function (t) { return { text: { content: t } }; });
+}
+function soDayDiff_(a, b) { return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 864e5); }
+function soErr_(props, msg) {
+  const list = soJson_(props.getProperty("so:err"), []);
+  list.push([nowIso_(), String(msg).slice(0, 300)]);
+  props.setProperty("so:err", JSON.stringify(list.slice(-20)));
+}
+
+// 祕密：第一次用到時自己產生（老師不必設）。加鎖避免兩個請求同時產生兩把。
+function soSecret_(props) {
+  let s = props.getProperty("SO_SECRET");
+  if (s) return s;
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error("祕密產生忙碌");
+  try {
+    s = props.getProperty("SO_SECRET");
+    if (!s) { s = Utilities.getUuid() + Utilities.getUuid(); props.setProperty("SO_SECRET", s); }
+    return s;
+  } finally { lock.releaseLock(); }
+}
+function soFp_(code, secret) {
+  return soHex_(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(code) + secret, Utilities.Charset.UTF_8)).slice(0, 8);
+}
+function soSign_(s, secret) {
+  return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(s, secret)).replace(/=+$/, "").slice(0, 22);
+}
+function soDayNo_() { return Math.floor((Date.now() - Date.UTC(2026, 0, 1)) / 864e5); }
+
+// 名冊快取：{座號:[學生頁 id, 查詢碼指紋]}（6 小時）。只存指紋，不存查詢碼原碼。
+function soRoster_(props, force) {
+  const cache = CacheService.getScriptCache();
+  if (!force) { const hit = soJson_(cache.get("so:roster"), null); if (hit) return hit; }
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return null;
+  const rows = queryAllDS_(token, DS_ROSTER, { filter: { and: [
+    { property: "在學", checkbox: { equals: true } },
+    { property: "學年", select: { equals: schoolYear_() } },
+  ] } });
+  if (!rows) return null;
+  const secret = soSecret_(props), map = {};
+  rows.forEach(function (pg) {
+    const p = pg.properties || {}, seat = Number((p["座號"] || {}).number), code = plain_(p["查詢碼"]).trim();
+    if (Number.isInteger(seat) && seat > 0 && code) map[seat] = [pg.id, soFp_(code, secret)];
+  });
+  cache.put("so:roster", JSON.stringify(map), 21600);
+  return map;
+}
+
+// 憑證＝座號.簽發日.碼指紋.簽章；回 {seat, test, sid(學生頁 id)} 或 null
+function soAuth_(props, token) {
+  const parts = String(token || "").split(".");
+  if (parts.length !== 4) return null;
+  const seat = Number(parts[0]), day = Number(parts[1]), fp = parts[2];
+  if (!Number.isInteger(seat) || !Number.isInteger(day)) return null;
+  const secret = props.getProperty("SO_SECRET");
+  if (!secret || soSign_(parts.slice(0, 3).join("."), secret) !== parts[3]) return null;
+  if (soDayNo_() - day > SO_TOKEN_DAYS || day > soDayNo_() + 1) return null;
+  if (soIsTest_(seat)) {
+    const k = props.getProperty("SO_TEST_KEY");
+    return k && soFp_(k, secret) === fp ? { seat: seat, test: true, sid: null } : null;
+  }
+  const r = soRoster_(props, false);
+  if (!r || !r[seat] || r[seat][1] !== fp) return null; // 老師換了查詢碼 → 指紋不同 → 舊憑證失效
+  return { seat: seat, test: false, sid: r[seat][0] };
+}
+
+// 班網公開檔（題本清單、答案鍵、行事曆），讀不到回 null，不擋學生
+function soFetchJson_(path) {
+  try {
+    const res = UrlFetchApp.fetch(SO_SITE + path, { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) return null;
+    return JSON.parse(res.getContentText());
+  } catch (e) { return null; }
+}
+function soIndex_() { // {題本代碼: 科目}
+  const cache = CacheService.getScriptCache();
+  const hit = soJson_(cache.get("so:idx"), null);
+  if (hit) return hit;
+  const data = soFetchJson_("study-orbit/index.json");
+  if (!data || !data.books) return null;
+  const map = {};
+  data.books.forEach(function (b) { map[b.code] = b.subject; });
+  cache.put("so:idx", JSON.stringify(map), 21600);
+  return map;
+}
+// §5.4 答案鍵：{題目ID:[正確答案, 選項盲點]}（6 小時）
+function soAnswerKey_(book) {
+  const cache = CacheService.getScriptCache();
+  const hit = soJson_(cache.get("so:ak:" + book), null);
+  if (hit) return hit;
+  const data = soFetchJson_("study-orbit/" + book + ".json");
+  if (!data || !data.questions) return null;
+  const ak = {};
+  data.questions.forEach(function (q) { ak[q.id] = [q.answer, q.ob || {}]; });
+  const s = JSON.stringify(ak);
+  if (s.length < 95000) cache.put("so:ak:" + book, s, 21600);
+  return ak;
+}
+// 停課日：行事曆 type＝放假 的區間（6 小時）；讀不到就只算週末
+function soHolidays_() {
+  const cache = CacheService.getScriptCache();
+  const hit = soJson_(cache.get("so:hol"), null);
+  if (hit) return hit;
+  const data = soFetchJson_("calendar.json");
+  if (!Array.isArray(data)) return [];
+  const list = data.filter(function (e) { return e.type === "放假" && e.date; })
+    .map(function (e) { return [e.date, e.endDate || e.date]; });
+  cache.put("so:hol", JSON.stringify(list), 21600);
+  return list;
+}
+function soSchoolDay_(ymd, hol) {
+  const dow = new Date(ymd + "T00:00:00Z").getUTCDay();
+  if (dow === 0 || dow === 6) return false;
+  return !hol.some(function (h) { return ymd >= h[0] && ymd <= h[1]; });
+}
+function soPrevSchoolDay_(ymd, hol) {
+  let d = ymd;
+  for (let i = 0; i < 60; i++) { d = addDays_(d, -1); if (soSchoolDay_(d, hol)) return d; }
+  return d;
+}
+// 連續自學天數：最後自學日 ≥ 今天的「上一個上課日」才算沒斷（假日、停課日沒玩不中斷）
+function soStreakNow_(me, today) {
+  if (!me.last) return 0;
+  if (me.last === today) return me.streak;
+  return me.last >= soPrevSchoolDay_(today, soHolidays_()) ? me.streak : 0;
+}
+function soMe_(props, seat, today) {
+  const me = soJson_(props.getProperty("so:me:" + seat), { streak: 0, last: "", today: { date: today, done: [] } });
+  if (!me.today || me.today.date !== today) me.today = { date: today, done: [] };
+  return me;
+}
+function soMeView_(me, today) { return { today: { done: me.today.done.length, of: 3, src: me.today.done }, streak: soStreakNow_(me, today) }; }
+
+function soSumOf_(props, book, seat) {
+  const row = soJson_(props.getProperty("so:sum:" + book), {})[seat];
+  if (!row) return { stars: 0, completed: 0, weekly: 0 };
+  return { stars: row[0], completed: row[1], weekly: row[3] === weekStart(Date.now()) ? row[2] : 0 };
+}
+
+// ---------- so_login ----------
+function soLogin_(props, body) {
+  const seat = Math.floor(Number(body.seat));
+  const code = String(body.code || "").trim();
+  if (!((seat >= 1 && seat <= 99) || soIsTest_(seat)) || !code) return SO_BAD_LOGIN;
+  if (overLimit_("so_login_" + seat, 10)) return { ok: false, error: "嘗試太多次，請等一分鐘再試" };
+  const secret = soSecret_(props);
+  const fp = soFp_(code, secret);
+  if (soIsTest_(seat)) {
+    const k = props.getProperty("SO_TEST_KEY");
+    if (!k || code !== k) return SO_BAD_LOGIN;
+  } else {
+    let r = soRoster_(props, false);
+    if (!r) return SO_BUSY;
+    if (!r[seat] || r[seat][1] !== fp) { // 快取可能是舊的（老師剛改碼）→ 重讀一次
+      r = soRoster_(props, true);
+      if (!r) return SO_BUSY;
+      if (!r[seat] || r[seat][1] !== fp) return SO_BAD_LOGIN;
+    }
+  }
+  const head = seat + "." + soDayNo_() + "." + fp;
+  const today = today_();
+  const idx = soIndex_() || {};
+  const books = Object.keys(idx).map(function (b) { const s = soSumOf_(props, b, seat); s.book = b; s.subject = idx[b]; return s; });
+  const v = soMeView_(soMe_(props, seat, today), today);
+  return { ok: true, token: head + "." + soSign_(head, secret), seat: seat, books: books, today: v.today, streak: v.streak };
+}
+
+// ---------- 暫存區一格 ----------
+// so:s:<題本>:<座號> = {save, ver, dirty, ds:{dev:[seq, at]}, pid, at, wk:{weekly, since}, rr(進行中回合), wait(待判事件)}
+function soCellKey_(book, seat) { return "so:s:" + book + ":" + seat; }
+function soBookOk_(book) {
+  if (!/^[a-z]-[a-z0-9]+-[a-z0-9]+$/.test(book)) return false;
+  const idx = soIndex_();
+  return !idx || !!idx[book]; // 題本清單讀不到時不擋
+}
+
+// 從 Notion 自學進度讀回一格（暫存區沒有時）；失敗回 null
+function soLoadCell_(props, book, auth) {
+  const token = props.getProperty("NOTION_TOKEN");
+  if (!token) return null;
+  const ds = auth.test ? DS_SO_PROG_SIM : DS_SO_PROG;
+  const res = queryDS_(token, ds, { filter: { and: [
+    { property: "座號", number: { equals: auth.seat } },
+    { property: "標題", title: { contains: "｜" + book + "｜" } },
+  ] }, sorts: [{ timestamp: "created_time", direction: "descending" }], page_size: 5 });
+  if (res.code !== 200) return null;
+  const year = soYearOf_(today_());
+  const pg = (res.data.results || []).filter(function (r) { return plain_((r.properties || {})["標題"]).indexOf(year + "｜") === 0; })[0];
+  if (!pg) return { save: encodeSave(decodeSave(null)), ver: 0, dirty: 0, ds: {}, pid: "", at: Date.now(), wk: { weekly: 0, since: "" } };
+  const p = pg.properties;
+  const raw = plain_(p["存檔"]);
+  return {
+    save: encodeSave(decodeSave(raw || null)), ver: Number((p["存檔版本"] || {}).number) || 0, dirty: 0, ds: {}, pid: pg.id, at: Date.now(),
+    wk: { weekly: Number((p["本週星數"] || {}).number) || 0, since: (((p["本週起算日"] || {}).date) || {}).start || "" },
+  };
+}
+
+// ---------- so_pull ----------
+function soPull_(props, body) {
+  const auth = soAuth_(props, body.token);
+  if (!auth) return { ok: false, relogin: true, error: "請重新登入" };
+  const book = String(body.book || "");
+  if (!soBookOk_(book)) return { ok: false, error: "沒有這本題本" };
+  const key = soCellKey_(book, auth.seat);
+  let cell = soJson_(props.getProperty(key), null);
+  if (!cell) {
+    const loaded = soLoadCell_(props, book, auth);
+    if (!loaded) return SO_BUSY;
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(3000)) return SO_BUSY;
+    try {
+      cell = soJson_(props.getProperty(key), null);
+      if (!cell) { cell = loaded; props.setProperty(key, JSON.stringify(cell)); soSumPut_(props, book, auth.seat, cell); }
+    } finally { lock.releaseLock(); }
+  }
+  const today = today_(), v = soMeView_(soMe_(props, auth.seat, today), today);
+  return { ok: true, book: book, save: cell.save, ver: cell.ver, sum: soSumOf_(props, book, auth.seat), today: v.today, streak: v.streak };
+}
+
+// 排行摘要格 so:sum:<題本> = {座號:[星數, 完成關數, 本週星數, 本週起算日]}
+function soSumPut_(props, book, seat, cell) {
+  const key = "so:sum:" + book, all = soJson_(props.getProperty(key), {});
+  const t = totals(decodeSave(cell.save).lv), wk = cell.wk || { weekly: 0, since: "" };
+  all[seat] = [t.stars, t.completed, wk.weekly, wk.since];
+  props.setProperty(key, JSON.stringify(all));
+}
+
+// ---------- 判對錯（代理端，前台送來的只有選項）----------
+function soNorm_(s) { return String(s == null ? "" : s).toUpperCase().replace(/\s/g, ""); }
+function soPairs_(s) { const o = {}; soNorm_(s).split(",").forEach(function (x) { if (x) o[x.slice(0, -1)] = x.slice(-1); }); return o; }
+function soJudge_(ans, opt) {
+  if (String(ans).indexOf(",") < 0) return soNorm_(ans) === soNorm_(opt);
+  const a = soPairs_(ans), o = soPairs_(opt);
+  return Object.keys(a).every(function (k) { return a[k] === o[k]; }) && Object.keys(o).length === Object.keys(a).length;
+}
+// 答錯時要發哪些盲點卡：選擇題＝選到的錯誤選項；配合題＝每個配錯的左項
+function soWrongBs_(ans, opt, ob) {
+  let keys;
+  if (String(ans).indexOf(",") < 0) keys = [soNorm_(opt)];
+  else { const a = soPairs_(ans), o = soPairs_(opt); keys = Object.keys(a).filter(function (k) { return a[k] !== o[k]; }); }
+  const out = [];
+  keys.forEach(function (k) { const b = ob[k]; if (b && out.indexOf(b) < 0) out.push(b); });
+  return out;
+}
+function soShortBs_(book, code) { return code.indexOf(book + "-") === 0 ? code.slice(book.length + 1) : code; }
+
+/**
+ * 把事件折進一格（§5.3）。事件：
+ *   ["a", 關, 格(1–7), 題目ID, 選項, 提示數, 秒數, 第幾次(1|2)]  闖關作答
+ *   ["c", 盲點(關-B序號), 題目ID, 選項, 秒數]                      複習卡冊（不影響燈與星，只改卡）
+ *   ["e", 關, 任務來源 r|n|f|""]                                   回合結束
+ * 回傳 {lines:[作答明細行], rounds:[回合摘要行], q, c, sec, ended:[關], sumChanged}
+ */
+function soFold_(cell, book, events, ak, me, today) {
+  const m = decodeSave(cell.save);
+  const out = { lines: [], rounds: [], q: 0, c: 0, sec: 0, ended: [], sumChanged: false };
+  let rr = cell.rr || null;
+  const card = function (code, st) {
+    const k = soShortBs_(book, code);
+    if (st === "t") { m.cd[k] = ["t", today]; m.ok = m.ok.filter(function (x) { return x !== k; }); }
+    else if (st === "d") { if (m.cd[k] && m.cd[k][0] === "t") m.cd[k] = ["d", today]; }
+    else if (st === "o") { delete m.cd[k]; if (m.ok.indexOf(k) < 0) m.ok.push(k); }
+  };
+  const doneTask = function (src) {
+    if ("rnf".indexOf(src) >= 0 && src && me.today.done.indexOf(src) < 0 && me.today.done.length < 3) me.today.done.push(src);
+  };
+  const studied = function () { // 有完成一回合（或卡冊一張）的日子 → 連續自學天數
+    if (me.last === today) return;
+    me.streak = me.last && me.last >= soPrevSchoolDay_(today, soHolidays_()) ? me.streak + 1 : 1;
+    me.last = today;
+  };
+  events.forEach(function (ev) {
+    if (!Array.isArray(ev)) return;
+    if (ev[0] === "a") {
+      const k = String(ev[1]), slot = Number(ev[2]), qid = String(ev[3]), opt = String(ev[4]);
+      const hints = Number(ev[5]) || 0, sec = Math.max(0, Math.round(Number(ev[6]) || 0)), nth = Number(ev[7]) === 2 ? 2 : 1;
+      if (!(slot >= 1 && slot <= 7) || !ak[qid]) return;
+      const ans = ak[qid][0], ok = soJudge_(ans, opt);
+      if (!rr || rr.k !== k || (nth === 1 && slot <= rr.top)) rr = { k: k, L: "xxxxxxx", top: 0, sec: 0, pend: {} };
+      rr.top = Math.max(rr.top, slot); rr.sec += sec;
+      let light;
+      if (nth === 1) {
+        if (ok) light = slotLight({ first: true, hinted: hints > 0, fast: isFast(sec) }).light;
+        else { light = "dark"; const bs = soWrongBs_(ans, opt, ak[qid][1]); bs.forEach(function (b) { card(b, "t"); }); rr.pend[slot] = bs; }
+      } else {
+        light = ok ? "silver" : "dark";
+        if (ok) (rr.pend[slot] || []).forEach(function (b) { card(b, "d"); });
+      }
+      rr.L = rr.L.slice(0, slot - 1) + (light === "gold" ? "g" : light === "silver" ? "s" : "x") + rr.L.slice(slot);
+      out.lines.push(book + "-" + k + "#" + slot + "," + qid + "," + opt + "," + (ok ? 1 : 0) + "," + hints + "," + sec + "," + nth);
+      out.q++; if (ok) out.c++; out.sec += sec;
+    } else if (ev[0] === "c") {
+      const bsk = String(ev[1]), qid = String(ev[2]), opt = String(ev[3]), sec = Math.max(0, Math.round(Number(ev[4]) || 0));
+      if (!ak[qid] || !/^.+-B\d+$/.test(bsk)) return;
+      const ok = soJudge_(ak[qid][0], opt), cur = m.cd[bsk];
+      if (!ok) card(bsk, "t");
+      else if (cur && cur[0] === "t") card(bsk, "d");
+      else if (cur && cur[0] === "d" && soDayDiff_(cur[1], today) >= 7) card(bsk, "o"); // 7 天後確認通過＝結案
+      const lv = bsk.replace(/-B\d+$/, "");
+      out.lines.push(book + "-" + lv + "#0," + qid + "," + opt + "," + (ok ? 1 : 0) + ",0," + sec + ",1");
+      out.q++; if (ok) out.c++; out.sec += sec;
+      doneTask("r"); studied();
+    } else if (ev[0] === "e") {
+      const k = String(ev[1]), src = String(ev[2] || "");
+      if (!rr || rr.k !== k) return; // 沒有這一回合的作答（可能已經結算過）
+      const gold = (rr.L.match(/g/g) || []).length, silver = (rr.L.match(/s/g) || []).length;
+      const res = applyRound(m.lv[k] || [0, 0, 0], gold, silver);
+      m.lv[k] = res.record;
+      if (passed(gold, silver) && m.sc.indexOf(k) < 0) m.sc.push(k);
+      cell.wk = addWeekly(cell.wk || { weekly: 0, since: "" }, res.gained, Date.now());
+      if (m.mid && m.mid.k === k) m.mid = null;
+      out.rounds.push(book + "-" + k + "," + stars(gold, silver) + "," + gold + "," + silver + "," + (7 - gold - silver) + "," + rr.sec + "," + src);
+      out.ended.push(k); out.sumChanged = true;
+      doneTask(src); studied();
+      rr = null;
+    }
+  });
+  cell.rr = rr;
+  cell.save = encodeSave(m);
+  return out;
+}
+
+// ---------- so_push ----------
+function soPush_(props, body) {
+  const auth = soAuth_(props, body.token);
+  if (!auth) return { ok: false, relogin: true, error: "請重新登入" };
+  const book = String(body.book || ""), dev = String(body.dev || ""), seq0 = Math.floor(Number(body.seq0));
+  const ev = Array.isArray(body.ev) ? body.ev : [];
+  if (!soBookOk_(book)) return { ok: false, error: "沒有這本題本" };
+  if (!/^[A-Za-z0-9]{4,16}$/.test(dev) || !(seq0 >= 1) || ev.length > 200) return { ok: false, error: "上傳資料格式不對" };
+  const ak = soAnswerKey_(book); // 讀不到 → 照收、標待判（§5.4）
+  const today = today_(), seat = auth.seat, key = soCellKey_(book, seat);
+  const lock = LockService.getScriptLock();
+  const t0 = Date.now();
+  if (!lock.tryLock(3000)) return SO_BUSY;
+  let cell, me, sumChanged = false, ended = [];
+  try {
+    cell = soJson_(props.getProperty(key), null);
+    if (!cell) return { ok: false, needPull: true, error: "請重新載入進度" };
+    me = soMe_(props, seat, today);
+    const last = (cell.ds[dev] || [0])[0];
+    const fresh = ev.filter(function (e, i) { return seq0 + i > last; });
+    const writes = {};
+    let changed = false;
+    if (fresh.length) {
+      cell.ds[dev] = [Math.max(last, seq0 + ev.length - 1), Date.now()];
+      const devs = Object.keys(cell.ds);
+      if (devs.length > SO_MAX_DEV) { // 只記最近 5 台
+        devs.sort(function (a, b) { return cell.ds[a][1] - cell.ds[b][1]; });
+        devs.slice(0, devs.length - SO_MAX_DEV).forEach(function (d) { delete cell.ds[d]; });
+      }
+      cell.wait = (cell.wait || []).concat(fresh);
+      if (ak) {
+        const r = soFold_(cell, book, cell.wait, ak, me, today);
+        cell.wait = [];
+        if (r.lines.length || r.rounds.length) writes["so:log:" + today + ":" + seat] = soLogAdd_(props, today, seat, r);
+        writes["so:me:" + seat] = JSON.stringify(me);
+        sumChanged = r.sumChanged; ended = r.ended;
+      } else if (cell.wait.length > SO_MAX_WAIT) return SO_BUSY;
+      changed = true;
+    }
+    // 換載具接續用的 mid：兩台都有時取 t 大的；這一包剛結算的關卡不接受舊 mid
+    const mid = body.mid;
+    if (mid && typeof mid === "object" && typeof mid.k === "string" && ended.indexOf(mid.k) < 0) {
+      const m = decodeSave(cell.save);
+      if (!m.mid || (Number(mid.t) || 0) > (Number(m.mid.t) || 0)) {
+        m.mid = { k: mid.k, i: Number(mid.i) || 0, res: String(mid.res || "").slice(0, 7), q: (Array.isArray(mid.q) ? mid.q : []).slice(0, 14).map(String), t: Number(mid.t) || Date.now() };
+        cell.save = encodeSave(m); changed = true;
+      }
+    }
+    if (changed) {
+      cell.ver++; cell.dirty = 1; cell.at = Date.now();
+      const s = JSON.stringify(cell);
+      if (soBytes_(s) > SO_CELL_LIMIT) { soErr_(props, "格子過大 " + key); return { ok: false, error: "進度資料過大，請告訴老師" }; }
+      writes[key] = s;
+      props.setProperties(writes);
+      if (sumChanged) soSumPut_(props, book, seat, cell);
+    }
+    soEnsureTrigger_(props);
+  } finally { lock.releaseLock(); }
+  const v = soMeView_(me, today);
+  return { ok: true, ver: cell.ver, sum: soSumOf_(props, book, seat), today: v.today, streak: v.streak, wait: (cell.wait || []).length, lockMs: Date.now() - t0 };
+}
+
+// 自學紀錄暫存 so:log:<日期>:<座號> = {a:[未落地明細行], r:[未落地回合行], q, c, sec(當日累計), pid, dirty}
+function soLogAdd_(props, date, seat, r) {
+  const lg = soJson_(props.getProperty("so:log:" + date + ":" + seat), { a: [], r: [], q: 0, c: 0, sec: 0, pid: "", dirty: 0 });
+  lg.a = lg.a.concat(r.lines); lg.r = lg.r.concat(r.rounds);
+  lg.q += r.q; lg.c += r.c; lg.sec += r.sec; lg.dirty = 1; lg.at = Date.now();
+  return JSON.stringify(lg);
+}
+
+// 落地觸發器：沒有就建一個（每分鐘）。快取 2 分鐘內不重查。
+function soEnsureTrigger_(props) {
+  const cache = CacheService.getScriptCache();
+  if (cache.get("so:trigok")) return;
+  const trig = soJson_(props.getProperty("so:trig"), null);
+  const exists = trig && ScriptApp.getProjectTriggers().some(function (t) { return t.getUniqueId() === trig.id; });
+  if (!exists) {
+    const t = ScriptApp.newTrigger("soFlush").timeBased().everyMinutes(1).create();
+    props.setProperty("so:trig", JSON.stringify({ id: t.getUniqueId(), lastWork: Date.now(), lastLog: 0, clean: "" }));
+  }
+  cache.put("so:trigok", "1", 120);
+}
+
+// ---------- so_rank（§5.5）----------
+function soRank_(props, body) {
+  const auth = soAuth_(props, body.token);
+  if (!auth) return { ok: false, relogin: true, error: "請重新登入" };
+  const scope = String(body.scope || "all"), metric = String(body.metric || "stars");
+  const keys = { stars: ["stars"], progress: ["completed", "stars"], weekly: ["weekly"] }[metric];
+  if (!keys) return { ok: false, error: "沒有這種排行" };
+  const cache = CacheService.getScriptCache();
+  const ck = "so:rk:" + (auth.test ? "t" : "r") + ":" + scope + ":" + metric;
+  let ranked = soJson_(cache.get(ck), null);
+  if (!ranked) {
+    const idx = soIndex_() || {};
+    const books = Object.keys(idx).filter(function (b) { return scope === "all" || idx[b] === scope; });
+    const ws = weekStart(Date.now()), agg = {};
+    books.forEach(function (b) {
+      const all = soJson_(props.getProperty("so:sum:" + b), {});
+      Object.keys(all).forEach(function (s) {
+        const seat = Number(s);
+        if (soIsTest_(seat) !== auth.test) return; // 測試座號不進正式排行（只和測試座號比）
+        const r = all[s], a = agg[s] || (agg[s] = { seat: seat, stars: 0, completed: 0, weekly: 0 });
+        a.stars += r[0]; a.completed += r[1]; if (r[3] === ws) a.weekly += r[2];
+      });
+    });
+    ranked = rank(Object.keys(agg).map(function (s) { return agg[s]; }), keys);
+    cache.put(ck, JSON.stringify(ranked), 60);
+  }
+  const main = keys[0];
+  const view = function (r) { return { seat: r.seat, rank: r.rank, value: r[main], stars: r.stars, completed: r.completed }; };
+  const meRow = ranked.filter(function (r) { return r.seat === auth.seat; })[0] || null;
+  return {
+    ok: true, scope: scope, metric: metric,
+    top: ranked.filter(function (r) { return r.rank <= 5; }).map(view), // 只回前 5 名（同分可能多於 5 列）＋本人
+    me: meRow ? view(meRow) : null,
+    catchUp: meRow ? starsToCatchUp(ranked, auth.seat, main) : null,
+  };
+}
+
+// ---------- so_test_clear（只清暫存區；沙盒表由人送待刪區，不在這裡刪 Notion）----------
+function soUsage_(props) {
+  const all = props.getProperties();
+  let total = 0, so = 0, n = 0;
+  Object.keys(all).forEach(function (k) { const b = soBytes_(k) + soBytes_(all[k]); total += b; n++; if (k.indexOf("so:") === 0) so += b; });
+  return { bytes: total, soBytes: so, keys: n };
+}
+function soTestClear_(props, body) {
+  const k = props.getProperty("SO_TEST_KEY");
+  if (!k || String(body.testKey || "") !== k) return { ok: false, error: "測試金鑰不正確" };
+  const before = soUsage_(props);
+  if (body.dry) return { ok: true, dry: true, usage: before, err: soJson_(props.getProperty("so:err"), []), trig: soJson_(props.getProperty("so:trig"), null) };
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) return SO_BUSY;
+  let removed = 0;
+  try {
+    const all = props.getProperties();
+    Object.keys(all).forEach(function (key) {
+      const m = /^so:(?:s:[^:]+|log:[^:]+|me):(\d+)$/.exec(key);
+      if (m && soIsTest_(Number(m[1]))) { props.deleteProperty(key); removed++; }
+      if (key.indexOf("so:sum:") === 0) {
+        const sum = soJson_(all[key], {}); let hit = false;
+        Object.keys(sum).forEach(function (s) { if (soIsTest_(Number(s))) { delete sum[s]; hit = true; } });
+        if (hit) props.setProperty(key, JSON.stringify(sum));
+      }
+    });
+  } finally { lock.releaseLock(); }
+  return { ok: true, removed: removed, before: before, after: soUsage_(props) };
+}
+
+// ---------- 落地（時間觸發器每分鐘，§6.2）----------
+// Notion 寫入：每秒最多 2 筆；遇 429 照 Retry-After 等（最多 60 秒）再試，最多 3 次
+function soNotion_(props, token, path, method, payload) {
+  for (let i = 0; i < 3; i++) {
+    Utilities.sleep(500);
+    const opts = { method: method, headers: { Authorization: "Bearer " + token, "Notion-Version": NOTION_VERSION_DS, "Content-Type": "application/json" }, muteHttpExceptions: true };
+    if (payload) opts.payload = JSON.stringify(payload);
+    const res = UrlFetchApp.fetch("https://api.notion.com/v1/" + path, opts);
+    const code = res.getResponseCode();
+    if (code === 429) {
+      soErr_(props, "429 " + path);
+      const h = (res.getHeaders && res.getHeaders()) || {};
+      Utilities.sleep(Math.min(60, Number(h["Retry-After"] || h["retry-after"]) || 5) * 1000);
+      continue;
+    }
+    let data = {}; try { data = JSON.parse(res.getContentText()); } catch (e) {}
+    return { code: code, data: data };
+  }
+  return { code: 429, data: {} };
+}
+function soBookPage_(props, token, book) {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get("so:bookpg:" + book);
+  if (hit) return hit;
+  const res = queryDS_(token, DS_SO_BOOK, { filter: { property: "代碼", title: { equals: book } }, page_size: 1 });
+  const pg = res.code === 200 ? (res.data.results || [])[0] : null;
+  if (!pg) return "";
+  cache.put("so:bookpg:" + book, pg.id, 21600);
+  return pg.id;
+}
+// 找既有列（防重複鍵＝標題）；沒有回 ""；查詢失敗回 null
+function soFindRow_(props, token, ds, title) {
+  const res = soNotion_(props, token, "data_sources/" + ds + "/query", "post", { filter: { property: "標題", title: { equals: title } }, page_size: 1 });
+  if (res.code !== 200) return null;
+  const pg = (res.data.results || [])[0];
+  return pg ? pg.id : "";
+}
+
+function soWriteProg_(props, token, book, seat, cell) {
+  const test = soIsTest_(seat), ds = test ? DS_SO_PROG_SIM : DS_SO_PROG;
+  const t = totals(decodeSave(cell.save).lv), wk = cell.wk || { weekly: 0, since: "" };
+  const ws = weekStart(Date.now());
+  const p = {
+    "存檔": { rich_text: soChunks_(cell.save) },
+    "存檔版本": { number: cell.ver },
+    "星數": { number: t.stars },
+    "完成關數": { number: t.completed },
+    "本週星數": { number: wk.since === ws ? wk.weekly : 0 },
+    "本週起算日": { date: { start: ws } },
+    "最後同步時間": { date: { start: nowIso_() } },
+  };
+  let pid = cell.pid;
+  if (!pid) {
+    const today = today_(), year = soYearOf_(today), title = year + "｜" + book + "｜" + soPad_(seat);
+    const found = soFindRow_(props, token, ds, title);
+    if (found === null) return null;
+    pid = found;
+    if (!pid) {
+      p["標題"] = { title: [{ text: { content: title } }] };
+      p["學年"] = { select: { name: year } };
+      p["座號"] = { number: seat };
+      const bp = soBookPage_(props, token, book);
+      if (bp) p["題本"] = { relation: [{ id: bp }] };
+      if (!test) {
+        const r = soRoster_(props, false);
+        if (!r || !r[seat]) { soErr_(props, "名冊找不到座號 " + seat); return null; }
+        p["學生"] = { relation: [{ id: r[seat][0] }] };
+      }
+      const res = soNotion_(props, token, "pages", "post", { parent: { type: "data_source_id", data_source_id: ds }, properties: p });
+      if (res.code !== 200) { soErr_(props, "自學進度建列 " + res.code + " " + book + ":" + seat); return null; }
+      return res.data.id;
+    }
+  }
+  const res = soNotion_(props, token, "pages/" + pid, "patch", { properties: p });
+  if (res.code !== 200) { soErr_(props, "自學進度寫入 " + res.code + " " + book + ":" + seat); return null; }
+  return pid;
+}
+
+function soWriteLog_(props, token, date, seat, lg) {
+  const test = soIsTest_(seat), ds = test ? DS_SO_LOG_SIM : DS_SO_LOG;
+  const title = date + "｜" + soPad_(seat);
+  let pid = lg.pid, oldA = "", oldR = "";
+  if (!pid) { const f = soFindRow_(props, token, ds, title); if (f === null) return null; pid = f; }
+  if (pid) { // 既有列：讀回已落地的內容再接上新行（暫存區只留還沒落地的行）
+    const g = soNotion_(props, token, "pages/" + pid, "get", null);
+    if (g.code !== 200) { soErr_(props, "自學紀錄讀回 " + g.code + " " + title); return null; }
+    oldA = plain_(g.data.properties["作答明細"]); oldR = plain_(g.data.properties["回合摘要"]);
+  }
+  const join = function (old, add) { return add.length ? (old ? old + "\n" : "") + add.join("\n") : old; };
+  const p = {
+    "作答明細": { rich_text: soChunks_(join(oldA, lg.a)) },
+    "回合摘要": { rich_text: soChunks_(join(oldR, lg.r)) },
+    "題數": { number: lg.q }, "答對數": { number: lg.c },
+    "用時分": { number: Math.floor(lg.sec / 60 + 0.5) }, // 四捨五入（不用銀行家捨入）
+  };
+  if (!pid) {
+    p["標題"] = { title: [{ text: { content: title } }] };
+    p["學年"] = { select: { name: soYearOf_(date) } };
+    p["日期"] = { date: { start: date } };
+    p["座號"] = { number: seat };
+    if (!test) {
+      const r = soRoster_(props, false);
+      if (!r || !r[seat]) { soErr_(props, "名冊找不到座號 " + seat); return null; }
+      p["學生"] = { relation: [{ id: r[seat][0] }] };
+    }
+    const res = soNotion_(props, token, "pages", "post", { parent: { type: "data_source_id", data_source_id: ds }, properties: p });
+    if (res.code !== 200) { soErr_(props, "自學紀錄建列 " + res.code + " " + title); return null; }
+    return res.data.id;
+  }
+  const res = soNotion_(props, token, "pages/" + pid, "patch", { properties: p });
+  if (res.code !== 200) { soErr_(props, "自學紀錄寫入 " + res.code + " " + title); return null; }
+  return pid;
+}
+
+// 寫完後在鎖裡回寫格子：版本沒變才清 dirty（期間又被改過就留到下一輪）
+function soMark_(props, key, fn) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(3000)) return;
+  try { const v = soJson_(props.getProperty(key), null); if (v) { fn(v); props.setProperty(key, JSON.stringify(v)); } }
+  finally { lock.releaseLock(); }
+}
+
+function soFlush() {
+  const props = PropertiesService.getScriptProperties();
+  const cache = CacheService.getScriptCache();
+  if (cache.get("so:flushing")) return; // 上一輪還在跑
+  cache.put("so:flushing", "1", 55);
+  const t0 = Date.now();
+  try {
+    const token = props.getProperty("NOTION_TOKEN");
+    const trig = soJson_(props.getProperty("so:trig"), { id: "", lastWork: Date.now(), lastLog: 0, clean: "" });
+    const doLog = Date.now() - (trig.lastLog || 0) >= 5 * 60e3 - 10e3; // 自學紀錄每 5 分鐘寫一次
+    const all = props.getProperties();
+    let work = 0;
+    Object.keys(all).forEach(function (key) {
+      const m = /^so:s:([^:]+):(\d+)$/.exec(key);
+      if (!m || Date.now() - t0 > 40e3 || !token) return;
+      let cell = soJson_(all[key], null);
+      if (!cell || !cell.dirty) return;
+      if (cell.wait && cell.wait.length) { // 待判事件：答案鍵讀得到才判
+        const ak = soAnswerKey_(m[1]);
+        if (!ak) return;
+        const lock = LockService.getScriptLock();
+        if (!lock.tryLock(3000)) return;
+        try {
+          cell = soJson_(props.getProperty(key), null);
+          const seat = Number(m[2]), today = today_(), me = soMe_(props, seat, today);
+          const r = soFold_(cell, m[1], cell.wait, ak, me, today);
+          cell.wait = []; cell.ver++;
+          const w = {}; w[key] = JSON.stringify(cell); w["so:me:" + seat] = JSON.stringify(me);
+          if (r.lines.length || r.rounds.length) w["so:log:" + today + ":" + seat] = soLogAdd_(props, today, seat, r);
+          props.setProperties(w);
+          soSumPut_(props, m[1], seat, cell);
+        } finally { lock.releaseLock(); }
+      }
+      work++;
+      const pid = soWriteProg_(props, token, m[1], Number(m[2]), cell);
+      if (!pid) return;
+      const ver = cell.ver;
+      soMark_(props, key, function (v) { v.pid = pid; if (v.ver === ver) v.dirty = 0; });
+    });
+    if (doLog && token) {
+      const all2 = props.getProperties();
+      Object.keys(all2).forEach(function (key) {
+        const m = /^so:log:(\d{4}-\d{2}-\d{2}):(\d+)$/.exec(key);
+        if (!m || Date.now() - t0 > 50e3) return;
+        const lg = soJson_(all2[key], null);
+        if (!lg || !lg.dirty) return;
+        work++;
+        const pid = soWriteLog_(props, token, m[1], Number(m[2]), lg);
+        if (!pid) return;
+        const nA = lg.a.length, nR = lg.r.length;
+        soMark_(props, key, function (v) { v.pid = pid; v.a = v.a.slice(nA); v.r = v.r.slice(nR); v.dirty = v.a.length || v.r.length ? 1 : 0; });
+      });
+      trig.lastLog = Date.now();
+    }
+    if (work) trig.lastWork = Date.now();
+    soHousekeep_(props, trig);
+    // 觸發器啟停：連續 10 分鐘沒工作、或過了 17:00 且全部落地完 → 刪掉自己（下次 so_push 會再建）
+    const left = soPending_(props);
+    const idle = !work && Date.now() - (trig.lastWork || 0) >= 10 * 60e3;
+    if ((idle && !left) || (soHour_() >= 17 && !left)) soStopTrigger_(props);
+    else props.setProperty("so:trig", JSON.stringify(trig));
+  } catch (e) {
+    soErr_(props, "落地失敗 " + e.message);
+  } finally { cache.remove("so:flushing"); }
+}
+function soPending_(props) {
+  const all = props.getProperties();
+  return Object.keys(all).some(function (k) { return (k.indexOf("so:s:") === 0 || k.indexOf("so:log:") === 0) && (soJson_(all[k], {}).dirty === 1); });
+}
+function soStopTrigger_(props) {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === "soFlush") ScriptApp.deleteTrigger(t); });
+  props.deleteProperty("so:trig");
+  CacheService.getScriptCache().remove("so:trigok");
+}
+// 總量護欄＋每天清一次：已落地且最久沒動的格先刪（下次 so_pull 從 Notion 讀回）
+function soHousekeep_(props, trig) {
+  const today = today_();
+  let all = props.getProperties();
+  const victims = function () {
+    return Object.keys(all).filter(function (k) { return k.indexOf("so:s:") === 0 || k.indexOf("so:log:") === 0; })
+      .map(function (k) { const v = soJson_(all[k], {}); return { k: k, at: v.at || 0, dirty: v.dirty, rr: !!v.rr, log: k.indexOf("so:log:") === 0, date: k.split(":")[2] }; })
+      .filter(function (v) { return !v.dirty && !v.rr; });
+  };
+  if (trig.clean !== today) { // 14 天沒動的格、昨天以前已落地的紀錄格
+    victims().forEach(function (v) {
+      if ((v.log && v.date < today) || Date.now() - v.at > SO_IDLE_DAYS * 864e5) props.deleteProperty(v.k);
+    });
+    trig.clean = today;
+    all = props.getProperties();
+  }
+  let total = soUsage_(props).bytes;
+  if (total <= SO_GUARD_HIGH) return;
+  const list = victims().sort(function (a, b) { return a.at - b.at; });
+  for (let i = 0; i < list.length && total > SO_GUARD_LOW; i++) {
+    total -= soBytes_(list[i].k) + soBytes_(all[list[i].k]);
+    props.deleteProperty(list[i].k);
+  }
+  soErr_(props, "暫存區超過 400KB，已逐出到 " + Math.round(total / 1024) + "KB");
+}
+
+// ===== BEGIN rules.mjs（自動產生）=====
+// 來源：scripts/classos/study-orbit/rules.mjs（自動複製，勿手改；改正本後跑 node scripts/build-so-proxy.mjs）
+// 自學星圖闖關規則（規格正本：ClassOS_v3.5_藍圖/SPEC_自學星圖_P1資料模型.md §5.1–5.3）
+// 全部是純函式；P2 前台與代理共用這一支，不各自重寫（U83）。
+
+/**
+ * §5.1 一格的燈。
+ * @param {{first:boolean, hinted:boolean, retry?:boolean|null, fast?:boolean}} a
+ *   first＝第一次是否答對；hinted＝第一次是否用過提示（1–3 層都算）；
+ *   retry＝第一次答錯後再挑戰是否答對（沒再挑戰為 null）；
+ *   fast＝第一次作答秒數 <2（P2 SPEC §1 第 6 項：太快答對只給銀燈，和用了提示一樣）
+ * @returns {{light:"gold"|"silver"|"dark", streak:"+1"|"keep"|"reset", card:null|"待複習"|"已克服"}}
+ */
+const FAST_SEC = 2; // 第一次作答 <2 秒＝作答過快
+const isFast = (sec) => Number.isFinite(Number(sec)) && Number(sec) < FAST_SEC;
+function slotLight({ first, hinted, retry = null, fast = false }) {
+  if (first) return hinted || fast
+    ? { light: "silver", streak: "keep", card: null }
+    : { light: "gold", streak: "+1", card: null };
+  if (retry === true) return { light: "silver", streak: "keep", card: "已克服" }; // 再挑戰用不用提示都是銀燈
+  return { light: "dark", streak: "reset", card: "待複習" };
+}
+
+/** 套用連對變化 */
+function nextStreak(streak, change) {
+  return change === "+1" ? streak + 1 : change === "reset" ? 0 : streak;
+}
+
+/** §5.2 星等：由上往下，先符合先算 */
+function stars(gold, silver) {
+  const lit = gold + silver;
+  if (lit === 7 && gold >= 6) return 3;
+  if (lit >= 5) return 2;
+  if (lit >= 3) return 1;
+  return 0;
+}
+const allGold = (gold) => gold === 7; // 全對＝七盞都是金燈（≠3 星）
+const passed = (gold, silver) => stars(gold, silver) >= 1;
+
+/**
+ * 一回合結束後更新該關紀錄（存檔 lv：[最高星等, 曾經七盞全金, 挑戰次數]）
+ * @returns {{record:[number,0|1,number], gained:number}} gained＝刷新紀錄多出來的星（加進本週星數）
+ */
+function applyRound(record, gold, silver) {
+  const [best, everGold, tries] = record ?? [0, 0, 0];
+  const s = stars(gold, silver);
+  const newBest = Math.max(best, s);
+  return {
+    record: [newBest, everGold || allGold(gold) ? 1 : 0, tries + 1],
+    gained: newBest - best,
+  };
+}
+
+/** 寶箱：一座島每一關「曾經七盞全金」都是 1 才開（不必同一次完成） */
+function chestOpen(islandLevelCodes, lv) {
+  return islandLevelCodes.length > 0 && islandLevelCodes.every((c) => lv[c]?.[1] === 1);
+}
+
+/** §5.3 星數＝各關最高星等加總；完成關數＝最高星等 ≥1 的關數 */
+function totals(lv) {
+  const recs = Object.values(lv ?? {});
+  return {
+    stars: recs.reduce((n, r) => n + r[0], 0),
+    completed: recs.filter((r) => r[0] >= 1).length,
+  };
+}
+
+/** 本週起算日（臺北時間週一），回傳 YYYY-MM-DD */
+function weekStart(date) {
+  const tpe = new Date(new Date(date).getTime() + 8 * 3600e3); // 用 UTC 欄位讀臺北時間
+  const dow = (tpe.getUTCDay() + 6) % 7; // 週一＝0
+  tpe.setUTCDate(tpe.getUTCDate() - dow);
+  return tpe.toISOString().slice(0, 10);
+}
+
+/** 換週就把本週星數歸零，再加這次多出來的星 */
+function addWeekly({ weekly, since }, gained, now) {
+  const ws = weekStart(now);
+  return since === ws ? { weekly: weekly + gained, since } : { weekly: gained, since: ws };
+}
+
+/**
+ * 排行：同分並列同一名次（1、1、3）。keys 由大到小比；回傳依名次排序的 [{...row, rank}]
+ * 進度榜：keys＝[完成關數, 星數]；星數榜：[星數]；本週榜：[本週星數]
+ */
+function rank(rows, keys) {
+  const cmp = (a, b) => { for (const k of keys) if (b[k] !== a[k]) return b[k] - a[k]; return 0; };
+  const sorted = [...rows].sort(cmp);
+  let r = 0;
+  return sorted.map((row, i) => {
+    if (i === 0 || cmp(sorted[i - 1], row) !== 0) r = i + 1;
+    return { ...row, rank: r };
+  });
+}
+
+/** 「再 N 顆星就追平前一名」：自己是第一名回 null */
+function starsToCatchUp(ranked, seat, key = "stars") {
+  const me = ranked.find((x) => x.seat === seat);
+  if (!me || me.rank === 1) return null;
+  const ahead = ranked.filter((x) => x.rank < me.rank);
+  const prev = ahead[ahead.length - 1];
+  return prev[key] - me[key];
+}
+
+// ── 存檔（P2 SPEC §4：第 2 版；第 1 版只讀不寫）──────────────────────────
+// 記憶體裡的形狀（兩版共用，鍵都省略題本代碼）：
+//   { lv:{關:[最高星等,曾經全金,挑戰次數]}, cd:{盲點:["t"|"d","YYYY-MM-DD"]}, ok:[盲點], sc:[關], mid:{k,i,res,q,t?}|null }
+// 第 2 版字串：{"v":2,"L":{關:[星,全金,次數,故事卡,盲點串]},"mid":{…,"t":毫秒}}
+//   盲點串一筆＝序號 1 字（36 進位，B1→1、B10→a）＋狀態 1 字（t／d 再接 3 字日期；o 不帶日期）
+
+const DAY0 = Date.UTC(2026, 0, 1);
+const dayToStr = (n) => new Date(DAY0 + n * 864e5).toISOString().slice(0, 10);
+const strToDay = (s) => Math.round((Date.parse(`${s}T00:00:00Z`) - DAY0) / 864e5);
+
+/** 日期 YYYY-MM-DD → 3 字（距 2026-01-01 天數，36 進位補零） */
+function encodeDay(s) {
+  const n = strToDay(s);
+  if (!(n >= 0 && n < 36 ** 3)) throw new Error(`存檔日期超出範圍：${s}`);
+  return n.toString(36).padStart(3, "0");
+}
+const decodeDay = (s3) => dayToStr(parseInt(s3, 36));
+
+const splitBs = (code) => { // "1-1-B10" → ["1-1", 10]
+  const m = /^(.+)-B(\d+)$/.exec(code);
+  if (!m) throw new Error(`盲點代碼格式不符：${code}`);
+  const n = Number(m[2]);
+  if (!(n >= 1 && n <= 35)) throw new Error(`盲點序號超出 1–35：${code}`);
+  return [m[1], n];
+};
+
+/** 一關的盲點串：entries＝[[序號, "t"|"d"|"o", 日期|null]] */
+function encodeBsStr(entries) {
+  return [...entries].sort((a, b) => a[0] - b[0])
+    .map(([n, st, d]) => n.toString(36) + st + (st === "o" ? "" : encodeDay(d))).join("");
+}
+function decodeBsStr(str) {
+  const out = [];
+  for (let i = 0; i < str.length;) {
+    const n = parseInt(str[i], 36), st = str[i + 1];
+    if (st === "o") { out.push([n, "o", null]); i += 2; }
+    else if (st === "t" || st === "d") { out.push([n, st, decodeDay(str.slice(i + 2, i + 5))]); i += 5; }
+    else throw new Error(`盲點串無法解析：${str}`);
+  }
+  return out;
+}
+
+const sortObj = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b, "en", { numeric: true })));
+const empty = () => ({ lv: {}, cd: {}, ok: [], sc: [], mid: null });
+
+/** 讀存檔（字串或物件；第 1、2 版都讀得進），回傳記憶體形狀（鍵已排序，方便比對） */
+function decodeSave(raw) {
+  if (raw == null || raw === "") return empty();
+  const s = typeof raw === "string" ? JSON.parse(raw) : raw;
+  const m = empty();
+  if (s.v === 1) {
+    for (const [k, r] of Object.entries(s.lv ?? {})) m.lv[k] = [r[0], r[1], r[2]];
+    for (const [k, r] of Object.entries(s.cd ?? {})) m.cd[k] = [r[0], r[1]];
+    m.ok = [...(s.ok ?? [])];
+    m.sc = [...(s.sc ?? [])];
+    m.mid = s.mid ?? null;
+  } else if (s.v === 2) {
+    for (const [k, r] of Object.entries(s.L ?? {})) {
+      const [best, gold, tries, story, bs = ""] = r;
+      if (best || gold || tries) m.lv[k] = [best, gold, tries];
+      if (story) m.sc.push(k);
+      for (const [n, st, d] of decodeBsStr(bs)) {
+        const code = `${k}-B${n}`;
+        if (st === "o") m.ok.push(code); else m.cd[code] = [st, d];
+      }
+    }
+    m.mid = s.mid ?? null;
+  } else throw new Error(`不認得的存檔版本：${s.v}`);
+  m.lv = sortObj(m.lv); m.cd = sortObj(m.cd);
+  const byNum = (a, b) => a.localeCompare(b, "en", { numeric: true });
+  m.ok.sort(byNum); m.sc.sort(byNum);
+  return m;
+}
+
+/** 寫存檔：一律第 2 版，回傳 JSON 字串 */
+function encodeSave(m) {
+  const L = {};
+  const row = (k) => L[k] || (L[k] = [...((m.lv && m.lv[k]) || [0, 0, 0]), 0, []]); // 不用 ??=：代理（Apps Script）共用這支
+  for (const k of Object.keys(m.lv ?? {})) row(k);
+  for (const k of m.sc ?? []) row(k)[3] = 1;
+  for (const [code, [st, d]] of Object.entries(m.cd ?? {})) { const [k, n] = splitBs(code); row(k)[4].push([n, st, d]); }
+  for (const code of m.ok ?? []) { const [k, n] = splitBs(code); row(k)[4].push([n, "o", null]); }
+  for (const r of Object.values(L)) r[4] = encodeBsStr(r[4]);
+  const out = { v: 2, L: sortObj(L) };
+  if (m.mid) out.mid = m.mid;
+  return JSON.stringify(out);
+}
+// ===== END rules.mjs（自動產生）=====

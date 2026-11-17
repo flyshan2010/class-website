@@ -95,7 +95,8 @@ export function rank(rows, keys) {
 export function starsToCatchUp(ranked, seat, key = "stars") {
   const me = ranked.find((x) => x.seat === seat);
   if (!me || me.rank === 1) return null;
-  const prev = ranked.filter((x) => x.rank < me.rank).at(-1);
+  const ahead = ranked.filter((x) => x.rank < me.rank);
+  const prev = ahead[ahead.length - 1];
   return prev[key] - me[key];
 }
 
@@ -176,7 +177,7 @@ export function decodeSave(raw) {
 /** 寫存檔：一律第 2 版，回傳 JSON 字串 */
 export function encodeSave(m) {
   const L = {};
-  const row = (k) => (L[k] ??= [...(m.lv?.[k] ?? [0, 0, 0]), 0, []]);
+  const row = (k) => L[k] || (L[k] = [...((m.lv && m.lv[k]) || [0, 0, 0]), 0, []]); // 不用 ??=：代理（Apps Script）共用這支
   for (const k of Object.keys(m.lv ?? {})) row(k);
   for (const k of m.sc ?? []) row(k)[3] = 1;
   for (const [code, [st, d]] of Object.entries(m.cd ?? {})) { const [k, n] = splitBs(code); row(k)[4].push([n, st, d]); }
