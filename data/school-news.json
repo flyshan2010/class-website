@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-11-16T21:25:25.347Z",
+  "fetchedAt": "2026-11-17T05:00:54.151Z",
   "items": [
+    {
+      "date": "2026-11-17",
+      "title": "衛生福利部食品藥物管理署為防範校園及補教機構非法流用、濫用坊間所稱「聰明藥」之管制藥品",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1159&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-11-16",
       "title": "臺南市115年中小學校際盃圍棋錦標賽競賽規程及報名名單公告，欲參加之學生請至學務處報名。",
@@ -53,12 +59,6 @@
       "date": "2026-11-13",
       "title": "本府第5屆青年事務委員會青年代表委員招募報名期限延長至115年11月20日",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1146&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
-      "date": "2026-11-13",
-      "title": "人權博物館115學年度上學期人權教育資源，開放受理申請至額滿為止",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1145&type=news&from_op=school_department_show",
       "dept": "學務處"
     }
   ]
