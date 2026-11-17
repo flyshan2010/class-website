@@ -501,7 +501,7 @@ test("so_test_clear：只清測試座號的暫存區；dry 回用量", () => {
 
 test("暫停開關、鎖拿不到、版本號", () => {
   const w = makeWorld();
-  assert.equal(w.post({ action: "version" }).version, "2.21");
+  assert.equal(w.post({ action: "version" }).version, "2.22");
   const s = session(w, 3); s.pull();
   w.lock.free = false;
   const busy = s.push(round("ggggggg"));

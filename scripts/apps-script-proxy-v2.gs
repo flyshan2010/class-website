@@ -1,6 +1,10 @@
 /**
- * 班網教師專區代理 v2.21（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
+ * 班網教師專區代理 v2.22（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.22 升級步驟（2026-11-17，約 1 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
+ *   v2.22 修正：自學星圖配合題改逐對判（前台一對送一筆事件，選項只帶那一對）；一題最多發兩張秘笈卡（P1 §9 第 4 項）。
  *
  * ── v2.21 升級步驟（2026-11-17，約 3 分鐘）──
  *   全選覆蓋 → 上方函式選單選「authorize」→ 執行 → 跳出授權視窗按「允許」（這版多一項「管理觸發器」權限，落地要用）
@@ -162,7 +166,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.21"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.22"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
