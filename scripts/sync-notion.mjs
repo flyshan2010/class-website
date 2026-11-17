@@ -19,6 +19,7 @@ import { termExamData } from "./classos/lib/midterm-report.mjs";
 import { trailOf, termSummary } from "./classos/lib/term-trail.mjs";
 import { matchExam, analyze, reportItem, missingCards } from "./classos/lib/quiz-errors.mjs";
 import { rowFromRecord, teacherWeeks, seatWeek, weekKey as assessWeekKey } from "./classos/lib/assess-weak.mjs";
+import { bundleFromNotion, buildBookFiles } from "./classos/study-orbit/books.mjs";
 
 const TOKEN = process.env.NOTION_TOKEN;
 if (!TOKEN) {
@@ -57,6 +58,12 @@ const DS = {
   quizExams: "51c1c08f-78b4-4352-85f6-e45fb7361c2a", // 📝 平時卷（含答案；只算錯題分析進加密報告，開放日前不輸出答案）
   essaySheets: "56117636-5b3f-4328-8e21-43edc867a266", // 📝 作文說明單（一列＝一個作文題目；分層名單只進教師加密檔 essay-tiers.json）
   reviewCards: "74bfc789-192e-425e-b7c6-477033bec302", // 📚 觀念複習卡（一列＝一個知識點；只有「上架」輸出到公開 data/review-cards.json）
+  // 🌌 自學星圖內容（P2 SPEC §3：只輸出上線題本的可用列到 data/study-orbit/；無學生資料，跨學年教材不過濾學年）
+  soBooks: "41ab1f9d-7e45-8171-bb0d-000be3c15679", // 📚 題本（結構 JSON 在頁面內文）
+  soKps: "41ab1f9d-7e45-81da-bd65-000b536e9294", // 🌌 知識點
+  soBlindspots: "41ab1f9d-7e45-8156-bc9c-000bba6c8369", // 🎯 學習盲點（含秘笈卡）
+  soStories: "41ab1f9d-7e45-8116-9be6-000b62c71f55", // 🎴 故事卡
+  questionBank: "8dbb69f2-e9e2-442b-82f2-d0462c986c5a", // 📝 題庫（只取「關卡代碼」有值的自學題）
 };
 
 // ── Phase F：學年過濾與漏填偵測（SPEC_學年升級 §5）──────────────────────
@@ -1938,6 +1945,44 @@ async function syncClassRules() {
   await save("class-rules.json", { cards, daily: pick("一日作息"), flows: pick("上課常規"), draw });
 }
 
+// ── 🌌 自學星圖題本檔（P2 SPEC §3）──
+// 讀題本／知識點／盲點／故事卡／題庫 → books.mjs 轉資料包並跑 checkBundle → data/study-orbit/index.json＋<題本代碼>.json。
+// 某本檢核有錯：該本不輸出、沿用上一版，只印錯誤清單，**不中止整個班網同步**（讀表失敗也一樣）。
+// 自學紀錄、自學進度（學生資料）本階段不讀（SPEC §9）。
+async function syncStudyOrbit() {
+  const dir = path.join(DATA_DIR, "study-orbit");
+  try {
+    const [books, kps, blindspots, stories, qbank, cards] = await Promise.all(
+      [DS.soBooks, DS.soKps, DS.soBlindspots, DS.soStories, DS.questionBank, DS.reviewCards].map(queryDataSource));
+    const structures = new Map();
+    for (const page of books) {
+      if (props(page)["狀態"] !== "上線") continue;
+      const code = (await blockChildren(page.id)).find(b => b.type === "code");
+      const text = (code?.code?.rich_text || []).map(t => t.plain_text).join("");
+      try { structures.set(page.id, JSON.parse(text)); }
+      catch { console.warn(`⚠️ 自學星圖：題本 ${props(page)["代碼"]} 內文找不到可解析的結構 JSON`); }
+    }
+    const B = bundleFromNotion({
+      books: books.map(props), structures, kps: kps.map(props), blindspots: blindspots.map(props),
+      stories: stories.map(props), questions: qbank.map(props), reviewCards: cards.map(props),
+    });
+    let prev = {};
+    try { prev = JSON.parse(await readFile(path.join(dir, "index.json"), "utf8")); } catch { /* 第一次產生 */ }
+    const { index, files, log } = buildBookFiles(B, prev);
+    for (const l of log) console.log(`  ${l}`);
+    await mkdir(dir, { recursive: true });
+    for (const [code, data] of Object.entries(files)) {
+      const json = JSON.stringify(data);
+      if (/座號|查詢碼/.test(json)) throw new Error(`題本 ${code} 內含座號或查詢碼字樣`);
+      await writeFile(path.join(dir, `${code}.json`), json + "\n", "utf8");
+    }
+    await writeFile(path.join(dir, "index.json"), JSON.stringify(index) + "\n", "utf8");
+    console.log(`✅ study-orbit/index.json（${index.books.length} 本）`);
+  } catch (e) {
+    console.warn(`⚠️ 自學星圖題本檔本次未更新（沿用上一版）：${String(e.message).slice(0, 200)}`);
+  }
+}
+
 // 先決定現行學年，後續各 sync 的查詢才知道要過濾哪一年（各 sync 為平行執行）
 await resolveCurrentYear();
 
@@ -1961,6 +2006,7 @@ await Promise.all([
   syncRecapExtras(),
   syncClassDuties(),
   syncClassRules(),
+  syncStudyOrbit(),
 ]);
 // ── Phase F fail-loud：學年漏填即報錯（SPEC_學年升級 §5）────────────────
 // 空學年在 2026-07-25 全庫回填後已無合法情境，出現即代表某支寫入端漏填。

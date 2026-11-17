@@ -2,55 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { checkBundle, worstSaveBytes, SAVE_LIMIT_BYTES } from "./check.mjs";
 
-// 合格資料包：一本題本兩關。L1＝七格選擇題；L2＝配合題（第 1–4 格）＋題組（第 5–7 格）
-const BOOK = "m-x-t1";
-const L1 = `${BOOK}-1-1`, L2 = `${BOOK}-1-2`;
-const STORY = "這是延伸小知識。".repeat(6); // 48 字
-let n = 0;
-const qid = () => `MA4-${String(++n).padStart(4, "0")}`;
-const choice = (level, slot, mother, extra = {}) => ({
-  id: qid(), type: "選擇", level, slot, span: 1, mother, kp: `${level}-K1`,
-  blindspots: [`${level}-B1`, `${level}-B2`, `${level}-B3`],
-  optionBlindspots: `B=${level}-B1\nC=${level}-B2\nD=${level}-B3`,
-  options: [`甲${n}`, `乙${n}`, `丙${n}`, `丁${n}`], answer: "A",
-  hint1: "想一想", hint2: "看位值表", explanation: "因為……", status: "可用", ...extra,
-});
-
-function fixture() {
-  n = 0;
-  const questions = [];
-  for (let s = 1; s <= 7; s++) {
-    const a = choice(L1, s, "");
-    questions.push(a, choice(L1, s, a.id));
-  }
-  const match = (mother) => ({
-    id: qid(), type: "配合", level: L2, slot: 1, span: 4, mother, kp: `${L2}-K1`,
-    blindspots: [`${L2}-B1`, `${L2}-B2`],
-    optionBlindspots: `1=${L2}-B1\n2=${L2}-B2\n3=${L2}-B1\n4=${L2}-B2`,
-    left: ["一", "二", "三", "四"], right: [`甲${n}`, `乙${n}`, `丙${n}`, `丁${n}`],
-    hint1: "想一想", hint2: "對照", explanation: "因為……", status: "可用",
-  });
-  const m1 = match("");
-  questions.push(m1, match(m1.id));
-  const g1 = [5, 6, 7].map((s) => choice(L2, s, "", { group: `${L2}-G1`, material: "短文甲", materialType: "文章" }));
-  const g2 = g1.map((q, i) => choice(L2, 5 + i, q.id, { group: `${L2}-G2`, material: "短文乙", materialType: "文章" }));
-  questions.push(...g1, ...g2);
-  const bs = (level, i) => ({ code: `${level}-B${i}`, name: `盲點${i}`, kp: `${level}-K1`, level, fix: "對的想法", ex: "例子", chk: "口訣", status: "可用" });
-  return {
-    books: [{ code: BOOK, subject: "數學", status: "試行", structure: { islands: [{ id: "1", name: "島", levels: [
-      { code: L1, name: "第一關", exam: "期中", slots: ["基礎", "基礎", "基礎", "進階", "進階", "應用", "應用"] },
-      { code: L2, name: "第二關", exam: "期中", slots: ["基礎", "基礎", "基礎", "基礎", "進階", "應用", "應用"] },
-    ] }] } }],
-    kps: [
-      { code: `${L1}-K1`, name: "重點一", subject: "數學", book: BOOK, level: L1, reviewCard: "大數", status: "可用" },
-      { code: `${L2}-K1`, name: "重點二", subject: "數學", book: BOOK, level: L2, reviewCard: "", status: "可用" },
-    ],
-    blindspots: [1, 2, 3].flatMap((i) => [bs(L1, i), bs(L2, i)]),
-    stories: [L1, L2].map((level) => ({ level, book: BOOK, title: "小知識", body: STORY, status: "可用" })),
-    questions,
-    reviewCards: [{ name: "大數", subject: "數學", status: "上架" }],
-  };
-}
+import { BOOK, L1, L2, fixture } from "./fixture.mjs";
 
 const rulesHit = (b) => new Set(checkBundle(b).errors.map((e) => e.rule));
 const q = (b, level, slot, nth = 0) => b.questions.filter((x) => x.level === level && x.slot === slot)[nth];
@@ -75,16 +27,22 @@ const BROKEN = {
   9: (b) => { q(b, L2, 6).material = "短文甲（改）"; },                                     // 題組素材不一致
   10: (b) => { b.stories[0].body = "太短了"; },                                            // 故事卡字數
   11: (b) => { b.kps[0].code = `${L1}-k1`; },                                              // 代碼格式
-  12: (b) => {                                                                             // 盲點多到存檔爆量
-    for (let i = 4; i < 400; i++) b.blindspots.push({ code: `${L1}-B${i}`, name: "x", kp: `${L1}-K1`, level: L1, fix: "a", ex: "b", chk: "c", status: "可用" });
+  12: (b) => {                                                                             // 關卡與盲點多到存檔爆量（第 2 版一關最多 B35）
+    const book = b.books[0], isl = book.structure.islands[0];
+    for (let n = 2; n <= 60; n++) {
+      const code = `${book.code}-9-${n}`;
+      isl.levels.push({ code, name: "x", exam: "期中", slots: isl.levels[0].slots });
+      for (let i = 1; i <= 35; i++) b.blindspots.push({ code: `${code}-B${i}`, name: "x", kp: `${L1}-K1`, level: code, fix: "a", ex: "b", chk: "c", status: "可用" });
+    }
   },
+  "11b": (b) => { b.blindspots.push({ code: `${L1}-B36`, name: "x", kp: `${L1}-K1`, level: L1, fix: "a", ex: "b", chk: "c", status: "可用" }); }, // 盲點超過 B35
   14: (b) => { b.reviewCards[0].subject = "國語"; },                                        // 觀念卡科目不同
 };
 for (const [rule, breakIt] of Object.entries(BROKEN)) {
   test(`第 ${rule} 條：故意做錯會被抓到`, () => {
     const b = fixture();
     breakIt(b);
-    assert.ok(rulesHit(b).has(Number(rule)), `第 ${rule} 條沒報錯`);
+    assert.ok(rulesHit(b).has(parseInt(rule)), `第 ${rule} 條沒報錯`);
   });
 }
 
@@ -108,7 +66,6 @@ test("第 12 條：國語 66 關、每關 8 個盲點的最壞存檔大小在 8K
   const levels = Array.from({ length: 66 }, (_, i) => `${book}-${Math.floor(i / 5) + 1}-${(i % 5) + 1}`);
   const bss = levels.flatMap((l) => Array.from({ length: 8 }, (_, i) => `${l}-B${i + 1}`));
   const bytes = worstSaveBytes(book, levels, bss);
-  assert.ok(bytes > 0);
-  // 只印實際數字給回報用；是否 ≤8KB 由真資料的第 12 條判定
+  assert.ok(bytes <= SAVE_LIMIT_BYTES, `${bytes} 超過 ${SAVE_LIMIT_BYTES}`); // P2 SPEC §4 第 2 版：試算約 4.1KB
   console.log(`國語 66 關 × 8 盲點最壞存檔：${bytes} bytes（上限 ${SAVE_LIMIT_BYTES}）`);
 });

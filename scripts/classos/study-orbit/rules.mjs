@@ -3,13 +3,16 @@
 
 /**
  * §5.1 一格的燈。
- * @param {{first:boolean, hinted:boolean, retry?:boolean|null}} a
+ * @param {{first:boolean, hinted:boolean, retry?:boolean|null, fast?:boolean}} a
  *   first＝第一次是否答對；hinted＝第一次是否用過提示（1–3 層都算）；
- *   retry＝第一次答錯後再挑戰是否答對（沒再挑戰為 null）
+ *   retry＝第一次答錯後再挑戰是否答對（沒再挑戰為 null）；
+ *   fast＝第一次作答秒數 <2（P2 SPEC §1 第 6 項：太快答對只給銀燈，和用了提示一樣）
  * @returns {{light:"gold"|"silver"|"dark", streak:"+1"|"keep"|"reset", card:null|"待複習"|"已克服"}}
  */
-export function slotLight({ first, hinted, retry = null }) {
-  if (first) return hinted
+export const FAST_SEC = 2; // 第一次作答 <2 秒＝作答過快
+export const isFast = (sec) => Number.isFinite(Number(sec)) && Number(sec) < FAST_SEC;
+export function slotLight({ first, hinted, retry = null, fast = false }) {
+  if (first) return hinted || fast
     ? { light: "silver", streak: "keep", card: null }
     : { light: "gold", streak: "+1", card: null };
   if (retry === true) return { light: "silver", streak: "keep", card: "已克服" }; // 再挑戰用不用提示都是銀燈
@@ -94,4 +97,92 @@ export function starsToCatchUp(ranked, seat, key = "stars") {
   if (!me || me.rank === 1) return null;
   const prev = ranked.filter((x) => x.rank < me.rank).at(-1);
   return prev[key] - me[key];
+}
+
+// ── 存檔（P2 SPEC §4：第 2 版；第 1 版只讀不寫）──────────────────────────
+// 記憶體裡的形狀（兩版共用，鍵都省略題本代碼）：
+//   { lv:{關:[最高星等,曾經全金,挑戰次數]}, cd:{盲點:["t"|"d","YYYY-MM-DD"]}, ok:[盲點], sc:[關], mid:{k,i,res,q,t?}|null }
+// 第 2 版字串：{"v":2,"L":{關:[星,全金,次數,故事卡,盲點串]},"mid":{…,"t":毫秒}}
+//   盲點串一筆＝序號 1 字（36 進位，B1→1、B10→a）＋狀態 1 字（t／d 再接 3 字日期；o 不帶日期）
+
+const DAY0 = Date.UTC(2026, 0, 1);
+const dayToStr = (n) => new Date(DAY0 + n * 864e5).toISOString().slice(0, 10);
+const strToDay = (s) => Math.round((Date.parse(`${s}T00:00:00Z`) - DAY0) / 864e5);
+
+/** 日期 YYYY-MM-DD → 3 字（距 2026-01-01 天數，36 進位補零） */
+export function encodeDay(s) {
+  const n = strToDay(s);
+  if (!(n >= 0 && n < 36 ** 3)) throw new Error(`存檔日期超出範圍：${s}`);
+  return n.toString(36).padStart(3, "0");
+}
+export const decodeDay = (s3) => dayToStr(parseInt(s3, 36));
+
+const splitBs = (code) => { // "1-1-B10" → ["1-1", 10]
+  const m = /^(.+)-B(\d+)$/.exec(code);
+  if (!m) throw new Error(`盲點代碼格式不符：${code}`);
+  const n = Number(m[2]);
+  if (!(n >= 1 && n <= 35)) throw new Error(`盲點序號超出 1–35：${code}`);
+  return [m[1], n];
+};
+
+/** 一關的盲點串：entries＝[[序號, "t"|"d"|"o", 日期|null]] */
+export function encodeBsStr(entries) {
+  return [...entries].sort((a, b) => a[0] - b[0])
+    .map(([n, st, d]) => n.toString(36) + st + (st === "o" ? "" : encodeDay(d))).join("");
+}
+export function decodeBsStr(str) {
+  const out = [];
+  for (let i = 0; i < str.length;) {
+    const n = parseInt(str[i], 36), st = str[i + 1];
+    if (st === "o") { out.push([n, "o", null]); i += 2; }
+    else if (st === "t" || st === "d") { out.push([n, st, decodeDay(str.slice(i + 2, i + 5))]); i += 5; }
+    else throw new Error(`盲點串無法解析：${str}`);
+  }
+  return out;
+}
+
+const sortObj = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b, "en", { numeric: true })));
+const empty = () => ({ lv: {}, cd: {}, ok: [], sc: [], mid: null });
+
+/** 讀存檔（字串或物件；第 1、2 版都讀得進），回傳記憶體形狀（鍵已排序，方便比對） */
+export function decodeSave(raw) {
+  if (raw == null || raw === "") return empty();
+  const s = typeof raw === "string" ? JSON.parse(raw) : raw;
+  const m = empty();
+  if (s.v === 1) {
+    for (const [k, r] of Object.entries(s.lv ?? {})) m.lv[k] = [r[0], r[1], r[2]];
+    for (const [k, r] of Object.entries(s.cd ?? {})) m.cd[k] = [r[0], r[1]];
+    m.ok = [...(s.ok ?? [])];
+    m.sc = [...(s.sc ?? [])];
+    m.mid = s.mid ?? null;
+  } else if (s.v === 2) {
+    for (const [k, r] of Object.entries(s.L ?? {})) {
+      const [best, gold, tries, story, bs = ""] = r;
+      if (best || gold || tries) m.lv[k] = [best, gold, tries];
+      if (story) m.sc.push(k);
+      for (const [n, st, d] of decodeBsStr(bs)) {
+        const code = `${k}-B${n}`;
+        if (st === "o") m.ok.push(code); else m.cd[code] = [st, d];
+      }
+    }
+    m.mid = s.mid ?? null;
+  } else throw new Error(`不認得的存檔版本：${s.v}`);
+  m.lv = sortObj(m.lv); m.cd = sortObj(m.cd);
+  const byNum = (a, b) => a.localeCompare(b, "en", { numeric: true });
+  m.ok.sort(byNum); m.sc.sort(byNum);
+  return m;
+}
+
+/** 寫存檔：一律第 2 版，回傳 JSON 字串 */
+export function encodeSave(m) {
+  const L = {};
+  const row = (k) => (L[k] ??= [...(m.lv?.[k] ?? [0, 0, 0]), 0, []]);
+  for (const k of Object.keys(m.lv ?? {})) row(k);
+  for (const k of m.sc ?? []) row(k)[3] = 1;
+  for (const [code, [st, d]] of Object.entries(m.cd ?? {})) { const [k, n] = splitBs(code); row(k)[4].push([n, st, d]); }
+  for (const code of m.ok ?? []) { const [k, n] = splitBs(code); row(k)[4].push([n, "o", null]); }
+  for (const r of Object.values(L)) r[4] = encodeBsStr(r[4]);
+  const out = { v: 2, L: sortObj(L) };
+  if (m.mid) out.mid = m.mid;
+  return JSON.stringify(out);
 }

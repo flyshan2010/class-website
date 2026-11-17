@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   slotLight, nextStreak, stars, allGold, passed, applyRound, chestOpen,
   totals, weekStart, addWeekly, rank, starsToCatchUp,
+  isFast, encodeSave, decodeSave, encodeDay, decodeDay,
 } from "./rules.mjs";
 
 test("§5.2 八個案例：星等、全對、過關", () => {
@@ -69,4 +70,42 @@ test("排行：同分並列；進度榜先比完成關數；追平前一名的�
   assert.equal(starsToCatchUp(star, 4), null);
   assert.equal(starsToCatchUp(star, 1), 2);
   assert.equal(starsToCatchUp(star, 2), 2);
+});
+
+test("P2 §1 第 6 項：第一次作答 <2 秒答對＝銀燈、連對不變；2 秒＝金燈；答錯照原流程", () => {
+  assert.equal(isFast(1), true);
+  assert.equal(isFast(1.99), true);
+  assert.equal(isFast(2), false);
+  assert.deepEqual(slotLight({ first: true, hinted: false, fast: isFast(1) }), { light: "silver", streak: "keep", card: null });
+  assert.deepEqual(slotLight({ first: true, hinted: false, fast: isFast(2) }), { light: "gold", streak: "+1", card: null });
+  assert.deepEqual(slotLight({ first: false, hinted: false, fast: true }), { light: "dark", streak: "reset", card: "待複習" });
+  assert.deepEqual(slotLight({ first: false, hinted: false, retry: true, fast: true }), { light: "silver", streak: "keep", card: "已克服" });
+});
+
+test("P2 §4 存檔第 2 版：日期 3 字、編碼→解碼不變", () => {
+  assert.equal(encodeDay("2026-01-01"), "000");
+  assert.equal(decodeDay(encodeDay("2026-11-20")), "2026-11-20");
+  assert.equal(decodeDay(encodeDay("2153-01-01")), "2153-01-01");
+  const m = {
+    lv: { "1-1": [3, 1, 4], "1-2": [1, 0, 2] },
+    cd: { "1-1-B1": ["d", "2026-11-20"], "1-1-B10": ["t", "2026-11-18"], "2-1-B3": ["t", "2026-12-01"] },
+    ok: ["1-1-B2"], sc: ["1-1"],
+    mid: { k: "1-2", i: 3, res: "gs", q: ["MA4-0131", "MA4-0133"], t: 1763380000000 },
+  };
+  const s = encodeSave(m);
+  assert.equal(JSON.parse(s).v, 2);
+  assert.deepEqual(JSON.parse(s).L["1-1"], [3, 1, 4, 1, "1d08z2oat08x"]);
+  assert.deepEqual(JSON.parse(s).L["2-1"], [0, 0, 0, 0, "3t09a"], "只有秘笈卡、沒玩過的關也要存");
+  assert.deepEqual(decodeSave(s), decodeSave(m.lv && { v: 1, ...m }));
+  assert.equal(encodeSave(decodeSave(s)), s, "再編一次字串完全相同");
+  assert.deepEqual(decodeSave(""), { lv: {}, cd: {}, ok: [], sc: [], mid: null });
+});
+
+test("P2 §4 第 1 版讀進來轉第 2 版，內容不變", () => {
+  const v1 = { v: 1, lv: { "1-1": [3, 1, 4], "3-2": [2, 0, 7] }, cd: { "1-1-B1": ["d", "2026-11-20"], "3-2-B4": ["t", "2026-11-19"] },
+    ok: ["1-1-B2", "3-2-B1"], sc: ["1-1", "3-2"], mid: { k: "1-2", i: 3, res: "gs", q: ["MA4-0131", "MA4-0133"] } };
+  const before = decodeSave(JSON.stringify(v1));
+  const after = decodeSave(encodeSave(before));
+  assert.deepEqual(after, before);
+  assert.ok(encodeSave(before).length < JSON.stringify(v1).length, "第 2 版比第 1 版短");
 });

@@ -14,6 +14,8 @@
 //   reviewCards:[{ name, subject, status }],
 // }
 
+import { encodeSave } from "./rules.mjs";
+
 export const SAVE_LIMIT_BYTES = 8 * 1024; // §4 第 12 條：存檔最壞情況 ≤8KB
 const SLOT_NORMAL = ["基礎", "基礎", "基礎", "進階", "進階", "應用", "應用"];
 const SLOT_MATCH = ["基礎", "基礎", "基礎", "基礎", "進階", "應用", "應用"];
@@ -39,18 +41,19 @@ export function parseOptionBlindspots(text) {
   return { map, bad };
 }
 
-/** 存檔最壞情況的位元組數（§3.8 第 1 版格式；鍵省略題本代碼） */
+/** 存檔最壞情況的位元組數（P2 SPEC §4 第 2 版；鍵省略題本代碼）
+ *  最壞＝每關都有紀錄與故事卡、每個盲點都在「已克服」（帶日期，比「確認通過」長）、答到一半的關卡塞滿 */
 export function worstSaveBytes(bookCode, levelCodes, blindspotCodes) {
   const short = (c) => c.slice(bookCode.length + 1);
   const lv = {}, cd = {};
   for (const c of levelCodes) lv[short(c)] = [3, 1, 999];
-  for (const c of blindspotCodes) cd[short(c)] = ["d", "2026-11-20"]; // cd 一筆比 ok 一筆長，最壞＝全在 cd
+  for (const c of blindspotCodes) if (/-B([1-9]|[12]\d|3[0-5])$/.test(c)) cd[short(c)] = ["d", "2026-11-20"]; // 超過 B35 已由第 11 條報錯
   const longest = levelCodes.map(short).sort((a, b) => b.length - a.length)[0] ?? "";
   const save = {
-    v: 1, lv, cd, ok: [], sc: levelCodes.map(short),
-    mid: { k: longest, i: 7, res: "sssssss", q: Array(7).fill("MA4-0000") },
+    lv, cd, ok: [], sc: levelCodes.map(short),
+    mid: { k: longest, i: 7, res: "sssssss", q: Array(7).fill("MA4-0000"), t: 1763380000000 },
   };
-  return Buffer.byteLength(JSON.stringify(save), "utf8");
+  return Buffer.byteLength(encodeSave(save), "utf8");
 }
 
 export function checkBundle(bundle) {
@@ -88,6 +91,7 @@ export function checkBundle(bundle) {
   }
   for (const b of B.blindspots) {
     if (!new RegExp(`^${b.level}-B\\d+$`).test(b.code ?? "")) err(11, `盲點代碼格式不符或和關卡代碼不一致：${b.code}`, b.level);
+    else if (Number(/-B(\d+)$/.exec(b.code)[1]) > 35) err(11, `盲點序號超過 B35（存檔第 2 版一關最多 35 個盲點）：${b.code}`, b.level);
   }
   const seenQ = new Set();
   for (const q of B.questions) {
