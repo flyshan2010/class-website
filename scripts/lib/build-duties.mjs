@@ -150,20 +150,43 @@ export function buildDutyData({ dutyRows, rosterRows, kv = {} }) {
       每人每輪次數: (weeks * slots.length) / pool.length,
       rotation: [],
     });
+    const pick = (p, start, w, i) => p[(start + w * slots.length + i) % p.length];
+    // 公平性驗證：新輪值池完整一輪後每人出場次數必須相同，否則輪值規則有 bug（與起點無關，從 0 驗即可）
+    const times = {};
+    for (let w = 0; w < weeks; w++) slots.forEach((_, i) => { const s = pick(pool, 0, w, i); times[s] = (times[s] || 0) + 1; });
+    const counts = [...new Set(Object.values(times))];
+    if (Object.keys(times).length !== pool.length || counts.length !== 1)
+      throw new Error(`午餐輪值不公平：${Object.keys(times).length}/${pool.length} 人出場，次數分布 ${counts.join("/")}`);
+
+    // 學期中換固定崗（打飯班換人）→「⚙️ 網站設定」的「午餐輪值接續」列（2026-11-18 老師裁定「從下週重排，不從第一週重排」）：
+    // 起算週之前照**舊固定崗**算（已發生的週與本週不變），起算週起用新輪值池、從「起始座號」接續。
+    // 換學期要清空這列（下學期週次從 1 重算，舊的前期設定會套錯）——RUNBOOK_制度學期檢視 有列。
+    const anc = {};
+    String(kv["午餐輪值接續"] ?? "").split(/[\n;；]+/).forEach(l => {
+      const m = l.match(/^\s*([^:：=]+?)\s*[:：=]\s*(.+?)\s*$/); if (m) anc[m[1]] = m[2];
+    });
+    let fromWeek = 1, start = 0, oldPool = pool;
+    if (Object.keys(anc).length) {
+      fromWeek = Number(anc["起算週"]);
+      const startSeat = Number(anc["起始座號"]);
+      const oldFixed = new Set(parseSeats(anc["前期固定崗"] ?? "", "午餐輪值接續・前期固定崗"));
+      oldPool = allSeats.filter(s => !oldFixed.has(s));
+      start = pool.indexOf(startSeat);
+      if (!Number.isInteger(fromWeek) || fromWeek < 1 || start < 0 || !oldFixed.size)
+        throw new Error("「午餐輪值接續」看不懂：要有 起算週（正整數）、起始座號（須在新輪值池）、前期固定崗（座號）——請到 Notion「⚙️ 網站設定」修正或清空");
+      Object.assign(lunch, { 輪值接續: { 起算週: fromWeek, 起始座號: startSeat } });
+    }
     rotationSeats = Array.from({ length: weeks }, (_, w) => ({
       week: w + 1,
-      assign: slots.map((slot, i) => ({ slot, seat: pool[(w * slots.length + i) % pool.length] })),
+      assign: slots.map((slot, i) => ({
+        slot,
+        seat: w + 1 < fromWeek ? pick(oldPool, 0, w, i) : pick(pool, start, w + 1 - fromWeek, i),
+      })),
     }));
     lunch.rotation = rotationSeats.map(wk => ({
       week: wk.week,
       assign: wk.assign.map(a => ({ slot: a.slot, name: nameOf(a.seat) })),
     }));
-    // 公平性驗證：完整一輪後每人出場次數必須相同，否則輪值規則有 bug
-    const times = {};
-    for (const wk of lunch.rotation) for (const a of wk.assign) times[a.name] = (times[a.name] || 0) + 1;
-    const counts = [...new Set(Object.values(times))];
-    if (Object.keys(times).length !== pool.length || counts.length !== 1)
-      throw new Error(`午餐輪值不公平：${Object.keys(times).length}/${pool.length} 人出場，次數分布 ${counts.join("/")}`);
   } else if (rotRows.length) {
     warnings.push("午餐輪值崗沒有可排的人（輪值池為空）");
   }

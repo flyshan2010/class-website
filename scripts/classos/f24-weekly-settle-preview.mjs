@@ -244,15 +244,14 @@ console.log(`🧹 打掃列 ${duties.filter(d => sel(d, "類型") === "打掃").
 console.log(`🍱 午餐固定崗座號：${[...fixedLunch].sort((a, b) => a - b).join("、")}`);
 const noClean = roster.filter(r => !cleanShares.has(r.seat)).map(r => r.seat);
 
-// 午餐輪值：輪次由週次算，池＝在學座號扣掉固定崗（與 build-duties.mjs 同一算法）
-const lunchJson = await readJSON("lunch.json");
+// 午餐輪值：直接讀同步端排好的 lunch-seats.json（班網、教室黑板顯示的同一份），不在這裡重算——
+// 2026-11-18 起有「午餐輪值接續」（學期中換固定崗，起算週前照舊名單），重算一份會跟班網對不起來（U83）。
+const lunchJson = await readJSON("lunch-seats.json");
 const cycle = Number(lunchJson.完整輪替週數) || (lunchJson.rotation ?? []).length;
-const perWeek = Number(lunchJson.每週人數) || 0;
-const pool = roster.map(r => r.seat).filter(s => !fixedLunch.has(s));
 const round = cycle ? ((TERM_NO - 1) % cycle) + 1 : null;
-const rotSeats = (cycle && perWeek)
-  ? Array.from({ length: perWeek }, (_, i) => pool[((round - 1) * perWeek + i) % pool.length])
-  : [];
+const rotSeats = ((lunchJson.rotation ?? []).find(r => r.week === round)?.assign ?? []).map(a => Number(a.seat));
+if (cycle && !rotSeats.length) console.log(`⚠️ lunch-seats.json 找不到第 ${round} 輪的搬餐桶名單——需人工`);
+console.log(`🍱 本週搬餐桶（第 ${round} 輪）：${rotSeats.join("、")}`);
 // 午餐例外：檢核台的「午餐支援／午餐缺席」tally（2026-09-11 補，原本只算基準，缺席也照發）
 const lunchSup = tallyBySeat("午餐支援"), lunchAbs = tallyBySeat("午餐缺席");
 const lunchSeats = new Set([...fixedLunch, ...rotSeats, ...lunchSup.keys()]);
