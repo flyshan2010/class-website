@@ -258,7 +258,8 @@ const lunchSeats = new Set([...fixedLunch, ...rotSeats, ...lunchSup.keys()]);
 let lunchTimes = 0;
 const lunchBySeat = new Map();   // 座號 → 本週午餐工作次數
 for (const s of lunchSeats) {
-  const base = (fixedLunch.has(s) || rotSeats.includes(s)) ? WORK_DAYS : 0;
+  // 固定崗＋本週搬餐桶兩份都做（學期中換打飯班的那一週才會發生）→ 兩份都算（2026-11-18 老師裁定：第12週 23 號領雙薪）
+  const base = (fixedLunch.has(s) ? WORK_DAYS : 0) + (rotSeats.includes(s) ? WORK_DAYS : 0);
   const n = Math.max(0, base + (lunchSup.get(s) ?? 0) - (lunchAbs.get(s) ?? 0));
   lunchTimes += n;
   if (n) lunchBySeat.set(s, n);
