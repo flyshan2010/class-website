@@ -1,6 +1,11 @@
 /**
- * 班網教師專區代理 v2.23（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
+ * 班網教師專區代理 v2.24（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.24 升級步驟（2026-11-18，約 1 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
+ *   v2.24 修正（自學星圖壓力測試第 2 輪新發現，P2 SPEC §15）：自學紀錄的題數／答對數／用時分改由「接好後的作答明細」逐行重算，
+ *   不再拿暫存格累計直接覆寫——暫存格當天中途被逐出（>400KB）或清掉後，原本會把 Notion 題數蓋成只剩之後做的題數。
  *
  * ── v2.23 升級步驟（2026-11-18，約 1 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
@@ -172,7 +177,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.23"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.24"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -3009,11 +3014,13 @@ function soWriteLog_(props, token, date, seat, lg) {
     if (old && (old === s || old.slice(-(s.length + 1)) === "\n" + s)) return old;
     return (old ? old + "\n" : "") + s;
   };
+  const allA = join(oldA, lg.a), n = soLogCount_(allA);
   const p = {
-    "作答明細": { rich_text: soChunks_(join(oldA, lg.a)) },
+    "作答明細": { rich_text: soChunks_(allA) },
     "回合摘要": { rich_text: soChunks_(join(oldR, lg.r)) },
-    "題數": { number: lg.q }, "答對數": { number: lg.c },
-    "用時分": { number: Math.floor(lg.sec / 60 + 0.5) }, // 四捨五入（不用銀行家捨入）
+    // v2.24：由整份作答明細重算（暫存格的 q／c／sec 是「這一格存在期間」的累計，格子被逐出後會從 0 起算）
+    "題數": { number: n.q }, "答對數": { number: n.c },
+    "用時分": { number: Math.floor(n.sec / 60 + 0.5) }, // 四捨五入（不用銀行家捨入）
   };
   if (!pid) {
     p["標題"] = { title: [{ text: { content: title } }] };
@@ -3032,6 +3039,17 @@ function soWriteLog_(props, token, date, seat, lg) {
   const res = soNotion_(props, token, "pages/" + pid, "patch", { properties: p });
   if (res.code !== 200) { soErr_(props, "自學紀錄寫入 " + res.code + " " + title); return null; }
   return pid;
+}
+
+// 作答明細一行一題：<本>-<關>#<格>,<題目ID>,<選項>,<對1錯0>,<提示>,<秒>,<第幾次>（soFold_ 產生；卡冊行格＝0）
+function soLogCount_(text) {
+  const out = { q: 0, c: 0, sec: 0 };
+  (text ? text.split("\n") : []).forEach(function (ln) {
+    const f = ln.split(","), n = f.length; // 從尾端取欄位：選項裡就算有逗號也不會錯位
+    if (n < 7 || f[0].indexOf("#") < 0) return;
+    out.q++; if (f[n - 4] === "1") out.c++; out.sec += Number(f[n - 2]) || 0;
+  });
+  return out;
 }
 
 // 寫完後在鎖裡回寫格子：版本沒變才清 dirty（期間又被改過就留到下一輪）

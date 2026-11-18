@@ -504,7 +504,7 @@ test("so_test_clear：只清測試座號的暫存區；dry 回用量", () => {
 
 test("暫停開關、鎖拿不到、版本號", () => {
   const w = makeWorld();
-  assert.equal(w.post({ action: "version" }).version, "2.23");
+  assert.equal(w.post({ action: "version" }).version, "2.24");
   const s = session(w, 3); s.pull();
   w.lock.free = false;
   const busy = s.push(round("ggggggg"));
@@ -573,4 +573,33 @@ test("v2.23：登入一次補齊各本；上傳分開回等待／持鎖；落地
   w.clock.t += 5 * 60e3; w.flush();
   assert.equal(w.text(w.rowsOf(DS.log)[0].properties.作答明細).split("\n").length, lines, "0 重複");
   assert.equal(JSON.parse(w.store.get("so:log:2026-11-20:3")).dirty, 0);
+});
+
+test("v2.24：紀錄格中途被逐出／清掉 → 題數、答對數、用時由整份作答明細重算，不少算也不重算", () => {
+  const w = makeWorld();
+  const s = session(w, 3); s.pull();
+  s.push(round("ggggggg"));
+  w.flush();
+  const k = "so:log:2026-11-20:3";
+  const first = w.rowsOf(DS.log)[0].properties;
+  assert.equal(first.題數.number, 7);
+  w.store.delete(k); // 模擬總量護欄逐出（壓力測試第 2 輪是 so_test_clear）
+  s.push(round("rgggggg", "f"));
+  w.clock.t += 5 * 60e3; w.flush();
+  const lg = w.rowsOf(DS.log)[0].properties;
+  const lines = w.text(lg.作答明細).split("\n");
+  assert.equal(w.rowsOf(DS.log).length, 1, "接在同一列");
+  assert.equal(lg.題數.number, lines.length, "題數＝明細行數（7＋本回合），不是只剩本回合");
+  assert.ok(lg.題數.number > 7);
+  assert.equal(lg.答對數.number, lines.filter((x) => x.split(",").at(-4) === "1").length);
+  const sec = lines.reduce((t, x) => t + Number(x.split(",").at(-2)), 0);
+  assert.equal(lg.用時分.number, Math.floor(sec / 60 + 0.5));
+  // 寫進 Notion 後回寫暫存區失敗 → 下一輪重寫，題數不重算
+  const q0 = lg.題數.number;
+  s.push(round("ggggggg"));
+  w.clock.t += 5 * 60e3; w.lock.free = false; w.flush(); w.lock.free = true;
+  const q1 = w.rowsOf(DS.log)[0].properties.題數.number;
+  w.clock.t += 5 * 60e3; w.flush();
+  assert.equal(w.rowsOf(DS.log)[0].properties.題數.number, q1);
+  assert.ok(q1 > q0);
 });
