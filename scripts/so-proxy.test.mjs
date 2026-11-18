@@ -212,9 +212,11 @@ test("測試座號：只認 SO_TEST_KEY；沒設金鑰就不能登入", () => {
 });
 
 // ───────────── 上傳與規則 ─────────────
-test("上傳前要先 so_pull；全金一回合＝3 星、全對、今日任務與連續天數", () => {
+test("格子不在暫存區要先 so_pull；全金一回合＝3 星、全對、今日任務與連續天數", () => {
   const w = makeWorld();
   const s = session(w, 3);
+  assert.ok(w.cell(3), "v2.23：登入時已先補好格子");
+  w.store.delete("so:s:m-h-4a:3"); // 模擬被逐出
   assert.equal(s.push(round("ggggggg")).needPull, true);
   s.seq = 1;
   const p = s.pull();
@@ -275,7 +277,7 @@ test("兩台載具交錯送出＝單台依序送出", () => {
   b2.push(evs.slice(5, 11), "devB0002");
   b1.push(evs.slice(11), "devA0001");
   assert.equal(two.cell(3).save, one.cell(3).save);
-  assert.equal(two.store.get("so:sum:m-h-4a"), one.store.get("so:sum:m-h-4a"));
+  assert.equal(two.store.get("so:sm:m-h-4a:3"), one.store.get("so:sm:m-h-4a:3"));
 });
 
 test("接續：mid 取 t 大的；結算的關不收舊 mid", () => {
@@ -360,6 +362,8 @@ test("落地期間又被改過 → 保留 dirty 下一輪再寫；429 照 Retry-
   assert.ok(w.cell(3).pid, "頁面 id 已存回");
   w.hooks.give429 = 1;
   w.clock.t += 60e3; w.flush();
+  assert.equal(w.calls.n429, 0, "v2.23：同一格 5 分鐘內不再落地");
+  w.clock.t += 4 * 60e3; w.flush();
   assert.equal(w.calls.n429, 1);
   assert.equal(w.cell(3).dirty, 0);
   assert.equal(w.rowsOf(DS.prog).length, 1);
@@ -494,14 +498,13 @@ test("so_test_clear：只清測試座號的暫存區；dry 回用量", () => {
   const r = w.post({ action: "so_test_clear", testKey: TEST_KEY });
   assert.equal(r.ok, true);
   assert.ok(![...w.store.keys()].some((k) => /:901$/.test(k)));
-  assert.ok(!JSON.parse(w.store.get("so:sum:m-h-4a"))["901"]);
   assert.ok(w.cell(3), "正式座號不動");
   assert.ok(r.after.bytes < r.before.bytes);
 });
 
 test("暫停開關、鎖拿不到、版本號", () => {
   const w = makeWorld();
-  assert.equal(w.post({ action: "version" }).version, "2.22");
+  assert.equal(w.post({ action: "version" }).version, "2.23");
   const s = session(w, 3); s.pull();
   w.lock.free = false;
   const busy = s.push(round("ggggggg"));
@@ -541,4 +544,33 @@ test("配合題：一對一筆事件逐對判；配錯的對發卡、一題最�
 test("代理的 rules 區塊＝rules.mjs 正本（不准手改）", () => {
   const { current, block } = build();
   assert.equal(current, block);
+});
+
+test("v2.23：登入一次補齊各本；上傳分開回等待／持鎖；落地每格 5 分鐘一次；耗時記 so:run；紀錄不重複接行", () => {
+  const w = makeWorld();
+  const s = session(w, 3);
+  assert.ok(w.cell(3) && w.cell(3, "s-k-4a"), "兩本格子都補好");
+  const n0 = w.calls.notion;
+  s.pull(); s.pull("s-k-4a");
+  assert.equal(w.calls.notion, n0, "拉取不再查 Notion");
+  const r = s.push(round("ggggggg"));
+  assert.equal(typeof r.lockWait, "number");
+  assert.equal(typeof r.lockMs, "number");
+  assert.ok(w.store.get("so:sm:m-h-4a:3"), "排行摘要一人一格");
+  w.flush();
+  const v1 = w.rowsOf(DS.prog)[0].properties.存檔版本.number;
+  s.push(round("rgggggg", "f"));
+  w.clock.t += 60e3; w.flush();
+  assert.equal(w.rowsOf(DS.prog)[0].properties.存檔版本.number, v1, "1 分鐘內不再寫");
+  w.clock.t += 4 * 60e3; w.flush();
+  assert.equal(w.rowsOf(DS.prog)[0].properties.存檔版本.number, w.cell(3).ver, "滿 5 分鐘寫");
+  const run = w.post({ action: "so_test_clear", testKey: TEST_KEY, dry: true }).run["2026-11-20"];
+  assert.ok(run && run[1] === 3, "三輪落地都記到");
+  // 寫進 Notion 後回寫暫存區失敗（鎖拿不到）→ 下一輪不重複接行
+  s.push(round("ggggggg"));
+  w.clock.t += 5 * 60e3; w.lock.free = false; w.flush(); w.lock.free = true;
+  const lines = w.text(w.rowsOf(DS.log)[0].properties.作答明細).split("\n").length;
+  w.clock.t += 5 * 60e3; w.flush();
+  assert.equal(w.text(w.rowsOf(DS.log)[0].properties.作答明細).split("\n").length, lines, "0 重複");
+  assert.equal(JSON.parse(w.store.get("so:log:2026-11-20:3")).dirty, 0);
 });
