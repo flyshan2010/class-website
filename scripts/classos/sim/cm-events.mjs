@@ -151,6 +151,7 @@ const cases = [
   ["⑧ → 人際互動", categoryOf({ src: "rule", rule_n: 8, kind: "good" }), "人際互動"],
   ["① → 生活指導", categoryOf({ src: "rule", rule_n: 1, kind: "bad" }), "生活指導"],
   ["⑥ → 生活指導", categoryOf({ src: "rule", rule_n: 6, kind: "bad" }), "生活指導"],
+  ["到校請假 → 生活指導", categoryOf({ src: "tally", kind: "neutral", act: "到校請假" }), "生活指導"],
   ["⑦ → 生活指導", categoryOf({ src: "rule", rule_n: 7, kind: "bad" }), "生活指導"],
   ["⑩ → 生活指導", categoryOf({ src: "rule", rule_n: 10, kind: "bad" }), "生活指導"],
   ["班規 ⑪ → 判不出", categoryOf({ src: "rule", rule_n: 11, kind: "bad" }), null],

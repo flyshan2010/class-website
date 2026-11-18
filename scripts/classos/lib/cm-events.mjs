@@ -63,6 +63,8 @@ export function categoryOf(ev) {
     return RULE_CAT[Number(ev.rule_n)] ?? null;
   }
   const act = String(ev.act ?? "");
+  // 到校請假（2026-11-18 老師要求：期末統計出缺席）：中性、0 幣，生活量尺不計（請假＝本份做滿）
+  if (act === "到校請假") return "生活指導";
   if (act.includes("打掃") || act.includes("午餐")) return "生活技能";
   if (act.includes("作業")) return "作業";
   if (act === "常規未達成") return "生活指導";
