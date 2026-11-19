@@ -66,7 +66,7 @@
 | R08 | 週報文案／三端文案／產生第N週週報 | 停待審 |
 | R09 | 開輔導個案／座號N需要輔導／輔導檢核 | 停待審 |
 | R10 | 出卷／出考卷／命題／出一份評量 | 停待審＋執行紀錄註明「請在 Claude Code 對話執行：/exam-generator」 |
-| R11 | 更新班網／同步班網 | **自動執行**：對 GitHub repo flyshan2010/class-website 發 repository_dispatch 事件 `sync-now`（若無 GitHub 權限則改停待審並註明） |
+| R11 | 更新班網／同步班網／更新自學星圖題本／更新題本（自學星圖題本由班網同步一起產生，2026-11-19） | **自動執行**：對 GitHub repo flyshan2010/class-website 發 repository_dispatch 事件 `sync-now`（若無 GitHub 權限則改停待審並註明） |
 | R12 | 備課／教學包／教材／駕駛艙／開新單元／課程進度／調課／進度順延 | 停待審＋註明「請在 Claude Code 對話執行：/lesson-flow」；**若是改課程進度／調課**，執行紀錄改寫「請自行到 Notion『📅 每日課程進度』改該列，再按教師專區『🔄 立即更新班網』；整批順延才需 AI」 |
 | R00 | 以上皆未命中 | **失敗**（見失敗處理） |
 
