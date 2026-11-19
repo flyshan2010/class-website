@@ -177,7 +177,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.24"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.25"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -2368,6 +2368,7 @@ const SO_BUSY = { ok: false, retry: true, error: "系統忙碌，稍後自動重
 const SO_BAD_LOGIN = { ok: false, error: "座號或查詢碼不正確" };
 
 function soRoute_(props, body) {
+  if (body.action === "so_health") return soHealth_(props); // v2.25：健檢用，暫停中也要能查
   if (props.getProperty("SO_PAUSED") === "1") return { ok: false, paused: true, error: "自學星圖暫停中，現在只能試玩、不會記錄" };
   switch (body.action) {
     case "so_login": return soLogin_(props, body);
@@ -2402,6 +2403,30 @@ function soErr_(props, msg) {
   const list = soJson_(props.getProperty("so:err"), []);
   list.push([nowIso_(), String(msg).slice(0, 300)]);
   props.setProperty("so:err", JSON.stringify(list.slice(-20)));
+}
+// v2.25：系統健檢讀落地狀況（免口令、只回數字，不含座號、頁面 id 與錯誤原文）。
+// 429 每次都記、但會自動重試，另外計數；卡住＝格子 dirty 且最後一次改動與最後一次落地都超過 60 分鐘。
+const SO_STUCK_MS = 60 * 60e3;
+function soHealth_(props) {
+  const all = props.getProperties(), now = Date.now(), since = now - 7 * 864e5;
+  const err7 = { retry: 0, evict: 0, fail: 0 };
+  let lastFail = null, stuck = 0, oldest = 0;
+  soJson_(all["so:err"], []).forEach(function (x) {
+    if (!(Date.parse(x[0]) >= since)) return;
+    const m = String(x[1] || "");
+    if (m.indexOf("429 ") === 0) err7.retry++;
+    else if (m.indexOf("暫存區超過") === 0) err7.evict++;
+    else { err7.fail++; if (!lastFail || Date.parse(x[0]) > Date.parse(lastFail)) lastFail = x[0]; }
+  });
+  Object.keys(all).forEach(function (k) {
+    if (k.indexOf("so:s:") !== 0 && k.indexOf("so:log:") !== 0) return;
+    const v = soJson_(all[k], {});
+    if (v.dirty !== 1) return;
+    const age = now - Math.max(v.at || 0, v.lt || 0);
+    if (age > SO_STUCK_MS) { stuck++; oldest = Math.max(oldest, age); }
+  });
+  return { ok: true, version: PROXY_VERSION, paused: props.getProperty("SO_PAUSED") === "1",
+    err7: err7, lastFail: lastFail, stuck: stuck, stuckMaxMin: Math.round(oldest / 60e3) };
 }
 
 // 祕密：第一次用到時自己產生（老師不必設）。加鎖避免兩個請求同時產生兩把。
@@ -2544,8 +2569,11 @@ function soSumOf_(props, book, seat) {
 
 // ---------- so_login ----------
 function soLogin_(props, body) {
-  const seat = Math.floor(Number(body.seat));
+  let seat = Math.floor(Number(body.seat));
   const code = String(body.code || "").trim();
+  // v2.25 體驗帳號：自己的座號＋體驗碼（指令碼屬性 SO_TEST_KEY）→ 體驗座號 900＋座號（全班試玩不用個人帳號、不碰正式資料）
+  const demoKey = props.getProperty("SO_TEST_KEY");
+  if (demoKey && code === demoKey && seat >= 1 && seat <= SO_TEST_MAX - 900) seat += 900;
   if (!((seat >= 1 && seat <= 99) || soIsTest_(seat)) || !code) return SO_BAD_LOGIN;
   if (overLimit_("so_login_" + seat, 10)) return { ok: false, error: "嘗試太多次，請等一分鐘再試" };
   const secret = soSecret_(props);
@@ -2585,7 +2613,12 @@ function soBookOk_(book) {
 function soLoadCells_(props, auth, books) {
   const token = props.getProperty("NOTION_TOKEN");
   if (!token) return null;
-  const ds = auth.test ? DS_SO_PROG_SIM : DS_SO_PROG;
+  if (auth.test) { // v2.25 體驗座號（9xx）完全不碰 Notion：被逐出或清掉就從頭開始
+    const blank = {};
+    books.forEach(function (b) { blank[b] = { save: encodeSave(decodeSave(null)), ver: 0, dirty: 0, ds: {}, pid: "", at: Date.now(), wk: { weekly: 0, since: "" } }; });
+    return blank;
+  }
+  const ds = DS_SO_PROG;
   let res = null;
   for (let i = 0; i < 3; i++) {
     res = queryDS_(token, ds, { filter: { property: "座號", number: { equals: auth.seat } },
@@ -2803,7 +2836,7 @@ function soPush_(props, body) {
       }
     }
     if (changed) {
-      cell.ver++; cell.dirty = 1; cell.at = Date.now();
+      cell.ver++; cell.dirty = auth.test ? 0 : 1; cell.at = Date.now(); // 體驗座號不落地
       const s = JSON.stringify(cell);
       if (soBytes_(s) > SO_CELL_LIMIT) { soErr_(props, "格子過大 " + key); return { ok: false, error: "進度資料過大，請告訴老師" }; }
       writes[key] = s;
@@ -2821,7 +2854,7 @@ function soPush_(props, body) {
 function soLogAdd_(props, date, seat, r) {
   const lg = soJson_(props.getProperty("so:log:" + date + ":" + seat), { a: [], r: [], q: 0, c: 0, sec: 0, pid: "", dirty: 0 });
   lg.a = lg.a.concat(r.lines); lg.r = lg.r.concat(r.rounds);
-  lg.q += r.q; lg.c += r.c; lg.sec += r.sec; lg.dirty = 1; lg.at = Date.now();
+  lg.q += r.q; lg.c += r.c; lg.sec += r.sec; lg.dirty = soIsTest_(seat) ? 0 : 1; lg.at = Date.now();
   return JSON.stringify(lg);
 }
 

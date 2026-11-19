@@ -99,6 +99,13 @@
       "href": "bank.html"
     },
     {
+      "id": "study-orbit",
+      "label": "自學星圖",
+      "icon": "🌌",
+      "href": "https://flyshan2010.github.io/study-orbit/",
+      "_說明": "自學星圖是另一個 repo（study-orbit），同網域兄弟站；2026-11-19 老師要求放上導覽列方便全班試玩（體驗帳號＝自己的座號＋體驗碼）。"
+    },
+    {
       "id": "links",
       "label": "常用網站",
       "icon": "🔗",

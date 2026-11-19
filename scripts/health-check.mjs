@@ -306,6 +306,30 @@ async function checkKnownTypos() {
   else ok("已知錯字 0 處");
 }
 
+// ── A9 自學星圖作答有沒有寫進 Notion（2026-11-19，代理 v2.25 so_health）────────
+// 學生作答先進代理暫存區，每 5 分鐘落地到 Notion；落地壞了學生畫面照常，沒有人會發現。
+// 只認兩種訊號：①卡住（改動與落地都超過 60 分鐘仍未寫入）＝紅 ②近 7 天寫入失敗或暫存區逐出＝黃。
+// 429 會自動重試、不算問題（壓力測試實測會自己補上）。代理只回數字，不含座號。
+async function checkStudyOrbitLanding() {
+  if (OFFLINE) { skipped.push("A9 自學星圖落地（--local）"); return; }
+  const conf = await readJSON("site-config.json", {});
+  if (!conf.updateProxyUrl) { skipped.push("A9 自學星圖落地（site-config 沒有代理網址）"); return; }
+  let h;
+  try {
+    const res = await fetch(conf.updateProxyUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "so_health" }), signal: AbortSignal.timeout(30000) });
+    h = await res.json();
+  } catch (e) { warn("自學星圖", `代理連不上：${String(e).slice(0, 60)}`, "隔幾分鐘再跑一次；連續兩次都連不上再查 Apps Script 部署"); return; }
+  if (!h || h.ok !== true || !h.err7) { skipped.push("A9 自學星圖落地（代理還沒部署 v2.25）"); return; }
+  if (h.stuck > 0) red("自學星圖", `${h.stuck} 格作答超過 60 分鐘沒寫進 Notion（最久 ${h.stuckMaxMin} 分鐘）`,
+    "學生的作答還在代理暫存區、沒有遺失；把 Apps Script 指令碼屬性 so:err 整段給 Claude，說「自學星圖落地卡住」");
+  const e = h.err7;
+  if (e.fail > 0) warn("自學星圖", `近 7 天寫入 Notion 失敗 ${e.fail} 次（最近一次 ${h.lastFail}）`,
+    h.stuck ? "同上" : "目前沒有卡住的格子＝失敗後已自動補寫；同一種錯每週都出現再請 Claude 看 so:err");
+  if (e.evict > 0) warn("自學星圖", `近 7 天暫存區超過 400KB 被逐出 ${e.evict} 次`, "代理屬性快滿了，請 Claude 量用量（SPEC_自學星圖_P2 §6.1）");
+  if (!h.stuck && !e.fail && !e.evict) ok(`自學星圖落地正常${e.retry ? `（近 7 天 Notion 忙碌自動重試 ${e.retry} 次）` : ""}${h.paused ? "・目前暫停中" : ""}`);
+}
+
 // ── 執行與輸出 ──────────────────────────────────────────────────────────
 await checkPagesLive();
 await checkSyncFresh();
@@ -319,6 +343,7 @@ await checkFifthSync();
 await checkCrossFile();
 await checkSwapPlanMoved();
 await checkKnownTypos();
+await checkStudyOrbitLanding();
 
 const reds = findings.filter(f => f.level === "red");
 const warns = findings.filter(f => f.level === "warn");

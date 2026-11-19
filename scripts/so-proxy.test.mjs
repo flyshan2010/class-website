@@ -211,6 +211,23 @@ test("測試座號：只認 SO_TEST_KEY；沒設金鑰就不能登入", () => {
   assert.equal(s.pull().relogin, true);
 });
 
+test("v2.25 體驗帳號：自己的座號＋體驗碼 → 體驗座號 9xx，不碰 Notion、不進正式榜", () => {
+  const w = makeWorld();
+  const r = w.login(3, TEST_KEY);
+  assert.deepEqual([r.ok, r.seat], [true, 903]);
+  assert.equal(w.login(55, TEST_KEY).error, "座號或查詢碼不正確", "超過 54 不對應");
+  assert.equal(w.login(3, "code3").seat, 3, "查詢碼照舊登入本人");
+  const before = w.calls.notion;
+  const d = session(w, 3, TEST_KEY); d.pull(); d.push(round("ggggggg"));
+  w.clock.t += 6 * 60e3; w.flush();
+  assert.equal(w.rowsOf(DS.progSim).length + w.rowsOf(DS.logSim).length + w.rowsOf(DS.prog).length + w.rowsOf(DS.log).length, 0, "四張表都沒寫");
+  assert.equal(w.calls.notion, before, "體驗座號沒有任何 Notion 呼叫");
+  assert.equal(w.cell(903).dirty, 0);
+  assert.equal(w.post({ action: "so_health" }).stuck, 0);
+  w.store.delete("SO_TEST_KEY");
+  assert.equal(w.login(3, TEST_KEY).error, "座號或查詢碼不正確", "刪掉體驗碼就關閉");
+});
+
 // ───────────── 上傳與規則 ─────────────
 test("格子不在暫存區要先 so_pull；全金一回合＝3 星、全對、今日任務與連續天數", () => {
   const w = makeWorld();
@@ -311,7 +328,7 @@ test("答案鍵讀不到：照收標待判，落地前再判", () => {
 });
 
 // ───────────── 落地 ─────────────
-test("落地：自學進度與紀錄建列、再寫只更新同一列；測試座號寫沙盒表", () => {
+test("落地：自學進度與紀錄建列、再寫只更新同一列；測試座號不落地（v2.25）", () => {
   const w = makeWorld();
   const s = session(w, 3); s.pull();
   s.push(round("ggggggg"));
@@ -346,9 +363,7 @@ test("落地：自學進度與紀錄建列、再寫只更新同一列；測試�
   // 測試座號
   const t = session(w, 901, TEST_KEY); t.pull(); t.push(round("ggggggg"));
   w.clock.t += 5 * 60e3; w.flush();
-  assert.equal(w.rowsOf(DS.progSim).length, 1);
-  assert.equal(w.rowsOf(DS.logSim).length, 1);
-  assert.equal(w.rowsOf(DS.progSim)[0].properties.學生, undefined);
+  assert.equal(w.rowsOf(DS.progSim).length + w.rowsOf(DS.logSim).length, 0, "v2.25 起測試／體驗座號不寫任何表");
   assert.equal(w.rowsOf(DS.prog).length, 1, "測試座號不進正式表");
 });
 
@@ -504,7 +519,7 @@ test("so_test_clear：只清測試座號的暫存區；dry 回用量", () => {
 
 test("暫停開關、鎖拿不到、版本號", () => {
   const w = makeWorld();
-  assert.equal(w.post({ action: "version" }).version, "2.24");
+  assert.equal(w.post({ action: "version" }).version, "2.25");
   const s = session(w, 3); s.pull();
   w.lock.free = false;
   const busy = s.push(round("ggggggg"));
@@ -512,6 +527,27 @@ test("暫停開關、鎖拿不到、版本號", () => {
   w.lock.free = true;
   w.store.set("SO_PAUSED", "1");
   assert.equal(w.login(3).paused, true);
+});
+
+test("v2.25 so_health：免口令只回數字；429 另計、卡住 60 分鐘才算；暫停中也查得到", () => {
+  const w = makeWorld();
+  let h = w.post({ action: "so_health" });
+  assert.deepEqual([h.ok, h.version, h.stuck, h.err7.fail, h.err7.retry, h.lastFail], [true, "2.25", 0, 0, 0, null]);
+  const iso = (ms) => new Date(ms).toISOString();
+  w.store.set("so:err", JSON.stringify([[iso(w.clock.t - 8 * 864e5), "自學紀錄寫入 500 舊的"], [iso(w.clock.t - 3600e3), "429 pages"],
+    [iso(w.clock.t - 7200e3), "自學進度寫入 502 m-h-4a:3"], [iso(w.clock.t - 60e3), "暫存區超過 400KB，已逐出到 290KB"]]));
+  const s = session(w, 3); s.pull(); s.push(round("ggggggg"));
+  h = w.post({ action: "so_health" });
+  assert.deepEqual(h.err7, { retry: 1, evict: 1, fail: 1 }, "超過 7 天的不算");
+  assert.equal(h.stuck, 0, "剛改的格子還沒到 60 分鐘不算卡住");
+  assert.ok(!JSON.stringify(h).includes("m-h-4a:3") && !JSON.stringify(h).includes("pg-"), "不回座號與頁面 id");
+  w.clock.t += 61 * 60e3;
+  h = w.post({ action: "so_health" });
+  assert.ok(h.stuck >= 1 && h.stuckMaxMin >= 61, "沒落地超過 60 分鐘＝卡住");
+  w.flush(); w.clock.t += 6 * 60e3; w.flush();
+  assert.equal(w.post({ action: "so_health" }).stuck, 0, "落地後就不算卡住");
+  w.store.set("SO_PAUSED", "1");
+  assert.equal(w.post({ action: "so_health" }).paused, true);
 });
 
 test("配合題：一對一筆事件逐對判；配錯的對發卡、一題最多兩張；再挑戰只算原本錯的對", () => {
