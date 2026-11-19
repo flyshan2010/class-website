@@ -1,4 +1,4 @@
-// 自學星圖 P1 內容檢核（規格正本：ClassOS_v3.5_藍圖/SPEC_自學星圖_P1資料模型.md §4 十四條）
+// 自學星圖 P1 內容檢核（規格正本：ClassOS_v3.5_藍圖/SPEC_自學星圖_P1資料模型.md §4 十五條）
 // 純函式 checkBundle(bundle)；輸入是已整理好的資料包（各表一列一個物件），不直接讀 Notion。
 // CLI：node check.mjs <bundle.json>　→ 有錯誤就 exit 1。
 //
@@ -26,6 +26,75 @@ const levelRe = (book) => new RegExp(`^${book.replace(/[-]/g, "\\-")}-(\\d+|T[1-
 const len = (s) => [...String(s ?? "")].length; // 中文以字計
 const blank = (s) => String(s ?? "").trim() === "";
 const sameSet = (a, b) => a.size === b.size && [...a].every((x) => b.has(x));
+
+/** 第 15 條：圖表素材 JSON（格式正本 SPEC §3.6.1）。回傳問題清單，空陣列＝合格 */
+const CHART_KEYS = {
+  table: ["k", "title", "head", "rows"],
+  bar: ["k", "title", "unit", "cat", "labels", "series", "min", "max", "step", "lab", "dir", "stack"],
+  line: ["k", "title", "unit", "cat", "labels", "series", "min", "max", "step", "lab"],
+};
+const isNum = (v) => typeof v === "number" && Number.isFinite(v);
+const oneDecimal = (v) => isNum(v) && Math.abs(v * 10 - Math.round(v * 10)) < 1e-9;
+const isStr = (v) => typeof v === "string" && v.trim() !== "";
+export function chartProblems(text) {
+  const P = [];
+  const raw = String(text ?? "");
+  if (/[\r\n]/.test(raw)) P.push("要寫成一行（不換行）");
+  if (raw.length > 1500) P.push(`超過 1500 字元（${raw.length}）`);
+  let d;
+  try { d = JSON.parse(raw); } catch (e) { return [...P, "不是合法的 JSON"]; }
+  if (!d || typeof d !== "object" || Array.isArray(d)) return [...P, "要是一個 {…} 物件"];
+  const keys = CHART_KEYS[d.k];
+  if (!keys) return [...P, `k 要是 table／bar／line（現在是 ${JSON.stringify(d.k)}）`];
+  for (const x of Object.keys(d)) if (!keys.includes(x)) P.push(`${d.k} 不認得的欄位「${x}」`);
+  if (!isStr(d.title) || len(d.title) > 24) P.push("title 要 1–24 字");
+  if (d.k === "table") {
+    const R = d.rows;
+    if (!Array.isArray(R) || R.length < 1 || R.length > 8 || !R.every(Array.isArray)) return [...P, "rows 要 1–8 列，每列是陣列"];
+    const w = R[0].length;
+    if (w < 1 || w > 8 || R.some((r) => r.length !== w)) P.push("rows 每列格數要相同，1–8 欄");
+    if (R.flat().some((c) => !(isNum(c) || typeof c === "string"))) P.push("格子只能是字串或數字");
+    if (d.head !== undefined && (!Array.isArray(d.head) || d.head.length !== w || d.head.some((h) => !isStr(h)))) P.push("head 要和每列同長、不可空");
+    return P;
+  }
+  // bar／line
+  if (!isStr(d.unit)) P.push("unit（數量軸單位）不可空");
+  if (d.cat !== undefined && !isStr(d.cat)) P.push("cat 有寫就不可空");
+  const L = d.labels;
+  if (!Array.isArray(L) || L.length < 2 || L.length > 12 || L.some((l) => !isStr(l)) || new Set(L).size !== L.length)
+    return [...P, "labels 要 2–12 個、不可空、不重複"];
+  const S = d.series;
+  if (!Array.isArray(S) || S.length < 1 || S.length > 3) return [...P, "series 要 1–3 組"];
+  for (const se of S) {
+    if (!se || typeof se !== "object" || Object.keys(se).some((x) => x !== "name" && x !== "vals")) { P.push("series 每組只能有 name、vals"); continue; }
+    if (!Array.isArray(se.vals) || se.vals.length !== L.length) P.push(`series「${se.name}」的 vals 個數要等於 labels（${L.length}）`);
+    else if (se.vals.some((v) => v !== null && !oneDecimal(v))) P.push(`series「${se.name}」的數值要是數字（最多一位小數）或 null`);
+  }
+  if (S.length === 1 && S[0].name !== "") P.push("只有一組資料時 name 要填空字串");
+  if (S.length > 1 && (S.some((se) => !isStr(se.name)) || new Set(S.map((se) => se.name)).size !== S.length)) P.push("兩組以上時 name 不可空、不重複");
+  if (P.length) return P;
+  const min = d.min ?? 0, { max, step } = d, lab = d.lab ?? 1;
+  if (!isNum(min) || min < 0) P.push("min 要是 ≥0 的數字");
+  if (!isNum(max) || !(max > min)) P.push("max 要大於 min");
+  if (!isNum(step) || step <= 0) P.push("step 要大於 0");
+  if (!Number.isInteger(lab) || lab < 1) P.push("lab 要是正整數");
+  if (P.length) return P;
+  const ticks = (max - min) / step;
+  if (Math.abs(ticks - Math.round(ticks)) > 1e-9 || Math.round(ticks) < 2 || Math.round(ticks) > 20) P.push(`(max−min)/step 要是 2–20 的整數（現在是 ${ticks}）`);
+  if (d.dir !== undefined && d.dir !== "v" && d.dir !== "h") P.push("dir 只能是 v 或 h");
+  if (d.stack !== undefined && typeof d.stack !== "boolean") P.push("stack 只能是 true／false");
+  const stack = d.stack === true;
+  if (stack && S.length < 2) P.push("堆疊長條圖要兩組以上");
+  const vals = S.flatMap((se) => se.vals);
+  const nulls = vals.filter((v) => v === null).length;
+  if (nulls > 1) P.push("一張圖最多一個 null（還沒畫）");
+  if (stack && nulls) P.push("堆疊長條圖不能用 null");
+  const nums = vals.filter((v) => v !== null);
+  const tops = stack ? L.map((_, i) => S.reduce((a, se) => a + (se.vals[i] ?? 0), 0)) : nums;
+  if (tops.some((v) => v > max + 1e-9) || nums.some((v) => v < min)) P.push(`有數值超出 ${min}～${max}${stack ? "（堆疊看各組相加）" : ""}`);
+  if (min > 0 && nums.some((v) => !(v > min))) P.push(`有省略符號（min=${min}）時，每個數值都要大於 min`);
+  return P;
+}
 
 /** 解析「選項盲點」：一行 `A=代碼` 或 `1=代碼` */
 export function parseOptionBlindspots(text) {
@@ -153,7 +222,8 @@ export function checkBundle(bundle) {
     }
     const positions = new Set();
     for (const [g, sub] of groups) {
-      if (sub.length < 3 || sub.length > 4) err(9, `題組 ${g} 有 ${sub.length} 小題（應 3–4）`, code);
+      const lo = sub[0].materialType === "圖表" ? 2 : 3; // 圖表題組 2–4、文章題組 3–4（老師 2026-11-19）
+      if (sub.length < lo || sub.length > 4) err(9, `題組 ${g} 有 ${sub.length} 小題（應 ${lo}–4）`, code);
       if (new Set(sub.map((q) => q.material ?? "")).size !== 1) err(9, `題組 ${g} 的共用素材不是逐字相同`, code);
       if (sub[0].materialType === "文章" && len(sub[0].material) > 300) err(9, `題組 ${g} 文章超過 300 字`, code);
       positions.add(sub.map((q) => q.slot).sort().join(","));
@@ -201,6 +271,12 @@ export function checkBundle(bundle) {
     if (blank(q.hint1) || blank(q.hint2)) qerr(7, `${q.id} 提示1 或提示2 是空的`);
     if (blank(q.explanation)) qerr(7, `${q.id} 解析是空的`);
     if (!blank(q.mother) && !qBy.has(q.mother)) qerr(2, `${q.id} 的母題 ${q.mother} 不存在`);
+    // 第 15 條：素材（圖表單題沒有題組也可以有圖；文章只能在題組）
+    const mt = q.materialType ?? "";
+    if (blank(q.material) !== blank(mt)) qerr(15, `${q.id} 共用素材和素材類型要同時有或同時空`);
+    else if (mt && mt !== "文章" && mt !== "圖表") qerr(15, `${q.id} 素材類型「${mt}」不是文章或圖表`);
+    else if (mt === "文章" && blank(q.group)) qerr(15, `${q.id} 文章素材只能放在題組`);
+    else if (mt === "圖表") for (const p of chartProblems(q.material)) qerr(15, `${q.id} 圖表素材：${p}`);
   }
 
   // 第 6 條：盲點

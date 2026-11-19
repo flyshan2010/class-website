@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkBundle, worstSaveBytes, SAVE_LIMIT_BYTES } from "./check.mjs";
+import { checkBundle, worstSaveBytes, SAVE_LIMIT_BYTES, chartProblems } from "./check.mjs";
 
 import { BOOK, L1, L2, fixture } from "./fixture.mjs";
 
@@ -37,6 +37,7 @@ const BROKEN = {
   },
   "11b": (b) => { b.blindspots.push({ code: `${L1}-B36`, name: "x", kp: `${L1}-K1`, level: L1, fix: "a", ex: "b", chk: "c", status: "可用" }); }, // 盲點超過 B35
   14: (b) => { b.reviewCards[0].subject = "國語"; },                                        // 觀念卡科目不同
+  15: (b) => { Object.assign(q(b, L1, 1), { material: "{壞掉", materialType: "圖表" }); },  // 圖表 JSON 壞掉
 };
 for (const [rule, breakIt] of Object.entries(BROKEN)) {
   test(`第 ${rule} 條：故意做錯會被抓到`, () => {
@@ -68,4 +69,63 @@ test("第 12 條：國語 66 關、每關 8 個盲點的最壞存檔大小在 8K
   const bytes = worstSaveBytes(book, levels, bss);
   assert.ok(bytes <= SAVE_LIMIT_BYTES, `${bytes} 超過 ${SAVE_LIMIT_BYTES}`); // P2 SPEC §4 第 2 版：試算約 4.1KB
   console.log(`國語 66 關 × 8 盲點最壞存檔：${bytes} bytes（上限 ${SAVE_LIMIT_BYTES}）`);
+});
+
+// 第 15 條：圖表素材（SPEC §3.6.1 的五個範例都要合格）
+const EX = [
+  '{"k":"bar","title":"四年甲班最喜歡的運動","unit":"人","cat":"運動","labels":["籃球","躲避球","跑步","游泳"],"series":[{"name":"","vals":[8,12,4,6]}],"max":12,"step":2}',
+  '{"k":"bar","title":"模範生選舉得票數","unit":"票","labels":["甲","乙","丙","丁","戊"],"series":[{"name":"","vals":[520,610,580,640,550]}],"min":500,"max":650,"step":10,"lab":5}',
+  '{"k":"bar","title":"各社團男女生人數","unit":"人","cat":"社團","labels":["桌球","合唱","圍棋"],"series":[{"name":"男生","vals":[9,3,7]},{"name":"女生","vals":[5,10,4]}],"max":16,"step":2,"dir":"h","stack":true}',
+  '{"k":"line","title":"某日 8 時到 16 時的氣溫","unit":"°C","cat":"時","labels":["8","10","12","14","16"],"series":[{"name":"","vals":[14,17,20,19,15]}],"min":10,"max":22,"step":2}',
+  '{"k":"table","title":"位值表","head":["萬位","千位","百位","十位","個位"],"rows":[[5,0,3,0,6]]}',
+];
+test("第 15 條：SPEC 範例全部合格", () => { for (const t of EX) assert.deepEqual(chartProblems(t), [], t); });
+
+test("第 15 條：每條限制都抓得到", () => {
+  const bar = JSON.parse(EX[0]), line = JSON.parse(EX[3]);
+  const bad = (mut, base = bar) => { const d = structuredClone(base); mut(d); return chartProblems(JSON.stringify(d)); };
+  const cases = {
+    "不是 JSON": () => chartProblems("{k:bar}"),
+    "換行": () => chartProblems(EX[0].replace(",", ",\n")),
+    "超過 1500 字元": () => chartProblems(EX[0].replace('"人"', `"${"人".repeat(1500)}"`)),
+    "k 不對": () => bad((d) => { d.k = "pie"; }),
+    "打錯欄位": () => bad((d) => { d.vlas = 1; }),
+    "標題太長": () => bad((d) => { d.title = "長".repeat(25); }),
+    "沒有單位": () => bad((d) => { d.unit = ""; }),
+    "labels 太少": () => bad((d) => { d.labels = ["籃球"]; d.series[0].vals = [8]; }),
+    "labels 重複": () => bad((d) => { d.labels[1] = "籃球"; }),
+    "vals 個數不對": () => bad((d) => { d.series[0].vals.pop(); }),
+    "兩位小數": () => bad((d) => { d.series[0].vals[0] = 8.25; }),
+    "數值是字串": () => bad((d) => { d.series[0].vals[0] = "8"; }),
+    "一組卻有 name": () => bad((d) => { d.series[0].name = "人數"; }),
+    "兩組 name 重複": () => bad((d) => { d.series.push({ name: "", vals: [1, 2, 3, 4] }); }),
+    "四組": () => bad((d) => { d.series = ["a", "b", "c", "d"].map((name) => ({ name, vals: [1, 2, 3, 4] })); }),
+    "格數不是整數": () => bad((d) => { d.step = 5; }),
+    "格數超過 20": () => bad((d) => { d.step = 0.5; }),
+    "超過 max": () => bad((d) => { d.series[0].vals[1] = 14; }),
+    "省略處不比最小值小": () => bad((d) => { d.min = 4; }),
+    "兩個 null": () => bad((d) => { d.series[0].vals[0] = null; d.series[0].vals[1] = null; }),
+    "折線不能 dir": () => bad((d) => { d.dir = "h"; }, line),
+    "dir 不對": () => bad((d) => { d.dir = "x"; }),
+    "堆疊只有一組": () => bad((d) => { d.stack = true; }),
+    "堆疊相加超過 max": () => bad((d) => { d.max = 12; d.step = 2; }, JSON.parse(EX[2])),
+    "堆疊有 null": () => bad((d) => { d.series[0].vals[0] = null; }, JSON.parse(EX[2])),
+    "表格列不等長": () => bad((d) => { d.rows.push([1, 2]); }, JSON.parse(EX[4])),
+    "表格 head 不等長": () => bad((d) => { d.head.pop(); }, JSON.parse(EX[4])),
+  };
+  for (const [name, run] of Object.entries(cases)) assert.ok(run().length > 0, `${name} 沒抓到`);
+  assert.deepEqual(bad((d) => { d.series[0].vals[2] = null; }), [], "一個 null 是合格的");
+});
+
+test("第 15 條：接進 checkBundle（圖表單題合格、文章單題與壞圖被抓）", () => {
+  const ok = fixture();
+  Object.assign(q(ok, L1, 1), { material: EX[0], materialType: "圖表" });
+  for (const x of q(ok, L2, 5) ? ok.questions.filter((x) => x.group) : []) x.materialType = "圖表", x.material = x.group.endsWith("G1") ? EX[0] : EX[3];
+  assert.deepEqual(checkBundle(ok).errors, [], "圖表單題＋3 小題圖表題組應合格");
+  const b1 = fixture(); Object.assign(q(b1, L1, 1), { material: "一段文章", materialType: "文章" });
+  assert.ok(rulesHit(b1).has(15), "文章單題沒抓到");
+  const b2 = fixture(); Object.assign(q(b2, L1, 1), { material: EX[0].replace('"max":12', '"max":10'), materialType: "圖表" });
+  assert.ok(rulesHit(b2).has(15), "壞圖沒抓到");
+  const b3 = fixture(); Object.assign(q(b3, L1, 1), { material: EX[0], materialType: "" });
+  assert.ok(rulesHit(b3).has(15), "有素材沒類型沒抓到");
 });

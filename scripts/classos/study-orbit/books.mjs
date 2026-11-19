@@ -87,7 +87,8 @@ function outQuestion(q) {
   o.answer = q.answer;
   o.ob = Object.fromEntries(parseOptionBlindspots(q.optionBlindspots).map);
   o.hint1 = q.hint1; o.hint2 = q.hint2; o.explanation = q.explanation;
-  if (q.group) { o.group = q.group; o.material = q.material; o.materialType = q.materialType; }
+  if (q.group) o.group = q.group;
+  if (q.materialType && q.material) { o.material = q.material; o.materialType = q.materialType; } // 圖表單題沒有題組也帶圖（SPEC §3.6.1）
   return o;
 }
 
