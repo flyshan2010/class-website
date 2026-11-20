@@ -477,15 +477,6 @@
     "notes": ""
   },
   {
-    "title": "校刊徵稿",
-    "date": "2026-12-01",
-    "endDate": "2026-12-31",
-    "startTime": "",
-    "endTime": "",
-    "type": "活動",
-    "notes": ""
-  },
-  {
     "title": "成長測驗",
     "date": "2026-12-03",
     "endDate": "",
@@ -873,18 +864,18 @@
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
