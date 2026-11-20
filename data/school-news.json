@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-11-19T19:47:05.411Z",
+  "fetchedAt": "2026-11-20T03:55:42.026Z",
   "items": [
+    {
+      "date": "2026-11-20",
+      "title": "補助本市115學年度第1次國民中小學現職教師完成臺灣台語/客語語言能力認證中高級以上考試報名費。",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1172&type=news&from_op=school_department_show",
+      "dept": "教務處"
+    },
     {
       "date": "2026-11-19",
       "title": "財團法人廣達文教基金會辦理「第八屆『廣達游智盃』創意程式競賽」",
@@ -48,18 +54,6 @@
       "title": "衛生福利部食品藥物管理署為防範校園及補教機構非法流用、濫用坊間所稱「聰明藥」之管制藥品",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1159&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-11-16",
-      "title": "臺南市115年中小學校際盃圍棋錦標賽競賽規程及報名名單公告，欲參加之學生請至學務處報名。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1150&type=news&from_op=school_department_show",
-      "dept": "學務處"
-    },
-    {
-      "date": "2026-11-16",
-      "title": "臺南市立圖書館辦理「2026年臺南市立圖書館－台語親子說故事比賽」活動簡章及宣傳海報各1份，歡迎踴躍組隊報名參加",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1158&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
