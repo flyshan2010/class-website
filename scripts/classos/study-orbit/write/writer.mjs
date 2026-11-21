@@ -2,6 +2,7 @@
  * 自學星圖題本寫入｜核心流程（不碰檔案與網路細節，api／gen 由呼叫端注入，測試用 mock）
  *
  * 依「被關聯的先建」順序：觀念複習卡 → 知識點 → 學習盲點 → 故事卡 → 母題 → 子題，最後更新題本頁內文的結構 JSON。
+ * 結構 JSON 真的有改，題本「最後更新日期」同時改成當天（臺北時間；老師 2026-11-22 裁定：依實際最後更新日期）。
  * 每張表的 pages 一律由 gen.py（卡片由 cards.py）產生——欄位正本在那兩支，這裡只換外殼、送出、記 id。
  *
  * 防重複（RULE_Notion操作限制 §5b）：每張表先依關卡代碼（卡片依卡名）查 Notion 現有列，
@@ -36,6 +37,21 @@ async function call(api, method, path, body) {
   const r = await api(method, path, body);
   if (!r.ok) throw new Error(`Notion API ${method} ${path} → ${r.status} ${r.json?.code ?? ""} ${r.json?.message ?? ""}`);
   return r.json;
+}
+
+/** 臺北時間的今天（YYYY-MM-DD） */
+export const taipeiToday = (now = Date.now()) => new Date(now + 8 * 3600e3).toISOString().slice(0, 10);
+export const BOOK_DATE = "最後更新日期";
+
+/** 題本頁「最後更新日期」改成 today 並回讀；學生看得到的內容有變（結構更新、promote 改可用）才呼叫 */
+export async function touchBookDate({ code, ids, api, execute, log = console.log, today = taipeiToday() }) {
+  const pageId = ids.book?.[code];
+  if (!pageId) throw new Error(`ids.json 沒有題本 ${code} 的頁面 id`);
+  if (!execute) { log(`🔎 題本 ${code} ${BOOK_DATE}將改為 ${today}`); return; }
+  const r = await call(api, "PATCH", `/pages/${pageId}`, { properties: { [BOOK_DATE]: { date: { start: today } } } });
+  const got = r.properties?.[BOOK_DATE]?.date?.start;
+  if (got !== today) throw new Error(`題本 ${code} ${BOOK_DATE}回讀是 ${got}，不是 ${today}`);
+  log(`✅ 題本 ${code} ${BOOK_DATE}改為 ${today}（回讀一致）`);
 }
 
 async function queryAll(api, ds, filter) {
@@ -78,7 +94,7 @@ const fakeId = () => `00000000-0000-4000-8000-${(++fakeSeq).toString(16).padStar
  * @param {boolean} o.execute
  * @param {object} o.newIds     寫入成功／補記的 id 收在這（中途失敗也保留已寫的，呼叫端 finally 落檔）
  */
-export async function runWrite({ payload, ids, gen, api, execute, newIds, log = console.log, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), throttleMs = 350 }) {
+export async function runWrite({ payload, ids, gen, api, execute, newIds, today, log = console.log, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), throttleMs = 350 }) {
   const levels = payload.levels ?? [];
   if (!levels.length || levels.some((x) => !x)) throw new Error("資料包沒有指定關卡範圍 levels（不給範圍會把舊批沒記 id 的子題重建一次）");
   const warnings = new Set();
@@ -135,13 +151,13 @@ export async function runWrite({ payload, ids, gen, api, execute, newIds, log = 
     log(`${execute ? "✅" : "🔎"} ${label}：${execute ? "已建" : "將建"} ${s.create} 筆，已在 Notion（補記 id）${s.adopt} 筆`);
   }
 
-  for (const code of payload.structure ?? []) summary.push(await writeStructure({ code, ids, gen, api, execute, log }));
+  for (const code of payload.structure ?? []) summary.push(await writeStructure({ code, ids, gen, api, execute, log, today }));
   for (const w of warnings) log(`⚠️ ${w}`);
   return { summary, warnings: [...warnings] };
 }
 
 /** 題本頁內文的結構 JSON（gen.py structure）寫進頁面裡唯一的 code 區塊，寫完回讀比對。 */
-export async function writeStructure({ code, ids, gen, api, execute, log = console.log }) {
+export async function writeStructure({ code, ids, gen, api, execute, log = console.log, today }) {
   const struct = gen("structure", ids, code);
   const islands = struct?.islands ?? [];
   if (!islands.length) throw new Error(`題本 ${code}：結構 JSON 沒有島`);
@@ -162,12 +178,13 @@ export async function writeStructure({ code, ids, gen, api, execute, log = conso
   const nLv = (s) => (s?.islands ?? []).reduce((n, i) => n + (i.levels?.length ?? 0), 0);
   const desc = `島 ${cur?.islands?.length ?? "?"}→${islands.length}、關 ${nLv(cur)}→${nLv(struct)}，unit ${islands.map((i) => i.unit ?? "-").join(",")}`;
   if (same) { log(`✅ 題本 ${code} 結構 JSON 已是最新（${desc}）`); return { label: `結構 ${code}`, create: 0, adopt: 1 }; }
-  if (!execute) { log(`🔎 題本 ${code} 結構 JSON 將更新（${desc}）`); return { label: `結構 ${code}`, create: 1, adopt: 0 }; }
+  if (!execute) { log(`🔎 題本 ${code} 結構 JSON 將更新（${desc}）`); await touchBookDate({ code, ids, api, execute, log, today }); return { label: `結構 ${code}`, create: 1, adopt: 0 }; }
   await call(api, "PATCH", `/blocks/${codes[0].id}`, { code: { rich_text: rt(text), language: "json" } });
   const back = await call(api, "GET", `/blocks/${codes[0].id}`);
   const got = JSON.parse(back.code.rich_text.map((t) => t.plain_text).join(""));
   if (JSON.stringify(got) !== text) throw new Error(`題本 ${code} 結構 JSON 寫入後回讀不符`);
   if (code.startsWith("c-") && !got.islands.every((i) => Number.isInteger(i.unit))) throw new Error(`題本 ${code} 回讀結構缺 unit`);
   log(`✅ 題本 ${code} 結構 JSON 已更新並回讀一致（${desc}）`);
+  await touchBookDate({ code, ids, api, execute, log, today });
   return { label: `結構 ${code}`, create: 1, adopt: 0 };
 }

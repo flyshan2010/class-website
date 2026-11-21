@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import { toNotionProps, chunks, mdToBlocks, pageId, mismatches } from "./props.mjs";
-import { runWrite, writeStructure, DS } from "./writer.mjs";
+import { runWrite, writeStructure, DS, taipeiToday } from "./writer.mjs";
 import { fingerprint } from "./fingerprint.mjs";
 import { mergeIds } from "./local.mjs";
 import { runPromote } from "./promote.mjs";
@@ -66,6 +66,7 @@ function mockApi({ existing = {}, blocks, tamper } = {}) {
       return { ok: true, status: 200, json: { id, properties: echo(body.properties, tamper) } };
     }
     if (method === "GET" && /\/children/.test(path)) return { ok: true, status: 200, json: { results: codeBlocks } };
+    if (method === "PATCH" && path.startsWith("/pages/")) return { ok: true, status: 200, json: { properties: echo(body.properties) } };
     if (method === "PATCH" && path.startsWith("/blocks/")) { codeBlocks[0].code.rich_text = body.code.rich_text.map((t) => ({ plain_text: t.text.content })); return { ok: true, status: 200, json: {} }; }
     if (method === "GET" && path.startsWith("/blocks/")) return { ok: true, status: 200, json: codeBlocks[0] };
     throw new Error(`mock 沒處理 ${method} ${path}`);
@@ -133,7 +134,8 @@ test("execute：依被關聯順序建頁，下一張表的關聯接上上一張�
   assert.equal(card.body.properties.狀態.select.name, "草稿");
   assert.ok([kp, bs, root, child].every((c) => c.body.properties.狀態.select.name === "待審"));
   assert.equal(card.body.children.length, 8);
-  assert.equal(m.calls.filter((c) => c.method === "PATCH").length, 1, "結構 JSON 更新一次");
+  assert.equal(m.calls.filter((c) => c.method === "PATCH" && c.path.startsWith("/blocks/")).length, 1, "結構 JSON 更新一次");
+  assert.equal(m.calls.filter((c) => c.method === "PATCH" && c.path === `/pages/${BOOK}`).length, 1, "結構有改 → 題本最後更新日期改一次");
 });
 
 test("dry-run：照樣查重與轉換、算筆數，但不建頁、不改結構", async () => {
@@ -238,6 +240,7 @@ function notionNow({ status = {}, edit = {}, extra = [] } = {}) {
     let m;
     if (method === "GET" && (m = path.match(/^\/data_sources\/(.+)$/))) return { ok: true, status: 200, json: { properties: SCHEMA[DS_TABLE[m[1]]] } };
     if (method === "POST" && (m = path.match(/^\/data_sources\/(.+)\/query$/))) return { ok: true, status: 200, json: { results: pages[DS_TABLE[m[1]]], has_more: false } };
+    if (method === "PATCH" && path === `/pages/${BOOK}`) return { ok: true, status: 200, json: { properties: echo(body.properties) } };
     if (method === "PATCH" && (m = path.match(/^\/pages\/(.+)$/))) {
       const page = Object.values(pages).flat().find((p) => p.id === m[1]);
       Object.assign(page.properties, echo(body.properties));
@@ -245,7 +248,7 @@ function notionNow({ status = {}, edit = {}, extra = [] } = {}) {
     }
     throw new Error(`mock 沒處理 ${method} ${path}`);
   };
-  return { api, calls, patches: () => calls.filter((c) => c.method === "PATCH") };
+  return { api, calls, patches: () => calls.filter((c) => c.method === "PATCH" && c.path !== `/pages/${BOOK}`), dates: () => calls.filter((c) => c.path === `/pages/${BOOK}`) };
 }
 const promote = (m, over = {}) => runPromote({ payload: basePayload(), ids: FULL_IDS(), gen: fakeGen, api: m.api, execute: true, log: quiet, sleep: async () => {}, ...over });
 
@@ -266,6 +269,22 @@ test("promote execute：只改狀態一欄（待審→可用、卡片草稿→�
   assert.ok(!p.some((c) => c.path.endsWith("card-old")));
   const again = await promote(m); // 重跑：全部已是目標狀態
   assert.deepEqual(again.summary.map((s) => s.change), [0, 0, 0, 0, 0]);
+  assert.equal(m.dates().length, 1, "題本最後更新日期只在真的改了狀態那一輪改");
+});
+
+test("題本最後更新日期：promote 有改才改成當天；結構 JSON 有改才改；回讀不符就停", async () => {
+  const m = notionNow();
+  await promote(m, { today: "2026-11-22" });
+  assert.deepEqual(m.dates().map((c) => c.body.properties.最後更新日期), [{ date: { start: "2026-11-22" } }]);
+  const dry = notionNow();
+  await promote(dry, { execute: false, today: "2026-11-22" });
+  assert.equal(dry.dates().length, 0);
+  const s = mockApi();
+  await writeStructure({ code: "c-h-4a", ids: baseIds(), gen: fakeGen, api: s.api, execute: true, log: quiet, today: "2026-11-22" });
+  assert.deepEqual(s.calls.filter((c) => c.path === `/pages/${BOOK}`).map((c) => c.body.properties.最後更新日期.date.start), ["2026-11-22"]);
+  const liar = async (method, path, body) => (path === `/pages/${BOOK}` ? { ok: true, status: 200, json: { properties: { 最後更新日期: { date: { start: "2026-11-20" } } } } } : s.api(method, path, body));
+  await assert.rejects(writeStructure({ code: "c-h-4a", ids: baseIds(), gen: (w, i, c) => (w === "structure" ? { islands: [{ id: "7", name: "新", unit: 3, levels: [] }] } : fakeGen(w, i, c)), api: liar, execute: true, log: quiet, today: "2026-11-22" }), /回讀是 2026-11-20/);
+  assert.equal(taipeiToday(Date.UTC(2026, 10, 21, 16, 30)), "2026-11-22"); // UTC 16:30＝臺北隔天 00:30
 });
 
 test("promote：中斷後重跑只改剩下的", async () => {

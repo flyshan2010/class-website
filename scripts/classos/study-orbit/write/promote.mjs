@@ -9,10 +9,11 @@
  *   ② 每列的文字、數字、選項欄和 gen.py／cards.py 產生的應有值相同（老師在 Notion 動過、或寫入時抄錯，都會擋下）
  *   ③ 狀態只能是「待審／草稿」（要改）或已是目標狀態（略過，中斷後重跑會接著改）
  * 通過才逐頁只改「狀態」一欄，改完回讀該欄。relation 不在這裡比（交給 verify.py）。
+ * 這批有任何一列真的改了狀態，範圍內各題本的「最後更新日期」改成當天（臺北時間，2026-11-22 裁定）。
  * log 只印筆數與代碼，不印題目內容。
  */
 import { toNotionProps, mismatches, readBack } from "./props.mjs";
-import { DS } from "./writer.mjs";
+import { DS, touchBookDate } from "./writer.mjs";
 
 // table＝Notion 表；gen＝gen.py 參數（卡片讀資料包 cards）；key＝唯一鍵；from→to＝狀態
 export const PROMOTE_STEPS = [
@@ -54,7 +55,7 @@ async function queryPages(api, table, schema, levels) {
  * @param {(what:string, ids:object, code?:string, all?:boolean)=>any} o.gen  跑 gen.py（all＝--all，不略過 ids.json 已有的列）
  * @returns {{summary:object[], problems:string[]}}
  */
-export async function runPromote({ payload, ids, gen, api, execute, log = console.log, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), throttleMs = 350 }) {
+export async function runPromote({ payload, ids, gen, api, execute, today, log = console.log, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), throttleMs = 350 }) {
   const levels = payload.levels ?? [];
   if (!levels.length || levels.some((x) => !x)) throw new Error("資料包沒有指定關卡範圍 levels");
   const plans = [];
@@ -124,5 +125,8 @@ export async function runPromote({ payload, ids, gen, api, execute, log = consol
     summary.push({ label, change: execute ? n : todo.length, already: done });
     log(`${execute ? "✅" : "🔎"} ${label}：${execute ? "已改" : "將改"}「${to}」${execute ? n : todo.length} 筆，原本就是「${to}」${done} 筆`);
   }
+  // 題本最後更新日期：關卡代碼前三段＝題本代碼（m-h-4a-10 → m-h-4a）
+  if (summary.some((s) => s.change > 0))
+    for (const code of [...new Set(levels.map((lv) => lv.split("-").slice(0, 3).join("-")))]) await touchBookDate({ code, ids, api, execute, log, today });
   return { summary, problems };
 }
