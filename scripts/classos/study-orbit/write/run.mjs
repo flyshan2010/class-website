@@ -1,17 +1,17 @@
 /**
- * 自學星圖題本寫入｜GitHub Actions 入口（.github/workflows/so-write.yml 呼叫）
+ * 自學星圖題本寫入｜GitHub Actions 入口（私有 repo classos-private 的 .github/workflows/so-write.yml 呼叫）
  *
- * 環境變數：PAYLOAD（so-payload 分支的 payload.bin 路徑）、SO_PAYLOAD_KEY（私鑰，Secret）、NOTION_TOKEN（Secret）、
+ * 環境變數：PAYLOAD（local.mjs pack 產的明文資料包路徑）、NOTION_TOKEN（私有 repo 的 Secret）、
  *   MODE（dry-run｜execute，預設 dry-run）、FINGERPRINT（execute 必填，＝dry-run 印出的資料包指紋）、OUT_DIR（預設 out/so-write）
  * 產出：OUT_DIR/ids-new.json（本次新建＋補記的 id，本機 local.mjs merge 併回 ids.json）、OUT_DIR/summary.json
- * 公開 log 只印筆數與代碼，不印題目內容（本 repo 公開）。
+ * log 只印筆數與代碼，不印題目內容（log 在私有 repo，仍維持此原則）。
  */
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { api, isExecute } from "../../lib/notion.mjs";
-import { unseal, fingerprint } from "./seal.mjs";
+import { fingerprint } from "./fingerprint.mjs";
 import { runWrite } from "./writer.mjs";
 
 const execute = isExecute();
@@ -22,12 +22,10 @@ let result = null;
 let failed = null;
 
 try {
-  const key = process.env.SO_PAYLOAD_KEY;
-  if (!key) throw new Error("缺少 SO_PAYLOAD_KEY（GitHub Secret）");
-  const plain = unseal(readFileSync(process.env.PAYLOAD), key);
+  const plain = readFileSync(process.env.PAYLOAD);
   const fp = fingerprint(plain);
   const payload = JSON.parse(plain.toString("utf8"));
-  console.log(`📦 資料包指紋 ${fp}｜封裝 ${payload.createdAt}｜來源 ${payload.source?.commit ?? "?"}${payload.source?.dirty ? "（有未 commit 改動）" : ""}`);
+  console.log(`📦 資料包指紋 ${fp}｜來源 ${payload.source?.commit ?? "?"}${payload.source?.dirty ? "（有未 commit 改動）" : ""}`);
   console.log(`   關卡範圍 ${payload.levels.join(",")}｜卡片 ${payload.cards?.length ?? 0} 張｜結構 ${(payload.structure ?? []).join(",") || "無"}｜模式 ${execute ? "execute" : "dry-run"}`);
   if (execute && (process.env.FINGERPRINT ?? "").trim() !== fp) {
     throw new Error(`execute 必須填這個資料包的指紋 ${fp}（先跑 dry-run 確認筆數）；實際填的是「${process.env.FINGERPRINT ?? ""}」`);

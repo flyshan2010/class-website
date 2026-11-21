@@ -1,29 +1,23 @@
 /**
- * 自學星圖題本寫入｜本機端（老師的 Mac／Windows 都可，只需 node＋python3＋gh 已登入，不需任何祕密）
+ * 自學星圖題本寫入｜資料包封裝與 id 合併（不需任何祕密）
  *
- * 用法（在 class-website/ 底下）：
- *   node scripts/classos/study-orbit/write/local.mjs pack --levels c-h-4a-7,c-h-4a-8 --cards content_國L7.py,content_國L8.py --structure c-h-4a
- *       讀 自學星圖_P1試點/ 的 bundle.json、ids.json、gen.py＋cards.py 輸出 → 加密 → 強制推到 so-payload 分支（只有一個 commit，不留歷史）
- *       --no-push：只產 payload.bin 到 --out（測試用）
- *   node scripts/classos/study-orbit/write/local.mjs merge <ids-new.json>
+ * 執行位置：私有 repo classos-private 的 .github/workflows/so-write.yml（題本內容不進公開 repo，U42）。
+ *   該 workflow 同時 checkout 本公開 repo 的 scripts/classos 取程式，題本資料讀私有 repo 的 自學星圖_P1試點/。
+ * 用法（工作目錄＝Project 根，或在 class-website/ 底下）：
+ *   node <本檔> pack --levels c-h-4a-7,c-h-4a-8 --cards content_國L7.py,content_國L8.py --structure c-h-4a --out payload.json
+ *       讀 自學星圖_P1試點/ 的 bundle.json、ids.json、gen.py＋cards.py 輸出 → 明文資料包（不含時間戳，指紋可重現）
+ *   node <本檔> merge <ids-new.json>
  *       把 workflow artifact 的新 id 併回 ids.json（同鍵不同 id＝衝突，整批不寫）
- *   node scripts/classos/study-orbit/write/local.mjs keygen
- *       產新金鑰：私鑰直接經 stdin 交給 gh secret set SO_PAYLOAD_KEY（不落地），公鑰寫進 so-payload.pub.pem
  * 選項：--dir 換題本資料夾（預設 ../ClassOS_v3.5_藍圖/自學星圖_P1試點）
  */
-import crypto from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
-import { readFileSync, writeFileSync, mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { seal, fingerprint } from "./seal.mjs";
+import { fingerprint } from "./fingerprint.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, "../../../..");
-const PUB = path.join(HERE, "so-payload.pub.pem");
-const GH_REPO = "flyshan2010/class-website";
-const BRANCH = "so-payload";
 
 const argv = process.argv.slice(2);
 const cmd = argv.shift();
@@ -49,8 +43,8 @@ if (cmd === "pack") {
   const levels = (opt("levels", "") || "").split(",").filter(Boolean);
   const cardFiles = (opt("cards", "") || "").split(",").filter(Boolean);
   const structure = (opt("structure", "") || "").split(",").filter(Boolean);
-  const noPush = flag("no-push");
-  const out = opt("out", path.join(mkdtempSync(path.join(tmpdir(), "so-pack-")), "payload.bin"));
+  const out = opt("out", "");
+  if (!out) throw new Error("--out 必填（資料包輸出路徑）");
   if (!levels.length) throw new Error("--levels 必填（不給範圍會把舊批沒記 id 的子題重建一次）");
   let cards = [];
   if (cardFiles.length) {
@@ -61,21 +55,12 @@ if (cmd === "pack") {
   const read = (f) => readFileSync(path.join(DIR, f), "utf8");
   let commit = "?", dirty = false;
   try { commit = git(["rev-parse", "--short", "HEAD"], undefined, DIR); dirty = !!git(["status", "--porcelain", "--", "."], undefined, DIR); } catch { /* 不是 git 也能封 */ }
-  const payload = { version: 1, createdAt: new Date().toISOString(), source: { commit, dirty }, levels, structure, cards,
+  const payload = { version: 2, source: { commit, dirty }, levels, structure, cards,
     ids: JSON.parse(read("ids.json")), bundle: JSON.parse(read("bundle.json")), genPy: read("gen.py") };
   const plain = Buffer.from(JSON.stringify(payload));
   const fp = fingerprint(plain);
-  const bin = seal(plain, readFileSync(PUB, "utf8"));
-  writeFileSync(out, bin);
-  console.log(`📦 指紋 ${fp}｜明文 ${(plain.length / 1024).toFixed(0)}KB → 密文 ${(bin.length / 1024).toFixed(0)}KB｜卡片 ${cards.length} 張｜來源 ${commit}${dirty ? "（⚠️ 題本資料夾有未 commit 改動）" : ""}`);
-  if (noPush) { console.log(`（--no-push）payload：${out}`); process.exit(0); }
-  const blob = git(["hash-object", "-w", out]);
-  const tree = git(["mktree"], `100644 blob ${blob}\tpayload.bin\n`);
-  const c = git(["commit-tree", tree, "-m", `so-payload ${fp}（加密資料包，勿合併進 main）`]);
-  git(["push", "--force", "origin", `${c}:refs/heads/${BRANCH}`]);
-  console.log(`⬆️ 已推到 ${BRANCH}（${c.slice(0, 7)}）。接著：`);
-  console.log(`   gh workflow run so-write.yml --ref main -f mode=dry-run`);
-  console.log(`   筆數無誤 → gh workflow run so-write.yml --ref main -f mode=execute -f fingerprint=${fp}`);
+  writeFileSync(out, plain);
+  console.log(`📦 指紋 ${fp}｜${(plain.length / 1024).toFixed(0)}KB｜卡片 ${cards.length} 張｜來源 ${commit}${dirty ? "（⚠️ 題本資料夾有未 commit 改動）" : ""}`);
 } else if (cmd === "merge") {
   const file = argv[0];
   if (!file) throw new Error("用法：merge <ids-new.json>");
@@ -85,13 +70,7 @@ if (cmd === "pack") {
   if (conflicts.length) { console.error(`❌ 衝突 ${conflicts.length} 筆，ids.json 未寫入：${conflicts.slice(0, 20).join("、")}`); process.exit(1); }
   writeFileSync(idsPath, JSON.stringify(ids, null, 1)); // 與 python json.dump(indent=1, ensure_ascii=False) 同格式
   console.log(`✅ ids.json 新增：${Object.entries(added).map(([t, n]) => `${t} ${n}`).join("、") || "無"}`);
-} else if (cmd === "keygen") {
-  const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 3072,
-    publicKeyEncoding: { type: "spki", format: "pem" }, privateKeyEncoding: { type: "pkcs8", format: "pem" } });
-  execFileSync("gh", ["secret", "set", "SO_PAYLOAD_KEY", "-R", GH_REPO], { input: privateKey, stdio: ["pipe", "inherit", "inherit"] });
-  writeFileSync(PUB, publicKey);
-  console.log(`🔑 私鑰已設為 ${GH_REPO} 的 Secret SO_PAYLOAD_KEY（未落地）；公鑰寫入 ${path.relative(REPO, PUB)}，記得 commit`);
 } else if (cmd) {
-  console.error(`不認得的指令：${cmd}（pack｜merge｜keygen）`);
+  console.error(`不認得的指令：${cmd}（pack｜merge）`);
   process.exit(1);
 }

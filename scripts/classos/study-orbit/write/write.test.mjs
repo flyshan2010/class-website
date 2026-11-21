@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import { toNotionProps, chunks, mdToBlocks, pageId, mismatches } from "./props.mjs";
 import { runWrite, writeStructure, DS } from "./writer.mjs";
-import { seal, unseal, fingerprint } from "./seal.mjs";
+import { fingerprint } from "./fingerprint.mjs";
 import { mergeIds } from "./local.mjs";
 
 import { SCHEMA } from "./schema.fixture.mjs";
@@ -196,17 +196,12 @@ test("mismatches：多選、勾選、數字照型別比", () => {
   assert.deepEqual(mismatches({ 格: 2 }, { 格: { type: "number", number: 3 } }), ["格"]);
 });
 
-// ── 加密與 id 合併 ──
-test("資料包加解密來回一致、被改一個 byte 就解不開、指紋 8 碼", () => {
-  const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 2048,
-    publicKeyEncoding: { type: "spki", format: "pem" }, privateKeyEncoding: { type: "pkcs8", format: "pem" } });
+// ── 指紋與 id 合併 ──
+test("指紋 8 碼、同內容同指紋、差一字就不同", () => {
   const plain = Buffer.from(JSON.stringify({ 題幹: "中文內容".repeat(1000) }));
-  const bin = seal(plain, publicKey);
-  assert.ok(!bin.includes(Buffer.from("中文內容")), "密文不含明文");
-  assert.deepEqual(unseal(bin, privateKey), plain);
-  bin[bin.length - 1] ^= 1;
-  assert.throws(() => unseal(bin, privateKey));
   assert.match(fingerprint(plain), /^[0-9a-f]{8}$/);
+  assert.equal(fingerprint(Buffer.from(plain)), fingerprint(plain));
+  assert.notEqual(fingerprint(Buffer.from(JSON.stringify({ 題幹: "中文內客".repeat(1000) }))), fingerprint(plain));
 });
 
 test("ids 合併：新鍵加入、同鍵同 id（不管連字號）略過、同鍵不同 id 算衝突", () => {
