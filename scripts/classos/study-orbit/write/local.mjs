@@ -8,6 +8,7 @@
  *       讀 自學星圖_P1試點/ 的 bundle.json、ids.json、gen.py＋cards.py 輸出 → 明文資料包（不含時間戳，指紋可重現）
  *   node <本檔> merge <ids-new.json>
  *       把 workflow artifact 的新 id 併回 ids.json（同鍵不同 id＝衝突，整批不寫）
+ *       --all-cards：卡片不略過 ids.json 已有的（promote 要整批卡片比對與改狀態時用）
  * 選項：--dir 換題本資料夾（預設 ../ClassOS_v3.5_藍圖/自學星圖_P1試點）
  */
 import { execFileSync, spawnSync } from "node:child_process";
@@ -44,11 +45,12 @@ if (cmd === "pack") {
   const cardFiles = (opt("cards", "") || "").split(",").filter(Boolean);
   const structure = (opt("structure", "") || "").split(",").filter(Boolean);
   const out = opt("out", "");
+  const allCards = flag("all-cards");
   if (!out) throw new Error("--out 必填（資料包輸出路徑）");
   if (!levels.length) throw new Error("--levels 必填（不給範圍會把舊批沒記 id 的子題重建一次）");
   let cards = [];
   if (cardFiles.length) {
-    const r = spawnSync("python3", ["cards.py", ...cardFiles], { cwd: DIR, encoding: "utf8", maxBuffer: 1 << 26 });
+    const r = spawnSync("python3", ["cards.py", ...cardFiles, ...(allCards ? ["--all"] : [])], { cwd: DIR, encoding: "utf8", maxBuffer: 1 << 26 });
     if (r.status !== 0) throw new Error(`cards.py 失敗：${r.stderr}`);
     cards = JSON.parse(r.stdout.split("\n")[0]);
   }
