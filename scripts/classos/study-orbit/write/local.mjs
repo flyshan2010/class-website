@@ -54,7 +54,7 @@ if (cmd === "pack") {
   }
   const read = (f) => readFileSync(path.join(DIR, f), "utf8");
   let commit = "?", dirty = false;
-  try { commit = git(["rev-parse", "--short", "HEAD"], undefined, DIR); dirty = !!git(["status", "--porcelain", "--", "."], undefined, DIR); } catch { /* 不是 git 也能封 */ }
+  try { commit = git(["log", "-1", "--format=%h", "--", "."], undefined, DIR); // 題本資料夾最後變動的 commit：改 handoff 等別處不影響指紋 dirty = !!git(["status", "--porcelain", "--", "."], undefined, DIR); } catch { /* 不是 git 也能封 */ }
   const payload = { version: 2, source: { commit, dirty }, levels, structure, cards,
     ids: JSON.parse(read("ids.json")), bundle: JSON.parse(read("bundle.json")), genPy: read("gen.py") };
   const plain = Buffer.from(JSON.stringify(payload));
