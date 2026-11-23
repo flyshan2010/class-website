@@ -157,9 +157,9 @@
   },
   "economy": {
     "totals": {
-      "supply": 14878,
-      "txCount": 3707,
-      "spend": 10916
+      "supply": 14803,
+      "txCount": 3748,
+      "spend": 11336
     },
     "weeks": [
       {
@@ -287,11 +287,22 @@
         "week": 12,
         "label": "四上第12週(11/16-11/20)",
         "salary": 1187,
-        "reward": 1190,
+        "reward": 1535,
         "penalty": 220,
         "interest": 0,
         "spend": 2315,
         "spendCount": 32,
+        "adjust": 0
+      },
+      {
+        "week": 13,
+        "label": "四上第13週(11/23-11/27)",
+        "salary": 0,
+        "reward": 0,
+        "penalty": 0,
+        "interest": 0,
+        "spend": 420,
+        "spendCount": 5,
         "adjust": 0
       }
     ]
