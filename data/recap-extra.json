@@ -157,9 +157,9 @@
   },
   "economy": {
     "totals": {
-      "supply": 14803,
-      "txCount": 3748,
-      "spend": 11336
+      "supply": 14523,
+      "txCount": 3751,
+      "spend": 11616
     },
     "weeks": [
       {
@@ -301,8 +301,8 @@
         "reward": 0,
         "penalty": 0,
         "interest": 0,
-        "spend": 420,
-        "spendCount": 5,
+        "spend": 700,
+        "spendCount": 8,
         "adjust": 0
       }
     ]

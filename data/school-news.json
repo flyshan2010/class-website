@@ -1,6 +1,18 @@
 {
-  "fetchedAt": "2026-11-23T23:03:03.181Z",
+  "fetchedAt": "2026-11-24T06:52:02.153Z",
   "items": [
+    {
+      "date": "2026-11-24",
+      "title": "116 年度臺南市身心障礙教育資源中心工作計畫",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1224&type=news&from_op=school_department_show",
+      "dept": "輔導室"
+    },
+    {
+      "date": "2026-11-24",
+      "title": "115年度詐騙防制宣導「教育部與內政部致家長的一封信」",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1219&type=news&from_op=school_department_show",
+      "dept": "學務處"
+    },
     {
       "date": "2026-11-23",
       "title": "國立屏東大學理學院辦理「2026藝術、科學與社會跨域論壇（ASSC 2026）」，「2026藝術、科學與社會跨域論壇（ASSC 2026）」，詳如說明。",
@@ -48,18 +60,6 @@
       "title": "2027年長庚科技感恩創作活動，請參閱附件說明。",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=5&zone_id=0&page_id=43&content_id=1176&type=news&from_op=school_department_show",
       "dept": "輔導室"
-    },
-    {
-      "date": "2026-11-20",
-      "title": "補助本市115學年度第1次國民中小學現職教師完成臺灣台語/客語語言能力認證中高級以上考試報名費。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1172&type=news&from_op=school_department_show",
-      "dept": "教務處"
-    },
-    {
-      "date": "2026-11-19",
-      "title": "財團法人廣達文教基金會辦理「第八屆『廣達游智盃』創意程式競賽」",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1170&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
