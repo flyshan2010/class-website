@@ -540,15 +540,6 @@
     "notes": "9.23\n限時:10分鐘 \n用藍、黑原子筆，塗改不計分。"
   },
   {
-    "title": "線上升旗",
-    "date": "2026-12-08",
-    "endDate": "",
-    "startTime": "08:00",
-    "endTime": "08:30",
-    "type": "活動",
-    "notes": ""
-  },
-  {
     "title": "校內語文競賽-台語朗讀",
     "date": "2026-12-08",
     "endDate": "",
@@ -556,6 +547,24 @@
     "endTime": "08:40",
     "type": "活動",
     "notes": "1.3.\n限時:3分鐘 \n準備時間6分鐘"
+  },
+  {
+    "title": "實體升旗",
+    "date": "2026-12-08",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "08:35",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "練大會舞",
+    "date": "2026-12-09",
+    "endDate": "",
+    "startTime": "08:05",
+    "endTime": "09:20",
+    "type": "活動",
+    "notes": ""
   },
   {
     "title": "搓湯圓吃湯圓活動",
@@ -572,15 +581,6 @@
     "endDate": "",
     "startTime": "09:30",
     "endTime": "10:10",
-    "type": "活動",
-    "notes": ""
-  },
-  {
-    "title": "實體升旗",
-    "date": "2026-12-15",
-    "endDate": "",
-    "startTime": "08:00",
-    "endTime": "08:35",
     "type": "活動",
     "notes": ""
   },
@@ -621,11 +621,11 @@
     "notes": ""
   },
   {
-    "title": "線上升旗-耶誕活動",
+    "title": "實體升旗",
     "date": "2026-12-22",
     "endDate": "",
     "startTime": "08:00",
-    "endTime": "08:30",
+    "endTime": "08:35",
     "type": "活動",
     "notes": ""
   },
@@ -954,18 +954,18 @@
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
