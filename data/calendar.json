@@ -495,6 +495,15 @@
     "notes": "7.5.\n限時:50分鐘 \n帶抹布及書法用具"
   },
   {
+    "title": "線上升旗",
+    "date": "2026-12-01",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "08:30",
+    "type": "活動",
+    "notes": ""
+  },
+  {
     "title": "校內語文競賽-作文",
     "date": "2026-12-01",
     "endDate": "",
@@ -572,6 +581,15 @@
     "endDate": "",
     "startTime": "08:00",
     "endTime": "08:35",
+    "type": "活動",
+    "notes": ""
+  },
+  {
+    "title": "線上升旗",
+    "date": "2026-12-15",
+    "endDate": "",
+    "startTime": "08:00",
+    "endTime": "08:30",
     "type": "活動",
     "notes": ""
   },
@@ -936,18 +954,18 @@
     "notes": ""
   },
   {
-    "title": "母親節活動",
+    "title": "語文競賽-國語演說",
     "date": "2027-05-03",
-    "endDate": "2027-05-07",
+    "endDate": "",
     "startTime": "",
     "endTime": "",
     "type": "活動",
     "notes": ""
   },
   {
-    "title": "語文競賽-國語演說",
+    "title": "母親節活動",
     "date": "2027-05-03",
-    "endDate": "",
+    "endDate": "2027-05-07",
     "startTime": "",
     "endTime": "",
     "type": "活動",
