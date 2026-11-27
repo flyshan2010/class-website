@@ -1,6 +1,12 @@
 {
-  "fetchedAt": "2026-11-27T04:53:38.177Z",
+  "fetchedAt": "2026-11-27T06:12:33.974Z",
   "items": [
+    {
+      "date": "2026-11-27",
+      "title": "公告本市116學年度各類資優學生鑑定安置計畫(共8份)",
+      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=8&zone_id=0&page_id=78&content_id=1280&type=news&from_op=school_department_show",
+      "dept": "崑山附設幼兒園"
+    },
     {
       "date": "2026-11-27",
       "title": "「美感智能閱讀計畫-安妮新聞」115-2新進種子教師招募計畫，詳如說明。",
@@ -54,12 +60,6 @@
       "title": "衛生福利部辦理「115年性創傷復原中心研討暨成果發表會」簡章1份",
       "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=3&zone_id=0&page_id=23&content_id=1266&type=news&from_op=school_department_show",
       "dept": "學務處"
-    },
-    {
-      "date": "2026-11-25",
-      "title": "國立臺灣師範大學心理與教育測驗研究發展中心辦理115年素養導向課室評量工具「設計選拔活動」及「實踐推廣方案（第二梯次）」，詳如說明。",
-      "link": "https://www.kses.tn.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=13&content_id=1256&type=news&from_op=school_department_show",
-      "dept": "教務處"
     }
   ]
 }
