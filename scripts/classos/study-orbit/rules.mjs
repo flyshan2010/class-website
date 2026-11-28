@@ -385,10 +385,15 @@ export function towerFast(ms) {
   (ms || []).forEach((t) => { if (Number(t) < TOWER_FAST_MS) { run++; if (run >= TOWER_FAST_RUN) { n++; run = 0; } } else run = 0; });
   return n;
 }
-/** 這一層開放了沒：第 1 層一定開；之後要過了前一層 */
-export function towerOpen(rec, floor) {
-  const top = (rec && rec[0]) || 0, n = TOWER_FLOORS.ma.length;
-  return floor >= 1 && floor <= n && floor <= top + 1;
+/**
+ * 這一層開放了沒（P3 §13.1）：floors＝該階可用層號（towerFloors 的結果，由小到大）。
+ * 第一個可用層一定開；之後要過了「前一個可用層」（rec[0]≥它）；中間不可用的層跳過。
+ * 之後才補成可用的小號層若 ≤rec[0]，直接開放（不倒退）。數學 floors＝1–12，結果和逐層開放相同。
+ */
+export function towerOpen(stair, rec, floor, floors) {
+  const list = floors || towerFloors(stair), i = list.indexOf(floor), top = (rec && rec[0]) || 0;
+  if (i < 0) return false;
+  return i === 0 || top >= list[i - 1] || floor <= top;
 }
 /**
  * 一層打完：correct＝答對題數、sec＝用時（整數秒）。
@@ -409,4 +414,83 @@ export function towerMerge(a, b) {
   const x = a || [0], y = b || [0], n = Math.max(x.length, y.length), out = [Math.max(x[0] || 0, y[0] || 0)];
   for (let i = 1; i < n; i++) { const p = x[i] || 0, q = y[i] || 0; out.push(p && q ? Math.min(p, q) : p || q); }
   return out;
+}
+
+/* ===== 百鍊塔・國語字詞階（ch）、社會常識階（so）：從題本抽題（P3 §13.1、§13.2、§13.4）===== */
+export const TOWER_STAIR_SUBJ = { ch: "國語", ma: "數學", so: "社會" }; // 階 → 題本科目（代理只收對應科目題本那一格）
+export const TOWER_TW = { 字音: 0, 字義: 0, 字形: 0, 詞義: 1, 情境: 1 }; // 塔題類 → 0＝該課字層（2n−1）、1＝詞層（2n）
+export const TOWER_POOL_MIN = 10;  // 題池 ≥10 題才開層
+export const TOWER_POOL_FULL = 20; // 目標每層 20 題
+const TW_L = ["A", "B", "C", "D"];
+
+/** 一道題本題目 → 塔題目項（配合題一項拆一題）；格式不對的回 [] */
+function twItems(q) {
+  if (!q || !q.id) return [];
+  if (q.type === "配合") {
+    const ans = {}, left = q.left || [], right = q.right || [];
+    String(q.answer || "").toUpperCase().replace(/\s/g, "").split(",").forEach((x) => { if (x) ans[x.slice(0, -1)] = x.slice(-1); });
+    if (right.length !== 4) return [];
+    return left.map((t, i) => ({ key: q.id + "#" + (i + 1), stem: q.stem + "\n" + t, opts: right.map((x, k) => ({ L: TW_L[k], text: String(x) })), ans: ans[i + 1] || "" }));
+  }
+  const o = q.options || [];
+  if (o.length !== 4) return [];
+  return [{ key: q.id, stem: q.stem, opts: o.map((x, k) => ({ L: TW_L[k], text: String(x) })), ans: String(q.answer || "").trim().toUpperCase() }];
+}
+const twOk = (it) => TW_L.indexOf(it.ans) >= 0 && it.opts.every((o) => o.text.trim()) && new Set(it.opts.map((o) => o.text)).size === 4;
+const twSize = (x) => (Array.isArray(x) ? x.length : x ? Object.keys(x).length : 0);
+
+/**
+ * 該階的題池：回 {層號: [題目項…]}（題目項＝{key, stem, opts:[{L,text}×4], ans}，依 key 排序）；數學或沒有題本回 null。
+ * 國語：島號 n、題目 tw（塔題類）屬字音／字義／字形 → 層 2n−1，詞義／情境 → 層 2n。
+ * 社會：結構裡帶 tower 的關、slots 標「基礎」那幾格的全部題 → 第 tower 層。
+ * @param book 題本檔（data/study-orbit/<代碼>.json）；structure＝index.json 該本的 structure
+ */
+export function towerPool(stair, book, structure) {
+  if ((stair !== "ch" && stair !== "so") || !book) return null;
+  const lv = {}, out = {};
+  ((structure && structure.islands) || []).forEach((isl) => (isl.levels || []).forEach((l) => { lv[l.code] = { n: Number(isl.id), tower: Number(l.tower), slots: l.slots || [] }; }));
+  (book.questions || []).forEach((q) => {
+    const L = lv[q.level];
+    if (!L) return;
+    let f = 0;
+    if (stair === "ch") { const t = TOWER_TW[q.tw]; if (t !== undefined && L.n >= 1) f = 2 * L.n - 1 + t; }
+    else if (L.tower >= 1 && L.slots[q.slot - 1] === "基礎") f = L.tower;
+    if (f) twItems(q).filter(twOk).forEach((it) => { (out[f] = out[f] || []).push(it); });
+  });
+  Object.keys(out).forEach((f) => out[f].sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)));
+  return out;
+}
+/** 代理快取用：{層號: {key: 正解字母}}（題目項陣列或已是對照表都可以） */
+export function towerAnsMap(pool) {
+  const out = {};
+  Object.keys(pool || {}).forEach((f) => {
+    const x = pool[f];
+    if (Array.isArray(x)) { out[f] = {}; x.forEach((it) => { out[f][it.key] = it.ans; }); } else out[f] = x;
+  });
+  return out;
+}
+/** 該階可用層號（由小到大）：數學＝1–12；國社＝題池 ≥10 題的層（pool 可以是 towerPool 或 towerAnsMap 的結果） */
+export function towerFloors(stair, pool) {
+  if (stair === "ma") return TOWER_FLOORS.ma.map((_, i) => i + 1);
+  return Object.keys(pool || {}).map(Number).filter((f) => f >= 1 && twSize(pool[f]) >= TOWER_POOL_MIN).sort((a, b) => a - b);
+}
+/** 國社出一層 10 題：同一個亂數產生器洗牌取 10 個不同 key、每題選項再洗牌；同種子必出同題。題池不到 10 題或種子不對回 null */
+export function towerFloorBank(pool, floor, seed) {
+  const items = pool && pool[floor];
+  if (!Array.isArray(items) || items.length < TOWER_Q || !(seed >= 1 && seed <= TOWER_SEED_MAX) || Math.floor(seed) !== seed) return null;
+  const r = twRng(seed * 31 + floor), a = items.slice();
+  const mix = (x) => { for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)), t = x[i]; x[i] = x[j]; x[j] = t; } return x; };
+  return mix(a).slice(0, TOWER_Q).map((it) => ({ key: it.key, stem: it.stem, opts: mix(it.opts.slice()), ans: it.ans }));
+}
+/**
+ * 國社判對錯：keys＝10 個題目 key、picked＝學生選的 10 個「原始字母」（A–D，不是畫面上的位置）。
+ * key 不重複且都在該層、picked 都是 A–D，否則 −1（不算）。靠題號＋原始字母判，不靠種子重算（題本勘誤改字不會誤判）。
+ */
+export function towerScoreBank(pool, floor, keys, picked) {
+  const m = towerAnsMap({ x: pool && pool[floor] }).x;
+  if (!m || !Array.isArray(keys) || !Array.isArray(picked) || keys.length !== TOWER_Q || picked.length !== TOWER_Q) return -1;
+  const ks = keys.map(String);
+  if (new Set(ks).size !== TOWER_Q || ks.some((k) => !Object.prototype.hasOwnProperty.call(m, k))) return -1;
+  if (picked.some((p) => TW_L.indexOf(String(p)) < 0)) return -1;
+  return ks.filter((k, i) => m[k] === String(picked[i])).length;
 }

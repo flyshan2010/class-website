@@ -1,7 +1,7 @@
 // 百鍊之塔・數學算力階（P3 SPEC §5.4）：每層 1,000 個種子——答案唯一、選項不重複、數字在該層範圍；同種子兩次結果相同
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { towerFloor, towerScore, towerFast, towerOpen, towerResult, towerMerge, TOWER_FLOORS, TOWER_Q } from "./rules.mjs";
+import { towerFloor, towerScore, towerFast, towerOpen, towerFloors, towerResult, towerMerge, TOWER_FLOORS, TOWER_Q } from "./rules.mjs";
 
 const IN = (x, a, b) => Number.isInteger(x) && x >= a && x <= b;
 const RANGE = [
@@ -80,11 +80,33 @@ test("快答提醒：連續 3 題 1 秒內才算一次，提醒後重新數", ()
 });
 
 test("開放：第 1 層一定開；過了第 N 層才開第 N+1 層", () => {
-  assert.ok(towerOpen(null, 1));
-  assert.ok(!towerOpen(null, 2));
-  assert.ok(towerOpen([3, 50, 60, 70], 4));
-  assert.ok(!towerOpen([3, 50, 60, 70], 5));
-  assert.ok(!towerOpen([12], 13));
+  assert.ok(towerOpen("ma", null, 1));
+  assert.ok(!towerOpen("ma", null, 2));
+  assert.ok(towerOpen("ma", [3, 50, 60, 70], 4));
+  assert.ok(!towerOpen("ma", [3, 50, 60, 70], 5));
+  assert.ok(!towerOpen("ma", [12], 13));
+});
+
+test("開放（§13.1）：數學 1–12 層和舊版逐層開放逐格相同", () => {
+  const old = (rec, f) => f >= 1 && f <= 12 && f <= ((rec && rec[0]) || 0) + 1;
+  for (let top = 0; top <= 12; top++) for (let f = -1; f <= 14; f++) {
+    assert.equal(towerOpen("ma", [top], f, towerFloors("ma")), old([top], f), `top=${top} f=${f}`);
+    assert.equal(towerOpen("ma", [top], f), old([top], f));
+  }
+});
+
+test("開放（§13.1）：國社缺號跳過、補上線的小號層 ≤ 最高層直接開", () => {
+  const fl = [4, 5, 8, 12];
+  assert.ok(towerOpen("ch", null, 4, fl), "第一個可用層一定開");
+  assert.ok(!towerOpen("ch", null, 5, fl));
+  assert.ok(!towerOpen("ch", null, 1, fl), "不可用的層不開");
+  assert.ok(towerOpen("ch", [4], 5, fl));
+  assert.ok(towerOpen("ch", [5], 8, fl), "6、7 層不可用 → 跳過，過了 5 就開 8");
+  assert.ok(!towerOpen("ch", [5], 12, fl));
+  assert.ok(towerOpen("ch", [8], 2, [2, 4, 5, 8, 12]), "第 2 層後來才可用、≤最高層 → 直接開");
+  assert.ok(towerOpen("ch", [8], 6, [4, 5, 6, 8, 12]), "第 6 層後來補上線：前一可用層 5 已過 → 開");
+  assert.ok(towerOpen("ch", [3], 10, [3, 10]), "前一可用層 3 已過 → 開 10");
+  assert.ok(!towerOpen("so", null, 1, []), "沒有可用層全不開");
 });
 
 test("過層與金階（§11 第 1 題 A：打破自己的最佳紀錄）", () => {
