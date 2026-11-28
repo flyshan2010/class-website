@@ -1,6 +1,11 @@
 /**
- * 班網教師專區代理 v2.26（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
+ * 班網教師專區代理 v2.27（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.27 升級步驟（2026-11-28，約 1 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
+ *   v2.27 新增（自學星圖 P3 第③步，P3 SPEC §4）：教師專區「自學星圖」分頁用的 orbit_class（全班）、orbit_student（個人，seat），
+ *   **要教師口令**（動作名刻意不用 so_ 開頭）；彙整用 classview.mjs 自動產生區塊。只回座號與數字，結果快取 60 秒。
  *
  * ── v2.26 升級步驟（2026-11-28，約 1 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
@@ -183,7 +188,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.26"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.27"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -251,6 +256,9 @@ function doPost(e) {
       case "yearbook_list": return out_(ybList_(props));
       case "yearbook_mark": return out_(ybMark_(props, body));
       case "yearbook_polish": return out_(ybPolish_(props, body));
+      // 🌌 教師專區・自學星圖（v2.27）：⚠️ 不可改成 so_ 開頭——so_ 開頭在上面驗口令之前就轉給 soRoute_
+      case "orbit_class":   return out_(orbitClass_(props));
+      case "orbit_student": return out_(orbitStudent_(props, body));
       default:             return out_({ ok: false, error: "未知的動作：" + (body.action || "(空白)") });
     }
   } catch (err) {
@@ -3248,6 +3256,93 @@ function soHousekeep_(props, trig) {
   soErr_(props, "暫存區超過 400KB，已逐出到 " + Math.round(total / 1024) + "KB");
 }
 
+// ---------- 🌌 教師專區・自學星圖 orbit_*（v2.27，P3 SPEC §4）----------
+// 驗教師口令之後才走到這裡。資料＝指令碼屬性暫存區（so:s:*、so:me:*）一次讀完；暫存區沒有的學生，該本題本一次查 Notion 自學進度補齊（唯讀、不寫回暫存區）。
+// 彙整規則在下方「classview.mjs（自動產生）」區塊（KPI、熱圖、盲點、這週需要您看的事），這裡只備料。回覆只有座號與數字。
+function orbitBooks_() { // 班網 index.json：[{code, subject, structure:{islands:[{id,name,levels:[{code,name}]}]}}]（6 小時快取）
+  const cache = CacheService.getScriptCache();
+  const hit = soJson_(cache.get("orbit:idx"), null);
+  if (hit) return hit;
+  const data = soFetchJson_("study-orbit/index.json");
+  if (!data || !data.books) return null;
+  const books = data.books.map(function (b) {
+    return { code: b.code, subject: b.subject, structure: { islands: (((b.structure || {}).islands) || []).map(function (i) {
+      return { id: i.id, name: i.name, levels: (i.levels || []).map(function (l) { return { code: l.code, name: l.name }; }) };
+    }) } };
+  });
+  const s = JSON.stringify(books);
+  if (s.length < 95000) cache.put("orbit:idx", s, 21600);
+  return books;
+}
+// 一本題本全班的 Notion 自學進度（標題「學年｜題本｜座號」）→ {座號: 存檔字串}；查詢失敗回 null
+function orbitProg_(token, book, year) {
+  const head = year + "｜" + book + "｜";
+  const rows = queryAllDS_(token, DS_SO_PROG, { filter: { property: "標題", title: { contains: head } } });
+  if (!rows) return null;
+  const out = {};
+  rows.forEach(function (pg) {
+    const p = pg.properties || {}, seat = Number((p["座號"] || {}).number);
+    if (Number.isInteger(seat) && plain_(p["標題"]).indexOf(head) === 0 && !(seat in out)) out[seat] = plain_(p["存檔"]) || null;
+  });
+  return out;
+}
+// 備料：{books, saves:{題本:{座號:存檔}}, mes:{座號:{days,cw,wr,streak}}, today, miss:[Notion 讀不到的題本]}
+function orbitData_(props, seats) {
+  const books = orbitBooks_();
+  if (!books) return { error: "讀不到班網題本清單，請稍後再試" };
+  const all = props.getProperties(), today = today_(), year = soYearOf_(today), token = props.getProperty("NOTION_TOKEN");
+  const saves = {}, mes = {}, miss = [];
+  books.forEach(function (b) {
+    const m = saves[b.code] = {};
+    let lack = false;
+    seats.forEach(function (s) { const c = soJson_(all[soCellKey_(b.code, s)], null); if (c) m[s] = c.save; else lack = true; });
+    if (!lack) return;
+    const rows = token ? orbitProg_(token, b.code, year) : null;
+    if (!rows) { miss.push(b.code); return; }
+    seats.forEach(function (s) { if (!(s in m) && rows[s]) m[s] = rows[s]; });
+  });
+  seats.forEach(function (s) {
+    const me = soJson_(all["so:me:" + s], null);
+    mes[s] = me ? { days: me.days || [], cw: me.cw, wr: me.wr, streak: soStreakNow_(me, today) } : {};
+  });
+  return { books: books, saves: saves, mes: mes, today: today, miss: miss };
+}
+function orbitSeats_(props) { // 在學座號（名冊；體驗座號 9xx 不在名冊裡）
+  const r = soRoster_(props, false);
+  return r ? Object.keys(r).map(Number).filter(function (s) { return !soIsTest_(s); }) : null;
+}
+function orbitClass_(props) {
+  const cache = CacheService.getScriptCache();
+  const hit = soJson_(cache.get("orbit:class"), null);
+  if (hit) return hit;
+  const seats = orbitSeats_(props);
+  if (!seats) return { ok: false, error: "讀不到學生名冊，請稍後再試" };
+  const d = orbitData_(props, seats);
+  if (d.error) return { ok: false, error: d.error };
+  const out = classView({ books: d.books, seats: seats, saves: d.saves, mes: d.mes, today: d.today });
+  out.missing = d.miss; out.at = nowIso_();
+  const s = JSON.stringify(out);
+  if (s.length < 95000) cache.put("orbit:class", s, 60);
+  return out;
+}
+function orbitStudent_(props, body) {
+  const seat = Math.floor(Number(body.seat));
+  const seats = orbitSeats_(props);
+  if (!seats) return { ok: false, error: "讀不到學生名冊，請稍後再試" };
+  if (seats.indexOf(seat) < 0) return { ok: false, error: "名冊裡沒有這個座號" };
+  const cache = CacheService.getScriptCache(), ck = "orbit:stu:" + seat;
+  const hit = soJson_(cache.get(ck), null);
+  if (hit) return hit;
+  const d = orbitData_(props, [seat]);
+  if (d.error) return { ok: false, error: d.error };
+  const sv = {};
+  d.books.forEach(function (b) { sv[b.code] = d.saves[b.code][seat]; });
+  const out = studentView({ books: d.books, seat: seat, saves: sv, me: d.mes[seat], today: d.today });
+  out.missing = d.miss; out.at = nowIso_();
+  cache.put(ck, JSON.stringify(out), 60);
+  return out;
+}
+
 // ===== BEGIN rules.mjs（自動產生）=====
 // 來源：scripts/classos/study-orbit/rules.mjs（自動複製，勿手改；改正本後跑 node scripts/build-so-proxy.mjs）
 // 自學星圖闖關規則（規格正本：ClassOS_v3.5_藍圖/SPEC_自學星圖_P1資料模型.md §5.1–5.3）
@@ -3496,3 +3591,172 @@ function solarTerm(ymd) {
   return SOLAR_NAMES[(i + 24) % 24]; // 1 月 5 日前＝前一年的冬至
 }
 // ===== END rules.mjs（自動產生）=====
+
+// ===== BEGIN classview.mjs（自動產生）=====
+// 來源：scripts/classos/study-orbit/classview.mjs（自動複製，勿手改；改正本後跑 node scripts/build-so-proxy.mjs）
+// 教師專區「自學星圖」分頁的彙整（P3 SPEC §4，第③步）。純函式、node 可測；
+// 代理 v2.27 的 orbit_class／orbit_student 用同一支（build-so-proxy.mjs 把本檔去掉 import／export 後貼進 .gs，U83）。
+// 輸出只有座號與數字（盲點、關卡只給代碼，名稱由教師頁從班網公開題本檔對照），不含姓名、查詢碼、作答原文。
+// ⚠️ 代理是 Apps Script：不用 ??=、?.，名稱一律 cv 開頭（避免和代理、rules.mjs 撞名，建置時會檢查）。
+
+const CV_SINCE = "2026-11-28"; // days／cw／wr 從代理 v2.26 部署這天起累積（部署前的日子不補）
+const CV_STUCK_TRIES = 2;      // 卡關＝挑戰 ≥2 次仍 0 星
+const CV_STUCK_SEATS = 3;      // 一關有 ≥3 人卡關＝卡關星
+const CV_DUE_CARDS = 3;        // 到期沒複習 ≥3 張才提醒
+const CV_STREAK_GOOD = 5;      // 連續天數 ≥5（正向）
+const CV_TODO_MAX = 5;
+
+const CV_DAY0 = Date.UTC(2026, 0, 1);
+function cvDayStr(n) { return new Date(CV_DAY0 + n * 864e5).toISOString().slice(0, 10); }
+function cvAddDays(ymd, n) { return new Date(Date.parse(ymd + "T00:00:00Z") + n * 864e5).toISOString().slice(0, 10); }
+function cvDiff(a, b) { return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 864e5); }
+function cvSave(raw) { // 存檔字串或物件 → 記憶體形狀；壞檔當空檔（不讓一位學生的壞檔擋住全班）
+  try { return decodeSave(raw == null ? null : raw); } catch (e) { return decodeSave(null); }
+}
+function cvShort(book, code) { return code.indexOf(book + "-") === 0 ? code.slice(book.length + 1) : code; }
+
+/** 題本結構 → 每座島 {id, name, keys:[一般關…], core:島心鍵, virtual}（鍵一律省略題本代碼，和存檔一致） */
+function cvIslands(book) {
+  const isl = ((book.structure || {}).islands) || [];
+  return isl.map(function (x) {
+    const island = { id: x.id, levels: (x.levels || []).map(function (l) { return { code: cvShort(book.code, l.code), name: l.name }; }) };
+    const c = islandCore(island);
+    return { id: String(x.id), name: x.name || "", island: island, keys: c.levels, core: c.key, virtual: c.virtual };
+  });
+}
+
+/** 一關的格子值：-1 沒玩、0 試過沒過、1–3 最高星等 */
+function cvCell(lv, k) { const r = lv[k]; if (!r) return -1; return r[0] >= 1 ? r[0] : (r[2] > 0 ? 0 : -1); }
+/** 一座島的熱圖格：0 沒玩、1 卡關（試過沒過）、2 部分過關、3 全過、4 島心全金（寶箱開） */
+function cvIslandState(isl, lv) {
+  if (chestOpen(isl.island, lv)) return 4;
+  const all = isl.keys.concat([isl.core]).map(function (k) { return cvCell(lv, k); });
+  if (all.every(function (v) { return v >= 1; })) return 3;
+  if (all.some(function (v) { return v >= 1; })) return 2;
+  if (all.some(function (v) { return v === 0; })) return 1;
+  return 0;
+}
+
+/** 本週、上週有自學的天數；days＝代理存的天數（距 2026-01-01） */
+function cvWeekCount(days, today) {
+  const ws = weekStart(today + "T12:00:00+08:00"), pws = cvAddDays(ws, -7);
+  let cur = 0, prev = 0;
+  (days || []).forEach(function (n) { const d = cvDayStr(n); if (d >= ws && d <= today) cur++; else if (d >= pws && d < ws) prev++; });
+  return { cur: cur, prev: prev };
+}
+function cvWk(arr, ws) { return Array.isArray(arr) && arr[0] === ws ? arr : [ws, 0, 0]; }
+
+/**
+ * 全班彙整。
+ * @param {object} a
+ *   books：[{code, subject, structure}]（班網 index.json）
+ *   seats：在學座號（名冊；不含體驗座號）
+ *   saves：{題本: {座號: 存檔字串|物件}}（缺＝沒玩）
+ *   mes：{座號: {days, cw, wr, streak}}（streak＝代理算好的「現在」連續天數）
+ *   today：臺北日期 YYYY-MM-DD
+ */
+function classView(a) {
+  const today = a.today, ws = weekStart(today + "T12:00:00+08:00");
+  const seats = (a.seats || []).slice().sort(function (x, y) { return x - y; });
+  const N = seats.length, mes = a.mes || {};
+  const out = {
+    ok: true, today: today, weekStart: ws, since: CV_SINCE, n: N,
+    kpi: {}, todo: [], heat: [], bsTop: [], usage: {}, tower: null, week: {},
+  };
+  let lit = 0, slots = 0;
+  const stuck = [], bsCount = {}, due = {};
+  (a.books || []).forEach(function (book) {
+    const isl = cvIslands(book), bySeat = ((a.saves || {})[book.code]) || {};
+    const keys = []; isl.forEach(function (x) { x.keys.concat([x.core]).forEach(function (k) { keys.push(k); }); });
+    const stuckN = {};
+    const rows = {}, detail = {};
+    seats.forEach(function (s) {
+      const m = cvSave(bySeat[s]), lv = m.lv;
+      rows[s] = isl.map(function (x) { return cvIslandState(x, lv); });
+      detail[s] = keys.map(function (k) { return cvCell(lv, k); });
+      keys.forEach(function (k) {
+        const r = lv[k];
+        if (r && r[0] >= 1) lit++;
+        if (r && r[0] === 0 && r[2] >= CV_STUCK_TRIES) stuckN[k] = (stuckN[k] || 0) + 1;
+      });
+      Object.keys(m.cd).forEach(function (code) {
+        const c = m.cd[code];
+        if (c[0] === "t" && c[1] >= ws) { const full = book.code + "-" + code; bsCount[full] = (bsCount[full] || 0) + 1; }
+        if (c[0] === "d" && cvDiff(c[1], today) >= 7) due[s] = (due[s] || 0) + 1;
+      });
+    });
+    slots += N * keys.length;
+    keys.forEach(function (k) { if ((stuckN[k] || 0) >= CV_STUCK_SEATS) stuck.push({ book: book.code, key: k, n: stuckN[k] }); });
+    out.heat.push({
+      book: book.code, subject: book.subject || "",
+      islands: isl.map(function (x) { return { id: x.id, name: x.name, keys: x.keys, core: x.core, virtual: x.virtual }; }),
+      keys: keys, rows: rows, detail: detail,
+    });
+  });
+  stuck.sort(function (x, y) { return y.n - x.n || (x.book + x.key).localeCompare(y.book + y.key, "en", { numeric: true }); });
+
+  // 週資料
+  let d3 = 0, cwT = 0, cwP = 0, wrA = 0, wrC = 0;
+  const zero = [], good = [];
+  seats.forEach(function (s) {
+    const me = mes[s] || {}, wc = cvWeekCount(me.days, today);
+    out.week[s] = { days: weekDays((me.days || []).map(cvDayStr), today), n: wc.cur, streak: me.streak || 0, due: due[s] || 0 };
+    if (wc.cur >= 3) d3++;
+    if (wc.cur === 0 && wc.prev >= 2) zero.push(s);
+    if ((me.streak || 0) >= CV_STREAK_GOOD) good.push(s);
+    const cw = cvWk(me.cw, ws), wr = cvWk(me.wr, ws);
+    cwT += cw[1]; cwP += cw[2]; wrA += wr[1]; wrC += wr[2];
+  });
+
+  out.kpi = {
+    week3: { n: d3, of: N },
+    bright: { lit: lit, of: slots, pct: slots ? Math.floor(lit / slots * 100 + 0.5) : 0 }, // 四捨五入（ROUND_HALF_UP）
+    stuck: { n: stuck.length, levels: stuck },
+    due: { pass: cwP, tries: cwT, pct: cwT ? Math.floor(cwP / cwT * 100 + 0.5) : null },
+  };
+  out.bsTop = Object.keys(bsCount).map(function (c) { return { code: c, n: bsCount[c] }; })
+    .sort(function (x, y) { return y.n - x.n || x.code.localeCompare(y.code, "en", { numeric: true }); }).slice(0, 5);
+  out.usage = { after: wrA, core: wrC, tower: null };
+
+  // 📌 這週需要您看的事：照順序挑，最多 5 句；一句一種事
+  const todo = [];
+  if (zero.length) todo.push({ t: "zero", seats: zero });
+  stuck.slice(0, 2).forEach(function (x) { todo.push({ t: "stuck", book: x.book, key: x.key, n: x.n }); });
+  if (out.bsTop.length) todo.push({ t: "bs", code: out.bsTop[0].code, n: out.bsTop[0].n });
+  const dueSeats = seats.filter(function (s) { return (due[s] || 0) >= CV_DUE_CARDS; }).map(function (s) { return { seat: s, n: due[s] }; });
+  if (dueSeats.length) todo.push({ t: "due", seats: dueSeats });
+  if (good.length) todo.push({ t: "streak", seats: good });
+  out.todo = todo.slice(0, CV_TODO_MAX);
+  return out;
+}
+
+/**
+ * 個人頁（點座號）。
+ * @param {object} a  books、today 同上；seat；saves：{題本: 存檔}；me：{days, cw, wr, streak}
+ */
+function studentView(a) {
+  const today = a.today, ws = weekStart(today + "T12:00:00+08:00"), me = a.me || {};
+  const books = (a.books || []).map(function (book) {
+    const m = cvSave(((a.saves || {})[book.code])), isl = cvIslands(book);
+    const cards = Object.keys(m.cd).map(function (code) {
+      const c = m.cd[code];
+      return { code: book.code + "-" + code, st: c[0] === "t" ? "todo" : cvDiff(c[1], today) >= 7 ? "due" : "wait", date: c[1] };
+    }).sort(function (x, y) { return x.code.localeCompare(y.code, "en", { numeric: true }); });
+    return {
+      book: book.code, subject: book.subject || "",
+      islands: isl.map(function (x) {
+        return { id: x.id, name: x.name, core: x.core, virtual: x.virtual,
+          keys: x.keys, cells: x.keys.map(function (k) { return cvCell(m.lv, k); }), coreCell: cvCell(m.lv, x.core),
+          state: cvIslandState(x, m.lv) };
+      }),
+      cards: cards, overcome: m.ok.length,
+    };
+  });
+  const wc = cvWeekCount(me.days, today), cw = cvWk(me.cw, ws), wr = cvWk(me.wr, ws);
+  return {
+    ok: true, seat: a.seat, today: today, weekStart: ws, since: CV_SINCE, books: books,
+    days: weekDays((me.days || []).map(cvDayStr), today), weekN: wc.cur, streak: me.streak || 0,
+    usage: { after: wr[1], core: wr[2], tower: null }, due: { pass: cw[2], tries: cw[1] },
+  };
+}
+// ===== END classview.mjs（自動產生）=====

@@ -81,6 +81,7 @@
       { icon: "🚀", label: "教學駕駛艙", href: "cockpit.html", color: "#54A0FF" },
       { icon: "🌅", label: "Morning Launch", href: "morning-launch.html", color: "#FF9F43" },
       { icon: "📊", label: "全班儀表板", href: "#sec-dash", color: "#2a78d6" },
+      { icon: "🌌", label: "自學星圖", href: "#sec-orbit", color: "#4b3fb5" }, // EI 線 P3 第③步 2026-11-28：全班×島、盲點、個人頁（代理 v2.27）
       { icon: "📝", label: "錯題紀錄表", href: "quiz.html", color: "#E17055" }, // 平時卷錯題登記（2026-10-18 從班級管理系統搬來）
       { icon: "🪑", label: "排座位", href: "seat-plan.html", color: "#2f6f5e" }, // DJ 線 2026-11-07：建議→微調→確認→更新班網座位表
       { icon: "📰", label: "校刊挑選", href: "yearbook.html", color: "#a9731a" }, // DL 線 2026-11-08：挑作文→編排→下載 Word→記錄繳交
@@ -110,6 +111,13 @@
           <div class="dash-head"><span class="meta">本週報告、需要關注、紀錄與作文進度</span>
             <label class="meta">週次 <select id="dash-week" hidden></select></label></div>
           <div id="dash-body"></div>
+        </details>
+      </section>
+
+      <section class="card" id="sec-orbit" style="--accent:#4b3fb5">
+        <details id="orbit-details">
+          <summary class="dash-summary"><h2>🌌 自學星圖</h2><span class="meta">（預設收合，點開才讀；只顯示座號、不排名）</span></summary>
+          <div id="orbit-body"></div>
         </details>
       </section>
 
@@ -197,6 +205,7 @@
 
     // 📊 全班學習儀表板（assets/js/teacher-dash.js）：預設收合，展開才解密載入
     if (window.TeacherDash) window.TeacherDash.mount();
+    if (window.OrbitTeacher) window.OrbitTeacher.mount(api); // 🌌 自學星圖（assets/js/orbit-teacher.js，代理 orbit_class／orbit_student）
     if (window.EssaySheets) window.EssaySheets.mount();
 
     // 快速鍵：帶入範本，游標停在「＿」處

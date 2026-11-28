@@ -520,7 +520,7 @@ test("so_test_clear：只清測試座號的暫存區；dry 回用量", () => {
 
 test("暫停開關、鎖拿不到、版本號", () => {
   const w = makeWorld();
-  assert.equal(w.post({ action: "version" }).version, "2.26");
+  assert.equal(w.post({ action: "version" }).version, "2.27");
   const s = session(w, 3); s.pull();
   w.lock.free = false;
   const busy = s.push(round("ggggggg"));
@@ -533,7 +533,7 @@ test("暫停開關、鎖拿不到、版本號", () => {
 test("v2.25 so_health：免口令只回數字；429 另計、卡住 60 分鐘才算；暫停中也查得到", () => {
   const w = makeWorld();
   let h = w.post({ action: "so_health" });
-  assert.deepEqual([h.ok, h.version, h.stuck, h.err7.fail, h.err7.retry, h.lastFail], [true, "2.26", 0, 0, 0, null]);
+  assert.deepEqual([h.ok, h.version, h.stuck, h.err7.fail, h.err7.retry, h.lastFail], [true, "2.27", 0, 0, 0, null]);
   const iso = (ms) => new Date(ms).toISOString();
   w.store.set("so:err", JSON.stringify([[iso(w.clock.t - 8 * 864e5), "自學紀錄寫入 500 舊的"], [iso(w.clock.t - 3600e3), "429 pages"],
     [iso(w.clock.t - 7200e3), "自學進度寫入 502 m-h-4a:3"], [iso(w.clock.t - 60e3), "暫存區超過 400KB，已逐出到 290KB"]]));
@@ -578,9 +578,8 @@ test("配合題：一對一筆事件逐對判；配錯的對發卡、一題最�
   assert.deepEqual(m.cd["1-1-B3"][0], "d");
 });
 
-test("代理的 rules 區塊＝rules.mjs 正本（不准手改）", () => {
-  const { current, block } = build();
-  assert.equal(current, block);
+test("代理的自動產生區塊＝正本（rules.mjs、classview.mjs；不准手改）", () => {
+  for (const b of build().blocks) assert.equal(b.current, b.block, b.name);
 });
 
 test("v2.23：登入一次補齊各本；上傳分開回等待／持鎖；落地每格 5 分鐘一次；耗時記 so:run；紀錄不重複接行", () => {
@@ -686,4 +685,59 @@ test("v2.26 cw：只算已克服滿 7 天的到期卡挑戰；通過另計", () 
   w.at("2026-11-24T02:00:00Z");
   s.push([c(codes[0], true), c(codes[1], false)]);
   assert.deepEqual(JSON.parse(w.store.get("so:me:3")).cw, ["2026-11-23", 2, 1]);
+});
+
+// ───────────── v2.27 教師專區 orbit_*（P3 SPEC §4）─────────────
+test("v2.27 orbit_class／orbit_student：不帶口令、錯口令都回口令錯誤（動作名不是 so_ 開頭）", () => {
+  const w = makeWorld();
+  for (const action of ["orbit_class", "orbit_student"]) {
+    assert.equal(w.post({ action, seat: 1 }).error, "口令錯誤");
+    assert.equal(w.post({ action, seat: 1, pw: "錯的" }).error, "口令錯誤");
+    assert.equal(w.post({ action, seat: 1, token: "x" }).error, "口令錯誤");
+  }
+  assert.equal(w.post({ action: "version" }).version, "2.27");
+});
+
+test("v2.27 orbit_class：暫存區＋Notion 補齊（唯讀）；體驗座號不算；只有座號與數字；快取 60 秒", () => {
+  const w = makeWorld({ start: "2026-11-25T02:00:00Z" });
+  const a = session(w, 3); a.pull(); a.push(round("ggggggg", "n", "1-1"));
+  const b = session(w, 5); b.pull(); b.push(round("xxxxxxx", "n", "1-2")); b.push(round("xxxxxxx", "n", "1-2"));
+  const d = session(w, 3, TEST_KEY); d.pull(); d.push(round("ggggggg", "n", "1-1")); // 體驗座號 903
+  w.flush();
+  w.store.delete("so:s:m-h-4a:5"); // 被逐出 → 要從 Notion 讀回
+  const before = w.store.size, writes = w.calls.writes;
+  const r = w.post({ action: "orbit_class", pw: "pw" });
+  assert.equal(r.ok, true, JSON.stringify(r).slice(0, 300));
+  assert.equal(r.n, 8, "在學人數＝名冊 8 人，不含 903");
+  const m = r.heat.find((h) => h.book === "m-h-4a"), i11 = m.keys.indexOf("1-1"), i12 = m.keys.indexOf("1-2");
+  assert.equal(m.detail[3][i11], 3);
+  assert.equal(m.detail[5][i12], 0, "座號 5 從 Notion 讀回：試 2 次 0 星");
+  assert.equal(m.detail[903], undefined);
+  assert.equal(r.week[3].n, 1);
+  assert.equal(r.usage.after, 3, "座號 3 一回合＋座號 5 兩回合（0 星也算回合）；體驗座號不算");
+  assert.deepEqual(r.missing, []);
+  assert.equal(w.store.size, before, "唯讀：不寫回暫存區");
+  assert.equal(w.calls.writes, writes, "唯讀：不寫 Notion");
+  const txt = JSON.stringify(r);
+  assert.equal(/學生\d|code\d|查詢碼|姓名|pg-\d/.test(txt), false, "回覆沒有姓名、查詢碼、頁面 id");
+  // 60 秒內同一份（at 不變），過 61 秒重算
+  assert.equal(w.post({ action: "orbit_class", pw: "pw" }).at, r.at);
+  w.at(new Date(w.clock.t + 61e3).toISOString());
+  a.push(round("ggggggg", "n", "1-2"));
+  assert.equal(w.post({ action: "orbit_class", pw: "pw" }).heat.find((h) => h.book === "m-h-4a").detail[3][i12], 3);
+});
+
+test("v2.27 orbit_student：名冊內座號才回；卡冊與本週七天", () => {
+  const w = makeWorld({ start: "2026-11-25T02:00:00Z" });
+  const a = session(w, 3); a.pull(); a.push(round("xgggggg", "n", "1-1"));
+  const r = w.post({ action: "orbit_student", pw: "pw", seat: 3 });
+  assert.equal(r.ok, true, JSON.stringify(r).slice(0, 300));
+  assert.equal(r.seat, 3);
+  assert.equal(r.weekN, 1);
+  assert.deepEqual(r.days, [false, false, true, false, false, false, false], "11-25 是週三");
+  const bk = r.books.find((x) => x.book === "m-h-4a");
+  assert.ok(bk.cards.length >= 1 && bk.cards.every((c) => c.st === "todo" && c.code.startsWith("m-h-4a-1-1-B")));
+  assert.equal(w.post({ action: "orbit_student", pw: "pw", seat: 99 }).ok, false);
+  assert.equal(w.post({ action: "orbit_student", pw: "pw", seat: 903 }).ok, false, "體驗座號不在名冊");
+  assert.equal(/學生\d|code\d|查詢碼|姓名/.test(JSON.stringify(r)), false);
 });

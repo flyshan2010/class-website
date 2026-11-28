@@ -2336,3 +2336,50 @@ a.qa-chip.link::after { content: "👉 複習卡"; display: inline-block; white-
   .ev-trail th button.ev-th { font-size: .62rem; }
 }
 @media print { .ev-panel { border: 0; padding: 0; } }
+
+/* 教師專區「🌌 自學星圖」（EI 線 P3 第③步，SPEC_自學星圖_P3… §4；程式 assets/js/orbit-teacher.js）
+ * 版面沿用全班儀表板的 dash-*；熱圖只在 .orbit-hm 容器內橫向捲動，整頁不得橫捲。 */
+#sec-orbit details > summary { cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+#sec-orbit details > summary::-webkit-details-marker { display: none; }
+#sec-orbit details > summary h2 { margin: 0; }
+#sec-orbit details > summary h2::before { content: "▸ "; color: var(--ink-soft); }
+#sec-orbit details[open] > summary h2::before { content: "▾ "; }
+#sec-orbit details[open] > summary { margin-bottom: 10px; }
+#orbit-body { min-width: 0; }
+.orbit-since { display: block; font-size: .78rem; color: #8a5a00; }
+.orbit-more { font-size: .85rem; margin-top: 4px; } .orbit-more summary { cursor: pointer; color: #2a78d6; min-height: 44px; display: flex; align-items: center; } .orbit-more ul { margin: 4px 0 0; padding-left: 1.2em; }
+.orbit-tab { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 14px; min-height: 44px; font: inherit; font-size: .9rem; cursor: pointer; color: var(--ink); }
+.orbit-tab.on { background: var(--c, #4b3fb5); border-color: var(--c, #4b3fb5); color: #fff; font-weight: 700; }
+.orbit-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.orbit-back { margin: 0 0 6px; }
+.orbit-todo { margin: 0; padding-left: 1.2em; } .orbit-todo li { margin: 4px 0; line-height: 1.6; }
+.orbit-hm { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+.orbit-hm table { border-collapse: separate; border-spacing: 3px; font-size: .8rem; }
+.orbit-hm th { font-weight: 600; color: var(--ink-soft); white-space: nowrap; padding: 2px 4px; text-align: center; }
+.orbit-hm th.sh { cursor: pointer; color: #2a78d6; writing-mode: vertical-rl; text-orientation: upright; letter-spacing: 1px; vertical-align: bottom; padding: 4px 0; min-width: 30px; min-height: 44px; }
+.orbit-hm th.sh:hover { background: #eef4fc; border-radius: 6px; }
+.orbit-hm td.c { width: 30px; min-width: 30px; height: 26px; border-radius: 5px; text-align: center; font-weight: 700; color: #5a1a1a; font-size: .8rem; }
+.orbit-hm td.seat button { min-width: 44px; min-height: 44px; border: 0; background: none; color: #2a78d6; font: inherit; font-weight: 700; cursor: pointer; }
+.orbit-hm td.days { color: #1baf7a; white-space: nowrap; font-size: .7rem; letter-spacing: -1px; } .orbit-hm td.days span { color: #e6e2d6; }
+.c.i0, .c.l-1, .orbit-crow .dot.l-1 { background: #e2ddd0; } .c.i1, .c.l0, .orbit-crow .dot.l0 { background: #e5737f; } .c.i2, .c.l1, .orbit-crow .dot.l1 { background: #e9b27e; }
+.c.i3, .c.l2, .orbit-crow .dot.l2 { background: #9fb0cf; } .c.i4, .c.l3, .orbit-crow .dot.l3 { background: #f5c542; color: #6b4a00; }
+.orbit-hm td.c.i1, .orbit-hm td.c.l0 { background: #f3a3a8; }
+.orbit-hm td.c.core, .orbit-legend i.core { border-radius: 50%; }
+.orbit-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .8rem; color: var(--ink-soft); margin-top: 6px; }
+.orbit-legend i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; font-style: normal; font-size: .65rem; text-align: center; line-height: 14px; font-weight: 700; }
+.orbit-bs, .orbit-use { display: grid; grid-template-columns: minmax(0, 1fr) 90px 3.2em; gap: 8px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--line); font-size: .88rem; }
+.orbit-bs small { color: #8a8f98; }
+.orbit-bs .bar, .orbit-use .bar { height: 10px; background: #f0ece2; border-radius: 5px; overflow: hidden; } .orbit-bs .bar i, .orbit-use .bar i { display: block; height: 100%; background: #e5737f; }
+.orbit-bs b, .orbit-use b { text-align: right; font-variant-numeric: tabular-nums; }
+.orbit-stu { background: var(--bg); border-radius: 14px; padding: 12px 14px; margin-top: 12px; }
+.orbit-stu-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.orbit-stu h5 { margin: 10px 0 4px; font-size: .95rem; } .orbit-stu h5 small { font-weight: normal; color: #8a8f98; }
+.orbit-week i { display: inline-block; width: 1.6em; text-align: center; border-radius: 6px; font-style: normal; background: #eeebe2; color: #8a8f98; margin-right: 2px; }
+.orbit-week i.on { background: #1baf7a; color: #fff; }
+.orbit-crow { display: flex; gap: 8px; align-items: flex-start; margin: 4px 0; } .orbit-crow .sj { flex: 0 0 2.6em; font-weight: 800; }
+.orbit-crow .isles { display: flex; flex-wrap: wrap; gap: 6px; }
+.orbit-crow .isle { display: inline-flex; gap: 2px; align-items: center; padding: 3px 5px; border-radius: 8px; background: #fff; border: 1px solid var(--line); }
+.orbit-crow .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; } .orbit-crow .dot.dia { border-radius: 1px; transform: rotate(45deg); }
+.orbit-cards { list-style: none; margin: 0; padding: 0; } .orbit-cards li { padding: 4px 0; border-bottom: 1px solid var(--line); font-size: .9rem; } .orbit-cards small { color: #8a8f98; }
+.orbit-cards .tag { display: inline-block; font-size: .75rem; padding: 0 8px; border-radius: 9px; margin-right: 6px; background: #f3a3a8; color: #5a1a1a; }
+.orbit-cards .tag.due { background: #f5c542; color: #6b4a00; }
