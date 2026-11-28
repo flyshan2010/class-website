@@ -1,6 +1,13 @@
 /**
- * 班網教師專區代理 v2.27（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
+ * 班網教師專區代理 v2.28（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.28 升級步驟（2026-11-28，約 1 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
+ *   v2.28 新增（自學星圖 P3 第④步，P3 SPEC §5）：百鍊之塔・數學算力階。so_push 收 ["t", 階, 層, 種子, 10 個選項, 用時秒, 快答提醒次數]，
+ *   代理用 rules.mjs 的 towerFloor 以同一個種子重算判對錯；塔紀錄存 so:tw:<座號>（{ma:[最高過層, 各層最佳秒…]}），
+ *   落地寫進「💾 自學進度」數學題本那一列的「百鍊塔」欄；wr 多第 4 格（本週塔層次）；so_login／so_pull／so_push 多回 tw。
+ *   教師專區 orbit_class／orbit_student 多回百鍊塔各層人數與層次。
  *
  * ── v2.27 升級步驟（2026-11-28，約 1 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
@@ -188,7 +195,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.27"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.28"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -2572,7 +2579,7 @@ function soMeView_(me, today) { // v2.26 多回 days（最近 14 個有自學的
 // v2.26 週計數 [本週起算日, …]：換週歸零（教師專區用；P3 SPEC §3.3）
 function soWeekCnt_(arr, n) {
   const ws = weekStart(Date.now());
-  if (Array.isArray(arr) && arr[0] === ws && arr.length === n + 1) return arr;
+  if (Array.isArray(arr) && arr[0] === ws && arr.length <= n + 1) { while (arr.length < n + 1) arr.push(0); return arr; } // v2.28 wr 由 3 格變 4 格：同週補 0、不歸零
   const out = [ws]; for (let i = 0; i < n; i++) out.push(0); return out;
 }
 // v2.26 各本的島心鍵（短鍵，例 1-5、3-0）：由班網 index.json 的題本結構推得（islandCore），6 小時快取；讀不到回 null
@@ -2635,7 +2642,7 @@ function soLogin_(props, body) {
   soEnsureCells_(props, { seat: seat, test: soIsTest_(seat) }, Object.keys(idx)); // 缺的各本先讀回（一位一次查詢），之後三本拉取不必再查；失敗由拉取補
   const books = Object.keys(idx).map(function (b) { const s = soSumOf_(props, b, seat); s.book = b; s.subject = idx[b]; return s; });
   const v = soMeView_(soMe_(props, seat, today), today);
-  return { ok: true, token: head + "." + soSign_(head, secret), seat: seat, books: books, today: v.today, streak: v.streak, days: v.days };
+  return { ok: true, token: head + "." + soSign_(head, secret), seat: seat, books: books, today: v.today, streak: v.streak, days: v.days, tw: soJson_(props.getProperty(soTwKey_(seat)), {}) };
 }
 
 // ---------- 暫存區一格 ----------
@@ -2713,7 +2720,7 @@ function soPull_(props, body) {
     if (!cell) return SO_BUSY;
   }
   const today = today_(), v = soMeView_(soMe_(props, auth.seat, today), today);
-  return { ok: true, book: book, save: cell.save, ver: cell.ver, sum: soSumOf_(props, book, auth.seat), today: v.today, streak: v.streak, days: v.days };
+  return { ok: true, book: book, save: cell.save, ver: cell.ver, sum: soSumOf_(props, book, auth.seat), today: v.today, streak: v.streak, days: v.days, tw: soJson_(props.getProperty(soTwKey_(auth.seat)), {}) };
 }
 
 function soSumPut_(props, book, seat, cell) {
@@ -2760,16 +2767,8 @@ function soFold_(cell, book, events, ak, me, today) {
     else if (st === "d") { if (m.cd[k] && m.cd[k][0] === "t") m.cd[k] = ["d", today]; }
     else if (st === "o") { delete m.cd[k]; if (m.ok.indexOf(k) < 0) m.ok.push(k); }
   };
-  const doneTask = function (src) {
-    if ("rnf".indexOf(src) >= 0 && src && me.today.done.indexOf(src) < 0 && me.today.done.length < 3) me.today.done.push(src);
-  };
-  const studied = function () { // 有完成一回合（或卡冊一張）的日子 → 連續自學天數；v2.26 另記 days（只留最近 14 筆）
-    const dn = strToDay(today), ds = me.days || (me.days = []);
-    if (ds[ds.length - 1] !== dn) { ds.push(dn); if (ds.length > 14) ds.splice(0, ds.length - 14); }
-    if (me.last === today) return;
-    me.streak = me.last && me.last >= soPrevSchoolDay_(today, soHolidays_()) ? me.streak + 1 : 1;
-    me.last = today;
-  };
+  const doneTask = function (src) { soDoneTask_(me, src); };
+  const studied = function () { soStudied_(me, today); };
   events.forEach(function (ev) {
     if (!Array.isArray(ev)) return;
     if (ev[0] === "a") {
@@ -2823,7 +2822,7 @@ function soFold_(cell, book, events, ak, me, today) {
       out.ended.push(k); out.sumChanged = true;
       if (cores === undefined) cores = soCoreKeys_(book);
       const isCore = cores ? cores.indexOf(k) >= 0 : /-0$/.test(k); // 讀不到結構：只認得虛擬島心
-      me.wr = soWeekCnt_(me.wr, 2); me.wr[isCore ? 2 : 1]++; // v2.26 wr：本週課後回合數、島心回合數
+      me.wr = soWeekCnt_(me.wr, 3); me.wr[isCore ? 2 : 1]++; // v2.26 wr：本週課後回合數、島心回合數（v2.28 第 4 格＝塔層次）
       doneTask(src); studied();
       rr = null;
     }
@@ -2831,6 +2830,35 @@ function soFold_(cell, book, events, ak, me, today) {
   cell.rr = rr;
   cell.save = encodeSave(m);
   return out;
+}
+
+function soDoneTask_(me, src) { // 今日任務：一件事只算一次、最多 3 件
+  if ("rnf".indexOf(src) >= 0 && src && me.today.done.indexOf(src) < 0 && me.today.done.length < 3) me.today.done.push(src);
+}
+function soStudied_(me, today) { // 有完成一回合（或卡冊一張、塔一層）的日子 → 連續自學天數；v2.26 另記 days（只留最近 14 筆）
+  const dn = strToDay(today), ds = me.days || (me.days = []);
+  if (ds[ds.length - 1] !== dn) { ds.push(dn); if (ds.length > 14) ds.splice(0, ds.length - 14); }
+  if (me.last === today) return;
+  me.streak = me.last && me.last >= soPrevSchoolDay_(today, soHolidays_()) ? me.streak + 1 : 1;
+  me.last = today;
+}
+
+// ---------- v2.28 百鍊之塔（P3 SPEC §5.3）----------
+// 事件 ["t", 階, 層, 種子, 10 個選項字串, 用時秒, 快答提醒次數]；判對錯用 rules.mjs 的 towerScore（同一個種子重算題目）。
+// 塔紀錄 so:tw:<座號> = {ma:[最高過層, 第 1 層最佳秒, …]}；沒開放的層、格式不對的事件不算（照樣吃掉 seq，不重送）。
+function soTwKey_(seat) { return "so:tw:" + seat; }
+function soIsTower_(ev) { return Array.isArray(ev) && ev[0] === "t"; }
+function soTower_(tw, me, ev, today) {
+  const stair = String(ev[1]), floor = Math.floor(Number(ev[2])), seed = Number(ev[3]), picked = ev[4];
+  const sec = Math.max(1, Math.min(3600, Math.round(Number(ev[5]) || 0)));
+  if (stair !== "ma" || !towerOpen(tw[stair], floor)) return null;
+  const correct = towerScore(stair, floor, seed, Array.isArray(picked) ? picked.map(String) : null);
+  if (correct < 0) return null;
+  const r = towerResult(tw[stair], floor, correct, sec);
+  tw[stair] = r.rec;
+  me.wr = soWeekCnt_(me.wr, 3); me.wr[3]++; // 本週塔層次（過不過都算一次）
+  soDoneTask_(me, "f"); soStudied_(me, today); // 塔的一層算「自選」；完成一層算有自學
+  return { floor: floor, correct: correct, sec: sec, pass: r.pass, gold: r.gold };
 }
 
 // ---------- so_push ----------
@@ -2847,7 +2875,7 @@ function soPush_(props, body) {
   const t0 = Date.now();
   if (!lock.tryLock(3000)) return SO_BUSY;
   const t1 = Date.now();
-  let cell, me, sumChanged = false, ended = [];
+  let cell, me, tw = null, sumChanged = false, ended = [];
   try { // v2.23：鎖裡只有讀格子、讀 me、讀紀錄（有作答才讀）、一次寫入；排行摘要併進同一次寫入，觸發器檢查移到鎖外
     cell = soJson_(props.getProperty(key), null);
     if (!cell) return { ok: false, needPull: true, error: "請重新載入進度" };
@@ -2863,7 +2891,13 @@ function soPush_(props, body) {
         devs.sort(function (a, b) { return cell.ds[a][1] - cell.ds[b][1]; });
         devs.slice(0, devs.length - SO_MAX_DEV).forEach(function (d) { delete cell.ds[d]; });
       }
-      cell.wait = (cell.wait || []).concat(fresh);
+      const tws = fresh.filter(soIsTower_);
+      if (tws.length) { // v2.28 塔事件：只收數學題本那一格送來的
+        tw = soJson_(props.getProperty(soTwKey_(seat)), {});
+        if ((soIndex_() || {})[book] === "數學") tws.forEach(function (e) { soTower_(tw, me, e, today); });
+        writes[soTwKey_(seat)] = JSON.stringify(tw); writes["so:me:" + seat] = JSON.stringify(me);
+      }
+      cell.wait = (cell.wait || []).concat(fresh.filter(function (e) { return !soIsTower_(e); }));
       if (ak) {
         const r = soFold_(cell, book, cell.wait, ak, me, today);
         cell.wait = [];
@@ -2894,7 +2928,7 @@ function soPush_(props, body) {
   const t2 = Date.now();
   soEnsureTrigger_(props);
   const v = soMeView_(me, today);
-  return { ok: true, ver: cell.ver, sum: soSumOf_(props, book, seat), today: v.today, streak: v.streak, days: v.days, wait: (cell.wait || []).length, lockWait: t1 - t0, lockMs: t2 - t1 };
+  return { ok: true, ver: cell.ver, sum: soSumOf_(props, book, seat), today: v.today, streak: v.streak, days: v.days, tw: tw || soJson_(props.getProperty(soTwKey_(seat)), {}), wait: (cell.wait || []).length, lockWait: t1 - t0, lockMs: t2 - t1 };
 }
 
 // 自學紀錄暫存 so:log:<日期>:<座號> = {a:[未落地明細行], r:[未落地回合行], q, c, sec(當日累計), pid, dirty}
@@ -2982,7 +3016,7 @@ function soTestClear_(props, body) {
   try {
     const all = props.getProperties();
     Object.keys(all).forEach(function (key) {
-      const m = /^so:(?:s:[^:]+|log:[^:]+|me|sm:[^:]+):(\d+)$/.exec(key);
+      const m = /^so:(?:s:[^:]+|log:[^:]+|me|tw|sm:[^:]+):(\d+)$/.exec(key);
       if (m && soIsTest_(Number(m[1]))) { props.deleteProperty(key); removed++; }
       if (key.indexOf("so:sum:") === 0) {
         const sum = soJson_(all[key], {}); let hit = false;
@@ -3050,6 +3084,10 @@ function soWriteProg_(props, token, book, seat, cell) {
     "本週起算日": { date: { start: ws } },
     "最後同步時間": { date: { start: nowIso_() } },
   };
+  if ((soIndex_() || {})[book] === "數學") { // v2.28 百鍊塔紀錄（JSON 字串）只寫數學題本那一列
+    const tw = props.getProperty(soTwKey_(seat));
+    if (tw) p["百鍊塔"] = { rich_text: soChunks_(tw) };
+  }
   let pid = cell.pid;
   if (!pid) {
     const today = today_(), year = soYearOf_(today), title = year + "｜" + book + "｜" + soPad_(seat);
@@ -3291,7 +3329,7 @@ function orbitData_(props, seats) {
   const books = orbitBooks_();
   if (!books) return { error: "讀不到班網題本清單，請稍後再試" };
   const all = props.getProperties(), today = today_(), year = soYearOf_(today), token = props.getProperty("NOTION_TOKEN");
-  const saves = {}, mes = {}, miss = [];
+  const saves = {}, mes = {}, tws = {}, miss = [];
   books.forEach(function (b) {
     const m = saves[b.code] = {};
     let lack = false;
@@ -3304,8 +3342,9 @@ function orbitData_(props, seats) {
   seats.forEach(function (s) {
     const me = soJson_(all["so:me:" + s], null);
     mes[s] = me ? { days: me.days || [], cw: me.cw, wr: me.wr, streak: soStreakNow_(me, today) } : {};
+    const tw = soJson_(all[soTwKey_(s)], null); if (tw) tws[s] = tw; // v2.28 百鍊塔
   });
-  return { books: books, saves: saves, mes: mes, today: today, miss: miss };
+  return { books: books, saves: saves, mes: mes, tws: tws, today: today, miss: miss };
 }
 function orbitSeats_(props) { // 在學座號（名冊；體驗座號 9xx 不在名冊裡）
   const r = soRoster_(props, false);
@@ -3319,7 +3358,7 @@ function orbitClass_(props) {
   if (!seats) return { ok: false, error: "讀不到學生名冊，請稍後再試" };
   const d = orbitData_(props, seats);
   if (d.error) return { ok: false, error: d.error };
-  const out = classView({ books: d.books, seats: seats, saves: d.saves, mes: d.mes, today: d.today });
+  const out = classView({ books: d.books, seats: seats, saves: d.saves, mes: d.mes, tws: d.tws, today: d.today });
   out.missing = d.miss; out.at = nowIso_();
   const s = JSON.stringify(out);
   if (s.length < 95000) cache.put("orbit:class", s, 60);
@@ -3337,7 +3376,7 @@ function orbitStudent_(props, body) {
   if (d.error) return { ok: false, error: d.error };
   const sv = {};
   d.books.forEach(function (b) { sv[b.code] = d.saves[b.code][seat]; });
-  const out = studentView({ books: d.books, seat: seat, saves: sv, me: d.mes[seat], today: d.today });
+  const out = studentView({ books: d.books, seat: seat, saves: sv, me: d.mes[seat], tw: d.tws[seat], today: d.today });
   out.missing = d.miss; out.at = nowIso_();
   cache.put(ck, JSON.stringify(out), 60);
   return out;
@@ -3590,6 +3629,173 @@ function solarTerm(ymd) {
   if (i >= 0 && d < solarTermDay(Y, i)) i--;
   return SOLAR_NAMES[(i + 24) % 24]; // 1 月 5 日前＝前一年的冬至
 }
+
+/* ---------- P3 §5：百鍊之塔・數學算力階（第④步） ----------
+   出題全部由程式依「階、層、種子」算出，同種子必出同題：前台出題、代理用同一支重算判對錯（P2 §5.3）。
+   塔紀錄 rec＝[最高過層, 第 1 層最佳秒, 第 2 層最佳秒, …]（0＝還沒過）；不倒數、不上排行榜、只和自己比。 */
+const TOWER_Q = 10;        // 一層 10 題
+const TOWER_PASS = 9;      // 答對 ≥9 題過層
+const TOWER_FAST_MS = 1000; // 1 秒內作答
+const TOWER_FAST_RUN = 3;   // 連續 3 題 1 秒內 → 提醒「看清楚再答」（只提醒、不扣分）
+const TOWER_FLOORS = { ma: ["二位數加減", "三位數加法（進位）", "三位數減法（借位）", "九九乘法", "九九反推除法", "大數位值（萬、億）",
+  "二位數乘一位數", "三位數乘一位數", "二位數乘二位數", "三位數除以一位數", "除以二位數（估商）", "二位小數加減"] };
+const TOWER_SEED_MAX = 2147483647;
+
+function twRng(seed) { // mulberry32：同種子同序列（Apps Script 與瀏覽器結果一致，只用 32 位元整數運算）
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const twInt = (r, a, b) => a + Math.floor(r() * (b - a + 1));
+const twComma = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const twDigits = (n) => String(n).split("").map(Number);
+/* 逐位不進位：各位相加只留個位（進位漏加） */
+function twNoCarry(a, b) { let s = 0, p = 1; while (a > 0 || b > 0) { s += ((a % 10 + b % 10) % 10) * p; a = Math.floor(a / 10); b = Math.floor(b / 10); p *= 10; } return s; }
+/* 逐位大減小（借位沒減） */
+function twAbsDigit(a, b) { let s = 0, p = 1; while (a > 0 || b > 0) { s += Math.abs(a % 10 - b % 10) * p; a = Math.floor(a / 10); b = Math.floor(b / 10); p *= 10; } return s; }
+/* 乘一位數各位只寫個位、進位漏加 */
+function twMulNoCarry(a, b) { let s = 0, p = 1; while (a > 0) { s += ((a % 10) * b % 10) * p; a = Math.floor(a / 10); p *= 10; } return s; }
+/* 乘法有進位時漏加進位：各位乘積各自取個位以外的部分丟掉 */
+const twHasCarry = (a, b) => twDigits(a).reverse().some((d, i) => d + (twDigits(b).reverse()[i] || 0) >= 10);
+const twHasBorrow = (a, b) => twDigits(a).reverse().some((d, i) => d < (twDigits(b).reverse()[i] || 0));
+
+/* 誘答：先放常見錯誤，再用鄰近數補；全部 ≥0、不等於正解、不重複。fmt＝數字轉選項字串 */
+function twOpts(r, ans, errs, near, fmt, min) {
+  const lo = min == null ? 0 : min, seen = {}, out = [];
+  seen[fmt(ans)] = 1;
+  const add = (v) => { if (out.length >= 3 || !(v >= lo) || !Number.isFinite(v)) return; const s = fmt(v); if (seen[s]) return; seen[s] = 1; out.push(s); };
+  errs.forEach(add);
+  const nb = near.slice();
+  for (let i = nb.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)), t = nb[i]; nb[i] = nb[j]; nb[j] = t; }
+  nb.forEach((d) => add(ans + d));
+  for (let d = 1; out.length < 3; d++) { add(ans + d); add(ans - d); }
+  const all = [fmt(ans)].concat(out);
+  for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)), t = all[i]; all[i] = all[j]; all[j] = t; }
+  return all;
+}
+const twQ = (text, ans, opts, v) => ({ text: text, ans: ans, opts: opts, v: v });
+
+/* 各層出一題（v＝運算元，測試檢查範圍用） */
+const TW_MA = [
+  function (r) { // 1 二位數加減
+    const a = twInt(r, 10, 99); let b = twInt(r, 10, 99); while (b === a) b = twInt(r, 10, 99);
+    if (r() < 0.5) { const s = a + b; return twQ(a + " ＋ " + b + " ＝ ？", String(s), twOpts(r, s, [twHasCarry(a, b) ? s - 10 : s + 10, twNoCarry(a, b)], [1, -1, 10, -10, 2], String), [a, b]); }
+    const x = Math.max(a, b), y = a === b ? x - 1 : Math.min(a, b), d = x - y;
+    return twQ(x + " － " + y + " ＝ ？", String(d), twOpts(r, d, [twHasBorrow(x, y) ? d + 10 : d - 10, twAbsDigit(x, y)], [1, -1, 10, -10, 2], String), [x, y]);
+  },
+  function (r) { // 2 三位數加法（進位）
+    let a, b, k = 0;
+    do { a = twInt(r, 100, 899); b = twInt(r, 100, 999 - a < 100 ? 100 : 999 - a); k++; } while ((!twHasCarry(a, b) || a + b > 999) && k < 50);
+    const s = a + b;
+    return twQ(a + " ＋ " + b + " ＝ ？", String(s), twOpts(r, s, [twNoCarry(a, b), s - 10, s - 100], [10, -10, 1, -1, 100], String), [a, b]);
+  },
+  function (r) { // 3 三位數減法（借位）
+    let a, b, k = 0;
+    do { a = twInt(r, 200, 999); b = twInt(r, 100, a - 1); k++; } while (!twHasBorrow(a, b) && k < 50);
+    const d = a - b;
+    return twQ(a + " － " + b + " ＝ ？", String(d), twOpts(r, d, [twAbsDigit(a, b), d + 10, d + 100], [10, -10, 1, -1, -100], String), [a, b]);
+  },
+  function (r) { // 4 九九乘法
+    const a = twInt(r, 2, 9), b = twInt(r, 2, 9), p = a * b;
+    return twQ(a + " × " + b + " ＝ ？", String(p), twOpts(r, p, [a * (b + 1), a * (b - 1), (a + 1) * b, (a - 1) * b], [1, -1, 2, -2], String, 1), [a, b]);
+  },
+  function (r) { // 5 九九反推除法
+    const a = twInt(r, 2, 9), b = twInt(r, 2, 9), c = a * b;
+    return twQ(c + " ÷ " + a + " ＝ ？", String(b), twOpts(r, b, [b + 1, b - 1, b + 2], [1, -1, 2, -2, 3], String, 1), [c, a]);
+  },
+  function (r) { // 6 大數位值（萬、億）
+    const PL = ["個", "十", "百", "千", "萬", "十萬", "百萬", "千萬", "億", "十億"];
+    if (r() < 0.5) { // 「3,040 萬＝？」寫成阿拉伯數字（位值錯一位＝多或少一個 0）
+      const big = r() < 0.5, k = twInt(r, 101, 9999), unit = big ? 100000000 : 10000, n = k * unit;
+      return twQ(twComma(k) + (big ? " 億" : " 萬") + " ＝ ？", twComma(n), twOpts(r, n, [n * 10, n / 10, big ? k * 10000 : k * 100000000], [], twComma, 1), [k, unit]);
+    }
+    let n, ds, d, pos, k = 0; // 數字 n 裡某個只出現一次的數字在哪一位
+    do { n = twInt(r, 10000000, 999999999); ds = String(n).split(""); pos = twInt(r, 2, ds.length - 1); d = ds[ds.length - 1 - pos]; k++; }
+    while ((d === "0" || ds.filter((x) => x === d).length !== 1) && k < 80);
+    const ans = PL[pos], cand = [pos + 1, pos - 1, pos + 4, pos - 4, pos + 2, pos - 2].filter((i) => i >= 0 && i < PL.length).map((i) => PL[i]);
+    const seen = {}, wrong = cand.filter((x) => !seen[x] && (seen[x] = 1)).slice(0, 3), all = [ans].concat(wrong);
+    for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)), t = all[i]; all[i] = all[j]; all[j] = t; }
+    return twQ("「" + twComma(n) + "」的「" + d + "」在哪一位？", ans + "位", all.map((x) => x + "位"), [n, pos]);
+  },
+  function (r) { // 7 二位數乘一位數
+    const a = twInt(r, 12, 99), b = twInt(r, 2, 9), p = a * b;
+    return twQ(a + " × " + b + " ＝ ？", String(p), twOpts(r, p, [twMulNoCarry(a, b), p - 10, p + 10, p + b], [10, -10, 1, -1, b, -b], String, 1), [a, b]);
+  },
+  function (r) { // 8 三位數乘一位數
+    const a = twInt(r, 100, 999), b = twInt(r, 2, 9), p = a * b;
+    return twQ(a + " × " + b + " ＝ ？", String(p), twOpts(r, p, [twMulNoCarry(a, b), p - 100, p - 10, p + 10], [10, -10, 100, -100, 1, -1], String, 1), [a, b]);
+  },
+  function (r) { // 9 二位數乘二位數
+    const a = twInt(r, 11, 99), b = twInt(r, 11, 99), p = a * b;
+    return twQ(a + " × " + b + " ＝ ？", String(p), twOpts(r, p, [a * (b % 10) + a * Math.floor(b / 10), p - a, p + a, p - 100], [10, -10, 100, -100, 1, -1], String, 1), [a, b]);
+  },
+  function (r) { // 10 三位數除以一位數（整除）
+    const b = twInt(r, 2, 9), q = twInt(r, Math.max(12, Math.ceil(100 / b)), Math.floor(999 / b)), a = q * b;
+    const drop0 = /0/.test(String(q).slice(1)) ? Number(String(q).replace(/0/g, "")) : q * 10;
+    return twQ(a + " ÷ " + b + " ＝ ？", String(q), twOpts(r, q, [drop0, q + 1, q - 1, q + 10], [1, -1, 10, -10, 2], String, 1), [a, b]);
+  },
+  function (r) { // 11 除以二位數（估商，整除）
+    const b = twInt(r, 11, 99), q = twInt(r, 2, 9), a = q * b;
+    return twQ(a + " ÷ " + b + " ＝ ？", String(q), twOpts(r, q, [q + 1, q - 1, q + 2], [1, -1, 2, -2, 3], String, 1), [a, b]);
+  },
+  function (r) { // 12 二位小數加減（以百分之一為單位算，避免浮點誤差）
+    const f = (c) => (c / 100).toFixed(2), a = twInt(r, 101, 999); let b = twInt(r, 101, 999); while (b === a) b = twInt(r, 101, 999);
+    if (r() < 0.5) { const s = a + b; return twQ(f(a) + " ＋ " + f(b) + " ＝ ？", f(s), twOpts(r, s, [twHasCarry(a, b) ? s - 10 : s + 10, twNoCarry(a, b), s - 100], [10, -10, 1, -1, 100], f, 1), [a, b]); }
+    const x = Math.max(a, b), y = a === b ? x - 1 : Math.min(a, b), d = x - y;
+    return twQ(f(x) + " － " + f(y) + " ＝ ？", f(d), twOpts(r, d, [twHasBorrow(x, y) ? d + 10 : d - 10, twAbsDigit(x, y), d + 100], [10, -10, 1, -1, 100], f, 1), [x, y]);
+  },
+];
+
+/** 出一層 10 題：回 [{text, ans, opts:[4 個選項字串], v}]；同一層不出同一題。不認得的階或層回 null */
+function towerFloor(stair, floor, seed) {
+  const gen = stair === "ma" ? TW_MA[floor - 1] : null;
+  if (!gen || !(seed >= 1 && seed <= TOWER_SEED_MAX) || Math.floor(seed) !== seed) return null;
+  const r = twRng(seed * 31 + floor), out = [], seen = {};
+  for (let k = 0; out.length < TOWER_Q && k < 200; k++) { const q = gen(r); if (seen[q.text]) continue; seen[q.text] = 1; out.push(q); }
+  return out;
+}
+/** 判對錯：picked＝學生選的 10 個選項字串；回答對題數（代理用同一支重算） */
+function towerScore(stair, floor, seed, picked) {
+  const qs = towerFloor(stair, floor, seed);
+  if (!qs || !Array.isArray(picked) || picked.length !== TOWER_Q) return -1;
+  return qs.filter((q, i) => String(picked[i]) === q.ans).length;
+}
+/** 快答提醒次數：ms＝每題作答毫秒；連續 3 題 <1 秒算一次，提醒後重新數 */
+function towerFast(ms) {
+  let run = 0, n = 0;
+  (ms || []).forEach((t) => { if (Number(t) < TOWER_FAST_MS) { run++; if (run >= TOWER_FAST_RUN) { n++; run = 0; } } else run = 0; });
+  return n;
+}
+/** 這一層開放了沒：第 1 層一定開；之後要過了前一層 */
+function towerOpen(rec, floor) {
+  const top = (rec && rec[0]) || 0, n = TOWER_FLOORS.ma.length;
+  return floor >= 1 && floor <= n && floor <= top + 1;
+}
+/**
+ * 一層打完：correct＝答對題數、sec＝用時（整數秒）。
+ * 回 {pass, gold, first, best:原本最佳秒(0＝沒有), rec:新紀錄}。
+ * 金階＝這層已經有最佳紀錄、這次過層且比最佳紀錄快（P3 §11 第 1 題 A）；第一次過層只記成最佳紀錄。沒過層的用時不算紀錄。
+ */
+function towerResult(rec, floor, correct, sec) {
+  const r = (rec || [0]).slice(), best = r[floor] || 0, pass = correct >= TOWER_PASS;
+  if (!pass) return { pass: false, gold: false, first: false, best: best, rec: r }; // 沒過層：紀錄原封不動
+  while (r.length <= floor) r.push(0);
+  const s = Math.max(1, Math.round(Number(sec) || 0)), gold = best > 0 && s < best;
+  if (!best || s < best) r[floor] = s;
+  r[0] = Math.max(r[0] || 0, floor);
+  return { pass: true, gold: gold, first: !best, best: best, rec: r };
+}
+/** 兩份塔紀錄合併（本機還沒上傳的 ＋ 伺服器的）：最高層取大、各層最佳取小（0＝沒有） */
+function towerMerge(a, b) {
+  const x = a || [0], y = b || [0], n = Math.max(x.length, y.length), out = [Math.max(x[0] || 0, y[0] || 0)];
+  for (let i = 1; i < n; i++) { const p = x[i] || 0, q = y[i] || 0; out.push(p && q ? Math.min(p, q) : p || q); }
+  return out;
+}
 // ===== END rules.mjs（自動產生）=====
 
 // ===== BEGIN classview.mjs（自動產生）=====
@@ -3644,7 +3850,22 @@ function cvWeekCount(days, today) {
   (days || []).forEach(function (n) { const d = cvDayStr(n); if (d >= ws && d <= today) cur++; else if (d >= pws && d < ws) prev++; });
   return { cur: cur, prev: prev };
 }
-function cvWk(arr, ws) { return Array.isArray(arr) && arr[0] === ws ? arr : [ws, 0, 0]; }
+function cvWk(arr, ws) { // 週計數 [起算日, …]；不是本週＝全 0；v2.28 前的 wr 只有 3 格，缺的格當 0
+  const a = Array.isArray(arr) && arr[0] === ws ? arr.slice() : [ws];
+  while (a.length < 4) a.push(0);
+  return a;
+}
+/** 百鍊之塔（v2.28）：tws＝{座號: {ma:[最高過層, 各層最佳秒…]}} → 各層停住人數（0＝還沒過第 1 層）；沒有人玩過回 null */
+function cvTower(seats, tws) {
+  const n = TOWER_FLOORS.ma.length, at = []; let played = 0;
+  for (let i = 0; i <= n; i++) at.push(0);
+  seats.forEach(function (s) {
+    const r = ((tws || {})[s] || {}).ma;
+    if (!r) { at[0]++; return; }
+    played++; at[Math.min(n, Math.max(0, r[0] || 0))]++;
+  });
+  return played ? { stair: "ma", names: TOWER_FLOORS.ma, at: at, played: played } : null;
+}
 
 /**
  * 全班彙整。
@@ -3653,6 +3874,7 @@ function cvWk(arr, ws) { return Array.isArray(arr) && arr[0] === ws ? arr : [ws,
  *   seats：在學座號（名冊；不含體驗座號）
  *   saves：{題本: {座號: 存檔字串|物件}}（缺＝沒玩）
  *   mes：{座號: {days, cw, wr, streak}}（streak＝代理算好的「現在」連續天數）
+ *   tws：{座號: {ma:[最高過層, 各層最佳秒…]}}（v2.28 百鍊之塔；缺＝沒玩）
  *   today：臺北日期 YYYY-MM-DD
  */
 function classView(a) {
@@ -3696,7 +3918,7 @@ function classView(a) {
   stuck.sort(function (x, y) { return y.n - x.n || (x.book + x.key).localeCompare(y.book + y.key, "en", { numeric: true }); });
 
   // 週資料
-  let d3 = 0, cwT = 0, cwP = 0, wrA = 0, wrC = 0;
+  let d3 = 0, cwT = 0, cwP = 0, wrA = 0, wrC = 0, wrT = 0;
   const zero = [], good = [];
   seats.forEach(function (s) {
     const me = mes[s] || {}, wc = cvWeekCount(me.days, today);
@@ -3705,7 +3927,7 @@ function classView(a) {
     if (wc.cur === 0 && wc.prev >= 2) zero.push(s);
     if ((me.streak || 0) >= CV_STREAK_GOOD) good.push(s);
     const cw = cvWk(me.cw, ws), wr = cvWk(me.wr, ws);
-    cwT += cw[1]; cwP += cw[2]; wrA += wr[1]; wrC += wr[2];
+    cwT += cw[1]; cwP += cw[2]; wrA += wr[1]; wrC += wr[2]; wrT += wr[3];
   });
 
   out.kpi = {
@@ -3716,7 +3938,8 @@ function classView(a) {
   };
   out.bsTop = Object.keys(bsCount).map(function (c) { return { code: c, n: bsCount[c] }; })
     .sort(function (x, y) { return y.n - x.n || x.code.localeCompare(y.code, "en", { numeric: true }); }).slice(0, 5);
-  out.usage = { after: wrA, core: wrC, tower: null };
+  out.usage = { after: wrA, core: wrC, tower: wrT };
+  out.tower = cvTower(seats, a.tws);
 
   // 📌 這週需要您看的事：照順序挑，最多 5 句；一句一種事
   const todo = [];
@@ -3732,7 +3955,7 @@ function classView(a) {
 
 /**
  * 個人頁（點座號）。
- * @param {object} a  books、today 同上；seat；saves：{題本: 存檔}；me：{days, cw, wr, streak}
+ * @param {object} a  books、today 同上；seat；saves：{題本: 存檔}；me：{days, cw, wr, streak}；tw：{ma:[…]}（百鍊之塔）
  */
 function studentView(a) {
   const today = a.today, ws = weekStart(today + "T12:00:00+08:00"), me = a.me || {};
@@ -3756,7 +3979,8 @@ function studentView(a) {
   return {
     ok: true, seat: a.seat, today: today, weekStart: ws, since: CV_SINCE, books: books,
     days: weekDays((me.days || []).map(cvDayStr), today), weekN: wc.cur, streak: me.streak || 0,
-    usage: { after: wr[1], core: wr[2], tower: null }, due: { pass: cw[2], tries: cw[1] },
+    usage: { after: wr[1], core: wr[2], tower: wr[3] }, due: { pass: cw[2], tries: cw[1] },
+    tower: ((a.tw || {}).ma) || null,
   };
 }
 // ===== END classview.mjs（自動產生）=====

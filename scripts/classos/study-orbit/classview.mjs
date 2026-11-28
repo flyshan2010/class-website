@@ -2,7 +2,7 @@
 // 代理 v2.27 的 orbit_class／orbit_student 用同一支（build-so-proxy.mjs 把本檔去掉 import／export 後貼進 .gs，U83）。
 // 輸出只有座號與數字（盲點、關卡只給代碼，名稱由教師頁從班網公開題本檔對照），不含姓名、查詢碼、作答原文。
 // ⚠️ 代理是 Apps Script：不用 ??=、?.，名稱一律 cv 開頭（避免和代理、rules.mjs 撞名，建置時會檢查）。
-import { decodeSave, islandCore, chestOpen, weekStart, weekDays } from "./rules.mjs";
+import { decodeSave, islandCore, chestOpen, weekStart, weekDays, TOWER_FLOORS } from "./rules.mjs";
 
 export const CV_SINCE = "2026-11-28"; // days／cw／wr 從代理 v2.26 部署這天起累積（部署前的日子不補）
 export const CV_STUCK_TRIES = 2;      // 卡關＝挑戰 ≥2 次仍 0 星
@@ -49,7 +49,22 @@ function cvWeekCount(days, today) {
   (days || []).forEach(function (n) { const d = cvDayStr(n); if (d >= ws && d <= today) cur++; else if (d >= pws && d < ws) prev++; });
   return { cur: cur, prev: prev };
 }
-function cvWk(arr, ws) { return Array.isArray(arr) && arr[0] === ws ? arr : [ws, 0, 0]; }
+function cvWk(arr, ws) { // 週計數 [起算日, …]；不是本週＝全 0；v2.28 前的 wr 只有 3 格，缺的格當 0
+  const a = Array.isArray(arr) && arr[0] === ws ? arr.slice() : [ws];
+  while (a.length < 4) a.push(0);
+  return a;
+}
+/** 百鍊之塔（v2.28）：tws＝{座號: {ma:[最高過層, 各層最佳秒…]}} → 各層停住人數（0＝還沒過第 1 層）；沒有人玩過回 null */
+function cvTower(seats, tws) {
+  const n = TOWER_FLOORS.ma.length, at = []; let played = 0;
+  for (let i = 0; i <= n; i++) at.push(0);
+  seats.forEach(function (s) {
+    const r = ((tws || {})[s] || {}).ma;
+    if (!r) { at[0]++; return; }
+    played++; at[Math.min(n, Math.max(0, r[0] || 0))]++;
+  });
+  return played ? { stair: "ma", names: TOWER_FLOORS.ma, at: at, played: played } : null;
+}
 
 /**
  * 全班彙整。
@@ -58,6 +73,7 @@ function cvWk(arr, ws) { return Array.isArray(arr) && arr[0] === ws ? arr : [ws,
  *   seats：在學座號（名冊；不含體驗座號）
  *   saves：{題本: {座號: 存檔字串|物件}}（缺＝沒玩）
  *   mes：{座號: {days, cw, wr, streak}}（streak＝代理算好的「現在」連續天數）
+ *   tws：{座號: {ma:[最高過層, 各層最佳秒…]}}（v2.28 百鍊之塔；缺＝沒玩）
  *   today：臺北日期 YYYY-MM-DD
  */
 export function classView(a) {
@@ -101,7 +117,7 @@ export function classView(a) {
   stuck.sort(function (x, y) { return y.n - x.n || (x.book + x.key).localeCompare(y.book + y.key, "en", { numeric: true }); });
 
   // 週資料
-  let d3 = 0, cwT = 0, cwP = 0, wrA = 0, wrC = 0;
+  let d3 = 0, cwT = 0, cwP = 0, wrA = 0, wrC = 0, wrT = 0;
   const zero = [], good = [];
   seats.forEach(function (s) {
     const me = mes[s] || {}, wc = cvWeekCount(me.days, today);
@@ -110,7 +126,7 @@ export function classView(a) {
     if (wc.cur === 0 && wc.prev >= 2) zero.push(s);
     if ((me.streak || 0) >= CV_STREAK_GOOD) good.push(s);
     const cw = cvWk(me.cw, ws), wr = cvWk(me.wr, ws);
-    cwT += cw[1]; cwP += cw[2]; wrA += wr[1]; wrC += wr[2];
+    cwT += cw[1]; cwP += cw[2]; wrA += wr[1]; wrC += wr[2]; wrT += wr[3];
   });
 
   out.kpi = {
@@ -121,7 +137,8 @@ export function classView(a) {
   };
   out.bsTop = Object.keys(bsCount).map(function (c) { return { code: c, n: bsCount[c] }; })
     .sort(function (x, y) { return y.n - x.n || x.code.localeCompare(y.code, "en", { numeric: true }); }).slice(0, 5);
-  out.usage = { after: wrA, core: wrC, tower: null };
+  out.usage = { after: wrA, core: wrC, tower: wrT };
+  out.tower = cvTower(seats, a.tws);
 
   // 📌 這週需要您看的事：照順序挑，最多 5 句；一句一種事
   const todo = [];
@@ -137,7 +154,7 @@ export function classView(a) {
 
 /**
  * 個人頁（點座號）。
- * @param {object} a  books、today 同上；seat；saves：{題本: 存檔}；me：{days, cw, wr, streak}
+ * @param {object} a  books、today 同上；seat；saves：{題本: 存檔}；me：{days, cw, wr, streak}；tw：{ma:[…]}（百鍊之塔）
  */
 export function studentView(a) {
   const today = a.today, ws = weekStart(today + "T12:00:00+08:00"), me = a.me || {};
@@ -161,6 +178,7 @@ export function studentView(a) {
   return {
     ok: true, seat: a.seat, today: today, weekStart: ws, since: CV_SINCE, books: books,
     days: weekDays((me.days || []).map(cvDayStr), today), weekN: wc.cur, streak: me.streak || 0,
-    usage: { after: wr[1], core: wr[2], tower: null }, due: { pass: cw[2], tries: cw[1] },
+    usage: { after: wr[1], core: wr[2], tower: wr[3] }, due: { pass: cw[2], tries: cw[1] },
+    tower: ((a.tw || {}).ma) || null,
   };
 }

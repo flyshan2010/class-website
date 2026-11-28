@@ -69,7 +69,8 @@ test("這週需要您看的事：照順序、最多 5 句；練習使用量", ()
     { t: "due", seats: [{ seat: 3, n: 3 }] },
     { t: "streak", seats: [1] },
   ]);
-  assert.deepEqual(V.usage, { after: 6, core: 2, tower: null });
+  assert.deepEqual(V.usage, { after: 6, core: 2, tower: 0 });
+  assert.equal(V.tower, null, "沒有人玩過塔＝整塊不顯示");
   assert.deepEqual(V.week[1], { days: [true, true, true, false, false, false, false], n: 3, streak: 6, due: 0 });
   assert.deepEqual(V.week[4], { days: [false, false, false, false, false, false, false], n: 0, streak: 0, due: 0 });
 });
@@ -98,7 +99,7 @@ test("個人頁：卡冊三種狀態、本週七天、練習回合；回覆沒�
   assert.equal(s.books[0].islands[0].coreCell, -1);
   assert.equal(s.books[1].islands[0].state, 0);
   assert.equal(s.weekN, 0);
-  assert.deepEqual(s.usage, { after: 1, core: 0, tower: null });
+  assert.deepEqual(s.usage, { after: 1, core: 0, tower: 0 });
   assert.deepEqual(s.due, { pass: 0, tries: 0 }, "上週的 cw 歸零");
   const txt = JSON.stringify([s, V]);
   assert.equal(/姓名|查詢碼|"name":"學生/.test(txt), false);

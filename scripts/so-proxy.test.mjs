@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import vm from "node:vm";
 import { build } from "./build-so-proxy.mjs";
-import { decodeSave } from "./classos/study-orbit/rules.mjs";
+import { decodeSave, towerFloor } from "./classos/study-orbit/rules.mjs";
 
 const SRC = readFileSync(new URL("./apps-script-proxy-v2.gs", import.meta.url), "utf8");
 const BOOK = JSON.parse(readFileSync(new URL("../data/study-orbit/m-h-4a.json", import.meta.url), "utf8"));
@@ -520,7 +520,7 @@ test("so_test_clear：只清測試座號的暫存區；dry 回用量", () => {
 
 test("暫停開關、鎖拿不到、版本號", () => {
   const w = makeWorld();
-  assert.equal(w.post({ action: "version" }).version, "2.27");
+  assert.equal(w.post({ action: "version" }).version, "2.28");
   const s = session(w, 3); s.pull();
   w.lock.free = false;
   const busy = s.push(round("ggggggg"));
@@ -533,7 +533,7 @@ test("暫停開關、鎖拿不到、版本號", () => {
 test("v2.25 so_health：免口令只回數字；429 另計、卡住 60 分鐘才算；暫停中也查得到", () => {
   const w = makeWorld();
   let h = w.post({ action: "so_health" });
-  assert.deepEqual([h.ok, h.version, h.stuck, h.err7.fail, h.err7.retry, h.lastFail], [true, "2.27", 0, 0, 0, null]);
+  assert.deepEqual([h.ok, h.version, h.stuck, h.err7.fail, h.err7.retry, h.lastFail], [true, "2.28", 0, 0, 0, null]);
   const iso = (ms) => new Date(ms).toISOString();
   w.store.set("so:err", JSON.stringify([[iso(w.clock.t - 8 * 864e5), "自學紀錄寫入 500 舊的"], [iso(w.clock.t - 3600e3), "429 pages"],
     [iso(w.clock.t - 7200e3), "自學進度寫入 502 m-h-4a:3"], [iso(w.clock.t - 60e3), "暫存區超過 400KB，已逐出到 290KB"]]));
@@ -663,13 +663,13 @@ test("v2.26 wr：課後與島心回合分開算（島心由題本結構推得）
   s.push(round("ggggggg", "f", "1-0"));
   s.push(round("gggxggg", "f", "1-0"));
   let me = JSON.parse(w.store.get("so:me:3"));
-  assert.deepEqual(me.wr, ["2026-11-16", 1, 2]);
+  assert.deepEqual(me.wr, ["2026-11-16", 1, 2, 0]);
   assert.deepEqual(decodeSave(w.cell(3).save).lv["1-0"], [3, 1, 2], "虛擬島心照一般關卡記星等與全金");
   assert.ok(w.rowsOf, "");
   w.at("2026-11-23T02:00:00Z");
   s.push(round("ggggggg", "f", "1-2"));
   me = JSON.parse(w.store.get("so:me:3"));
-  assert.deepEqual(me.wr, ["2026-11-23", 1, 0]);
+  assert.deepEqual(me.wr, ["2026-11-23", 1, 0, 0]);
 });
 
 test("v2.26 cw：只算已克服滿 7 天的到期卡挑戰；通過另計", () => {
@@ -695,7 +695,7 @@ test("v2.27 orbit_class／orbit_student：不帶口令、錯口令都回口令�
     assert.equal(w.post({ action, seat: 1, pw: "錯的" }).error, "口令錯誤");
     assert.equal(w.post({ action, seat: 1, token: "x" }).error, "口令錯誤");
   }
-  assert.equal(w.post({ action: "version" }).version, "2.27");
+  assert.equal(w.post({ action: "version" }).version, "2.28");
 });
 
 test("v2.27 orbit_class：暫存區＋Notion 補齊（唯讀）；體驗座號不算；只有座號與數字；快取 60 秒", () => {
@@ -740,4 +740,72 @@ test("v2.27 orbit_student：名冊內座號才回；卡冊與本週七天", () =
   assert.equal(w.post({ action: "orbit_student", pw: "pw", seat: 99 }).ok, false);
   assert.equal(w.post({ action: "orbit_student", pw: "pw", seat: 903 }).ok, false, "體驗座號不在名冊");
   assert.equal(/學生\d|code\d|查詢碼|姓名/.test(JSON.stringify(r)), false);
+});
+
+// ───────────── v2.28 百鍊之塔（P3 SPEC §5.3）─────────────
+// 一層的塔事件：ok＝答對幾題（前 ok 題選正解，其餘選第一個錯的選項）
+function towerEv(floor, seed, ok, sec = 60, warn = 0) {
+  const qs = towerFloor("ma", floor, seed);
+  return ["t", "ma", floor, seed, qs.map((q, i) => (i < ok ? q.ans : q.opts.find((o) => o !== q.ans))), sec, warn];
+}
+test("v2.28 塔：代理重算判對錯；≥9 對過層、開下一層；更快＝更新最佳；沒開放的層不算；wr 第 4 格、自選、連續天數", () => {
+  const w = makeWorld({ start: "2026-11-25T02:00:00Z" });
+  const s = session(w, 3); s.pull();
+  let r = s.push([towerEv(1, 11, 8, 50)]);
+  assert.deepEqual(r.tw, { ma: [0] }, "8 題對沒過層、用時不記");
+  r = s.push([towerEv(2, 12, 10, 40)]);
+  assert.deepEqual(r.tw, { ma: [0] }, "第 2 層還沒開放：不算");
+  r = s.push([towerEv(1, 13, 9, 52), towerEv(2, 14, 10, 70)]);
+  assert.deepEqual(r.tw, { ma: [2, 52, 70] }, "過第 1 層才開第 2 層（同一包也照順序）");
+  r = s.push([towerEv(1, 15, 10, 47)]);
+  assert.deepEqual(r.tw.ma, [2, 47, 70], "更快＝金階，更新最佳");
+  const me = JSON.parse(w.store.get("so:me:3"));
+  assert.deepEqual(me.wr, ["2026-11-23", 0, 0, 4], "本週塔層次：過不過都算、沒開放的不算");
+  assert.deepEqual(me.today.done, ["f"], "塔一層算自選");
+  assert.deepEqual(r.days, ["2026-11-25"]);
+  assert.equal(r.streak, 1);
+  assert.deepEqual(w.login(3).tw, { ma: [2, 47, 70] });
+  assert.deepEqual(s.pull().tw, { ma: [2, 47, 70] });
+  assert.deepEqual(decodeSave(w.cell(3).save).lv, {}, "塔不動島嶼存檔");
+});
+test("v2.28 塔：被竄改的選項（全填正解但種子不同）判錯；格式不對的不算", () => {
+  const w = makeWorld({ start: "2026-11-25T02:00:00Z" });
+  const s = session(w, 4); s.pull();
+  const ev = towerEv(1, 21, 10, 30); ev[3] = 22; // 選項是種子 21 的正解，送種子 22
+  assert.deepEqual(s.push([ev]).tw, { ma: [0] });
+  assert.deepEqual(s.push([["t", "ma", 1, 21, ["1"], 30, 0]]).tw, { ma: [0] }, "選項不是 10 個");
+  assert.deepEqual(s.push([["t", "zh", 1, 21, towerEv(1, 21, 10)[4], 30, 0]]).tw, { ma: [0] }, "國語階還沒開");
+  assert.equal(JSON.parse(w.store.get("so:tw:4")).ma[0], 0);
+});
+test("v2.28 塔：落地寫進數學題本那一列的「百鍊塔」；社會題本送來的塔事件不收；so_test_clear 清 so:tw", () => {
+  const w = makeWorld({ start: "2026-11-25T02:00:00Z" });
+  const s = session(w, 3); s.pull();
+  s.push([towerEv(1, 31, 10, 44)]);
+  w.flush();
+  const row = w.rowsOf(DS.prog).find((p) => w.text(p.properties.標題) === "115｜m-h-4a｜03");
+  assert.deepEqual(JSON.parse(w.text(row.properties.百鍊塔)), { ma: [1, 44] });
+  // 社會題本那一格送塔事件：不收
+  w.post({ action: "so_pull", token: s.token, book: "s-k-4a" });
+  w.post({ action: "so_push", token: s.token, book: "s-k-4a", dev: "devA0001", seq0: 1, ev: [towerEv(2, 32, 10, 30)] });
+  assert.deepEqual(JSON.parse(w.store.get("so:tw:3")).ma, [1, 44]);
+  // 體驗座號的塔紀錄被清掉
+  const d = session(w, 3, TEST_KEY); d.pull(); d.push([towerEv(1, 33, 10, 30)]);
+  assert.ok(w.store.get("so:tw:903"));
+  w.post({ action: "so_test_clear", testKey: TEST_KEY });
+  assert.equal(w.store.get("so:tw:903"), undefined);
+  assert.ok(w.store.get("so:tw:3"), "正式座號不清");
+});
+test("v2.28 教師專區：百鍊塔各層人數與本週層次", () => {
+  const w = makeWorld({ start: "2026-11-25T02:00:00Z" });
+  const a = session(w, 3); a.pull(); a.push([towerEv(1, 41, 10, 44), towerEv(2, 42, 9, 50), towerEv(3, 43, 3, 50)]);
+  const b = session(w, 5); b.pull(); b.push([towerEv(1, 44, 10, 44)]);
+  const r = w.post({ action: "orbit_class", pw: "pw" });
+  assert.equal(r.usage.tower, 4);
+  assert.equal(r.tower.played, 2);
+  assert.equal(r.tower.at[2], 1, "座號 3 停在第 2 層");
+  assert.equal(r.tower.at[1], 1);
+  assert.equal(r.tower.at[0], 6, "沒玩的 6 人");
+  const st = w.post({ action: "orbit_student", pw: "pw", seat: 3 });
+  assert.deepEqual(st.tower, [2, 44, 50]);
+  assert.equal(st.usage.tower, 3);
 });

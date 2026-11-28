@@ -98,12 +98,22 @@
     const max = Math.max(1, ...V.bsTop.map(x => x.n));
     const bs = V.bsTop.length ? V.bsTop.map(x => { const b = bsLabel(x.code); return `<div class="orbit-bs"><span>${esc(b.name)}<br><small>${esc(b.where)}</small></span><span class="bar"><i style="width:${x.n / max * 100}%"></i></span><b>${x.n} 人</b></div>`; }).join("")
       : `<p class="empty-hint">本週還沒有人拿到新的盲點卡。</p>`;
-    const U = V.usage, umax = Math.max(1, U.after, U.core);
+    const U = V.usage, umax = Math.max(1, U.after, U.core, U.tower || 0);
     const bar = (t, n, c) => `<div class="orbit-use"><span>${t}</span><span class="bar"><i style="width:${n / umax * 100}%;background:${c}"></i></span><b>${n}</b></div>`;
     return `<div class="dash-card"><h4>🧩 本週最多人卡住的盲點 <small>本週拿到卡、還沒克服的人數</small></h4>${bs}</div>
       <div class="dash-card" style="margin-top:12px"><h4>三種練習的使用（本週回合數）${V.weekStart < V.since ? `<small>週資料從 ${md(V.since)} 起</small>` : ""}</h4>
         ${bar("島嶼點燈（課後練習）", U.after, "#1baf7a")}${bar("島心試煉", U.core, "#eda100")}
-        <div class="orbit-use"><span>百鍊之塔</span><span class="meta">尚未開放</span><b></b></div></div>`;
+        ${bar("百鍊之塔（層次）", U.tower || 0, "#5a4fb8")}</div>${tower()}`;
+  }
+  /* 🗼 百鍊之塔各層人數（v2.28 起；沒有人玩過整塊不顯示）：一條＝停在該層（最高過到第 N 層）的人數 */
+  function tower() {
+    const T = V.tower;
+    if (!T) return "";
+    const max = Math.max(1, ...T.at.slice(1)), rows = [];
+    let top = 0; T.at.forEach((n, i) => { if (n && i) top = i; });
+    for (let f = Math.min(T.names.length, top + 1); f >= 1; f--) /* 只列到「有人到的最高層＋1」，空的高層不佔版面 */
+      rows.push(`<div class="orbit-use"><span>第 ${f} 層・${esc(T.names[f - 1])}</span><span class="bar"><i style="width:${T.at[f] / max * 100}%;background:#5a4fb8"></i></span><b>${T.at[f]}</b></div>`);
+    return `<div class="dash-card" style="margin-top:12px"><h4>🗼 百鍊之塔・數學算力階 <small>最高過到第幾層的人數；玩過 ${T.played} 人、還沒過第 1 層 ${T.at[0]} 人</small></h4>${rows.join("")}</div>`;
   }
   function render(body) {
     const miss = (V.missing || []).length ? `<p class="meta" style="color:#b3261e">⚠️ 有 ${V.missing.length} 本題本暫時讀不到 Notion 進度，部分學生先當「沒玩」顯示；稍後重新整理。</p>` : "";
@@ -143,7 +153,7 @@
     box.innerHTML = `<div class="orbit-stu">
       <div class="orbit-stu-head"><b>座號 ${S.seat}</b><button class="orbit-tab" id="orbit-stu-close">關閉</button></div>
       <p class="meta">本週 <span class="orbit-week">${S.days.map((on, i) => `<i class="${on ? "on" : ""}">${"一二三四五六日"[i]}</i>`).join("")}</span>　連續 ${S.streak} 天
-        島嶼點燈 ${S.usage.after} 回合・島心試煉 ${S.usage.core} 回合${S.weekStart < S.since ? `（週資料從 ${md(S.since)} 起）` : ""}</p>
+        島嶼點燈 ${S.usage.after} 回合・島心試煉 ${S.usage.core} 回合・百鍊之塔 ${S.usage.tower || 0} 層次${S.tower ? `（最高過到第 ${S.tower[0]} 層）` : ""}${S.weekStart < S.since ? `（週資料從 ${md(S.since)} 起）` : ""}</p>
       <h5>星座圖 <small>一點＝一關、一串＝一座島；菱形＝島心；顏色＝最高星等（紅＝試過沒過）</small></h5><div class="orbit-cons">${cons}</div>
       <h5>卡冊 <small>待確認 ${wait} 張・已結案 ${ok} 張</small></h5>${cardList}
       <p class="meta">個人頁給個別指導用；學生、家長看不到這一頁。</p></div>`;
