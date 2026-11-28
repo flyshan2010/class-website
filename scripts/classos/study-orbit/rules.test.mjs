@@ -109,3 +109,26 @@ test("P2 §4 第 1 版讀進來轉第 2 版，內容不變", () => {
   assert.deepEqual(after, before);
   assert.ok(encodeSave(before).length < JSON.stringify(v1).length, "第 2 版比第 1 版短");
 });
+
+import { season, solarTerm, solarTermDay } from "./rules.mjs";
+test("P3 §1 season：月份制四季", () => {
+  assert.equal(season("2026-03-01"), "spring"); assert.equal(season("2026-05-31"), "spring");
+  assert.equal(season("2026-06-01"), "summer"); assert.equal(season("2026-08-31"), "summer");
+  assert.equal(season("2026-09-01"), "autumn"); assert.equal(season("2026-11-30"), "autumn");
+  assert.equal(season("2026-12-01"), "winter"); assert.equal(season("2027-02-28"), "winter");
+});
+// 中央氣象署 115、116 年日曆資料表（臺灣時）的交節日，一個月兩個：差 0 天才算過
+const CWA = {
+  2026: [5, 20, 4, 18, 5, 20, 5, 20, 5, 21, 5, 21, 7, 23, 7, 23, 7, 23, 8, 23, 7, 22, 7, 22],
+  2027: [5, 20, 4, 19, 6, 21, 5, 20, 6, 21, 6, 21, 7, 23, 8, 23, 8, 23, 8, 23, 7, 22, 7, 22],
+};
+test("P3 §1 solarTermDay：2026、2027 年 48 個交節日＝中央氣象署", () => {
+  for (const [y, days] of Object.entries(CWA)) days.forEach((d, i) => assert.equal(solarTermDay(Number(y), i), d, `${y} 第 ${i} 個`));
+});
+test("P3 §1 solarTerm：交節當天換名、前一天還是上一個", () => {
+  assert.equal(solarTerm("2026-11-28"), "小雪");
+  assert.equal(solarTerm("2026-11-21"), "立冬"); assert.equal(solarTerm("2026-11-22"), "小雪");
+  assert.equal(solarTerm("2026-02-17"), "立春"); assert.equal(solarTerm("2026-02-18"), "雨水");
+  assert.equal(solarTerm("2027-01-04"), "冬至"); assert.equal(solarTerm("2027-01-05"), "小寒");
+  assert.equal(solarTerm("2026-12-31"), "冬至"); assert.equal(solarTerm("2027-06-06"), "芒種");
+});

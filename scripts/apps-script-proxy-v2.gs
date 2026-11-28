@@ -3400,4 +3400,32 @@ function encodeSave(m) {
   if (m.mid) out.mid = m.mid;
   return JSON.stringify(out);
 }
+
+/* ---------- P3 §1：四季與節氣（皇城圖像化第①步；日期一律臺北日期字串 YYYY-MM-DD） ---------- */
+/** 季節：月份制 3–5 春／6–8 夏／9–11 秋／12–2 冬 */
+function season(ymd) {
+  const m = Number(String(ymd).slice(5, 7));
+  return m >= 3 && m <= 5 ? "spring" : m >= 6 && m <= 8 ? "summer" : m >= 9 && m <= 11 ? "autumn" : "winter";
+}
+const SOLAR_NAMES = ["小寒", "大寒", "立春", "雨水", "驚蟄", "春分", "清明", "穀雨", "立夏", "小滿", "芒種", "夏至",
+  "小暑", "大暑", "立秋", "處暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至"];
+// 壽星公式 21 世紀 C 值（依上表順序；每月兩個節氣）
+const SOLAR_C = [5.4055, 20.12, 3.87, 18.73, 5.63, 20.646, 4.81, 20.1, 5.52, 21.04, 5.678, 21.37,
+  7.108, 22.83, 7.5, 23.13, 7.646, 23.042, 8.318, 23.438, 7.438, 22.36, 7.18, 21.94];
+// 公式例外（21 世紀已知；臺灣時間）：年-節氣序號 → 加減天數。2026 雨水已對照中央氣象署 115 年日曆資料表（2/18 23:52）
+const SOLAR_FIX = { "2002-14": 1, "2008-9": 1, "2016-12": 1, "2019-0": -1, "2021-23": -1, "2026-3": -1,
+  "2082-1": 1, "2084-5": 1, "2089-19": 1, "2089-20": 1 };
+/** 某年第 i 個節氣（0＝小寒）是幾號 */
+function solarTermDay(year, i) {
+  const y = year % 100, L = i < 4 ? Math.floor((y - 1) / 4) : Math.floor(y / 4);
+  return Math.floor(y * 0.2422 + SOLAR_C[i]) - L + (SOLAR_FIX[year + "-" + i] || 0);
+}
+/** 今天所在的節氣名（例：2026-11-28 → 小雪）；只支援 2001–2099 年 */
+function solarTerm(ymd) {
+  const Y = Number(String(ymd).slice(0, 4)), m = Number(String(ymd).slice(5, 7)), d = Number(String(ymd).slice(8, 10));
+  let i = (m - 1) * 2 + 1; // 從本月第二個節氣往回找
+  if (d < solarTermDay(Y, i)) i--;
+  if (i >= 0 && d < solarTermDay(Y, i)) i--;
+  return SOLAR_NAMES[(i + 24) % 24]; // 1 月 5 日前＝前一年的冬至
+}
 // ===== END rules.mjs（自動產生）=====
