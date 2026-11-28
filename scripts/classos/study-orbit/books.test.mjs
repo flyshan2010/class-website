@@ -40,12 +40,12 @@ test("Notion 列轉資料包：關聯換成代碼、沒有關卡代碼的一般�
 });
 
 test("輸出：有塔題類才帶 tw；結構的 tower 照抄（P3 §13.4）", () => {
-  const b = live();
+  const C = "c-x-t1", b = JSON.parse(JSON.stringify(live()).replaceAll(BOOK, C)); // 塔題類只有國語題能填（第 16 條）
   b.questions[0].tw = "情境";
   b.books[0].structure.islands[0].levels[0].tower = 3;
   const { index, files } = buildBookFiles(b);
-  assert.equal(files[BOOK].questions.find((q) => q.id === b.questions[0].id).tw, "情境");
-  assert.ok(files[BOOK].questions.filter((q) => q.id !== b.questions[0].id).every((q) => !("tw" in q)));
+  assert.equal(files[C].questions.find((q) => q.id === b.questions[0].id).tw, "情境");
+  assert.ok(files[C].questions.filter((q) => q.id !== b.questions[0].id).every((q) => !("tw" in q)));
   assert.equal(index.books[0].structure.islands[0].levels[0].tower, 3);
 });
 
