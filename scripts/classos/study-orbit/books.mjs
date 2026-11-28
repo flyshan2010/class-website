@@ -60,6 +60,7 @@ export function bundleFromNotion(raw) {
       optionBlindspots: String(r["選項盲點"] ?? ""), ...parseOptions(r["題型"], r["選項"]), answer: txt(r["正確答案"]),
       stem: txt(r["題幹"]), hint1: txt(r["提示1"]), hint2: txt(r["提示2"]), explanation: txt(r["解析"]),
       group: txt(r["題組"]), material: String(r["共用素材"] ?? ""), materialType: r["素材類型"] || "", status: r["狀態"],
+      tw: r["塔題類"] || "", // P3 §13.2：國語塔題類（select；空＝不進塔）
     })),
     reviewCards: raw.reviewCards.map((r) => ({ name: txt(r["卡名"]), subject: r["科目"], status: r["狀態"] })),
   };
@@ -89,6 +90,7 @@ function outQuestion(q) {
   o.hint1 = q.hint1; o.hint2 = q.hint2; o.explanation = q.explanation;
   if (q.group) o.group = q.group;
   if (q.materialType && q.material) { o.material = q.material; o.materialType = q.materialType; } // 圖表單題沒有題組也帶圖（SPEC §3.6.1）
+  if (q.tw) o.tw = q.tw; // P3 §13.4：國語塔題類（社會的塔層號在結構 JSON 的 tower）
   return o;
 }
 

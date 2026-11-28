@@ -129,3 +129,54 @@ test("第 15 條：接進 checkBundle（圖表單題合格、文章單題與壞�
   const b3 = fixture(); Object.assign(q(b3, L1, 1), { material: EX[0], materialType: "" });
   assert.ok(rulesHit(b3).has(15), "有素材沒類型沒抓到");
 });
+
+// P3 §13.4：每格可以多於 2 題（塔題也是闖關題）；塔題類欄
+const extra = (b, level, slot, patch = {}) => {
+  const root = b.questions.find((x) => x.level === level && x.slot === slot && !x.mother);
+  const c = { ...JSON.parse(JSON.stringify(root)), id: "MA4-0" + (900 + b.questions.length), mother: root.id, ...patch };
+  b.questions.push(c);
+  return c;
+};
+test("§13.4：一格 3 題、5 題都合格，照樣可上線", () => {
+  const b = fixture();
+  extra(b, L1, 1); extra(b, L1, 2); extra(b, L1, 2); extra(b, L1, 2);
+  extra(b, L2, 1); // 配合格多一題
+  const r = checkBundle(b);
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.publishable, { [L1]: true, [L2]: true });
+});
+test("§13.4 第 2 條：多出的題指向別題、知識點不同、題型不同、盲點不屬於該知識點都會被抓到", () => {
+  const cases = [
+    (b) => { const x = extra(b, L1, 1); x.mother = q(b, L1, 2).id; },
+    (b) => { const x = extra(b, L1, 1); x.mother = ""; },
+    (b) => { extra(b, L1, 1, { kp: `${L2}-K1` }); },
+    (b) => { extra(b, L2, 1, { type: "選擇", span: 1, options: ["甲", "乙", "丙", "丁"], answer: "A" }); },
+    (b) => { b.kps.push({ code: `${L1}-K2`, name: "重點三", subject: "數學", book: BOOK, level: L1, reviewCard: "", status: "可用" });
+      b.blindspots.push({ code: `${L1}-B4`, name: "盲點4", kp: `${L1}-K2`, level: L1, fix: "a", ex: "b", chk: "c", status: "可用" });
+      const x = extra(b, L1, 1); x.blindspots = [`${L1}-B1`, `${L1}-B2`, `${L1}-B4`]; x.optionBlindspots = `B=${L1}-B1\nC=${L1}-B2\nD=${L1}-B4`; },
+  ];
+  cases.forEach((breakIt, i) => { const b = fixture(); breakIt(b); assert.ok(rulesHit(b).has(2), `第 ${i + 1} 例`); });
+  const ok = fixture();
+  ok.blindspots.push({ code: `${L1}-B4`, name: "盲點4", kp: `${L1}-K1`, level: L1, fix: "a", ex: "b", chk: "c", status: "可用" });
+  const x = extra(ok, L1, 1); x.blindspots = [`${L1}-B1`, `${L1}-B2`, `${L1}-B4`]; x.optionBlindspots = `B=${L1}-B1\nC=${L1}-B2\nD=${L1}-B4`;
+  assert.ok(!rulesHit(ok).has(2), "新增同知識點的盲點可以");
+});
+test("第 16 條：塔題類只能五個、只有國語題能填", () => {
+  const b = fixture(); q(b, L1, 1).tw = "字音";
+  assert.ok(rulesHit(b).has(16), "數學題不能填");
+  const c = fixture(); c.books[0].code = "c-x-t1";
+  c.books[0].structure.islands[0].levels.forEach((l) => { l.code = l.code.replace("m-x-t1", "c-x-t1"); });
+  const ren = (s) => String(s).replace(/m-x-t1/g, "c-x-t1");
+  for (const t of ["kps", "blindspots", "stories", "questions"]) c[t] = c[t].map((r) => JSON.parse(ren(JSON.stringify(r))));
+  c.questions[0].tw = "字音"; c.questions[2].tw = "情境";
+  const r = checkBundle(c);
+  assert.ok(!r.errors.some((e) => e.rule === 16), JSON.stringify(r.errors.filter((e) => e.rule === 16)));
+  c.questions[0].tw = "字詞";
+  assert.ok(rulesHit(c).has(16), "不在表內");
+});
+test("塔題池報告：國語每本報各層題池數（只警告）", () => {
+  const c = fixture(); c.books[0].subject = "國語";
+  const r = checkBundle(c);
+  assert.deepEqual(r.towerPools, { [BOOK]: {} });
+  assert.deepEqual(r.towerWarn, []);
+});

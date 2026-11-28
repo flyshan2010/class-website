@@ -19,7 +19,7 @@ test("Notion 列轉資料包：關聯換成代碼、沒有關卡代碼的一般�
     stories: [{ _id: "t1", 關卡代碼: "m-h-4a-1-1", 題本: ["b1"], 標題: "小", 內文: "文", 狀態: "可用" }],
     questions: [
       { _id: "q1", 題目ID: "MA4-0001", 題型: "選擇", 關卡代碼: "m-h-4a-1-1", 格: 1, 占格: 1, 母題: [], 知識點: ["k1"], 盲點: ["s1"],
-        選項盲點: "B=m-h-4a-1-1-B1", 選項: "A. 1\nB. 2\nC. 3\nD. 4", 正確答案: "A", 題幹: "幾？", 提示1: "x", 提示2: "y", 解析: "z", 題組: "", 共用素材: "", 素材類型: "", 狀態: "可用" },
+        選項盲點: "B=m-h-4a-1-1-B1", 選項: "A. 1\nB. 2\nC. 3\nD. 4", 正確答案: "A", 題幹: "幾？", 提示1: "x", 提示2: "y", 解析: "z", 題組: "", 共用素材: "", 素材類型: "", 狀態: "可用", 塔題類: "字音" },
       { _id: "q2", 題目ID: "MA4-0002", 題型: "選擇", 關卡代碼: "m-h-4a-1-1", 格: 1, 占格: "", 母題: ["q1"], 知識點: ["k1"], 盲點: ["s1"], 狀態: "可用" },
       { _id: "q3", 題目ID: "MA4-0100", 題型: "選擇", 關卡代碼: "", 狀態: "可用" },
     ],
@@ -35,6 +35,18 @@ test("Notion 列轉資料包：關聯換成代碼、沒有關卡代碼的一般�
   assert.equal(B.questions[1].span, 1, "占格空白當 1");
   assert.deepEqual(B.questions[0].blindspots, ["m-h-4a-1-1-B1"]);
   assert.deepEqual(B.questions[0].options, ["1", "2", "3", "4"]);
+  assert.equal(B.questions[0].tw, "字音", "塔題類（P3 §13.4）");
+  assert.equal(B.questions[1].tw, "", "沒填＝空");
+});
+
+test("輸出：有塔題類才帶 tw；結構的 tower 照抄（P3 §13.4）", () => {
+  const b = live();
+  b.questions[0].tw = "情境";
+  b.books[0].structure.islands[0].levels[0].tower = 3;
+  const { index, files } = buildBookFiles(b);
+  assert.equal(files[BOOK].questions.find((q) => q.id === b.questions[0].id).tw, "情境");
+  assert.ok(files[BOOK].questions.filter((q) => q.id !== b.questions[0].id).every((q) => !("tw" in q)));
+  assert.equal(index.books[0].structure.islands[0].levels[0].tower, 3);
 });
 
 test("合格又上線：輸出兩關、題數 = 14 × 2、沒有座號姓名查詢碼與審題欄", () => {

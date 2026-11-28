@@ -14,7 +14,7 @@
 //   reviewCards:[{ name, subject, status }],
 // }
 
-import { encodeSave, islandCore } from "./rules.mjs";
+import { encodeSave, islandCore, towerPool, TOWER_TW, TOWER_POOL_MIN, TOWER_POOL_FULL } from "./rules.mjs";
 
 export const SAVE_LIMIT_BYTES = 8 * 1024; // §4 第 12 條：存檔最壞情況 ≤8KB
 const SLOT_NORMAL = ["基礎", "基礎", "基礎", "進階", "進階", "應用", "應用"];
@@ -186,7 +186,7 @@ export function checkBundle(bundle) {
     if (lv.slots.length === 7 && lv.slots.join() !== want.join())
       err(1, `${code} 的 slots 應為 ${want.join("、")}`, code);
 
-    // 第 1 條：每格剛好兩「組」；第 2 條：同格兩題成對
+    // 第 1 條：每格至少兩「組」；第 2 條：同格恰一題母題、其餘指向它，知識點、題型、占格相同（P3 §13.4 放寬）
     const units = new Map(); // slot → Set(unitKey)
     const atSlot = new Map(); // slot → [q]
     for (const q of qs) {
@@ -201,17 +201,21 @@ export function checkBundle(bundle) {
     }
     for (let s = 1; s <= 7; s++) {
       const n = units.get(s)?.size ?? 0;
-      if (n !== 2) err(1, `${code} 第 ${s} 格有 ${n} 組題（應為 2）`, code);
-      const pair = atSlot.get(s) ?? [];
-      if (pair.length !== 2) continue;
-      const [a, b] = pair;
-      const roots = pair.filter((q) => blank(q.mother));
-      const child = pair.find((q) => !blank(q.mother));
-      if (roots.length !== 1 || !child || child.mother !== roots[0].id)
-        err(2, `${code} 第 ${s} 格：應一題母題留空、另一題指向它（${a.id}、${b.id}）`, code);
-      if (a.kp !== b.kp) err(2, `${code} 第 ${s} 格兩題知識點不同（${a.id}、${b.id}）`, code);
-      if (!sameSet(new Set(a.blindspots ?? []), new Set(b.blindspots ?? [])))
-        err(2, `${code} 第 ${s} 格兩題盲點集合不同（${a.id}、${b.id}）`, code);
+      if (n < 2) err(1, `${code} 第 ${s} 格有 ${n} 組題（應至少 2）`, code);
+      const at = atSlot.get(s) ?? [];
+      if (at.length < 2) continue;
+      const ids = at.map((q) => q.id).join("、");
+      const roots = at.filter((q) => blank(q.mother));
+      if (roots.length !== 1 || at.some((q) => !blank(q.mother) && q.mother !== roots[0].id))
+        err(2, `${code} 第 ${s} 格：應恰一題母題留空、其餘都指向它（${ids}）`, code);
+      if (new Set(at.map((q) => q.kp)).size !== 1) err(2, `${code} 第 ${s} 格題目知識點不同（${ids}）`, code);
+      if (new Set(at.map((q) => `${q.type}/${Number(q.span) || 1}/${q.slot}`)).size !== 1) err(2, `${code} 第 ${s} 格題型或占格不同（${ids}）`, code);
+      // 盲點：每題的盲點要是「該格母題用的盲點」或「屬於該格知識點的盲點」（§13.3：優先用該格既有盲點，沒有才新增該知識點的）
+      const rootBs = new Set(roots[0]?.blindspots ?? []);
+      for (const q of at) for (const c of q.blindspots ?? []) {
+        const bs = bsBy.get(c);
+        if (bs && !rootBs.has(c) && bs.kp !== q.kp) err(2, `${code} 第 ${s} 格 ${q.id} 的盲點 ${c} 不是母題用過的、也不屬於該格知識點 ${q.kp}`, code);
+      }
     }
 
     // 第 9 條：題組
@@ -277,6 +281,12 @@ export function checkBundle(bundle) {
     else if (mt && mt !== "文章" && mt !== "圖表") qerr(15, `${q.id} 素材類型「${mt}」不是文章或圖表`);
     else if (mt === "文章" && blank(q.group)) qerr(15, `${q.id} 文章素材只能放在題組`);
     else if (mt === "圖表") for (const p of chartProblems(q.material)) qerr(15, `${q.id} 圖表素材：${p}`);
+    // 第 16 條：塔題類（P3 §13.4）：只能是表內五個、只有國語題能填；進塔的配合題右欄四項不重複
+    if (!blank(q.tw)) {
+      if (!(q.tw in TOWER_TW)) qerr(16, `${q.id} 塔題類「${q.tw}」不是字音／字義／字形／詞義／情境`);
+      if (!String(q.level ?? "").startsWith("c-")) qerr(16, `${q.id} 不是國語題，不能填塔題類`);
+      if (q.type === "配合" && ((q.right ?? []).length !== 4 || new Set(q.right).size !== 4)) qerr(16, `${q.id} 進塔的配合題右欄要四項不重複`);
+    }
   }
 
   // 第 6 條：盲點
@@ -316,16 +326,28 @@ export function checkBundle(bundle) {
     const errInLevel = [...errs.values()].some((e) => e.level === code);
     publishable[code] =
       !errInLevel &&
-      qs.length > 0 && (units14(qs) === 14) &&
+      qs.length > 0 && (units14(qs) >= 14) &&
       qs.every((q) => q.status === "可用") &&
       [...used].every((c) => bsBy.get(c)?.status === "可用") &&
       st?.status === "可用";
   }
 
-  return { errors: [...errs.values()].sort((a, b) => a.rule - b.rule), publishable, noReviewCard, saveSize };
+  // 塔題池（P3 §13.4）：每本報一次各層題池數（只警告、不擋）：<10＝不開、10–19＝未滿 20
+  const towerPools = {}, towerWarn = [];
+  for (const book of B.books) {
+    const stair = { 國語: "ch", 社會: "so" }[book.subject];
+    if (!stair) continue;
+    const mine = B.questions.filter((q) => String(q.level ?? "").startsWith(`${book.code}-`) && q.status !== "停用");
+    const pool = towerPool(stair, { questions: mine }, book.structure) || {};
+    towerPools[book.code] = Object.fromEntries(Object.keys(pool).map((f) => [f, pool[f].length]));
+    for (const [f, n] of Object.entries(towerPools[book.code]))
+      if (n < TOWER_POOL_FULL) towerWarn.push(`${book.code} 塔第 ${f} 層題池 ${n} 題（${n < TOWER_POOL_MIN ? "不到 10，不開" : "未滿 20"}）`);
+  }
+
+  return { errors: [...errs.values()].sort((a, b) => a.rule - b.rule), publishable, noReviewCard, saveSize, towerPools, towerWarn };
 }
 
-/** 一關的「題數」：配合題一對算一題（§四之一），14＝7 格 × 2 */
+/** 一關的「題數」：配合題一對算一題（§四之一），至少 14＝7 格 × 2（P3 §13.4 起每格可以多於 2 題） */
 function units14(qs) {
   return qs.reduce((n, q) => n + (Number(q.span) || 1), 0);
 }
@@ -339,5 +361,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log(`可上線關卡：${Object.entries(r.publishable).filter(([, v]) => v).map(([k]) => k).join("、") || "（無）"}`);
   console.log(`存檔最壞情況：${JSON.stringify(r.saveSize)}`);
   if (r.noReviewCard.length) console.log(`沒有對應觀念卡（交老師）：${r.noReviewCard.join("、")}`);
+  for (const w of r.towerWarn) console.log(`⚠️ ${w}`);
   process.exit(r.errors.length ? 1 : 0);
 }
