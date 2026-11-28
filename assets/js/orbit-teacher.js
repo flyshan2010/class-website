@@ -105,15 +105,27 @@
         ${bar("島嶼點燈（課後練習）", U.after, "#1baf7a")}${bar("島心試煉", U.core, "#eda100")}
         ${bar("百鍊之塔（層次）", U.tower || 0, "#5a4fb8")}</div>${tower()}`;
   }
-  /* 🗼 百鍊之塔各層人數（v2.28 起；沒有人玩過整塊不顯示）：一條＝停在該層（最高過到第 N 層）的人數 */
-  function tower() {
-    const T = V.tower;
+  /* 🗼 百鍊之塔各層人數（v2.29 起三階並列、窄螢幕直排；沒有人玩過的階不列）：一條＝停在該層（最高過到第 N 層）的人數 */
+  /* 個人頁：各階最高過到第幾層（v2.28 代理回數學陣列、v2.29 回 {ch, ma, so}） */
+  function towerTop(T) {
     if (!T) return "";
-    const max = Math.max(1, ...T.at.slice(1)), rows = [];
-    let top = 0; T.at.forEach((n, i) => { if (n && i) top = i; });
-    for (let f = Math.min(T.names.length, top + 1); f >= 1; f--) /* 只列到「有人到的最高層＋1」，空的高層不佔版面 */
-      rows.push(`<div class="orbit-use"><span>第 ${f} 層・${esc(T.names[f - 1])}</span><span class="bar"><i style="width:${T.at[f] / max * 100}%;background:#5a4fb8"></i></span><b>${T.at[f]}</b></div>`);
-    return `<div class="dash-card" style="margin-top:12px"><h4>🗼 百鍊之塔・數學算力階 <small>最高過到第幾層的人數；玩過 ${T.played} 人、還沒過第 1 層 ${T.at[0]} 人</small></h4>${rows.join("")}</div>`;
+    const o = Array.isArray(T) ? { ma: T } : T, nm = { ch: "國語", ma: "數學", so: "社會" };
+    const parts = ["ch", "ma", "so"].filter((k) => o[k]).map((k) => `${nm[k]}第 ${o[k][0] || 0} 層`);
+    return parts.length ? `（最高過到：${parts.join("、")}）` : "";
+  }
+  function tower() {
+    const list = V.tower ? (Array.isArray(V.tower) ? V.tower : [V.tower]) : []; /* v2.28 代理回單一物件也照畫 */
+    if (!list.length) return "";
+    const card = (T) => {
+      const max = Math.max(1, ...T.at.slice(1)), rows = [];
+      let top = 0; T.at.forEach((n, i) => { if (n && i) top = i; });
+      for (let f = Math.min(T.names.length, top + 1); f >= 1; f--) { /* 只列到「有人到的最高層＋1」，空的高層不佔版面 */
+        if (!T.names[f - 1] && !T.at[f]) continue; /* 國社沒有這一層（層號空著）就跳過 */
+        rows.push(`<div class="orbit-use"><span>第 ${f} 層・${esc(T.names[f - 1] || "")}</span><span class="bar"><i style="width:${T.at[f] / max * 100}%;background:#5a4fb8"></i></span><b>${T.at[f]}</b></div>`);
+      }
+      return `<div class="dash-card"><h4>🗼 ${esc(T.title || "數學・算力階")} <small>最高過到第幾層的人數；玩過 ${T.played} 人、還沒過任何一層 ${T.at[0]} 人</small></h4>${rows.join("")}</div>`;
+    };
+    return `<div class="orbit-towers" style="margin-top:12px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">${list.map(card).join("")}</div>`;
   }
   function render(body) {
     const miss = (V.missing || []).length ? `<p class="meta" style="color:#b3261e">⚠️ 有 ${V.missing.length} 本題本暫時讀不到 Notion 進度，部分學生先當「沒玩」顯示；稍後重新整理。</p>` : "";
@@ -153,7 +165,7 @@
     box.innerHTML = `<div class="orbit-stu">
       <div class="orbit-stu-head"><b>座號 ${S.seat}</b><button class="orbit-tab" id="orbit-stu-close">關閉</button></div>
       <p class="meta">本週 <span class="orbit-week">${S.days.map((on, i) => `<i class="${on ? "on" : ""}">${"一二三四五六日"[i]}</i>`).join("")}</span>　連續 ${S.streak} 天
-        島嶼點燈 ${S.usage.after} 回合・島心試煉 ${S.usage.core} 回合・百鍊之塔 ${S.usage.tower || 0} 層次${S.tower ? `（最高過到第 ${S.tower[0]} 層）` : ""}${S.weekStart < S.since ? `（週資料從 ${md(S.since)} 起）` : ""}</p>
+        島嶼點燈 ${S.usage.after} 回合・島心試煉 ${S.usage.core} 回合・百鍊之塔 ${S.usage.tower || 0} 層次${towerTop(S.tower)}${S.weekStart < S.since ? `（週資料從 ${md(S.since)} 起）` : ""}</p>
       <h5>星座圖 <small>一點＝一關、一串＝一座島；菱形＝島心；顏色＝最高星等（紅＝試過沒過）</small></h5><div class="orbit-cons">${cons}</div>
       <h5>卡冊 <small>待確認 ${wait} 張・已結案 ${ok} 張</small></h5>${cardList}
       <p class="meta">個人頁給個別指導用；學生、家長看不到這一頁。</p></div>`;

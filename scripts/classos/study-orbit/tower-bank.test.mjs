@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { towerPool, towerFloors, towerFloorBank, towerScoreBank, towerAnsMap, TOWER_Q, TOWER_TW } from "./rules.mjs";
+import { towerPool, towerFloors, towerFloorBank, towerScoreBank, towerAnsMap, towerNames, TOWER_Q, TOWER_TW } from "./rules.mjs";
 
 const D = new URL("../../../data/study-orbit/", import.meta.url);
 const J = (n) => JSON.parse(readFileSync(new URL(n, D), "utf8"));
@@ -119,4 +119,14 @@ test("towerScoreBank：全對＝10；竄改／重複／不足 10／字母不是 
   const qs2 = towerFloorBank(CH, f, 778);
   assert.equal(towerScoreBank(CH, f, qs2.map((q) => q.key), qs2.map((q) => q.ans)), 10, "種子不參與判分");
   assert.equal(towerScoreBank(null, f, keys, ans), -1);
+});
+
+test("towerNames：數學 12 層、國語 24 層「〈課名〉・字／詞」、社會依 tower", () => {
+  assert.equal(towerNames("ma").length, 12);
+  const ch = towerNames("ch", IX["國語"].structure);
+  assert.equal(ch.length, 24);
+  assert.equal(ch[0], "美麗島・字"); assert.equal(ch[1], "美麗島・詞"); assert.equal(ch[23], "寧靜的音樂會・詞");
+  const so = towerNames("so", soStructure());
+  assert.deepEqual([so.length, so[0], so[9]], [10, "家鄉在哪裡", "現代的節日"]);
+  assert.deepEqual(towerNames("so", IX["社會"].structure), [], "還沒寫 tower＝沒有層");
 });

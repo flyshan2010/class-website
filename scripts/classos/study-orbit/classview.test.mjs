@@ -104,3 +104,19 @@ test("個人頁：卡冊三種狀態、本週七天、練習回合；回覆沒�
   const txt = JSON.stringify([s, V]);
   assert.equal(/姓名|查詢碼|"name":"學生/.test(txt), false);
 });
+
+test("v2.29 百鍊塔三階：各階停住人數、國語層名從題本結構取；個人頁只留玩過的階", () => {
+  const tws = { 1: { ma: [2, 40, 50], ch: [1, 30] }, 3: { ch: [2, 30, 33] } };
+  const V = classView({ books: BOOKS, seats: [1, 2, 3, 4], saves: SAVES, mes: {}, tws, today: TODAY });
+  assert.deepEqual(V.tower.map((t) => t.stair), ["ch", "ma"], "社會沒人玩不列");
+  const ch = V.tower[0];
+  assert.equal(ch.title, "國語・字詞階");
+  assert.deepEqual(ch.names, ["字詞・字", "字詞・詞"], "課名取第一關名稱「・」前面");
+  assert.deepEqual(ch.at, [2, 1, 1]);
+  assert.equal(ch.played, 2);
+  assert.deepEqual(V.tower[1].at.slice(0, 3), [3, 0, 1]);
+  assert.equal(classView({ books: BOOKS, seats: [1], saves: {}, mes: {}, tws: {}, today: TODAY }).tower, null);
+  const S = studentView({ books: BOOKS, seat: 1, saves: {}, me: {}, tw: { ma: [2, 40, 50], ch: [1, 30], xx: [9] }, today: TODAY });
+  assert.deepEqual(S.tower, { ma: [2, 40, 50], ch: [1, 30] });
+  assert.equal(studentView({ books: BOOKS, seat: 1, saves: {}, me: {}, tw: {}, today: TODAY }).tower, null);
+});

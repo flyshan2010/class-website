@@ -494,3 +494,21 @@ export function towerScoreBank(pool, floor, keys, picked) {
   if (picked.some((p) => TW_L.indexOf(String(p)) < 0)) return -1;
   return ks.filter((k, i) => m[k] === String(picked[i])).length;
 }
+export const TOWER_STAIR_TITLE = { ch: "國語・字詞階", ma: "數學・算力階", so: "社會・常識階" };
+/**
+ * 各層層名（陣列索引＝層號−1，沒有的層＝""）：數學＝TOWER_FLOORS.ma；
+ * 國語＝「〈課名〉・字／詞」（課名取該島第一關名稱「・」前面）；社會＝帶 tower 那一關的名稱。
+ */
+export function towerNames(stair, structure) {
+  if (stair === "ma") return TOWER_FLOORS.ma.slice();
+  const out = [];
+  const put = (f, s) => { while (out.length < f) out.push(""); out[f - 1] = s; };
+  ((structure && structure.islands) || []).forEach((isl) => {
+    const lv = isl.levels || [];
+    if (stair === "ch") {
+      const n = Number(isl.id), name = String((lv[0] && lv[0].name) || isl.name || "").split("・")[0];
+      if (n >= 1 && lv.length) { put(2 * n - 1, name + "・字"); put(2 * n, name + "・詞"); }
+    } else lv.forEach((l) => { if (Number(l.tower) >= 1) put(Number(l.tower), String(l.name || "")); });
+  });
+  return out;
+}
