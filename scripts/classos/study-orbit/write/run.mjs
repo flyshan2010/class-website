@@ -15,10 +15,11 @@ import { api, isExecute } from "../../lib/notion.mjs";
 import { fingerprint } from "./fingerprint.mjs";
 import { runWrite } from "./writer.mjs";
 import { runPromote } from "./promote.mjs";
+import { runTag } from "./tag.mjs";
 
 const execute = isExecute();
 const action = (process.env.ACTION || "write").trim();
-if (!["write", "promote"].includes(action)) throw new Error(`ACTION 只能是 write 或 promote，實際是「${action}」`);
+if (!["write", "promote", "tag"].includes(action)) throw new Error(`ACTION 只能是 write、promote 或 tag，實際是「${action}」`);
 const outDir = process.env.OUT_DIR || "out/so-write";
 mkdirSync(outDir, { recursive: true });
 const newIds = {};
@@ -28,7 +29,7 @@ let failed = null;
 try {
   const plain = readFileSync(process.env.PAYLOAD);
   // promote 的指紋另算（混入動作名）：寫入的 dry-run 指紋不能拿來直接改狀態
-  const fp = action === "promote" ? fingerprint(Buffer.concat([plain, Buffer.from("|promote")])) : fingerprint(plain);
+  const fp = action === "write" ? fingerprint(plain) : fingerprint(Buffer.concat([plain, Buffer.from("|" + action)]));
   const payload = JSON.parse(plain.toString("utf8"));
   console.log(`📦 資料包指紋 ${fp}｜來源 ${payload.source?.commit ?? "?"}${payload.source?.dirty ? "（有未 commit 改動）" : ""}`);
   console.log(`   關卡範圍 ${payload.levels.join(",")}｜卡片 ${payload.cards?.length ?? 0} 張｜結構 ${(payload.structure ?? []).join(",") || "無"}｜動作 ${action}｜模式 ${execute ? "execute" : "dry-run"}`);
@@ -49,7 +50,9 @@ try {
 
   result = action === "promote"
     ? await runPromote({ payload, ids: payload.ids, gen, api, execute })
-    : await runWrite({ payload, ids: payload.ids, gen, api, execute, newIds });
+    : action === "tag"
+      ? await runTag({ payload, ids: payload.ids, gen, api, execute }) // P3 §13.2：只改題庫「塔題類」一欄
+      : await runWrite({ payload, ids: payload.ids, gen, api, execute, newIds });
   result.fingerprint = fp;
   if (!execute) console.log(`\n👉 筆數確認無誤後，以 action=${action}、mode=execute、fingerprint=${fp} 再跑一次。`);
 } catch (e) {

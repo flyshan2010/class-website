@@ -7,6 +7,7 @@ import { runWrite, writeStructure, DS, taipeiToday } from "./writer.mjs";
 import { fingerprint } from "./fingerprint.mjs";
 import { mergeIds } from "./local.mjs";
 import { runPromote } from "./promote.mjs";
+import { runTag } from "./tag.mjs";
 
 import { SCHEMA } from "./schema.fixture.mjs";
 const DS_TABLE = Object.fromEntries(Object.entries(DS).map(([t, id]) => [id, t]));
@@ -22,7 +23,7 @@ function fakeGen(what, ids, code, all = false) {
     kp: () => [{ 代碼: `${lv}-K1`, 名稱: "部首", 科目: "國語", 題本: [need("book", "c-h-4a")], 關卡代碼: lv, 課本位置: "第七課", 觀念複習卡: [need("card", "松鼠・字詞")], 狀態: "待審" }],
     bs: () => [{ 代碼: `${lv}-B1`, 卡名: "看錯部首", 知識點: [need("kp", `${lv}-K1`)], 關卡代碼: lv, 正確的想法: "想", 看例子: "例", 檢查口訣: "訣", 狀態: "待審" }],
     story: () => [{ 關卡代碼: lv, 題本: [need("book", "c-h-4a")], 標題: "麵包", 內文: "故事", 狀態: "待審" }],
-    qroot: () => [q("CH4-0065", null)],
+    qroot: () => [{ ...q("CH4-0065", null), 塔題類: "字音" }],
     qchild: () => [q("CH4-0066", "CH4-0065")],
   }[what]();
   function q(id, mother) {
@@ -308,4 +309,28 @@ test("promote：Notion 多出 bundle 沒有的列、或狀態不是待審／可�
   kpPage.properties.狀態 = { type: "select", select: { name: "停用" } };
   await assert.rejects(promote(stop), /檢查不通過/);
   assert.equal(stop.patches().length, 0);
+});
+
+// ── 塔題類（P3 §13.2）：只改這一欄 ──
+const tag = (m, over = {}) => runTag({ payload: basePayload(), ids: FULL_IDS(), gen: fakeGen, api: m.api, execute: true, log: quiet, sleep: async () => {}, ...over });
+test("tag dry-run：算出要改的題數，一頁都不改", async () => {
+  const m = notionNow({ edit: { "CH4-0065": { 塔題類: "" } } });
+  const { summary } = await tag(m, { execute: false });
+  assert.deepEqual(summary.map((s) => [s.change, s.already]), [[1, 1]]);
+  assert.equal(m.patches().length, 0);
+});
+test("tag execute：只改塔題類一欄、回讀一致；重跑 0 筆", async () => {
+  const m = notionNow({ edit: { "CH4-0065": { 塔題類: "詞義" } } });
+  const r = await tag(m);
+  assert.deepEqual(r.changed, ["CH4-0065"]);
+  assert.equal(m.patches().length, 1);
+  assert.deepEqual(Object.keys(m.patches()[0].body.properties), ["塔題類"]);
+  assert.deepEqual(m.patches()[0].body.properties.塔題類, { select: { name: "字音" } });
+  const again = await tag(m);
+  assert.equal(again.summary[0].change, 0);
+});
+test("tag：Notion 多出 bundle 沒有的題 → 整批不改", async () => {
+  const m = notionNow({ edit: { "CH4-0065": { 塔題類: "" } }, extra: [{ t: "q", props: { 題目ID: "CH4-0999", 關卡代碼: "c-h-4a-7-1", 狀態: "待審" } }] });
+  await assert.rejects(tag(m), /檢查不通過/);
+  assert.equal(m.patches().length, 0);
 });
