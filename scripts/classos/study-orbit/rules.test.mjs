@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  slotLight, nextStreak, stars, allGold, passed, applyRound, chestOpen,
+  slotLight, nextStreak, stars, allGold, passed, applyRound, chestOpen, islandCore, coreOpen, coreLeft, weekDays,
   totals, weekStart, addWeekly, rank, starsToCatchUp,
   isFast, encodeSave, decodeSave, encodeDay, decodeDay,
 } from "./rules.mjs";
@@ -39,12 +39,11 @@ test("重玩只記最高星等；曾經全金不會變回 0；多出來的星才
   assert.deepEqual(r, { record: [3, 1, 3], gained: 0 });
 });
 
-test("寶箱：島上每關都曾經全金才開，不必同一次", () => {
-  const lv = { "1-1": [3, 1, 4], "1-2": [3, 0, 2] };
-  assert.equal(chestOpen(["1-1", "1-2"], lv), false);
-  lv["1-2"] = [3, 1, 3];
-  assert.equal(chestOpen(["1-1", "1-2"], lv), true);
-  assert.equal(chestOpen([], lv), false);
+test("寶箱（舊條件仍有效）：島上每關都曾經全金才開，不必同一次", () => {
+  const isl = { id: 1, levels: [{ code: "1-1", name: "甲" }, { code: "1-2", name: "乙" }] };
+  assert.equal(chestOpen(isl, { "1-1": [3, 1, 2], "1-2": [3, 0, 2] }), false);
+  assert.equal(chestOpen(isl, { "1-1": [3, 1, 2], "1-2": [2, 1, 3] }), true);
+  assert.equal(chestOpen({ id: 1, levels: [] }, {}), false);
 });
 
 test("§5.3 星數、完成關數", () => {
@@ -131,4 +130,47 @@ test("P3 §1 solarTerm：交節當天換名、前一天還是上一個", () => {
   assert.equal(solarTerm("2026-02-17"), "立春"); assert.equal(solarTerm("2026-02-18"), "雨水");
   assert.equal(solarTerm("2027-01-04"), "冬至"); assert.equal(solarTerm("2027-01-05"), "小寒");
   assert.equal(solarTerm("2026-12-31"), "冬至"); assert.equal(solarTerm("2027-06-06"), "芒種");
+});
+
+import { readFileSync } from "node:fs";
+const BOOKS = JSON.parse(readFileSync(new URL("../../../data/study-orbit/index.json", import.meta.url), "utf8")).books;
+const zh = { id: 1, levels: ["字詞", "內容理解", "形式深究", "綜合整理", "評量複習"].map((n, i) => ({ code: `1-${i + 1}`, name: `美麗島・${n}` })) };
+const ma = { id: 3, levels: [1, 2, 3].map((i) => ({ code: `3-${i}`, name: `第${i}關` })) };
+
+test("P3 §1 islandCore：國語＝評量複習那一關；數學社會＝虛擬 <島>-0；三本真題本", () => {
+  assert.deepEqual(islandCore(zh), { key: "1-5", levels: ["1-1", "1-2", "1-3", "1-4"], virtual: false });
+  assert.deepEqual(islandCore(ma), { key: "3-0", levels: ["3-1", "3-2", "3-3"], virtual: true });
+  assert.equal(islandCore({ id: 2, levels: [{ code: "m-h-4a-2-1", name: "x" }] }).key, "m-h-4a-2-0");
+  for (const b of BOOKS) for (const isl of b.structure.islands) {
+    const c = islandCore(isl);
+    assert.equal(c.virtual, b.subject !== "國語", `${b.code} 島 ${isl.id}`);
+    if (!c.virtual) assert.equal(c.key, `${b.code}-${isl.id}-5`);
+    else assert.equal(c.key, `${b.code}-${isl.id}-0`);
+  }
+});
+
+test("P3 §1 coreOpen：差 1 關沒開／全 ≥1 星開／已玩過照開（不倒退）", () => {
+  const lv = { "3-1": [1, 0, 1], "3-2": [2, 0, 1], "3-3": [0, 0, 2] };
+  assert.equal(coreOpen(ma, lv), false); assert.equal(coreLeft(ma, lv), 1);
+  assert.equal(coreOpen(ma, { ...lv, "3-3": [1, 0, 3] }), true); assert.equal(coreLeft(ma, { ...lv, "3-3": [1, 0, 3] }), 0);
+  assert.equal(coreOpen(ma, { ...lv, "3-0": [0, 0, 1] }), true);
+  assert.equal(coreOpen(zh, { "1-5": [2, 0, 1] }), true, "國語已經玩過第 5 關照樣能進");
+  assert.equal(coreOpen(zh, { "1-1": [1, 0, 1], "1-2": [1, 0, 1], "1-3": [1, 0, 1] }), false);
+  assert.equal(coreOpen({ id: 9, levels: [] }, {}), false);
+});
+
+test("P3 §3.2 寶箱新條件：島心全金就開；數學每關全金但島心未全金＝開；國語第 5 關全金＝開", () => {
+  assert.equal(chestOpen(ma, { "3-0": [3, 1, 1] }), true);
+  assert.equal(chestOpen(ma, { "3-0": [3, 0, 4] }), false);
+  assert.equal(chestOpen(ma, { "3-1": [3, 1, 1], "3-2": [3, 1, 1], "3-3": [3, 1, 1], "3-0": [2, 0, 1] }), true);
+  assert.equal(chestOpen(zh, { "1-5": [3, 1, 2] }), true);
+  assert.equal(chestOpen(zh, { "1-1": [3, 1, 1], "1-5": [3, 0, 2] }), false);
+});
+
+test("P3 §1 weekDays：本週一～日（臺北），上週與下週不算", () => {
+  // 2026-11-28 是週六；本週一＝11-23
+  assert.deepEqual(weekDays(["2026-11-22", "2026-11-23", "2026-11-25", "2026-11-28", "2026-11-30"], "2026-11-28"),
+    [true, false, true, false, false, true, false]);
+  assert.deepEqual(weekDays([], "2026-11-23"), [false, false, false, false, false, false, false]);
+  assert.deepEqual(weekDays(["2026-11-29"], "2026-11-29"), [false, false, false, false, false, false, true], "週日屬於同一週");
 });

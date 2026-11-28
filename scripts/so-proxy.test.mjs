@@ -12,7 +12,8 @@ import { decodeSave } from "./classos/study-orbit/rules.mjs";
 
 const SRC = readFileSync(new URL("./apps-script-proxy-v2.gs", import.meta.url), "utf8");
 const BOOK = JSON.parse(readFileSync(new URL("../data/study-orbit/m-h-4a.json", import.meta.url), "utf8"));
-const INDEX = { books: [{ code: "m-h-4a", subject: "數學" }, { code: "s-k-4a", subject: "社會" }] };
+const REAL_INDEX = JSON.parse(readFileSync(new URL("../data/study-orbit/index.json", import.meta.url), "utf8"));
+const INDEX = { books: [{ code: "m-h-4a", subject: "數學", structure: REAL_INDEX.books.find((b) => b.code === "m-h-4a").structure }, { code: "s-k-4a", subject: "社會" }] };
 const DS = { roster: "ad232b7a-c7f8-4a68-b224-5b2d5b16599a", book: "41ab1f9d-7e45-8171-bb0d-000be3c15679",
   prog: "41ab1f9d-7e45-819c-90b8-000b0870e17e", log: "41ab1f9d-7e45-814c-83c1-000b89fcfdf0",
   progSim: "41bb1f9d-7e45-8171-8630-000b4c3f9633", logSim: "41bb1f9d-7e45-8188-a73b-000b5f24b177" };
@@ -519,7 +520,7 @@ test("so_test_clear：只清測試座號的暫存區；dry 回用量", () => {
 
 test("暫停開關、鎖拿不到、版本號", () => {
   const w = makeWorld();
-  assert.equal(w.post({ action: "version" }).version, "2.25");
+  assert.equal(w.post({ action: "version" }).version, "2.26");
   const s = session(w, 3); s.pull();
   w.lock.free = false;
   const busy = s.push(round("ggggggg"));
@@ -532,7 +533,7 @@ test("暫停開關、鎖拿不到、版本號", () => {
 test("v2.25 so_health：免口令只回數字；429 另計、卡住 60 分鐘才算；暫停中也查得到", () => {
   const w = makeWorld();
   let h = w.post({ action: "so_health" });
-  assert.deepEqual([h.ok, h.version, h.stuck, h.err7.fail, h.err7.retry, h.lastFail], [true, "2.25", 0, 0, 0, null]);
+  assert.deepEqual([h.ok, h.version, h.stuck, h.err7.fail, h.err7.retry, h.lastFail], [true, "2.26", 0, 0, 0, null]);
   const iso = (ms) => new Date(ms).toISOString();
   w.store.set("so:err", JSON.stringify([[iso(w.clock.t - 8 * 864e5), "自學紀錄寫入 500 舊的"], [iso(w.clock.t - 3600e3), "429 pages"],
     [iso(w.clock.t - 7200e3), "自學進度寫入 502 m-h-4a:3"], [iso(w.clock.t - 60e3), "暫存區超過 400KB，已逐出到 290KB"]]));
@@ -638,4 +639,51 @@ test("v2.24：紀錄格中途被逐出／清掉 → 題數、答對數、用時�
   w.clock.t += 5 * 60e3; w.flush();
   assert.equal(w.rowsOf(DS.log)[0].properties.題數.number, q1);
   assert.ok(q1 > q0);
+});
+
+// ───────────── v2.26：島心、days／cw／wr（P3 SPEC §3.3）─────────────
+test("v2.26 days：有自學的日子記進 so:me、只留 14 筆；登入、拉取、上傳都回日期字串", () => {
+  const w = makeWorld({ start: "2026-11-02T02:00:00Z" });
+  const s = session(w, 3); s.pull();
+  for (let d = 0; d < 20; d++) { w.at(new Date(Date.parse("2026-11-02T02:00:00Z") + d * 864e5).toISOString()); s.push(round("ggggggg", "f")); }
+  s.push(round("ggggggg", "f")); // 同一天第二回合不重記
+  const me = JSON.parse(w.store.get("so:me:3"));
+  assert.equal(me.days.length, 14);
+  const r = s.pull();
+  assert.equal(r.days.length, 14);
+  assert.equal(r.days[13], "2026-11-21");
+  assert.equal(r.days[0], "2026-11-08");
+  assert.equal(w.login(3).days[13], "2026-11-21");
+  assert.equal(s.push(round("ggggggg", "f")).days.length, 14);
+});
+
+test("v2.26 wr：課後與島心回合分開算（島心由題本結構推得）；跨週歸零", () => {
+  const w = makeWorld({ start: "2026-11-20T02:00:00Z" });
+  const s = session(w, 3); s.pull();
+  s.push(round("ggggggg", "n", "1-1"));
+  s.push(round("ggggggg", "f", "1-0"));
+  s.push(round("gggxggg", "f", "1-0"));
+  let me = JSON.parse(w.store.get("so:me:3"));
+  assert.deepEqual(me.wr, ["2026-11-16", 1, 2]);
+  assert.deepEqual(decodeSave(w.cell(3).save).lv["1-0"], [3, 1, 2], "虛擬島心照一般關卡記星等與全金");
+  assert.ok(w.rowsOf, "");
+  w.at("2026-11-23T02:00:00Z");
+  s.push(round("ggggggg", "f", "1-2"));
+  me = JSON.parse(w.store.get("so:me:3"));
+  assert.deepEqual(me.wr, ["2026-11-23", 1, 0]);
+});
+
+test("v2.26 cw：只算已克服滿 7 天的到期卡挑戰；通過另計", () => {
+  const w = makeWorld({ start: "2026-11-16T02:00:00Z" });
+  const s = session(w, 3); s.pull();
+  s.push(round("rrggggg")); // 格 1、2 錯→再挑戰對＝兩張已克服（d）
+  const m = decodeSave(w.cell(3).save), codes = Object.keys(m.cd);
+  assert.equal(codes.length >= 2, true);
+  const qOf = (bs) => BOOK.questions.find((q) => Object.values(q.ob || {}).includes("m-h-4a-" + bs));
+  const c = (bs, ok) => { const q = qOf(bs); return ["c", bs, q.id, ok ? q.answer : Object.keys(q.ob).find((k) => q.ob[k] !== undefined && k !== q.answer), 5]; };
+  s.push([c(codes[0], true)]); // 未滿 7 天：不算
+  assert.equal(JSON.parse(w.store.get("so:me:3")).cw, undefined);
+  w.at("2026-11-24T02:00:00Z");
+  s.push([c(codes[0], true), c(codes[1], false)]);
+  assert.deepEqual(JSON.parse(w.store.get("so:me:3")).cw, ["2026-11-23", 2, 1]);
 });

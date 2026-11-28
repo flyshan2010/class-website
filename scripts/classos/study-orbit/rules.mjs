@@ -49,9 +49,37 @@ export function applyRound(record, gold, silver) {
   };
 }
 
-/** 寶箱：一座島每一關「曾經七盞全金」都是 1 才開（不必同一次完成） */
-export function chestOpen(islandLevelCodes, lv) {
-  return islandLevelCodes.length > 0 && islandLevelCodes.every((c) => lv[c]?.[1] === 1);
+/* ---------- P3 §1：島心試煉與寶箱（第②步） ----------
+   island＝{id, levels:[{code, name}]}（code 可以是完整代碼或省略題本的短鍵，回傳同一種）；lv＝存檔的關卡紀錄 */
+export const CORE_RE = /評量複習$/;
+/** 島心：名稱以「評量複習」結尾的那一關（國語）；沒有就是虛擬島心 <島>-0（數學、社會，從各關題池抽題） */
+export function islandCore(island) {
+  const lvs = (island && island.levels) || [];
+  const i = lvs.findIndex((l) => CORE_RE.test(String(l.name || "")));
+  if (i >= 0) return { key: lvs[i].code, levels: lvs.filter((_, k) => k !== i).map((l) => l.code), virtual: false };
+  const all = lvs.map((l) => l.code);
+  return { key: (all.length ? all[0].replace(/-[^-]+$/, "") : String(island && island.id)) + "-0", levels: all, virtual: true };
+}
+/** 島心開放前還差幾關（各關最高星等 ≥1 才算過） */
+export function coreLeft(island, lv) {
+  return islandCore(island).levels.filter((k) => !(((lv || {})[k] || [0])[0] >= 1)).length;
+}
+/** 島心開放＝其餘每一關都 ≥1 星；島心已經有紀錄的照樣開（不倒退） */
+export function coreOpen(island, lv) {
+  const c = islandCore(island);
+  if ((lv || {})[c.key]) return true;
+  return c.levels.length > 0 && coreLeft(island, lv) === 0;
+}
+/** 寶箱：島心曾經七盞全金，或（舊條件）島上每一關都曾經全金——任一成立就開（P3 §11 第 2 題 A，不寫遷移） */
+export function chestOpen(island, lv) {
+  const c = islandCore(island), L = lv || {}, all = ((island && island.levels) || []).map((l) => l.code);
+  if ((L[c.key] || [])[1] === 1) return true;
+  return all.length > 0 && all.every((k) => (L[k] || [])[1] === 1);
+}
+/** 本週一～日哪幾天有自學：days＝日期字串陣列（YYYY-MM-DD），回 7 個 true／false */
+export function weekDays(days, today) {
+  const set = new Set(days || []), ws = Date.parse(weekStart(`${today}T12:00:00+08:00`) + "T00:00:00Z");
+  return Array.from({ length: 7 }, (_, i) => set.has(new Date(ws + i * 864e5).toISOString().slice(0, 10)));
 }
 
 /** §5.3 星數＝各關最高星等加總；完成關數＝最高星等 ≥1 的關數 */

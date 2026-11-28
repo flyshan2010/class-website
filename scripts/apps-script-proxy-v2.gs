@@ -1,6 +1,12 @@
 /**
- * 班網教師專區代理 v2.24（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
+ * 班網教師專區代理 v2.26（Google Apps Script）── ClassOS v3.5 Phase A＋班級商店兌換＋兌換券執行＋🧪 創造提案＋🔒 兌換條件把關＋🪑 排座＋📰 校刊挑選＋🌌 自學星圖
  * 取代 apps-script-update-proxy.gs（v1 只有一鍵更新）。
+ *
+ * ── v2.26 升級步驟（2026-11-28，約 1 分鐘）──
+ *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
+ *   v2.26 新增（自學星圖 P3 第②步，P3 SPEC §3.3）：島心試煉＋寶箱新條件（rules.mjs 區塊重新產生）；so:me 多記 days（最近 14 個有自學的日子）、
+ *   cw（本週到期卡挑戰／通過次數）、wr（本週課後／島心回合數，跨週歸零）；so_login／so_pull／so_push 多回 days（前台畫本週七格）。
+ *   （v2.25＝體驗帳號：自己的座號＋體驗碼。）
  *
  * ── v2.24 升級步驟（2026-11-18，約 1 分鐘）──
  *   全選覆蓋 → 部署 → 管理部署作業 → 鉛筆 → 版本「新增版本」→ 部署（沿用原網址）。不必再授權。
@@ -177,7 +183,7 @@
  */
 
 const REPO = "flyshan2010/class-website";
-const PROXY_VERSION = "2.25"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
+const PROXY_VERSION = "2.26"; // 每次升版改這裡；action「version」免口令回這個值，部署後用它確認新版已上線
 const NOTION_VERSION = "2022-06-28"; // 收件匣沿用（database_id 端點）
 const NOTION_VERSION_DS = "2025-09-03"; // 兌換流用（data_sources 端點，與 sync-notion.mjs 相同）
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB/檔
@@ -2552,7 +2558,32 @@ function soMe_(props, seat, today) {
   if (!me.today || me.today.date !== today) me.today = { date: today, done: [] };
   return me;
 }
-function soMeView_(me, today) { return { today: { done: me.today.done.length, of: 3, src: me.today.done }, streak: soStreakNow_(me, today) }; }
+function soMeView_(me, today) { // v2.26 多回 days（最近 14 個有自學的日子，日期字串；前台用 weekDays() 畫本週七格）
+  return { today: { done: me.today.done.length, of: 3, src: me.today.done }, streak: soStreakNow_(me, today), days: (me.days || []).map(dayToStr) };
+}
+// v2.26 週計數 [本週起算日, …]：換週歸零（教師專區用；P3 SPEC §3.3）
+function soWeekCnt_(arr, n) {
+  const ws = weekStart(Date.now());
+  if (Array.isArray(arr) && arr[0] === ws && arr.length === n + 1) return arr;
+  const out = [ws]; for (let i = 0; i < n; i++) out.push(0); return out;
+}
+// v2.26 各本的島心鍵（短鍵，例 1-5、3-0）：由班網 index.json 的題本結構推得（islandCore），6 小時快取；讀不到回 null
+function soCoreKeys_(book) {
+  const cache = CacheService.getScriptCache();
+  let map = soJson_(cache.get("so:core"), null);
+  if (!map) {
+    const data = soFetchJson_("study-orbit/index.json");
+    if (!data || !data.books) return null;
+    map = {};
+    data.books.forEach(function (b) {
+      map[b.code] = (((b.structure || {}).islands) || []).map(function (isl) {
+        return islandCore({ id: isl.id, levels: (isl.levels || []).map(function (l) { return { code: soShortBs_(b.code, l.code), name: l.name }; }) }).key;
+      });
+    });
+    cache.put("so:core", JSON.stringify(map), 21600);
+  }
+  return map[book] || [];
+}
 
 // 排行摘要（v2.23 起一人一本一格）so:sm:<題本>:<座號> = [星數, 完成關數, 本週星數, 本週起算日]
 // 原本整本一格（so:sum:<題本>），每次上傳都要在鎖裡讀＋寫整格；拆開後併進上傳的同一次寫入
@@ -2596,7 +2627,7 @@ function soLogin_(props, body) {
   soEnsureCells_(props, { seat: seat, test: soIsTest_(seat) }, Object.keys(idx)); // 缺的各本先讀回（一位一次查詢），之後三本拉取不必再查；失敗由拉取補
   const books = Object.keys(idx).map(function (b) { const s = soSumOf_(props, b, seat); s.book = b; s.subject = idx[b]; return s; });
   const v = soMeView_(soMe_(props, seat, today), today);
-  return { ok: true, token: head + "." + soSign_(head, secret), seat: seat, books: books, today: v.today, streak: v.streak };
+  return { ok: true, token: head + "." + soSign_(head, secret), seat: seat, books: books, today: v.today, streak: v.streak, days: v.days };
 }
 
 // ---------- 暫存區一格 ----------
@@ -2674,7 +2705,7 @@ function soPull_(props, body) {
     if (!cell) return SO_BUSY;
   }
   const today = today_(), v = soMeView_(soMe_(props, auth.seat, today), today);
-  return { ok: true, book: book, save: cell.save, ver: cell.ver, sum: soSumOf_(props, book, auth.seat), today: v.today, streak: v.streak };
+  return { ok: true, book: book, save: cell.save, ver: cell.ver, sum: soSumOf_(props, book, auth.seat), today: v.today, streak: v.streak, days: v.days };
 }
 
 function soSumPut_(props, book, seat, cell) {
@@ -2714,7 +2745,7 @@ function soShortBs_(book, code) { return code.indexOf(book + "-") === 0 ? code.s
 function soFold_(cell, book, events, ak, me, today) {
   const m = decodeSave(cell.save);
   const out = { lines: [], rounds: [], q: 0, c: 0, sec: 0, ended: [], sumChanged: false };
-  let rr = cell.rr || null;
+  let rr = cell.rr || null, cores;
   const card = function (code, st) {
     const k = soShortBs_(book, code);
     if (st === "t") { m.cd[k] = ["t", today]; m.ok = m.ok.filter(function (x) { return x !== k; }); }
@@ -2724,7 +2755,9 @@ function soFold_(cell, book, events, ak, me, today) {
   const doneTask = function (src) {
     if ("rnf".indexOf(src) >= 0 && src && me.today.done.indexOf(src) < 0 && me.today.done.length < 3) me.today.done.push(src);
   };
-  const studied = function () { // 有完成一回合（或卡冊一張）的日子 → 連續自學天數
+  const studied = function () { // 有完成一回合（或卡冊一張）的日子 → 連續自學天數；v2.26 另記 days（只留最近 14 筆）
+    const dn = strToDay(today), ds = me.days || (me.days = []);
+    if (ds[ds.length - 1] !== dn) { ds.push(dn); if (ds.length > 14) ds.splice(0, ds.length - 14); }
     if (me.last === today) return;
     me.streak = me.last && me.last >= soPrevSchoolDay_(today, soHolidays_()) ? me.streak + 1 : 1;
     me.last = today;
@@ -2759,6 +2792,9 @@ function soFold_(cell, book, events, ak, me, today) {
       const bsk = String(ev[1]), qid = String(ev[2]), opt = String(ev[3]), sec = Math.max(0, Math.round(Number(ev[4]) || 0));
       if (!ak[qid] || !/^.+-B\d+$/.test(bsk)) return;
       const ok = soJudge_(ak[qid][0], opt), cur = m.cd[bsk];
+      if (cur && cur[0] === "d" && soDayDiff_(cur[1], today) >= 7) { // v2.26 cw：到期卡（已克服滿 7 天）的挑戰次數、通過次數
+        me.cw = soWeekCnt_(me.cw, 2); me.cw[1]++; if (ok) me.cw[2]++;
+      }
       if (!ok) card(bsk, "t");
       else if (cur && cur[0] === "t") card(bsk, "d");
       else if (cur && cur[0] === "d" && soDayDiff_(cur[1], today) >= 7) card(bsk, "o"); // 7 天後確認通過＝結案
@@ -2777,6 +2813,9 @@ function soFold_(cell, book, events, ak, me, today) {
       if (m.mid && m.mid.k === k) m.mid = null;
       out.rounds.push(book + "-" + k + "," + stars(gold, silver) + "," + gold + "," + silver + "," + (7 - gold - silver) + "," + rr.sec + "," + src);
       out.ended.push(k); out.sumChanged = true;
+      if (cores === undefined) cores = soCoreKeys_(book);
+      const isCore = cores ? cores.indexOf(k) >= 0 : /-0$/.test(k); // 讀不到結構：只認得虛擬島心
+      me.wr = soWeekCnt_(me.wr, 2); me.wr[isCore ? 2 : 1]++; // v2.26 wr：本週課後回合數、島心回合數
       doneTask(src); studied();
       rr = null;
     }
@@ -2847,7 +2886,7 @@ function soPush_(props, body) {
   const t2 = Date.now();
   soEnsureTrigger_(props);
   const v = soMeView_(me, today);
-  return { ok: true, ver: cell.ver, sum: soSumOf_(props, book, seat), today: v.today, streak: v.streak, wait: (cell.wait || []).length, lockWait: t1 - t0, lockMs: t2 - t1 };
+  return { ok: true, ver: cell.ver, sum: soSumOf_(props, book, seat), today: v.today, streak: v.streak, days: v.days, wait: (cell.wait || []).length, lockWait: t1 - t0, lockMs: t2 - t1 };
 }
 
 // 自學紀錄暫存 so:log:<日期>:<座號> = {a:[未落地明細行], r:[未落地回合行], q, c, sec(當日累計), pid, dirty}
@@ -3262,9 +3301,37 @@ function applyRound(record, gold, silver) {
   };
 }
 
-/** 寶箱：一座島每一關「曾經七盞全金」都是 1 才開（不必同一次完成） */
-function chestOpen(islandLevelCodes, lv) {
-  return islandLevelCodes.length > 0 && islandLevelCodes.every((c) => lv[c]?.[1] === 1);
+/* ---------- P3 §1：島心試煉與寶箱（第②步） ----------
+   island＝{id, levels:[{code, name}]}（code 可以是完整代碼或省略題本的短鍵，回傳同一種）；lv＝存檔的關卡紀錄 */
+const CORE_RE = /評量複習$/;
+/** 島心：名稱以「評量複習」結尾的那一關（國語）；沒有就是虛擬島心 <島>-0（數學、社會，從各關題池抽題） */
+function islandCore(island) {
+  const lvs = (island && island.levels) || [];
+  const i = lvs.findIndex((l) => CORE_RE.test(String(l.name || "")));
+  if (i >= 0) return { key: lvs[i].code, levels: lvs.filter((_, k) => k !== i).map((l) => l.code), virtual: false };
+  const all = lvs.map((l) => l.code);
+  return { key: (all.length ? all[0].replace(/-[^-]+$/, "") : String(island && island.id)) + "-0", levels: all, virtual: true };
+}
+/** 島心開放前還差幾關（各關最高星等 ≥1 才算過） */
+function coreLeft(island, lv) {
+  return islandCore(island).levels.filter((k) => !(((lv || {})[k] || [0])[0] >= 1)).length;
+}
+/** 島心開放＝其餘每一關都 ≥1 星；島心已經有紀錄的照樣開（不倒退） */
+function coreOpen(island, lv) {
+  const c = islandCore(island);
+  if ((lv || {})[c.key]) return true;
+  return c.levels.length > 0 && coreLeft(island, lv) === 0;
+}
+/** 寶箱：島心曾經七盞全金，或（舊條件）島上每一關都曾經全金——任一成立就開（P3 §11 第 2 題 A，不寫遷移） */
+function chestOpen(island, lv) {
+  const c = islandCore(island), L = lv || {}, all = ((island && island.levels) || []).map((l) => l.code);
+  if ((L[c.key] || [])[1] === 1) return true;
+  return all.length > 0 && all.every((k) => (L[k] || [])[1] === 1);
+}
+/** 本週一～日哪幾天有自學：days＝日期字串陣列（YYYY-MM-DD），回 7 個 true／false */
+function weekDays(days, today) {
+  const set = new Set(days || []), ws = Date.parse(weekStart(`${today}T12:00:00+08:00`) + "T00:00:00Z");
+  return Array.from({ length: 7 }, (_, i) => set.has(new Date(ws + i * 864e5).toISOString().slice(0, 10)));
 }
 
 /** §5.3 星數＝各關最高星等加總；完成關數＝最高星等 ≥1 的關數 */

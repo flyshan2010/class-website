@@ -14,7 +14,7 @@
 //   reviewCards:[{ name, subject, status }],
 // }
 
-import { encodeSave } from "./rules.mjs";
+import { encodeSave, islandCore } from "./rules.mjs";
 
 export const SAVE_LIMIT_BYTES = 8 * 1024; // §4 第 12 條：存檔最壞情況 ≤8KB
 const SLOT_NORMAL = ["基礎", "基礎", "基礎", "進階", "進階", "應用", "應用"];
@@ -290,7 +290,9 @@ export function checkBundle(bundle) {
   for (const book of B.books) {
     const lvCodes = [...levels].filter(([, v]) => v.book === book.code).map(([c]) => c);
     const bsCodes = B.blindspots.filter((b) => lvCodes.includes(b.level)).map((b) => b.code);
-    saveSize[book.code] = worstSaveBytes(book.code, lvCodes, bsCodes);
+    // P3 §3.4：虛擬島心 <島>-0 也會有一筆關卡紀錄，算進最壞情況
+    const cores = (book.structure?.islands ?? []).map((isl) => islandCore(isl)).filter((c) => c.virtual).map((c) => c.key);
+    saveSize[book.code] = worstSaveBytes(book.code, [...lvCodes, ...cores], bsCodes);
     if (saveSize[book.code] > SAVE_LIMIT_BYTES)
       err(12, `題本 ${book.code} 存檔最壞情況 ${saveSize[book.code]} bytes，超過 ${SAVE_LIMIT_BYTES}`);
   }
